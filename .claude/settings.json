@@ -11,17 +11,41 @@
       "Read(./coverage/**)",
       "Bash(git push:*)",
       "Bash(npx prisma db push:*)",
-      "Bash(npx prisma migrate reset:*)"
+      "Bash(npx prisma migrate reset:*)",
+      "Read(./ios/Pods/**)",
+      "Read(./ios/build/**)",
+      "Read(./android/build/**)",
+      "Read(./android/app/build/**)",
+      "Read(./android/.gradle/**)"
     ],
-    "ask": ["Bash(npm install:*)", "Bash(npm i:*)", "Bash(npx expo install:*)"]
+    "ask": [
+      "Bash(npm install:*)",
+      "Bash(npm i:*)",
+      "Bash(npx expo install:*)"
+    ]
   },
   "hooks": {
     "PreToolUse": [
-      { "matcher": "Read|Edit|Write|Grep|Glob|Bash",
-        "hooks": [{ "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-secrets.sh" }] }
+      {
+        "matcher": "Read|Edit|Write|Grep|Glob|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-secrets.sh"
+          }
+        ]
+      }
     ],
     "Stop": [
-      { "hooks": [{ "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check.sh", "timeout": 600 }] }
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check.sh",
+            "timeout": 600
+          }
+        ]
+      }
     ]
   }
 }

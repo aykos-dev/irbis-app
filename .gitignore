@@ -10,3 +10,11 @@ coverage/
 .env.*
 !.env.example
 .claude/settings.local.json
+ios/Pods/
+ios/build/
+android/.gradle/
+android/app/build/
+*.keystore
+!debug.keystore
+GoogleService-Info.plist
+google-services.json

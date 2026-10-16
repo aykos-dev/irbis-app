@@ -1,27 +1,32 @@
 # irbis-app
 
-Expo + Expo Router (React Native). Project-wide rules: `../irbis-docs/CLAUDE.md`. Versions: `../irbis-docs/PROJECT.md`.
-Expo APIs change between SDKs: check Context7 for the pinned SDK before using an unfamiliar API.
+**Bare React Native** (no Expo — never add `expo-*` packages, Expo Router, EAS or prebuild).
+iOS + Android, New Architecture, Hermes. `ios/` and `android/` are committed source.
+
+**Before any change read:** `docs/architecture.md` (structure, stack, decisions) and
+`docs/engineering-standards.md` (definition of done — its Quick gate must pass).
+Project-wide rules: `../irbis-docs/CLAUDE.md`. Tokens: `../irbis-docs/design/design.md`.
 
 ## Commands
-- `npm run check` — lint + typecheck + tests + slop grep, failures only. Must be green before "done".
-- `npm run gen:api` — orval from `../irbis-api/openapi.json` → `src/api/generated/`. Never edit generated files.
-- `npx expo install <pkg>` — only after approval; keeps versions SDK-compatible.
-- `npm run test -- <path>` — single test file.
+- `npm run check` — lint + typecheck + tests + slop grep, failures only. Green before "done".
+- `npm run gen:api` — orval from `../irbis-api/openapi.json` → `src/shared/api/generated/`. Never edit generated files.
+- `npm run test -- <path>` — single test file (Jest + Testing Library).
+- `cd ios && LANG=en_US.UTF-8 pod install` — after any native dependency change.
+- `npm run ios` / `npm run android` — run on simulator/emulator.
 
-## Layout
-- `app/` — Expo Router routes only; thin, import screens from features.
-- `src/features/<slug>/` — screens, components, hooks for that feature. No imports from other features.
-- `src/api/generated/` — typed client + TanStack Query hooks. The only way to call the API.
-- `src/components/ui/` — shared primitives. `src/theme/tokens.ts` — all colours/spacing/type.
+## Layout (details in docs/architecture.md)
+- `src/app/` — App.tsx, providers, `navigation/` (typed param lists in `types.ts`).
+- `src/features/<slug>/` — screens, components, hooks, schemas. Never import another feature.
+- `src/shared/` — api (client, generated, tokenManager), components, constants (tokens), contexts, hooks, i18n, storage, utils.
 
 ## Shared modules — check before creating anything new
-<!-- Keep this list current. -->
-- `src/components/ui/` — Screen (safe area + keyboard avoiding), Button, TextField, EmptyState, ErrorState, Spinner, Toast
-- `src/lib/` — formatDate, formatNumber, location helpers
-- `src/api/mutator.ts` — the single HTTP client (auth header, refresh, error mapping)
-- Tokens stored only via `expo-secure-store`
+- `shared/components/` — Screen, Pressable, AppText, AppButton, TextField, Icon, Toast, Skeleton, EmptyState, ErrorState, OfflineBanner, ListRow, Sheet
+- `shared/utils/` — haptics, format (Intl), geo, time
+- `shared/hooks/` — useNetworkStatus, usePermission, useDebounce, useAppState
+- `shared/api/client.ts` — the only axios instance; `tokenManager.ts` — the only Keychain user
+- `shared/storage/` — the only MMKV user
 
-## Errors and states
-Every screen: loading, empty, error (with retry), offline, permission denied.
-Wrap screens in `Screen` (safe areas + keyboard). Root error boundary + toasts for mutation errors.
+## Non-negotiables (from the standards)
+Tokens only, `StyleSheet.create` at module scope · Reanimated for all motion · haptics via `shared/utils/haptics` ·
+safe area via `Screen` · keyboard-controller for inputs · generated hooks only · four data states ·
+toasts on mutations · i18n for every string · a11y labels · tokens in Keychain, never MMKV.
