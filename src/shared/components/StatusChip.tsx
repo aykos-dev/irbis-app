@@ -66,7 +66,7 @@ export function StatusChip({ variant, label, testID }: Props) {
       style={[styles.chip, { backgroundColor: tone.chipBg }]}
     >
       <ChipIcon variant={variant} color={tone.chipFg} />
-      <AppText variant="chip" style={{ color: tone.chipFg }}>
+      <AppText variant="chip" style={[styles.label, { color: tone.chipFg }]}>
         {label}
       </AppText>
     </View>
@@ -78,9 +78,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
+    maxWidth: '100%',
     gap: spacing[6],
     minHeight: sizes.chipHeight,
     paddingHorizontal: sizes.chipPaddingHorizontal,
     borderRadius: radii.pill,
+  },
+  label: {
+    flexShrink: 1,
   },
 });
