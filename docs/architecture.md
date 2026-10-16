@@ -188,9 +188,9 @@ From the canvas (`Nav.dc.html` + page boards). Bottom tabs: **Path · Explore ·
 ```
 RootNavigator (Native Stack)
 ├── Splash
-├── Auth flow            (not designed yet — `auth` feature)
-├── Onboarding           Meet Irbis → Language → Experience → Interests → Companion reveal
-└── MainTabs (Bottom Tabs)
+├── Onboarding           Meet Irbis → Language → Experience → Interests → Companion reveal (no account needed)
+├── Auth (modal stack)   LogIn · SignUp · ForgotPassword → ResetCode     (canvas page "Accounts & sign-in")
+└── MainTabs (Bottom Tabs) — open to guests
     ├── Path       → Home (This Week's Path) → PlaceDetail → TrailMap
     │                                        → TripPlan → ActiveTrip → Summit / check-in celebration
     ├── Explore    → ExploreMap → PlaceDetail …
@@ -200,7 +200,11 @@ RootNavigator (Native Stack)
     └── Profile    → Profile → EditProfile · Settings · Notifications · SafetyCenter · MySpots · Badges
                      · (Phase 4) Tours · Gear · Irbis Plus
 ```
-Full-screen flows (stack, `fullScreenModal`): onboarding, trip plan → active trip, micro-lesson, level-up, Add a Spot.
+Full-screen flows (stack, `fullScreenModal`): onboarding, auth, trip plan → active trip, micro-lesson, level-up, Add a Spot.
+**Guest-first (ADR-001):** no login wall. `useRequireAccount(reason)` opens the **log-in prompt sheet** (`AccGate`) before
+any action that saves or earns; after sign-up/log-in the action resumes, "Not now" returns to where the user was. The
+Profile tab shows the guest profile (`AccGuestProfile`) until signed in. Guest data lives in `shared/storage` (MMKV,
+non-sensitive) and is sent once to `/v1/me/guest-merge` after the first sign-up/log-in.
 Sheets: report, filters, smart swap, confirm check-out.
 Deep links: `irbis://places/:placeId`, `irbis://trips/:tripId`, `irbis://lessons/:lessonId`, `irbis://profile`.
 
