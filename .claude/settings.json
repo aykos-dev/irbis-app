@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./node_modules/**)",
+      "Read(./dist/**)",
+      "Read(./.next/**)",
+      "Read(./.expo/**)",
+      "Read(./coverage/**)",
+      "Bash(git push:*)",
+      "Bash(npx prisma db push:*)",
+      "Bash(npx prisma migrate reset:*)"
+    ],
+    "ask": ["Bash(npm install:*)", "Bash(npm i:*)", "Bash(npx expo install:*)"]
+  },
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Read|Edit|Write|Grep|Glob|Bash",
+        "hooks": [{ "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-secrets.sh" }] }
+    ],
+    "Stop": [
+      { "hooks": [{ "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check.sh", "timeout": 600 }] }
+    ]
+  }
+}
