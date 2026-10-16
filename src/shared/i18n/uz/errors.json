@@ -1,0 +1,6 @@
+{
+  "generic": "Nimadir xato ketdi. Qaytadan urinib ko‘ring.",
+  "network": "Irbis bilan bog‘lanib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.",
+  "timeout": "Juda uzoq davom etdi. Qaytadan urinib ko‘ring.",
+  "unauthorized": "Seans tugadi. Qaytadan kiring."
+}

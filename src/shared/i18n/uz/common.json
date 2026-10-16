@@ -1,0 +1,13 @@
+{
+  "appName": "Irbis",
+  "retry": "Qayta urinish",
+  "close": "Yopish",
+  "offline": "Internet yo‘q. Oxirgi saqlangan ma’lumotlar ko‘rsatilmoqda.",
+  "loading": "Yuklanmoqda",
+  "environment": "Muhit: %{env}",
+  "apiAddress": "API: %{url}",
+  "status": {
+    "title": "Holat",
+    "subtitle": "Ilova qobig‘i tayyor."
+  }
+}

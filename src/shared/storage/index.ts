@@ -1,0 +1,27 @@
+import { createMMKV } from 'react-native-mmkv';
+
+/**
+ * The only MMKV user. Non-sensitive state only (prefs, drafts, last-known-good UI state).
+ * Tokens never go here — they live in the Keychain via shared/api/tokenManager.
+ */
+const mmkv = createMMKV({ id: 'irbis' });
+
+/** Every persisted key, with its value type. Add keys here, never inline strings. */
+type StorageSchema = {
+  'prefs.locale': string;
+  'prefs.colorScheme': string;
+};
+
+export type StorageKey = keyof StorageSchema;
+
+export const storage = {
+  getString<K extends StorageKey>(key: K): StorageSchema[K] | undefined {
+    return mmkv.getString(key);
+  },
+  setString<K extends StorageKey>(key: K, value: StorageSchema[K]): void {
+    mmkv.set(key, value);
+  },
+  remove(key: StorageKey): void {
+    mmkv.remove(key);
+  },
+};

@@ -1,0 +1,41 @@
+import { DarkTheme, DefaultTheme, NavigationContainer, type Theme } from '@react-navigation/native';
+import { useMemo } from 'react';
+
+import { useTheme } from '../shared/contexts/theme';
+import { linking } from './navigation/linking';
+import { navigationRef } from './navigation/navigationRef';
+import { RootNavigator } from './navigation/RootNavigator';
+import { Providers } from './providers';
+
+function ThemedNavigation() {
+  const { scheme, colors } = useTheme();
+  const navigationTheme = useMemo<Theme>(() => {
+    const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
+    return {
+      ...base,
+      colors: {
+        ...base.colors,
+        primary: colors.teal700,
+        background: colors.bg,
+        card: colors.card,
+        text: colors.ink,
+        border: colors.line,
+        notification: colors.red700,
+      },
+    };
+  }, [scheme, colors]);
+
+  return (
+    <NavigationContainer ref={navigationRef} linking={linking} theme={navigationTheme}>
+      <RootNavigator />
+    </NavigationContainer>
+  );
+}
+
+export function App() {
+  return (
+    <Providers>
+      <ThemedNavigation />
+    </Providers>
+  );
+}

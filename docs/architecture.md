@@ -20,34 +20,36 @@ Companion documents — both mandatory:
 ## Tech Stack
 
 Pinned. Do not substitute or add libraries without explicit approval (recorded below or as an
-ADR in `irbis-docs/decisions/`). Versions are the latest stable as of 2026-10-16 — replace with
-the exact versions installed at scaffold time.
+ADR in `irbis-docs/decisions/`). Exact versions installed at scaffold time (2026-10-17), pinned
+without `^` in `package.json`. "Not installed yet" rows are approved but arrive with the first feature that uses them.
 
 | Layer | Technology | Version |
 | ----- | ---------- | ------- |
-| **Framework** | React Native (bare, New Architecture, Hermes) + React | 0.88 / 19.3 |
-| **CLI** | `@react-native-community/cli` | 20.x |
-| **Language** | TypeScript strict | per `PROJECT.md` |
-| **Navigation** | React Navigation 7 (Native Stack + Bottom Tabs) | 7.x |
-| **Server state** | TanStack Query 5 | 5.x |
-| **API client** | **orval**-generated hooks + zod schemas over **axios** | orval 8 / axios 1.x |
-| **Forms** | react-hook-form + zod | 7.x / 4.x |
-| **Animation** | react-native-reanimated 4 + react-native-worklets | 4.7 / 0.13 |
-| **Gestures** | react-native-gesture-handler | 3.x |
-| **Screens** | react-native-screens | 4.x |
-| **Bottom sheets** | @gorhom/bottom-sheet | 5.x |
-| **Lists** | @shopify/flash-list | 2.x |
-| **Secure storage** | react-native-keychain (tokens) | 10.x |
-| **Local storage** | react-native-mmkv (prefs, drafts) | 4.x |
-| **i18n** | i18n-js + react-native-localize | 4.x / 3.x |
-| **Haptics** | react-native-haptic-feedback | 3.x |
-| **Keyboard** | react-native-keyboard-controller | 1.x |
-| **Safe area** | react-native-safe-area-context | 5.x |
-| **Network status** | @react-native-community/netinfo | 12.x |
-| **Icons / SVG** | react-native-svg + `@react-native-vector-icons/*` behind `shared/components/Icon.tsx` | 15.x / 13.x |
-| **Config** | react-native-config (public build-time values only) | 1.x |
-| **Splash** | react-native-bootsplash | 7.x |
-| **Tests** | Jest + @testing-library/react-native | 30 / 14 |
+| **Framework** | React Native (bare, New Architecture, Hermes) + React | 0.88.0 / 19.3.0 |
+| **CLI** | `@react-native-community/cli` | 20.2.0 |
+| **Language** | TypeScript strict | 6.0.3 |
+| **Navigation** | React Navigation 7 — `native` / `native-stack` (Bottom Tabs: not installed yet) | 7.5.1 / 7.21.0 |
+| **Server state** | TanStack Query 5 | 5.104.3 |
+| **API client** | **orval**-generated hooks + zod schemas over **axios** | orval 8.43.0 / axios 1.20.0 |
+| **Forms** | react-hook-form (not installed yet) + zod | — / 4.6.7 |
+| **Animation** | react-native-reanimated 4 + react-native-worklets | 4.7.1 / 0.13.0 |
+| **Gestures** | react-native-gesture-handler | 3.4.0 |
+| **Screens** | react-native-screens | 4.30.0 |
+| **Bottom sheets** | @gorhom/bottom-sheet | 5.2.14 |
+| **Lists** | @shopify/flash-list (not installed yet) | 2.x |
+| **Secure storage** | react-native-keychain (tokens) | 10.0.0 |
+| **Local storage** | react-native-mmkv (prefs, drafts) + react-native-nitro-modules | 4.3.2 / 0.37.1 |
+| **i18n** | i18n-js + react-native-localize | 4.5.4 / 3.7.2 |
+| **Haptics** | react-native-haptic-feedback | 3.0.0 |
+| **Keyboard** | react-native-keyboard-controller | 1.22.7 |
+| **Safe area** | react-native-safe-area-context | 5.10.1 |
+| **Network status** | @react-native-community/netinfo | 12.0.1 |
+| **Icons / SVG** | react-native-svg + `@react-native-vector-icons/*` (not installed yet) behind `shared/components/Icon.tsx` | 15.16.0 / — |
+| **Config** | react-native-config (public build-time values only) | 1.7.2 |
+| **Splash** | react-native-bootsplash (not installed yet) | 7.x |
+| **Tests** | Jest + @testing-library/react-native (+ `test-renderer`) | 30.5.2 / 14.1.0 (1.3.1) |
+| **Lint** | ESLint flat config + typescript-eslint + react-hooks + eslint-plugin-boundaries | 10.13.0 / 8.71.2 / 7.1.1 / 7.2.0 |
+| **Build tooling** | `@babel/plugin-transform-export-namespace-from` (zod 4 under Metro), `react-native-asset` (fonts) | 7.29.7 / 2.3.0 |
 
 **Planned — approve when the first feature needs it** (each must support bare RN 0.88 + New
 Architecture; verify before adding):
@@ -294,8 +296,16 @@ Ordering constraints:
 
 ## Environments & build
 
-- Environments: `development`, `staging`, `production` — iOS schemes/configurations and Android
-  product flavours, each with its own bundle id suffix and `.env.<env>` read by react-native-config.
+- Environments: `dev`, `staging`, `prod` — Android product flavours (`uz.irbis.app.dev` "Irbis Dev",
+  `uz.irbis.app.staging` "Irbis Staging", `uz.irbis.app` "Irbis"), each reading `.env.dev` /
+  `.env.staging` / `.env.prod` via react-native-config (`API_URL`, `APP_ENV`). iOS schemes: not yet
+  (iOS is generated, not built, in M0).
+- dev/staging **release** builds are signed with the public debug keystore so QA can sideload them;
+  prod release is signed only when `IRBIS_UPLOAD_*` properties exist in `~/.gradle/gradle.properties`.
+- Run: `npm start` (Metro) + `npm run android` (= `run-android --mode devDebug --appId uz.irbis.app.dev`).
+  Standalone APK: `cd android && ./gradlew assembleDevRelease` → `android/app/build/outputs/apk/dev/release/`.
+- Watchman is disabled in `metro.config.js` / `jest.config.js` (node crawler) — the dev Mac's Homebrew
+  watchman fails to load `libfmt`.
 - `.env.*` files hold **public** values only (API base URL, env name). They are git-ignored,
   filled in by a human, with `.env.example` committed. Claude never reads them.
 - Signing keys, keystores, `GoogleService-Info.plist`, `google-services.json` are never committed

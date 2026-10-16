@@ -1,0 +1,3 @@
+<resources>
+    <!-- app_name is set per product flavour in app/build.gradle -->
+</resources>

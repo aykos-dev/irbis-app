@@ -1,0 +1,6 @@
+{
+  "generic": "Something went wrong. Please try again.",
+  "network": "Can't reach Irbis. Check your connection and try again.",
+  "timeout": "This is taking too long. Please try again.",
+  "unauthorized": "Your session has ended. Please log in again."
+}
