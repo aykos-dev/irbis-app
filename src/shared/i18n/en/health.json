@@ -1,0 +1,13 @@
+{
+  "title": "Status",
+  "apiUp": "API is up",
+  "apiDegraded": "API is degraded",
+  "dbUp": "Database is up",
+  "dbDown": "Database is down",
+  "version": "v%{version}",
+  "checkedAt": "Checked at %{time}",
+  "stale": "Not updated — this is the last known result.",
+  "errorTitle": "Can't check the status",
+  "mascot": "Irbis the snow leopard",
+  "refresh": "Refresh status"
+}

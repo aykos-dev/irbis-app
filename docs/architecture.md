@@ -189,6 +189,7 @@ From the canvas (`Nav.dc.html` + page boards). Bottom tabs: **Path · Explore ·
 
 ```
 RootNavigator (Native Stack)
+├── Status               M0 initial route (features/health.md) — replaced by Splash/MainTabs as features land
 ├── Splash
 ├── Onboarding           Meet Irbis → Language → Experience → Interests → Companion reveal (no account needed)
 ├── Auth (modal stack)   LogIn · SignUp · ForgotPassword → ResetCode     (canvas page "Accounts & sign-in")
@@ -249,6 +250,10 @@ One axios instance, used by orval as its mutator:
 
 Components never touch the client — only generated hooks, via feature hooks.
 
+Per-request overrides go through the generated hook's `request` option (e.g. `health` accepts
+200 **and** 503 via `validateStatus` and validates the body with the generated zod schema in
+`select`), never by changing the shared client.
+
 ### Codegen
 
 ```bash
@@ -304,6 +309,9 @@ Ordering constraints:
   prod release is signed only when `IRBIS_UPLOAD_*` properties exist in `~/.gradle/gradle.properties`.
 - Run: `npm start` (Metro) + `npm run android` (= `run-android --mode devDebug --appId uz.irbis.app.dev`).
   Standalone APK: `cd android && ./gradlew assembleDevRelease` → `android/app/build/outputs/apk/dev/release/`.
+- The **dev** flavour adds `src/dev/res/xml/network_security_config.xml`: cleartext only to
+  `localhost` / `127.0.0.1` / `10.0.2.2` (local API via `adb reverse tcp:3000 tcp:3000`, Metro).
+  staging/prod stay HTTPS-only (release forces `usesCleartextTraffic=false`).
 - Watchman is disabled in `metro.config.js` / `jest.config.js` (node crawler) — the dev Mac's Homebrew
   watchman fails to load `libfmt`.
 - `.env.*` files hold **public** values only (API base URL, env name). They are git-ignored,

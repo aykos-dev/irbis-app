@@ -1,0 +1,13 @@
+{
+  "title": "Holat",
+  "apiUp": "API ishlayapti",
+  "apiDegraded": "API uzilishlar bilan ishlayapti",
+  "dbUp": "Ma’lumotlar bazasi ishlayapti",
+  "dbDown": "Ma’lumotlar bazasi ishlamayapti",
+  "version": "v%{version}",
+  "checkedAt": "%{time} da tekshirildi",
+  "stale": "Yangilanmadi — bu oxirgi ma’lum natija.",
+  "errorTitle": "Holatni tekshirib bo‘lmadi",
+  "mascot": "Irbis — qor qoploni",
+  "refresh": "Holatni yangilash"
+}

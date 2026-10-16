@@ -55,6 +55,8 @@ export const sizes = {
   icon: 20,
   iconStroke: 2.5,
   touchTarget: 44,
+  /** Mascot on a status card (derived from the canvas — confirm in design.md). */
+  mascotCard: 88,
 } as const;
 
 /** Path node drop shadow: 5 px, rgba(0,0,0,.18). */

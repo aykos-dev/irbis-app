@@ -1,56 +1,87 @@
-import { StyleSheet, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import { RefreshControl, StyleSheet, View } from 'react-native';
 
 import type { RootStackScreenProps } from '../../../app/navigation/types';
 import { AppText } from '../../../shared/components/AppText';
+import { ErrorState } from '../../../shared/components/ErrorState';
 import { Screen } from '../../../shared/components/Screen';
 import { appConfig } from '../../../shared/constants/config';
-import { borders, radii, spacing } from '../../../shared/constants/spacing';
-import { createThemedStyles } from '../../../shared/contexts/theme';
-import { t } from '../../../shared/i18n';
+import { spacing } from '../../../shared/constants/spacing';
+import { useTheme } from '../../../shared/contexts/theme';
+import { useNetworkStatus } from '../../../shared/hooks/useNetworkStatus';
+import { getLocale, t } from '../../../shared/i18n';
+import { formatTime } from '../../../shared/utils/format';
+import { HealthCard } from '../components/HealthCard';
+import { useHealthStatus } from '../hooks/useHealthStatus';
 
 type Props = RootStackScreenProps<'Status'>;
 
-/**
- * M0 initial route. Shows the build's environment; the live API/database status card
- * (`useHealthCheck`, four data states) is added with the health contract.
- */
+/** M0 initial route (features/health.md AC3): API + database reachability, four data states. */
 export function StatusScreen(_props: Props) {
-  const styles = useStyles();
+  const { colors } = useTheme();
+  const { isOnline } = useNetworkStatus();
+  const { data, error, isError, dataUpdatedAt, refetch } = useHealthStatus();
+  const [pulling, setPulling] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setPulling(true);
+    try {
+      await refetch();
+    } finally {
+      setPulling(false);
+    }
+  }, [refetch]);
+
+  const onRetry = useCallback(() => {
+    refetch();
+  }, [refetch]);
+
+  const showError = isError && !data;
+  const stale = !!data && (!isOnline || isError);
+  const checkedAt = data ? formatTime(new Date(dataUpdatedAt), getLocale()) : null;
+
   return (
-    <Screen testID="health.screen" scroll>
-      <View style={layout.header}>
+    <Screen
+      testID="health.screen"
+      scroll
+      refreshControl={
+        <RefreshControl
+          accessibilityLabel={t('health.refresh')}
+          refreshing={pulling}
+          onRefresh={onRefresh}
+          tintColor={colors.teal700}
+          colors={[colors.teal700]}
+          progressBackgroundColor={colors.card}
+        />
+      }
+    >
+      <View style={styles.header}>
         <AppText variant="caption">{t('common.appName')}</AppText>
         <AppText variant="h1" accessibilityRole="header">
-          {t('common.status.title')}
+          {t('health.title')}
         </AppText>
       </View>
-      <View testID="health.status-card" style={[layout.card, styles.card]}>
-        <AppText variant="body">{t('common.status.subtitle')}</AppText>
-        <AppText variant="small" testID="health.environment">
-          {t('common.environment', { env: appConfig.appEnv })}
-        </AppText>
-        <AppText variant="small" testID="health.api-url">
-          {t('common.apiAddress', { url: appConfig.apiUrl })}
-        </AppText>
-      </View>
+      {showError ? (
+        <ErrorState
+          testID="health.error"
+          retryTestID="health.retry"
+          title={t('health.errorTitle')}
+          error={error}
+          onRetry={onRetry}
+        />
+      ) : (
+        <HealthCard result={data} checkedAt={checkedAt} stale={stale} />
+      )}
+      <AppText variant="small" testID="health.environment">
+        {t('common.environment', { env: appConfig.appEnv })}
+      </AppText>
     </Screen>
   );
 }
 
-const layout = StyleSheet.create({
+const styles = StyleSheet.create({
   header: {
     paddingTop: spacing[24],
     gap: spacing[4],
   },
-  card: {
-    borderRadius: radii.card,
-    borderWidth: borders.card,
-    borderBottomWidth: borders.edge,
-    padding: spacing[20],
-    gap: spacing[8],
-  },
 });
-
-const useStyles = createThemedStyles(c => ({
-  card: { backgroundColor: c.card, borderColor: c.line },
-}));

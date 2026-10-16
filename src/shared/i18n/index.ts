@@ -3,10 +3,13 @@ import { findBestLanguageTag } from 'react-native-localize';
 
 import enCommon from './en/common.json';
 import enErrors from './en/errors.json';
+import enHealth from './en/health.json';
 import ruCommon from './ru/common.json';
 import ruErrors from './ru/errors.json';
+import ruHealth from './ru/health.json';
 import uzCommon from './uz/common.json';
 import uzErrors from './uz/errors.json';
+import uzHealth from './uz/health.json';
 
 /**
  * i18n setup. Translations live in `<locale>/<namespace>.json`; keys are `<namespace>.<key>`
@@ -18,9 +21,9 @@ export type Locale = (typeof supportedLocales)[number];
 const fallbackLocale: Locale = 'en';
 
 export const i18n = new I18n({
-  en: { common: enCommon, errors: enErrors },
-  ru: { common: ruCommon, errors: ruErrors },
-  uz: { common: uzCommon, errors: uzErrors },
+  en: { common: enCommon, errors: enErrors, health: enHealth },
+  ru: { common: ruCommon, errors: ruErrors, health: ruHealth },
+  uz: { common: uzCommon, errors: uzErrors, health: uzHealth },
 });
 
 i18n.defaultLocale = fallbackLocale;

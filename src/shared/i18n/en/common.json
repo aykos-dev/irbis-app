@@ -4,10 +4,5 @@
   "close": "Close",
   "offline": "You're offline. Showing the last saved data.",
   "loading": "Loading",
-  "environment": "Environment: %{env}",
-  "apiAddress": "API: %{url}",
-  "status": {
-    "title": "Status",
-    "subtitle": "The app shell is ready."
-  }
+  "environment": "Environment: %{env}"
 }

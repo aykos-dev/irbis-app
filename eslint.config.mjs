@@ -129,7 +129,7 @@ export default tseslint.config(
   },
   {
     // Tests talk to libraries at the boundary (axios adapter, haptics spy, module isolation).
-    files: ['src/**/__tests__/**/*.{ts,tsx}'],
+    files: ['src/**/__tests__/**/*.{ts,tsx}', 'jest/**/*.ts'],
     languageOptions: { globals: { ...globals.jest } },
     rules: {
       'no-restricted-imports': 'off',

@@ -7,7 +7,8 @@ import { navigationRef } from './navigation/navigationRef';
 import { RootNavigator } from './navigation/RootNavigator';
 import { Providers } from './providers';
 
-function ThemedNavigation() {
+/** Navigation container + root stack, themed from tokens. Exported for integration tests. */
+export function AppNavigation() {
   const { scheme, colors } = useTheme();
   const navigationTheme = useMemo<Theme>(() => {
     const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
@@ -35,7 +36,7 @@ function ThemedNavigation() {
 export function App() {
   return (
     <Providers>
-      <ThemedNavigation />
+      <AppNavigation />
     </Providers>
   );
 }

@@ -49,6 +49,7 @@ export function Screen({
       <StatusBar barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'} />
       {scroll ? (
         <ScrollView
+          testID={`${testID}-scroll`}
           style={layout.fill}
           contentContainerStyle={[layout.content, insetPadding]}
           refreshControl={refreshControl}

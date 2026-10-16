@@ -1,9 +1,12 @@
 import en from '../en/common.json';
 import enErrors from '../en/errors.json';
+import enHealth from '../en/health.json';
 import ru from '../ru/common.json';
 import ruErrors from '../ru/errors.json';
+import ruHealth from '../ru/health.json';
 import uz from '../uz/common.json';
 import uzErrors from '../uz/errors.json';
+import uzHealth from '../uz/health.json';
 import { detectDeviceLocale, russianPluralKeys } from '..';
 
 function keys(value: unknown, prefix = ''): string[] {
@@ -21,6 +24,8 @@ describe('i18n', () => {
     expect(keys(ru).sort()).toEqual(keys(en).sort());
     expect(keys(uzErrors).sort()).toEqual(keys(enErrors).sort());
     expect(keys(ruErrors).sort()).toEqual(keys(enErrors).sort());
+    expect(keys(uzHealth).sort()).toEqual(keys(enHealth).sort());
+    expect(keys(ruHealth).sort()).toEqual(keys(enHealth).sort());
   });
 
   it('follows the device locale', () => {

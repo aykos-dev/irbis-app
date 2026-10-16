@@ -1,24 +1,51 @@
 import { onlineManager } from '@tanstack/react-query';
 import { act, render, screen } from '@testing-library/react-native';
 
-import { App } from '../App';
+import { stubHttp, type HttpStub } from '../../../jest/httpStub';
+import { createQueryClient } from '../../shared/api/query';
+import { AppNavigation } from '../App';
+import { Providers } from '../providers';
+
+/** Same tree as <App />, with a client that schedules no GC timers after unmount. */
+async function renderApp() {
+  const queryClient = createQueryClient();
+  queryClient.setDefaultOptions({ queries: { gcTime: Infinity } });
+  await render(
+    <Providers queryClient={queryClient}>
+      <AppNavigation />
+    </Providers>,
+  );
+}
+
+let http: HttpStub;
 
 describe('App shell', () => {
-  afterEach(() => {
-    onlineManager.setOnline(true);
+  beforeEach(() => {
+    http = stubHttp();
+    http.reply('/health', {
+      status: 200,
+      body: { status: 'ok', db: 'up', version: '0.0.1', time: '2026-10-17T08:00:00.000Z' },
+    });
+  });
+  afterEach(async () => {
+    await act(() => {
+      onlineManager.setOnline(true);
+    });
+    http.restore();
   });
 
-  it('renders the providers and the Status screen', async () => {
-    await render(<App />);
+  it('renders the providers with Status as the initial route', async () => {
+    await renderApp();
 
     expect(screen.getByTestId('health.screen')).toBeOnTheScreen();
     expect(screen.getByText('Status')).toBeOnTheScreen();
-    expect(screen.getByTestId('health.environment')).toHaveTextContent('Environment: dev');
+    expect(await screen.findByTestId('health.api-chip')).toBeOnTheScreen();
     expect(screen.queryByTestId('app.offline-banner')).not.toBeOnTheScreen();
   });
 
   it('shows the persistent offline banner when the network drops', async () => {
-    await render(<App />);
+    await renderApp();
+    await screen.findByTestId('health.api-chip');
 
     await act(() => {
       onlineManager.setOnline(false);
