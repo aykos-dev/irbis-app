@@ -29,4 +29,5 @@ Project-wide rules: `../irbis-docs/CLAUDE.md`. Tokens: `../irbis-docs/design/des
 ## Non-negotiables (from the standards)
 Tokens only, `StyleSheet.create` at module scope · Reanimated for all motion · haptics via `shared/utils/haptics` ·
 safe area via `Screen` · keyboard-controller for inputs · generated hooks only · four data states ·
-toasts on mutations · i18n for every string · a11y labels · tokens in Keychain, never MMKV.
+toasts on mutations · i18n for every string · a11y labels · tokens in Keychain, never MMKV ·
+`testID` on interactive/asserted elements + spec's QA events via `shared/utils/qaLog` (standards §16).

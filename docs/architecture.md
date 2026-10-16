@@ -130,7 +130,7 @@ irbis-app/
         ├── i18n/                # setup + <locale>/<feature>.json
         ├── storage/             # MMKV instance + typed keys
         ├── types/               # App-only types (never API shapes — those are generated)
-        └── utils/               # haptics, format (Intl), distance/geo, time
+        └── utils/               # haptics, format (Intl), distance/geo, time, qaLog (dev/staging QA events)
 ```
 
 Rules:
@@ -325,6 +325,7 @@ Failures here look like code problems but aren't:
 | 4 | Navigation shape | Native Stack + Bottom Tabs. A Drawer requires an ADR. |
 | 5 | Offline | Read-only offline: cached data stays visible and stale-marked; writes refused. No queue. |
 | 6 | Server-granted value | XP/rewards are never optimistic. |
+| 7 | Device QA | Android QA over adb (`irbis-docs/scripts/qa`). App provides `testID`s and `qaLog` events (standards §16). iOS is tested by hand. |
 
 > Extend this doc as screens land: add the screen to **Navigation Structure**, any new entity to
 > **Domain Model**, and any new library to **Tech Stack** (with its approval). Each feature also

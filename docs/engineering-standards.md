@@ -30,6 +30,7 @@ Before marking any feature complete, every line must be true or explicitly waive
 - [ ] Every touchable labelled for screen readers; screen checked at the largest font size
 - [ ] Zero hardcoded user-facing strings; layout survives +40% text expansion; styles are RTL-safe
 - [ ] Permission-gated features (location, camera, notifications) handle *denied* and *blocked*
+- [ ] Every interactive / asserted element has a `testID`; the spec's QA events are logged via `qaLog`
 - [ ] `npm run check` green; tests written from the spec's acceptance criteria
 
 ---
@@ -282,6 +283,7 @@ Supported locales are listed in `irbis-docs/PROJECT.md`.
 - No secrets in the bundle. Build-time config via `react-native-config` holds **public** values only
   (API base URL, environment name). Real `.env` files are filled in by a human and never read by Claude.
 - Never log tokens, phone numbers, locations or other personal data — not even in dev builds.
+  The one sanctioned log is `qaLog` (§16): event names and non-personal props, dev/staging only.
 - Location is requested **when-in-use**, only at the moment a feature needs it, with a rationale screen first.
 - Deep links are validated; never navigate to an arbitrary URL from a link or push payload.
 
@@ -293,6 +295,23 @@ Supported locales are listed in `irbis-docs/PROJECT.md`.
 - Network mocked at the HTTP boundary (MSW or an axios adapter), not by mocking our own hooks.
 - Pure utilities (`shared/utils`) are unit-tested exhaustively.
 - Never modify, skip or weaken an existing test to make it pass — report it.
+
+## 16. Testability (device QA)
+
+The Android QA toolkit (`irbis-docs/scripts/qa`, `/qa-run`, `/qa-retest`) drives the app over adb and proves
+results from the screen and from QA events. Two hooks make that reliable:
+
+- **`testID` on every interactive element and every element a test asserts on**, named `<feature>.<element>`
+  in kebab-case (`spot.checkin-button`, `spot.distance-label`, `profile.xp-total`). On Android it becomes the
+  node's resource-id, so tests don't depend on translated text. List the feature's testIDs in its spec.
+- **`shared/utils/qaLog.ts`** — the only QA logger. In dev and staging builds it writes one line per event:
+  `console.log('IRBIS_QA ' + JSON.stringify({ event, ...props }))`; in production it is a no-op (compiled out
+  by the env check). Props are names, ids, counts, booleans, distances in metres, enum states — **never**
+  tokens, phone numbers, names, precise coordinates or free text the user typed.
+  - Required: `location_received { is_mocked, accuracy_m }` whenever the app gets a location fix.
+  - Feature events (`checkin_succeeded { xp_awarded }`, `checkin_refused { code }`) are listed in the spec's
+    "QA events" section and logged at the moment the outcome is shown to the user.
+- No QA-only screens, flags or backdoors in production builds; dev-only tools live in `features/debug/`.
 
 ---
 
