@@ -1,7 +1,9 @@
 # irbis-app — Architecture
 
-The Irbis end-user mobile app for iOS and Android. Users discover verified **spots**, check in
-when they are physically there, and earn **XP**. (Product summary: `irbis-docs/PROJECT.md`.)
+The Irbis end-user mobile app for iOS and Android: a Duolingo-style, gamified outdoor app — this week's path of
+places matched to level, season and forecast, live safety conditions, safety lessons, trip plans with auto-alerts and
+SOS, check-ins, a companion that evolves over 7 levels, badges, community and games.
+(Product: `irbis-docs/PROJECT.md`; screens: `irbis-docs/design/canvas/`, 390×844, light + dark.)
 
 > **Bare React Native. No Expo** — no Expo SDK, Expo Router, EAS, `expo-*` packages or
 > Expo prebuild. Native projects in `ios/` and `android/` are source code, committed and owned.
@@ -52,9 +54,12 @@ Architecture; verify before adding):
 
 | Need | Candidate | First feature |
 | ---- | --------- | ------------- |
-| Location | `react-native-permissions` + `@react-native-community/geolocation` | spot-checkin |
-| Maps | `react-native-maps` | spots |
-| Push | `@react-native-firebase/app` + `/messaging` | notifications |
+| Location (foreground + background during an active trip) | `react-native-permissions` + `@react-native-community/geolocation` (verify background support, else `react-native-background-geolocation` via ADR) | active-trip, check-in |
+| Maps + offline regions | `react-native-maps` or MapLibre (`@maplibre/maplibre-react-native`, offline packs) — decide by ADR | places, safety-center |
+| Push | `@react-native-firebase/app` + `/messaging` | streaks, conditions, trip alerts |
+| SMS fallback for SOS | native SMS intent (no package) | active-trip |
+| Animation assets | `lottie-react-native` or `react-native-video` — per media format the owner provides | levels, onboarding |
+| 360° viewer, local hotspot server | TBD by ADR | bu-qayer, campfire-core |
 | Images | `react-native-image-picker` | profile |
 | Liquid Glass | TBD (no Expo packages) | — |
 
@@ -101,10 +106,11 @@ irbis-app/
     ├── assets/                  # fonts, svg, images
     │
     ├── features/                # Vertical slices — same slug as irbis-api / irbis-web
-    │   ├── auth/                # sign up, sign in, OTP, session restore
-    │   ├── profile/             # own profile, XP total, settings entry
-    │   ├── spots/               # list, map, spot detail
-    │   ├── spot-checkin/        # location check, check-in, XP result
+    │   ├── auth/  onboarding/  profile/            # Phase 1 — slugs match ROADMAP.md and the api
+    │   ├── places/  conditions/  weekly-path/       # Path + Explore tabs
+    │   ├── levels/  lessons/  streaks/  badges/     # Lessons tab, progress
+    │   ├── trip-plan/  active-trip/  check-in/  safety-center/
+    │   ├── …                                        # Phase 2+ features add their own folder
     │   └── debug/               # network log, env info (dev builds only)
     │
     └── shared/                  # Cross-cutting — features import from here, never from each other
@@ -163,42 +169,40 @@ There is no hand-written `api.ts`: endpoints come from `shared/api/generated/`.
 
 ## Domain Model (client view)
 
-Provisional — the API's OpenAPI spec is authoritative; these are the shapes the app reasons
-about. Extend as features land.
-
-```
-User         { id, displayName, avatarUrl?, xp, locale, createdAt }
-Spot         { id, name, description, location: { lat, lng }, radiusM, verified, photoUrls[] }
-CheckIn      { id, spotId, userId, createdAt, xpAwarded }
-XpEntry      { id, userId, amount, reason: 'check_in' | …, refId, createdAt }
-```
-
-Rules the app relies on (enforced by the API, mirrored in UI copy):
-
-- Check-in only within the spot's radius (default 200m), once per day per spot.
-- **XP is server-authoritative.** The app never computes or optimistically shows awarded XP.
-- Distances are computed for display only (`shared/utils/geo.ts`); the server decides eligibility.
+The API's domain model (`irbis-api/docs/architecture.md`) is authoritative and arrives as generated types. What the
+app must reason about locally:
+- **Condition status** (go / caution / not_now / seasonal_lock) — always rendered as colour + icon + label; "Not now"
+  never shows a start / "Go there" action.
+- **Difficulty lock** — places and trails above the user's level are visible with the required level, not startable.
+- **XP, level, badges, streaks are server-authoritative** — never computed or shown optimistically; the app shows what
+  the server returned (e.g. the summit celebration renders the check-in response).
+- **Offline:** downloaded region maps, the active trip plan and SOS work with no data; XP earned offline (campfire
+  games) is queued and synced — the only offline write queue, added by its feature via ADR.
 
 ---
 
 ## Navigation Structure
 
-Provisional — add screens as features land.
+From the canvas (`Nav.dc.html` + page boards). Bottom tabs: **Path · Explore · Lessons · Community · Profile**.
 
 ```
 RootNavigator (Native Stack)
-├── Auth flow (unauthenticated)
-│   ├── Welcome
-│   ├── SignIn          → VerifyOtp
-│   └── SignUp          → VerifyOtp
-│
+├── Splash
+├── Auth flow            (not designed yet — `auth` feature)
+├── Onboarding           Meet Irbis → Language → Experience → Interests → Companion reveal
 └── MainTabs (Bottom Tabs)
-    ├── Spots   → SpotsScreen (list ⇄ map)  → SpotDetail → CheckInResult
-    └── Profile → ProfileScreen             → Settings → Language
+    ├── Path       → Home (This Week's Path) → PlaceDetail → TrailMap
+    │                                        → TripPlan → ActiveTrip → Summit / check-in celebration
+    ├── Explore    → ExploreMap → PlaceDetail …
+    ├── Lessons    → LessonsHub → MicroLesson (question → correct / incorrect)
+    │                → LevelProgress → LevelUp · Badges · (Phase 3: Bu qayer?, Leagues)
+    ├── Community  → (Phase 2) Feed · Groups · Buddies · Top Shots · (Phase 3) Campfire games
+    └── Profile    → Profile → EditProfile · Settings · Notifications · SafetyCenter · MySpots · Badges
+                     · (Phase 4) Tours · Gear · Irbis Plus
 ```
-
-Sheets (over any screen): `SpotFilters`, `ConfirmCheckIn`, `LocationRationale`.
-Deep links: `irbis://spots/:spotId`, `irbis://profile`.
+Full-screen flows (stack, `fullScreenModal`): onboarding, trip plan → active trip, micro-lesson, level-up, Add a Spot.
+Sheets: report, filters, smart swap, confirm check-out.
+Deep links: `irbis://places/:placeId`, `irbis://trips/:tripId`, `irbis://lessons/:lessonId`, `irbis://profile`.
 
 ---
 
@@ -324,7 +328,7 @@ Failures here look like code problems but aren't:
 | 3 | API types | Generated by orval from `irbis-api/openapi.json` (ADR-003). Never hand-written. |
 | 4 | Navigation shape | Native Stack + Bottom Tabs. A Drawer requires an ADR. |
 | 5 | Offline | Read-only offline: cached data stays visible and stale-marked; writes refused. No queue. |
-| 6 | Server-granted value | XP/rewards are never optimistic. |
+| 6 | Server-granted value | XP, levels, badges, streaks are never optimistic. |
 | 7 | Device QA | Android QA over adb (`irbis-docs/scripts/qa`). App provides `testID`s and `qaLog` events (standards §16). iOS is tested by hand. |
 
 > Extend this doc as screens land: add the screen to **Navigation Structure**, any new entity to
