@@ -1,0 +1,56 @@
+{
+  "back": "Back",
+  "type": {
+    "peak": "Peak",
+    "lake": "Lake",
+    "cave": "Cave",
+    "camping": "Camping",
+    "trail": "Trail",
+    "waterfall": "Waterfall",
+    "canyon": "Canyon"
+  },
+  "elevation": "Elevation",
+  "elevationValue": "%{n} m",
+  "distanceKm": "%{d} km",
+  "fromYou": "From you",
+  "fromTashkent": "From Tashkent",
+  "difficulty": "Difficulty %{d}/5",
+  "level": {
+    "requires": "Requires",
+    "line": "Level %{n} · %{name}",
+    "orHigher": "or higher",
+    "qualify": "You qualify",
+    "locked": "Reach Level %{n} to go here"
+  },
+  "levels": {
+    "1": "Wanderer",
+    "2": "Burrower",
+    "3": "Pathfinder",
+    "4": "Ridge Walker",
+    "5": "Mountain Guardian",
+    "6": "Sky Watcher",
+    "7": "Snow Legend"
+  },
+  "about": "About",
+  "season": {
+    "title": "Best season",
+    "today": "Today: %{month}",
+    "best": "Best",
+    "possible": "Possible",
+    "closed": "Closed",
+    "months": "J F M A M J J A S O N D",
+    "empty": "Season not set yet"
+  },
+  "hazards": {
+    "title": "Hazards",
+    "empty": "Hazards not set yet"
+  },
+  "hazard": {
+    "avalanche": "Avalanche",
+    "flood": "Flood",
+    "mudslide": "Mudslide",
+    "heat": "Heat",
+    "road": "Road"
+  },
+  "notFound": "This place isn't available"
+}

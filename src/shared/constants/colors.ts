@@ -77,6 +77,10 @@ export const placeTypeColors = {
   cave: '#7B61FF',
   camping: '#3DAA5C',
   trail: '#FF9F1C',
+  /** Placeholder (owner Q8, STATUS known issue) — not in design.md yet. */
+  waterfall: '#2BA3C4',
+  /** Placeholder (owner Q8, STATUS known issue) — not in design.md yet. */
+  canyon: '#D9733F',
 } as const;
 
 export const levelColors = {

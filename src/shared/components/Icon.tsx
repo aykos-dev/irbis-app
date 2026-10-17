@@ -23,7 +23,11 @@ export type IconName =
   | 'star'
   | 'person'
   | 'phone'
-  | 'chevron';
+  | 'chevron'
+  | 'lock'
+  /** Place-type glyphs — placeholders (owner Q8) until the owner supplies final icons. */
+  | 'waterfall'
+  | 'canyon';
 
 type Props = {
   name: IconName;
@@ -171,6 +175,23 @@ function draw(name: IconName, color: string, accent: string) {
           <Path d="M2 20.5c.4-4.4 3.2-6.6 7-6.6s6.6 2.2 7 6.6z" fill={color} />
         </>
       );
+    case 'lock':
+      return (
+        <>
+          <Path d="M5 11h14v10H5z" fill="none" stroke={color} strokeWidth={2.4} {...STROKE} />
+          <Path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke={color} strokeWidth={2.4} {...STROKE} />
+        </>
+      );
+    case 'waterfall':
+      return (
+        <>
+          <Path d="M3 4h18v4H3z" fill={color} />
+          <Path d="M7 8v9M12 8v11M17 8v9" fill="none" stroke={color} strokeWidth={2.4} {...STROKE} />
+          <Path d="M3 21c3-2 15-2 18 0" fill="none" stroke={color} strokeWidth={2.4} {...STROKE} />
+        </>
+      );
+    case 'canyon':
+      return <Path d="M1.5 4H8l2 6 2 10H1.5zM22.5 4H16l-2 6-2 10h10.5z" fill={color} />;
     case 'phone':
       return (
         <Path

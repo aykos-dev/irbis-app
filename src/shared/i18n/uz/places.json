@@ -1,0 +1,56 @@
+{
+  "back": "Orqaga",
+  "type": {
+    "peak": "Cho‘qqi",
+    "lake": "Ko‘l",
+    "cave": "G‘or",
+    "camping": "Lager",
+    "trail": "So‘qmoq",
+    "waterfall": "Sharshara",
+    "canyon": "Kanyon"
+  },
+  "elevation": "Balandlik",
+  "elevationValue": "%{n} m",
+  "distanceKm": "%{d} km",
+  "fromYou": "Sizdan",
+  "fromTashkent": "Toshkentdan",
+  "difficulty": "Qiyinlik %{d}/5",
+  "level": {
+    "requires": "Talab",
+    "line": "%{n}-daraja · %{name}",
+    "orHigher": "yoki undan yuqori",
+    "qualify": "Sizga ochiq",
+    "locked": "Bu yerga borish uchun %{n}-darajaga yeting"
+  },
+  "levels": {
+    "1": "Sayyoh",
+    "2": "Qazuvchi",
+    "3": "Izquvar",
+    "4": "Tizma yo‘lovchisi",
+    "5": "Tog‘ posboni",
+    "6": "Osmon kuzatuvchisi",
+    "7": "Qor afsonasi"
+  },
+  "about": "Tavsif",
+  "season": {
+    "title": "Eng yaxshi mavsum",
+    "today": "Bugun: %{month}",
+    "best": "Eng yaxshi",
+    "possible": "Mumkin",
+    "closed": "Yopiq",
+    "months": "Y F M A M I I A S O N D",
+    "empty": "Mavsum hali belgilanmagan"
+  },
+  "hazards": {
+    "title": "Xavflar",
+    "empty": "Xavflar hali belgilanmagan"
+  },
+  "hazard": {
+    "avalanche": "Ko‘chki",
+    "flood": "Toshqin",
+    "mudslide": "Sel",
+    "heat": "Issiq",
+    "road": "Yo‘l"
+  },
+  "notFound": "Bu joy mavjud emas"
+}

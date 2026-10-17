@@ -7,9 +7,9 @@ import { setLocale, supportedLocales } from '../../shared/i18n';
 import type { RootStackParamList } from './types';
 
 /**
- * Deep-link config. `irbis://profile` opens the Profile tab. The debug links
+ * Deep-link config. `irbis://profile` opens the Profile tab; `irbis://place/<id>` opens a place. The debug links
  * (`irbis://debug`, `irbis://debug/status`, `irbis://debug/lang/<uz|ru|en>`,
- * `irbis://debug/onboarding/<reset|done>`) exist only outside production (AC10). Other planned routes (docs/architecture.md: places, trips, lessons) are added
+ * `irbis://debug/onboarding/<reset|done>`) exist only outside production (AC10). Other planned routes (docs/architecture.md: trips, lessons) are added
  * with the screen they open.
  */
 const debugScreens: Record<string, string> = appConfig.isQaEnabled
@@ -70,6 +70,7 @@ export const linking: LinkingOptions<RootStackParamList> = {
           Profile: 'profile',
         },
       },
+      Place: 'place/:id',
       ...debugScreens,
     },
   },

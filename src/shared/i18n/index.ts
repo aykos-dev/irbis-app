@@ -10,6 +10,7 @@ import enErrors from './en/errors.json';
 import enHealth from './en/health.json';
 import enNav from './en/nav.json';
 import enOnboarding from './en/onboarding.json';
+import enPlaces from './en/places.json';
 import ruAuth from './ru/auth.json';
 import ruCommon from './ru/common.json';
 import ruDebug from './ru/debug.json';
@@ -17,6 +18,7 @@ import ruErrors from './ru/errors.json';
 import ruHealth from './ru/health.json';
 import ruNav from './ru/nav.json';
 import ruOnboarding from './ru/onboarding.json';
+import ruPlaces from './ru/places.json';
 import uzAuth from './uz/auth.json';
 import uzCommon from './uz/common.json';
 import uzDebug from './uz/debug.json';
@@ -24,6 +26,7 @@ import uzErrors from './uz/errors.json';
 import uzHealth from './uz/health.json';
 import uzNav from './uz/nav.json';
 import uzOnboarding from './uz/onboarding.json';
+import uzPlaces from './uz/places.json';
 
 /**
  * i18n setup. Translations live in `<locale>/<namespace>.json`; keys are `<namespace>.<key>`
@@ -50,6 +53,7 @@ export const i18n = new I18n({
     errors: enErrors,
     health: enHealth,
     onboarding: enOnboarding,
+    places: enPlaces,
   },
   ru: {
     auth: ruAuth,
@@ -59,6 +63,7 @@ export const i18n = new I18n({
     errors: ruErrors,
     health: ruHealth,
     onboarding: ruOnboarding,
+    places: ruPlaces,
   },
   uz: {
     auth: uzAuth,
@@ -68,6 +73,7 @@ export const i18n = new I18n({
     errors: uzErrors,
     health: uzHealth,
     onboarding: uzOnboarding,
+    places: uzPlaces,
   },
 });
 

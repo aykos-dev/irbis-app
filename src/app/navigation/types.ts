@@ -51,6 +51,8 @@ export type RootStackParamList = {
   /** Dev and staging builds only. */
   Debug: undefined;
   Status: undefined;
+  /** Place screen (places AC7). Explore passes the device position when it has one. */
+  Place: { id: string; lat?: number; lng?: number };
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<
