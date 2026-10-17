@@ -11,13 +11,24 @@ import {
 } from 'react';
 
 import { useAuthRefresh, useAuthSignOut } from '../api/generated/auth/auth';
-import { getMeGetQueryKey, useMeGet, useMeGuestMerge } from '../api/generated/me/me';
-import type { AuthSessionResponseDto, MeResponseDto } from '../api/generated/model';
+import {
+  getMeGetQueryKey,
+  useMeGet,
+  useMeGuestMerge,
+} from '../api/generated/me/me';
+import type {
+  AuthSessionResponseDto,
+  MeResponseDto,
+} from '../api/generated/model';
 import { apiErrorCodes, isApiError } from '../api/errors';
 import { staleTimes } from '../api/query';
 import { tokenManager } from '../api/tokenManager';
 import { toast } from '../components/toastBus';
-import { collectGuestData, guestMergeDone, markGuestMergeDone } from '../guest/guestStore';
+import {
+  collectGuestData,
+  guestMergeDone,
+  markGuestMergeDone,
+} from '../guest/guestStore';
 import { getLocale, setLocale, t } from '../i18n';
 import { qaLog } from '../utils/qaLog';
 
@@ -45,7 +56,10 @@ type AuthState = {
    * Store the tokens from a sign-up / log-in / reset response and move to signed in. After a
    * log-in (`applyAccountLocale`) the account language replaces the device one (AC8).
    */
-  startSession: (session: AuthSessionResponseDto, options?: StartSessionOptions) => Promise<void>;
+  startSession: (
+    session: AuthSessionResponseDto,
+    options?: StartSessionOptions,
+  ) => Promise<void>;
   /** Replace the cached user (after the recovery phone was verified). */
   setUser: (me: MeResponseDto) => void;
   signOut: () => Promise<void>;
@@ -71,12 +85,22 @@ function isRefusal(error: unknown): boolean {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const [status, setStatus] = useState<SessionStatus>('loading');
-  const [blockedNotice, setBlockedNotice] = useState<BlockedNotice | null>(null);
+  const [blockedNotice, setBlockedNotice] = useState<BlockedNotice | null>(
+    null,
+  );
 
-  const { mutateAsync: refreshAsync } = useAuthRefresh({ mutation: { meta: { silentError: true } } });
-  const { mutateAsync: signOutAsync } = useAuthSignOut({ mutation: { meta: { silentError: true } } });
-  const { mutateAsync: mergeAsync } = useMeGuestMerge({ mutation: { meta: { silentError: true } } });
-  const me = useMeGet({ query: { enabled: status === 'signedIn', staleTime: staleTimes.profile } });
+  const { mutateAsync: refreshAsync } = useAuthRefresh({
+    mutation: { meta: { silentError: true } },
+  });
+  const { mutateAsync: signOutAsync } = useAuthSignOut({
+    mutation: { meta: { silentError: true } },
+  });
+  const { mutateAsync: mergeAsync } = useMeGuestMerge({
+    mutation: { meta: { silentError: true } },
+  });
+  const me = useMeGet({
+    query: { enabled: status === 'signedIn', staleTime: staleTimes.profile },
+  });
 
   const refreshRef = useRef(refreshAsync);
   refreshRef.current = refreshAsync;
@@ -123,6 +147,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const result = await mergeAsync({ data: collectGuestData() });
       markGuestMergeDone();
       qaLog('guest_merged', { items: result.merged.length });
+      qaLog('guest_merge_result', {
+        merged: result.merged.join(','),
+        skipped: result.skipped.join(','),
+      });
     } catch {
       // Not marked done: the next sign-in on this device retries. The guest data stays on the phone.
     }
@@ -191,7 +219,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       showBlocked,
       clearBlocked,
     }),
-    [status, user, userError, reloadUser, blockedNotice, startSession, setUser, signOut, showBlocked, clearBlocked],
+    [
+      status,
+      user,
+      userError,
+      reloadUser,
+      blockedNotice,
+      startSession,
+      setUser,
+      signOut,
+      showBlocked,
+      clearBlocked,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

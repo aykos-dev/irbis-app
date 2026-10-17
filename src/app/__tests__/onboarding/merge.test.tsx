@@ -58,7 +58,7 @@ describe('onboarding — choices into the account (AC7)', () => {
     expect(collectGuestData()).toEqual({ locale: 'en', onboarding: { interests: ['caves'] } });
   });
 
-  it('AC7: the choices are sent once after log-in and kept on the device', async () => {
+  it('AC7: the choices are sent once after log-in, kept on the device; guest_merge_result is logged', async () => {
     http.reply('/v1/auth/log-in', { status: 200, body: sessionBody() });
     saveExperience('experienced');
     await renderApp();
@@ -74,6 +74,11 @@ describe('onboarding — choices into the account (AC7)', () => {
       onboarding: { experience: 'experienced' },
     });
     expect(storage.getString('onboarding.experience')).toBe('experienced');
+    expect(qaEvents()).toContainEqual({
+      event: 'guest_merge_result',
+      merged: 'onboarding',
+      skipped: 'locale',
+    });
   });
 });
 
