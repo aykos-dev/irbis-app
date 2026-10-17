@@ -1,18 +1,18 @@
 import {
-  Experience as ApiExperience,
-  Interest as ApiInterest,
+  Experience,
+  Interest,
   type GuestOnboardingDto,
 } from '../../shared/api/generated/model';
 import { registerGuestItem } from '../../shared/guest/guestStore';
 import { storage } from '../../shared/storage';
 
+export type { Experience, Interest };
+
 /** Hiking experience picked on the Experience step (features/onboarding.md AC4). */
-export const experiences = ['beginner', 'weekend', 'experienced'] as const;
-export type Experience = (typeof experiences)[number];
+export const experiences: readonly Experience[] = Object.values(Experience);
 
 /** Interests in canonical order (AC5); saved lists always follow this order. */
-export const interests = ['peaks', 'caves', 'lakes', 'camping', 'trails'] as const;
-export type Interest = (typeof interests)[number];
+export const interests: readonly Interest[] = Object.values(Interest);
 
 /** Onboarding shows once per device: until it ends, or until the app opens already signed in. */
 export function isOnboardingDone(): boolean {
@@ -72,17 +72,6 @@ export function clearOnboardingChoices(): void {
   storage.remove('onboarding.interests');
 }
 
-const apiExperiences: readonly string[] = Object.values(ApiExperience);
-const apiInterests: readonly string[] = Object.values(ApiInterest);
-
-function isApiExperience(value: string | undefined): value is ApiExperience {
-  return value !== undefined && apiExperiences.includes(value);
-}
-
-function isApiInterest(value: string): value is ApiInterest {
-  return apiInterests.includes(value);
-}
-
 /**
  * The guest's onboarding choices for `/v1/me/guest-merge` (AC7): unset or empty keys are left out,
  * nothing at all after ✕. Values the API does not know are dropped. The local copy stays after merge.
@@ -90,10 +79,10 @@ function isApiInterest(value: string): value is ApiInterest {
 export function collectOnboardingChoices(): GuestOnboardingDto | undefined {
   const onboarding: GuestOnboardingDto = {};
   const experience = getExperience();
-  if (isApiExperience(experience)) {
+  if (experience) {
     onboarding.experience = experience;
   }
-  const chosen = getInterests().filter(isApiInterest);
+  const chosen = getInterests();
   if (chosen.length > 0) {
     onboarding.interests = chosen;
   }
