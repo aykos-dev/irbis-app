@@ -44,7 +44,11 @@ export function PlaceScreen({ navigation, route }: RootStackScreenProps<'Place'>
   const locale = useLocale();
   const { isOnline } = useNetworkStatus();
   const { data, error, isNotFound, refetch } = usePlace(id, coords);
-  const goBack = () => navigation.goBack();
+  // A cold deep link leaves Place alone in the stack: fall back to the Explore tab (D2).
+  const goBack = () =>
+    navigation.canGoBack()
+      ? navigation.goBack()
+      : navigation.reset({ index: 0, routes: [{ name: 'MainTabs', params: { screen: 'Explore' } }] });
 
   let body;
   if (data) {
