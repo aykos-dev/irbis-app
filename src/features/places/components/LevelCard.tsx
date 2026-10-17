@@ -61,7 +61,9 @@ export function LevelCard({ requiredLevel, qualifies }: Props) {
         ) : (
           <View testID="place.level-locked" style={layout.status}>
             <Icon name="lock" color={colors.muted} />
-            <AppText variant="small">{t('places.level.locked', { n: requiredLevel })}</AppText>
+            <AppText variant="small" style={layout.statusText}>
+              {t('places.level.locked', { n: requiredLevel })}
+            </AppText>
           </View>
         )}
       </View>
@@ -79,6 +81,8 @@ const layout = StyleSheet.create({
   },
   text: { flex: 1, gap: spacing[4] },
   status: { flexDirection: 'row', alignItems: 'center', gap: spacing[6], paddingTop: spacing[4] },
+  /** Lets long translations (uz) wrap inside the card instead of overflowing it (D3). */
+  statusText: { flexShrink: 1 },
 });
 
 const useStyles = createThemedStyles(c => ({
