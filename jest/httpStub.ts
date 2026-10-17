@@ -32,6 +32,10 @@ export type HttpStub = {
   calls: InternalAxiosRequestConfig[];
   /** Replies are used in order; the last one repeats. */
   reply: (url: string, ...replies: StubReply[]) => void;
+  /** Computes the reply from the request (e.g. per query parameter). */
+  handle: (url: string, route: (config: InternalAxiosRequestConfig) => StubReply) => void;
+  /** Requests made to one url, in order. */
+  callsTo: (url: string) => InternalAxiosRequestConfig[];
   restore: () => void;
 };
 
@@ -85,6 +89,12 @@ export function stubHttp(): HttpStub {
         }
         return next;
       });
+    },
+    handle(url, route) {
+      routes.set(url, route);
+    },
+    callsTo(url) {
+      return calls.filter(call => call.url === url);
     },
     restore() {
       axiosInstance.defaults.adapter = original;

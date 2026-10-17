@@ -27,6 +27,10 @@ export const screenPadding = spacing[22];
 
 export const radii = {
   button: 16,
+  /** Text field (canvas AccLogin .in) — derived, confirm in design.md. */
+  input: 14,
+  /** Checkbox box (canvas AccSignup .box) — derived, confirm in design.md. */
+  checkbox: 8,
   tile: 16,
   card: 20,
   sheet: 24,
@@ -44,6 +48,10 @@ export const borders = {
 
 export const sizes = {
   buttonMinHeight: 54,
+  /** Text field min-height (canvas AccLogin .in) — derived, confirm in design.md. */
+  inputMinHeight: 52,
+  /** Fixed-width country-code block next to the phone field. */
+  otpBoxHeight: 58,
   buttonPaddingVertical: 8,
   buttonPaddingHorizontal: 20,
   chipHeight: 28,
@@ -55,6 +63,8 @@ export const sizes = {
   icon: 20,
   iconStroke: 2.5,
   touchTarget: 44,
+  /** Tinted icon tile (canvas AccGate .pi) — derived, confirm in design.md. */
+  iconTile: 36,
   /** Mascot on a status card (derived from the canvas — confirm in design.md). */
   mascotCard: 88,
 } as const;

@@ -1,16 +1,56 @@
+import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import type {
+  CompositeScreenProps,
+  NavigatorScreenParams,
+} from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 /**
- * Every param list in the app. Params carry ids, never objects (engineering-standards §7).
- * M0 has a single Status screen; Onboarding, Auth and MainTabs arrive with their features.
+ * Every param list in the app. Params carry ids and plain values, never objects
+ * (engineering-standards §7).
  */
+
+/** Auth modal stack (canvas page "Accounts & sign-in"). */
+export type AuthStackParamList = {
+  LogIn: undefined;
+  SignUp: undefined;
+  ForgotPassword: undefined;
+  ResetCode: { username: string; resendAfterSec: number };
+};
+
+/** Bottom tabs, per canvas Nav. */
+export type MainTabParamList = {
+  Path: undefined;
+  Explore: undefined;
+  Lessons: undefined;
+  Community: undefined;
+  Profile: undefined;
+};
+
 export type RootStackParamList = {
+  MainTabs: NavigatorScreenParams<MainTabParamList> | undefined;
+  Auth: NavigatorScreenParams<AuthStackParamList> | undefined;
+  RecoveryPhone: undefined;
+  /** Safety & SOS: its empty state until `safety-center` ships. */
+  Safety: undefined;
+  /** Dev and staging builds only. */
+  Debug: undefined;
   Status: undefined;
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<
   RootStackParamList,
   T
+>;
+
+export type AuthStackScreenProps<T extends keyof AuthStackParamList> = CompositeScreenProps<
+  NativeStackScreenProps<AuthStackParamList, T>,
+  RootStackScreenProps<'Auth'>
+>;
+
+export type MainTabScreenProps<T extends keyof MainTabParamList> = CompositeScreenProps<
+  BottomTabScreenProps<MainTabParamList, T>,
+  RootStackScreenProps<'MainTabs'>
 >;
 
 /** Types `useNavigation()` and `Link` app-wide (React Navigation's global param list). */

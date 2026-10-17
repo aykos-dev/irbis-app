@@ -3,6 +3,7 @@ import { act, render, screen } from '@testing-library/react-native';
 
 import { stubHttp, type HttpStub } from '../../../jest/httpStub';
 import { createQueryClient } from '../../shared/api/query';
+import { navigationRef } from '../navigation/navigationRef';
 import { AppNavigation } from '../App';
 import { Providers } from '../providers';
 
@@ -34,8 +35,15 @@ describe('App shell', () => {
     http.restore();
   });
 
-  it('renders the providers with Status as the initial route', async () => {
+  it('renders the providers with the tab bar as the initial route and Status reachable in dev builds (auth AC1, AC10)', async () => {
     await renderApp();
+
+    expect(screen.getByTestId('nav.tab-path')).toBeOnTheScreen();
+    expect(screen.queryByTestId('health.screen')).not.toBeOnTheScreen();
+
+    await act(() => {
+      navigationRef.navigate('Status');
+    });
 
     expect(screen.getByTestId('health.screen')).toBeOnTheScreen();
     expect(screen.getByText('Status')).toBeOnTheScreen();
@@ -45,6 +53,9 @@ describe('App shell', () => {
 
   it('shows the persistent offline banner when the network drops', async () => {
     await renderApp();
+    await act(() => {
+      navigationRef.navigate('Status');
+    });
     await screen.findByTestId('health.api-chip');
 
     await act(() => {

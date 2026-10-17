@@ -13,11 +13,25 @@ export const clientErrorCodes = {
   unauthorized: 'UNAUTHORIZED',
 } as const;
 
+/** API error codes the client branches on (auth feature). */
+export const apiErrorCodes = {
+  accountBlocked: 'ACCOUNT_BLOCKED',
+  accountLocked: 'ACCOUNT_LOCKED',
+  invalidCredentials: 'INVALID_CREDENTIALS',
+  rateLimited: 'RATE_LIMITED',
+  refreshInvalid: 'REFRESH_INVALID',
+  refreshReused: 'REFRESH_REUSED',
+} as const;
+
 export class ApiError extends Error {
   readonly code: string;
   readonly status: number | null;
   readonly fieldErrors?: FieldErrors;
   readonly requestId?: string;
+  /** ACCOUNT_BLOCKED only: spam | harassment | unsafe | fake_content | other. */
+  readonly reasonCode?: string;
+  /** ACCOUNT_LOCKED, RATE_LIMITED: seconds until the client may retry. */
+  readonly retryAfterSec?: number;
 
   constructor(params: {
     code: string;
@@ -25,6 +39,8 @@ export class ApiError extends Error {
     status: number | null;
     fieldErrors?: FieldErrors;
     requestId?: string;
+    reasonCode?: string;
+    retryAfterSec?: number;
   }) {
     super(params.message);
     this.name = 'ApiError';
@@ -32,6 +48,8 @@ export class ApiError extends Error {
     this.status = params.status;
     this.fieldErrors = params.fieldErrors;
     this.requestId = params.requestId;
+    this.reasonCode = params.reasonCode;
+    this.retryAfterSec = params.retryAfterSec;
   }
 }
 
@@ -44,6 +62,8 @@ type ErrorBody = {
   message?: unknown;
   fieldErrors?: unknown;
   requestId?: unknown;
+  reasonCode?: unknown;
+  retryAfterSec?: unknown;
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -96,6 +116,8 @@ export function normaliseError(failure: RawFailure): ApiError {
     status: failure.status,
     fieldErrors: readFieldErrors(body.fieldErrors),
     requestId: typeof body.requestId === 'string' ? body.requestId : undefined,
+    reasonCode: typeof body.reasonCode === 'string' ? body.reasonCode : undefined,
+    retryAfterSec: typeof body.retryAfterSec === 'number' ? body.retryAfterSec : undefined,
   });
 }
 

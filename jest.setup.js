@@ -35,3 +35,33 @@ jest.mock('react-native-keychain', () => ({
   resetGenericPassword: jest.fn(async () => true),
   ACCESSIBLE: { AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY: 'AccessibleAfterFirstUnlockThisDeviceOnly' },
 }));
+jest.mock('react-native-mmkv', () => {
+  const stores = new Map();
+  return {
+    createMMKV: ({ id }) => {
+      const data = stores.get(id) ?? new Map();
+      stores.set(id, data);
+      return {
+        getString: key => data.get(key),
+        set: (key, value) => {
+          data.set(key, value);
+        },
+        remove: key => data.delete(key),
+        clearAll: () => data.clear(),
+      };
+    },
+  };
+});
+jest.mock('@gorhom/bottom-sheet', () => {
+  const base = require('@gorhom/bottom-sheet/mock');
+  // The stock mock never reports a dismissal; the real modal calls onDismiss once it is gone.
+  class BottomSheetModal extends base.BottomSheetModal {
+    dismiss() {
+      super.dismiss();
+      if (this.props.onDismiss) {
+        this.props.onDismiss();
+      }
+    }
+  }
+  return { ...base, BottomSheetModal };
+});

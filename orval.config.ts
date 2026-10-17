@@ -16,7 +16,7 @@ export default defineConfig({
       clean: true,
       override: {
         mutator: { path: 'src/shared/api/client.ts', name: 'apiClient' },
-        query: { useQuery: true, signal: true },
+        query: { signal: true },
       },
     },
   },

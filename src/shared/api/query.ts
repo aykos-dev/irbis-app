@@ -2,7 +2,7 @@ import { MutationCache, QueryClient } from '@tanstack/react-query';
 
 import { toast } from '../components/toastBus';
 import { t } from '../i18n';
-import { ApiError, errorMessageKey } from './errors';
+import { ApiError, apiErrorCodes, clientErrorCodes, errorMessageKey } from './errors';
 
 declare module '@tanstack/react-query' {
   interface Register {
@@ -39,6 +39,13 @@ export function createQueryClient(): QueryClient {
     mutationCache: new MutationCache({
       onError: (error, _variables, _context, mutation) => {
         if (mutation.meta?.silentError) {
+          return;
+        }
+        // The session layer already tells the user (toast / blocked card) when a session ends.
+        if (
+          error.code === clientErrorCodes.unauthorized ||
+          error.code === apiErrorCodes.accountBlocked
+        ) {
           return;
         }
         toast.show({ variant: 'error', message: t(errorMessageKey(error)) });

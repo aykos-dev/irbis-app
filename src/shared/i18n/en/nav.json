@@ -1,0 +1,16 @@
+{
+  "tabs": {
+    "path": "Path",
+    "explore": "Explore",
+    "lessons": "Lessons",
+    "community": "Community",
+    "profile": "Profile"
+  },
+  "mainLabel": "Main",
+  "comingSoon": {
+    "title": "Coming with the next update",
+    "body": "Irbis is still packing for this one.",
+    "mascot": "Irbis, sleepy"
+  },
+  "safetyTitle": "Safety & SOS"
+}

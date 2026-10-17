@@ -28,10 +28,10 @@ without `^` in `package.json`. "Not installed yet" rows are approved but arrive 
 | **Framework** | React Native (bare, New Architecture, Hermes) + React | 0.88.0 / 19.3.0 |
 | **CLI** | `@react-native-community/cli` | 20.2.0 |
 | **Language** | TypeScript strict | 6.0.3 |
-| **Navigation** | React Navigation 7 — `native` / `native-stack` (Bottom Tabs: not installed yet) | 7.5.1 / 7.21.0 |
+| **Navigation** | React Navigation 7 — `native` / `native-stack` / `bottom-tabs` | 7.5.1 / 7.21.0 / 7.21.0 |
 | **Server state** | TanStack Query 5 | 5.104.3 |
 | **API client** | **orval**-generated hooks + zod schemas over **axios** | orval 8.43.0 / axios 1.20.0 |
-| **Forms** | react-hook-form (not installed yet) + zod | — / 4.6.7 |
+| **Forms** | react-hook-form + zod (own `shared/forms/zodResolver`, no resolvers package) | 7.90.0 / 4.6.7 |
 | **Animation** | react-native-reanimated 4 + react-native-worklets | 4.7.1 / 0.13.0 |
 | **Gestures** | react-native-gesture-handler | 3.4.0 |
 | **Screens** | react-native-screens | 4.30.0 |

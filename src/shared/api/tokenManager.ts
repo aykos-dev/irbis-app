@@ -12,10 +12,20 @@ const SERVICE = 'uz.irbis.app.session';
 export type Tokens = { accessToken: string; refreshToken: string };
 
 type RefreshHandler = (refreshToken: string) => Promise<Tokens>;
-type SignOutListener = () => void;
+
+/**
+ * Why the session ended. `user` = the user signed out; `expired` = the refresh token was refused
+ * (REFRESH_INVALID / REUSED); `blocked` = the account was blocked (ACCOUNT_BLOCKED).
+ */
+export type SignOutEvent = { reason: 'user' | 'expired' | 'blocked'; blockReasonCode?: string };
+type SignOutListener = (event: SignOutEvent) => void;
+
+/** True when a refresh failure means the refresh token is dead (not a network blip). */
+type RefreshRefusal = (error: unknown) => boolean;
 
 let cached: Tokens | null | undefined;
 let refreshHandler: RefreshHandler | null = null;
+let isRefusal: RefreshRefusal = () => true;
 let inFlightRefresh: Promise<string | null> | null = null;
 const signOutListeners = new Set<SignOutListener>();
 
@@ -50,6 +60,10 @@ export const tokenManager = {
     return (await load())?.accessToken ?? null;
   },
 
+  async getRefreshToken(): Promise<string | null> {
+    return (await load())?.refreshToken ?? null;
+  },
+
   async hasSession(): Promise<boolean> {
     return (await load()) !== null;
   },
@@ -62,14 +76,16 @@ export const tokenManager = {
     cached = tokens;
   },
 
-  async clear(): Promise<void> {
+  async clear(event: SignOutEvent = { reason: 'user' }): Promise<void> {
     await Keychain.resetGenericPassword({ service: SERVICE });
     cached = null;
-    signOutListeners.forEach(listener => listener());
+    signOutListeners.forEach(listener => listener(event));
   },
 
-  setRefreshHandler(handler: RefreshHandler | null): void {
+  /** `refusal` tells a dead refresh token apart from a transient failure (offline, timeout). */
+  setRefreshHandler(handler: RefreshHandler | null, refusal: RefreshRefusal = () => true): void {
     refreshHandler = handler;
+    isRefusal = refusal;
   },
 
   onSignOut(listener: SignOutListener): () => void {
@@ -79,7 +95,10 @@ export const tokenManager = {
     };
   },
 
-  /** Returns a fresh access token, or null when the session cannot be refreshed. */
+  /**
+   * Returns a fresh access token, or null when the refresh token was refused (session over).
+   * Transient failures (offline, timeout) reject instead, so the session survives a bad network.
+   */
   refresh(): Promise<string | null> {
     if (inFlightRefresh) {
       return inFlightRefresh;
@@ -91,10 +110,16 @@ export const tokenManager = {
       }
       try {
         const next = await refreshHandler(current.refreshToken);
-        await tokenManager.setTokens(next);
+        await tokenManager.setTokens({
+          accessToken: next.accessToken,
+          refreshToken: next.refreshToken,
+        });
         return next.accessToken;
-      } catch {
-        return null;
+      } catch (error) {
+        if (isRefusal(error)) {
+          return null;
+        }
+        throw error;
       }
     })().finally(() => {
       inFlightRefresh = null;

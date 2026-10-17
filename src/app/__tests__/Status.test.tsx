@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react-native';
 
 import { gate, stubHttp, type HttpStub } from '../../../jest/httpStub';
 import { createQueryClient } from '../../shared/api/query';
+import { navigationRef } from '../navigation/navigationRef';
 import { AppNavigation } from '../App';
 import { Providers } from '../providers';
 
@@ -26,12 +27,17 @@ async function renderApp() {
       <AppNavigation />
     </Providers>,
   );
+  // AC10 (auth): Status is no longer the initial route; dev builds reach it via Debug / deep link.
+  await act(() => {
+    navigationRef.navigate('Status');
+  });
 }
 
 function qaEvents(): string[] {
   return log.mock.calls
     .map(call => String(call[0]))
-    .filter(line => line.startsWith('IRBIS_QA '));
+    // The tab bar (auth) logs tab_opened too; this suite asserts the health events only.
+    .filter(line => line.startsWith('IRBIS_QA {"event":"health_'));
 }
 
 describe('Status screen (features/health.md)', () => {

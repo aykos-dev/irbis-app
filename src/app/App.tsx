@@ -2,6 +2,7 @@ import { DarkTheme, DefaultTheme, NavigationContainer, type Theme } from '@react
 import { useMemo } from 'react';
 
 import { useTheme } from '../shared/contexts/theme';
+import { AuthGateHost } from './AuthGateHost';
 import { linking } from './navigation/linking';
 import { navigationRef } from './navigation/navigationRef';
 import { RootNavigator } from './navigation/RootNavigator';
@@ -29,6 +30,7 @@ export function AppNavigation() {
   return (
     <NavigationContainer ref={navigationRef} linking={linking} theme={navigationTheme}>
       <RootNavigator />
+      <AuthGateHost />
     </NavigationContainer>
   );
 }

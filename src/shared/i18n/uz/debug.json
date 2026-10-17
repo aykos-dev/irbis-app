@@ -1,0 +1,7 @@
+{
+  "title": "Nosozliklarni tuzatish",
+  "apiStatus": "API holati",
+  "openGate": "Kirish oynasini ochish",
+  "gateRan": "Kirish talab qilgan amal bajarildi: %{count} marta.",
+  "env": "Muhit: %{env}"
+}

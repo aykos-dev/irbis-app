@@ -1,4 +1,4 @@
-import { StyleSheet, View, type GestureResponderEvent } from 'react-native';
+import { ActivityIndicator, StyleSheet, View, type GestureResponderEvent } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -6,7 +6,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import type { ThemeColors } from '../constants/colors';
+import { palette, type ThemeColors } from '../constants/colors';
 import { borders, motion, radii, sizes } from '../constants/spacing';
 import { createThemedStyles } from '../contexts/theme';
 import { haptics } from '../utils/haptics';
@@ -21,6 +21,8 @@ type Props = {
   testID: string;
   variant?: AppButtonVariant;
   disabled?: boolean;
+  /** Request in flight: shows a spinner and ignores presses (no double submit). */
+  loading?: boolean;
   /** Defaults to `label`. */
   accessibilityLabel?: string;
   accessibilityHint?: string;
@@ -31,6 +33,13 @@ const labelTone: Record<AppButtonVariant, TextTone> = {
   secondary: 'onOrange',
   white: 'teal700',
   danger: 'white',
+};
+
+const spinnerColor: Record<AppButtonVariant, string> = {
+  primary: palette.white,
+  secondary: palette.onOrange,
+  white: palette.teal700,
+  danger: palette.white,
 };
 
 const timing = { duration: motion.press, easing: Easing.out(Easing.cubic) };
@@ -45,6 +54,7 @@ export function AppButton({
   testID,
   variant = 'primary',
   disabled = false,
+  loading = false,
   accessibilityLabel,
   accessibilityHint,
 }: Props) {
@@ -56,6 +66,9 @@ export function AppButton({
   }));
 
   const handlePress = (event: GestureResponderEvent) => {
+    if (loading) {
+      return;
+    }
     haptics.tap();
     onPress(event);
   };
@@ -65,6 +78,7 @@ export function AppButton({
       testID={testID}
       feedback="none"
       disabled={disabled}
+      accessibilityState={{ busy: loading }}
       accessibilityLabel={accessibilityLabel ?? label}
       accessibilityHint={accessibilityHint}
       onPressIn={() => {
@@ -84,13 +98,17 @@ export function AppButton({
           faceStyle,
         ]}
       >
-        <AppText
-          variant="button"
-          tone={labelTone[variant]}
-          style={[layout.label, disabled && styles.disabledLabel]}
-        >
-          {label}
-        </AppText>
+        {loading ? (
+          <ActivityIndicator color={spinnerColor[variant]} />
+        ) : (
+          <AppText
+            variant="button"
+            tone={labelTone[variant]}
+            style={[layout.label, disabled && styles.disabledLabel]}
+          >
+            {label}
+          </AppText>
+        )}
       </Animated.View>
     </Pressable>
   );

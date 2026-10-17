@@ -10,6 +10,8 @@ const mmkv = createMMKV({ id: 'irbis' });
 type StorageSchema = {
   'prefs.locale': string;
   'prefs.colorScheme': string;
+  /** '1' once the device's guest data went into an account (`/v1/me/guest-merge`, once per device). */
+  'guest.merged': string;
 };
 
 export type StorageKey = keyof StorageSchema;
@@ -23,5 +25,9 @@ export const storage = {
   },
   remove(key: StorageKey): void {
     mmkv.remove(key);
+  },
+  /** Test and sign-out-everywhere hook; never called in normal flows. */
+  clearAll(): void {
+    mmkv.clearAll();
   },
 };

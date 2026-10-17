@@ -8,7 +8,7 @@ import axios, {
 import { appConfig } from '../constants/config';
 import { getLocale, t } from '../i18n';
 import { uuidV4 } from '../utils/uuid';
-import { ApiError, clientErrorCodes, normaliseError } from './errors';
+import { ApiError, apiErrorCodes, clientErrorCodes, normaliseError } from './errors';
 import { tokenManager } from './tokenManager';
 
 /**
@@ -64,18 +64,35 @@ function toApiError(error: unknown): ApiError {
   });
 }
 
+/** Auth endpoints answer 401 for their own reasons (bad credentials, dead refresh token). */
+function isAuthEndpoint(url: string | undefined): boolean {
+  return (url ?? '').startsWith('/v1/auth/');
+}
+
 axiosInstance.interceptors.response.use(
   response => response,
   async (error: unknown) => {
-    if (error instanceof AxiosError && error.response?.status === 401 && error.config) {
+    if (
+      error instanceof AxiosError &&
+      error.response?.status === 401 &&
+      error.config &&
+      !isAuthEndpoint(error.config.url)
+    ) {
       const original: RetriableConfig = error.config;
       if (!original._retried && (await tokenManager.hasSession())) {
         original._retried = true;
-        const accessToken = await tokenManager.refresh();
+        let accessToken: string | null;
+        try {
+          accessToken = await tokenManager.refresh();
+        } catch (refreshError) {
+          throw toApiError(refreshError);
+        }
         if (accessToken) {
           return axiosInstance.request(original);
         }
-        await tokenManager.clear();
+        if (await tokenManager.hasSession()) {
+          await tokenManager.clear({ reason: 'expired' });
+        }
         throw new ApiError({
           code: clientErrorCodes.unauthorized,
           message: t('errors.unauthorized'),
@@ -83,7 +100,12 @@ axiosInstance.interceptors.response.use(
         });
       }
     }
-    throw toApiError(error);
+    const apiError = toApiError(error);
+    // A signed-in user who gets blocked is signed out on their next request or refresh (AC11).
+    if (apiError.code === apiErrorCodes.accountBlocked && (await tokenManager.hasSession())) {
+      await tokenManager.clear({ reason: 'blocked', blockReasonCode: apiError.reasonCode });
+    }
+    throw apiError;
   },
 );
 

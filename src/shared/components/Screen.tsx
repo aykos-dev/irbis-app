@@ -6,6 +6,7 @@ import {
   View,
   type RefreshControlProps,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { screenPadding, spacing } from '../constants/spacing';
@@ -20,6 +21,10 @@ type Props = {
   refreshControl?: ReactElement<RefreshControlProps>;
   /** Persistent offline banner at the top (engineering-standards §11). */
   showOfflineBanner?: boolean;
+  /** Screens with inputs: content moves in lockstep with the keyboard (§4). Implies `scroll`. */
+  keyboardAware?: boolean;
+  /** False when a tab bar already owns the bottom inset. */
+  bottomInset?: boolean;
 };
 
 /**
@@ -32,6 +37,8 @@ export function Screen({
   scroll = false,
   refreshControl,
   showOfflineBanner = true,
+  keyboardAware = false,
+  bottomInset = true,
 }: Props) {
   const insets = useSafeAreaInsets();
   const { scheme } = useTheme();
@@ -39,7 +46,7 @@ export function Screen({
 
   const insetPadding = {
     paddingTop: insets.top,
-    paddingBottom: insets.bottom || spacing[20],
+    paddingBottom: bottomInset ? insets.bottom || spacing[20] : spacing[20],
     paddingStart: screenPadding + insets.left,
     paddingEnd: screenPadding + insets.right,
   };
@@ -47,7 +54,19 @@ export function Screen({
   return (
     <View testID={testID} style={styles.root}>
       <StatusBar barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'} />
-      {scroll ? (
+      {keyboardAware ? (
+        <KeyboardAwareScrollView
+          testID={`${testID}-scroll`}
+          style={layout.fill}
+          contentContainerStyle={[layout.content, insetPadding]}
+          keyboardDismissMode="interactive"
+          keyboardShouldPersistTaps="handled"
+          bottomOffset={spacing[48]}
+        >
+          {showOfflineBanner && <OfflineBanner />}
+          {children}
+        </KeyboardAwareScrollView>
+      ) : scroll ? (
         <ScrollView
           testID={`${testID}-scroll`}
           style={layout.fill}

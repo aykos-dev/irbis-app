@@ -1,0 +1,7 @@
+{
+  "title": "Debug",
+  "apiStatus": "API status",
+  "openGate": "Open log-in prompt",
+  "gateRan": "The gated action ran %{count} time(s).",
+  "env": "Environment: %{env}"
+}

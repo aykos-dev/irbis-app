@@ -1,0 +1,16 @@
+{
+  "tabs": {
+    "path": "Yo‘l",
+    "explore": "Kashf",
+    "lessons": "Darslar",
+    "community": "Jamoa",
+    "profile": "Profil"
+  },
+  "mainLabel": "Asosiy menyu",
+  "comingSoon": {
+    "title": "Keyingi yangilanishda keladi",
+    "body": "Irbis hali sumkasini yig‘yapti.",
+    "mascot": "Irbis, uyqusiragan"
+  },
+  "safetyTitle": "Xavfsizlik va SOS"
+}
