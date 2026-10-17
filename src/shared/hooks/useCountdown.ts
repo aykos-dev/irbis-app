@@ -15,7 +15,11 @@ export function useCountdown(): { secondsLeft: number; start: (seconds: number) 
       return;
     }
     const timer = setInterval(() => {
-      setNow(Date.now());
+      const current = Date.now();
+      setNow(current);
+      if (current >= deadline) {
+        clearInterval(timer);
+      }
     }, TICK_MS);
     return () => clearInterval(timer);
   }, [deadline]);

@@ -82,7 +82,11 @@ export async function startSignedIn(): Promise<void> {
 /** `expectTabs: false` when the app is expected to open straight on an auth screen. */
 export async function renderApp({ expectTabs = true }: { expectTabs?: boolean } = {}): Promise<void> {
   const queryClient = createQueryClient();
-  queryClient.setDefaultOptions({ queries: { retry: false, gcTime: Infinity } });
+  // No GC timers (queries or mutations) that would outlive the test and keep the worker alive.
+  queryClient.setDefaultOptions({
+    queries: { retry: false, gcTime: Infinity },
+    mutations: { retry: false, gcTime: Infinity },
+  });
   await render(
     <Providers queryClient={queryClient}>
       <AppNavigation />
