@@ -5,6 +5,8 @@
  * Backend for the Irbis app and admin web. This document is the contract (ADR-003).
  * OpenAPI spec version: 0.0.1
  */
+import type { Experience } from './experience.ts';
+import type { Interest } from './interest.ts';
 import type { Locale } from './locale.ts';
 import type { Role } from './role.ts';
 
@@ -12,6 +14,8 @@ export interface MeResponseDto {
   id: string;
   username: string;
   locale: Locale;
+  experience: Experience | null;
+  interests: Interest[];
   role: Role;
   /** A verified recovery phone exists. */
   hasRecoveryPhone: boolean;

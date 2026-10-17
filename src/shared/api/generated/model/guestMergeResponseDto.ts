@@ -9,6 +9,6 @@
 export interface GuestMergeResponseDto {
   /** Parts that were merged. */
   merged: string[];
-  /** Parts nothing handles yet. */
+  /** Parts that were accepted but not written to the account. */
   skipped: string[];
 }

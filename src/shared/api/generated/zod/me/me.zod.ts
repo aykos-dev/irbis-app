@@ -15,6 +15,8 @@ export const MeGetResponse = zod.object({
   "id": zod.uuid(),
   "username": zod.string(),
   "locale": zod.enum(['uz', 'ru', 'en']),
+  "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
+  "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
   "role": zod.enum(['user', 'admin']),
   "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
@@ -43,6 +45,8 @@ export const MeVerifyRecoveryPhoneResponse = zod.object({
   "id": zod.uuid(),
   "username": zod.string(),
   "locale": zod.enum(['uz', 'ru', 'en']),
+  "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
+  "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
   "role": zod.enum(['user', 'admin']),
   "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
@@ -52,13 +56,20 @@ export const MeVerifyRecoveryPhoneResponse = zod.object({
 /**
  * @summary Move data kept on the device while a guest into the account
  */
+export const meGuestMergeBodyOnboardingInterestsMax = 5;
+
+
+
 export const MeGuestMergeBody = zod.object({
-  "locale": zod.enum(['uz', 'ru', 'en']).optional(),
-  "onboarding": zod.record(zod.string(), zod.unknown()).optional().describe('Onboarding choices; accepted now, merged once the onboarding feature registers its handler.')
+  "locale": zod.enum(['uz', 'ru', 'en']).optional().describe('Accepted and validated, never written: the account keeps the language set at sign-up.'),
+  "onboarding": zod.object({
+  "experience": zod.enum(['beginner', 'weekend', 'experienced']).optional(),
+  "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])).max(meGuestMergeBodyOnboardingInterestsMax).optional()
+}).optional()
 })
 
 export const MeGuestMergeResponse = zod.object({
   "merged": zod.array(zod.string()).describe('Parts that were merged.'),
-  "skipped": zod.array(zod.string()).describe('Parts nothing handles yet.')
+  "skipped": zod.array(zod.string()).describe('Parts that were accepted but not written to the account.')
 })
 

@@ -5,11 +5,11 @@
  * Backend for the Irbis app and admin web. This document is the contract (ADR-003).
  * OpenAPI spec version: 0.0.1
  */
-import type { GuestMergeDtoOnboarding } from './guestMergeDtoOnboarding.ts';
+import type { GuestOnboardingDto } from './guestOnboardingDto.ts';
 import type { Locale } from './locale.ts';
 
 export interface GuestMergeDto {
+  /** Accepted and validated, never written: the account keeps the language set at sign-up. */
   locale?: Locale;
-  /** Onboarding choices; accepted now, merged once the onboarding feature registers its handler. */
-  onboarding?: GuestMergeDtoOnboarding;
+  onboarding?: GuestOnboardingDto;
 }

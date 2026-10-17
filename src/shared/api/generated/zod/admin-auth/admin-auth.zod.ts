@@ -23,6 +23,8 @@ export const AdminAuthLogInResponse = zod.object({
   "id": zod.uuid(),
   "username": zod.string(),
   "locale": zod.enum(['uz', 'ru', 'en']),
+  "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
+  "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
   "role": zod.enum(['user', 'admin']),
   "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
