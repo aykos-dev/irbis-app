@@ -3,12 +3,9 @@ import { interestCavesSvg } from '../../assets/svg/interestCaves';
 import { interestLakesSvg } from '../../assets/svg/interestLakes';
 import { interestPeaksSvg } from '../../assets/svg/interestPeaks';
 import { interestTrailsSvg } from '../../assets/svg/interestTrails';
-import { onb3LakeSvg } from '../../assets/svg/onb3Lake';
-import { onb3PeakSvg } from '../../assets/svg/onb3Peak';
-import { onb3TrailSvg } from '../../assets/svg/onb3Trail';
-import { placeCanyonSvg } from '../../assets/svg/placeCanyon';
-import { placeCaveSvg } from '../../assets/svg/placeCave';
-import { placeWaterfallSvg } from '../../assets/svg/placeWaterfall';
+import type { ImageRequireSource } from 'react-native';
+
+import { placeHeroes } from '../../assets/images/places';
 import type { PlaceType } from '../../shared/api/generated/model';
 import type { IconName } from '../../shared/components/Icon';
 import { placeTypeColors } from '../../shared/constants/colors';
@@ -19,57 +16,56 @@ export type PlaceTypeGlyph = { xml: string } | { icon: IconName };
 type PlaceTypeInfo = {
   color: string;
   glyph: PlaceTypeGlyph;
-  /** 390×240 hero illustration, generic per type. */
-  hero: string;
+  /** Hero image, generic per type; shown cover-cropped in the 390×240 frame. */
+  hero: ImageRequireSource;
   labelKey: string;
 };
 
 /**
- * Place type → colour token, icon, hero illustration and label (features/places.md AC7).
- * Waterfall and canyon art, icons and colours are placeholders (owner Q8). Camping has no canvas
- * hero yet and shares the trail illustration (no camping places in the seed).
+ * Place type → colour token, icon, hero image and label (features/places.md AC7).
+ * Waterfall and canyon icons and colours are placeholders (owner Q8).
  */
 export const placeTypes: Record<PlaceType, PlaceTypeInfo> = {
   peak: {
     color: placeTypeColors.peak,
     glyph: { xml: interestPeaksSvg },
-    hero: onb3PeakSvg,
+    hero: placeHeroes.peak,
     labelKey: 'places.type.peak',
   },
   lake: {
     color: placeTypeColors.lake,
     glyph: { xml: interestLakesSvg },
-    hero: onb3LakeSvg,
+    hero: placeHeroes.lake,
     labelKey: 'places.type.lake',
   },
   cave: {
     color: placeTypeColors.cave,
     glyph: { xml: interestCavesSvg },
-    hero: placeCaveSvg,
+    hero: placeHeroes.cave,
     labelKey: 'places.type.cave',
   },
   camping: {
     color: placeTypeColors.camping,
     glyph: { xml: interestCampingSvg },
-    hero: onb3TrailSvg,
+    hero: placeHeroes.camping,
     labelKey: 'places.type.camping',
   },
   trail: {
     color: placeTypeColors.trail,
     glyph: { xml: interestTrailsSvg },
-    hero: onb3TrailSvg,
+    hero: placeHeroes.trail,
     labelKey: 'places.type.trail',
   },
   waterfall: {
     color: placeTypeColors.waterfall,
     glyph: { icon: 'waterfall' },
-    hero: placeWaterfallSvg,
+    hero: placeHeroes.waterfall,
     labelKey: 'places.type.waterfall',
   },
   canyon: {
     color: placeTypeColors.canyon,
     glyph: { icon: 'canyon' },
-    hero: placeCanyonSvg,
+    hero: placeHeroes.canyon,
     labelKey: 'places.type.canyon',
   },
 };

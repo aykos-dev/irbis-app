@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
 import { bootSvg } from '../../../assets/svg/boot';
@@ -16,7 +16,7 @@ import { localized } from '../screens/PlaceScreen';
 
 const BOOTS_MAX = 5;
 const BOOT = 14;
-/** Thumb shows the type hero at its 390×240 aspect. */
+/** Thumb shows the type hero in a 390×240-aspect frame. */
 const THUMB_HEIGHT = 56;
 const THUMB_WIDTH = (THUMB_HEIGHT * 390) / 240;
 
@@ -47,7 +47,7 @@ export const PlaceCard = memo(function PlaceCard({ place, locale, onPress }: Pro
       style={styles.card}
     >
       <View style={layout.thumb}>
-        <SvgXml xml={info.hero} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" />
+        <Image source={info.hero} resizeMode="cover" accessible={false} style={layout.image} />
       </View>
       <View style={layout.text}>
         <AppText variant="h3" numberOfLines={1}>
@@ -79,6 +79,7 @@ const layout = StyleSheet.create({
     borderRadius: radii.tile,
     overflow: 'hidden',
   },
+  image: { width: '100%', height: '100%' },
   text: { flex: 1, gap: spacing[4] },
   boots: { flexDirection: 'row', gap: spacing[4] },
 });
