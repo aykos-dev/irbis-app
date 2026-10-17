@@ -9,18 +9,21 @@ import enDebug from './en/debug.json';
 import enErrors from './en/errors.json';
 import enHealth from './en/health.json';
 import enNav from './en/nav.json';
+import enOnboarding from './en/onboarding.json';
 import ruAuth from './ru/auth.json';
 import ruCommon from './ru/common.json';
 import ruDebug from './ru/debug.json';
 import ruErrors from './ru/errors.json';
 import ruHealth from './ru/health.json';
 import ruNav from './ru/nav.json';
+import ruOnboarding from './ru/onboarding.json';
 import uzAuth from './uz/auth.json';
 import uzCommon from './uz/common.json';
 import uzDebug from './uz/debug.json';
 import uzErrors from './uz/errors.json';
 import uzHealth from './uz/health.json';
 import uzNav from './uz/nav.json';
+import uzOnboarding from './uz/onboarding.json';
 
 /**
  * i18n setup. Translations live in `<locale>/<namespace>.json`; keys are `<namespace>.<key>`
@@ -39,9 +42,33 @@ export const languageNames: Record<Locale, string> = {
 const fallbackLocale: Locale = 'en';
 
 export const i18n = new I18n({
-  en: { auth: enAuth, common: enCommon, debug: enDebug, nav: enNav, errors: enErrors, health: enHealth },
-  ru: { auth: ruAuth, common: ruCommon, debug: ruDebug, nav: ruNav, errors: ruErrors, health: ruHealth },
-  uz: { auth: uzAuth, common: uzCommon, debug: uzDebug, nav: uzNav, errors: uzErrors, health: uzHealth },
+  en: {
+    auth: enAuth,
+    common: enCommon,
+    debug: enDebug,
+    nav: enNav,
+    errors: enErrors,
+    health: enHealth,
+    onboarding: enOnboarding,
+  },
+  ru: {
+    auth: ruAuth,
+    common: ruCommon,
+    debug: ruDebug,
+    nav: ruNav,
+    errors: ruErrors,
+    health: ruHealth,
+    onboarding: ruOnboarding,
+  },
+  uz: {
+    auth: uzAuth,
+    common: uzCommon,
+    debug: uzDebug,
+    nav: uzNav,
+    errors: uzErrors,
+    health: uzHealth,
+    onboarding: uzOnboarding,
+  },
 });
 
 i18n.defaultLocale = fallbackLocale;

@@ -1,0 +1,29 @@
+{
+  "splash": {
+    "wordmark": "irbis",
+    "tagline": "Kashf et. O‘rgan. Eson-omon qayt."
+  },
+  "welcome": {
+    "bubble": "Salom! Men Irbisman. Seni cho‘qqilar, ko‘llar va g‘orlarga boshlab boraman — va uyga eson-omon qaytaraman.",
+    "title": "Markaziy Osiyoni kashf et — cho‘qqima-cho‘qqi",
+    "body": "Darajang, mavsum va ob-havoga mos haftalik yo‘nalishlar.",
+    "getStarted": "Boshlash",
+    "haveAccount": "Menda allaqachon akkaunt bor",
+    "langChip": "Tilni o‘zgartirish"
+  },
+  "header": {
+    "back": "Orqaga",
+    "close": "Yopish",
+    "progress": "%{n}-qadam, jami 4"
+  },
+  "language": {
+    "bubble": "Qaysi tilda gaplashay?",
+    "sub": {
+      "uz": "O‘zbek tili · Lotin yozuvi",
+      "ru": "Rus tili",
+      "en": "Ingliz tili"
+    },
+    "footnote": "Tilni istalgan vaqt Profil › Sozlamalar bo‘limida o‘zgartirish mumkin. Joy nomlari mahalliy yozilishida qoladi."
+  },
+  "continue": "Davom etish"
+}

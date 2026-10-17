@@ -20,7 +20,7 @@ import { useTheme } from '../../../shared/contexts/theme';
 import { useLocale } from '../../../shared/hooks/useLocale';
 import { getLocale, languageNames, t } from '../../../shared/i18n';
 import { haptics } from '../../../shared/utils/haptics';
-import { LanguageSheet } from '../components/LanguageSheet';
+import { LanguageSheet } from '../../../shared/components/LanguageSheet';
 
 const COMPANION_RING = 132;
 const COMPANION_ART = 108;

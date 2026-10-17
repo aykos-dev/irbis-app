@@ -1,0 +1,4 @@
+<resources>
+    <!-- Brand teal (design.md tealIconEdge). -->
+    <color name="launch_background">#0E8A83</color>
+</resources>

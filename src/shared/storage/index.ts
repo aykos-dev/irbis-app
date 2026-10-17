@@ -12,6 +12,8 @@ type StorageSchema = {
   'prefs.colorScheme': string;
   /** '1' once the device's guest data went into an account (`/v1/me/guest-merge`, once per device). */
   'guest.merged': string;
+  /** '1' once onboarding ended (finished, closed or logged in) or the app opened signed in. */
+  'onboarding.done': string;
 };
 
 export type StorageKey = keyof StorageSchema;

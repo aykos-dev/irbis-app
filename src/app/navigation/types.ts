@@ -18,6 +18,16 @@ export type AuthStackParamList = {
   ResetCode: { username: string; resendAfterSec: number };
 };
 
+/**
+ * Onboarding stack (features/onboarding.md): Splash → Welcome → Language → Experience → Interests
+ * → Companion. Screens are added with the slice that builds them.
+ */
+export type OnboardingStackParamList = {
+  Splash: undefined;
+  Welcome: undefined;
+  Language: undefined;
+};
+
 /** Bottom tabs, per canvas Nav. */
 export type MainTabParamList = {
   Path: undefined;
@@ -28,6 +38,8 @@ export type MainTabParamList = {
 };
 
 export type RootStackParamList = {
+  /** First launch only (no `onboarding.done`, no session). */
+  Onboarding: NavigatorScreenParams<OnboardingStackParamList> | undefined;
   MainTabs: NavigatorScreenParams<MainTabParamList> | undefined;
   Auth: NavigatorScreenParams<AuthStackParamList> | undefined;
   RecoveryPhone: undefined;
@@ -47,6 +59,12 @@ export type AuthStackScreenProps<T extends keyof AuthStackParamList> = Composite
   NativeStackScreenProps<AuthStackParamList, T>,
   RootStackScreenProps<'Auth'>
 >;
+
+export type OnboardingStackScreenProps<T extends keyof OnboardingStackParamList> =
+  CompositeScreenProps<
+    NativeStackScreenProps<OnboardingStackParamList, T>,
+    RootStackScreenProps<'Onboarding'>
+  >;
 
 export type MainTabScreenProps<T extends keyof MainTabParamList> = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, T>,

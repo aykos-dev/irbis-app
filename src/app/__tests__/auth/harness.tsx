@@ -47,6 +47,8 @@ export async function setUpApp(): Promise<HttpStub> {
   log = jest.spyOn(console, 'log').mockImplementation(() => undefined);
   await tokenManager.clear();
   storage.clearAll();
+  // A returning device: onboarding already ended (first launch is covered by onboarding tests).
+  storage.setString('onboarding.done', '1');
   i18n.locale = 'en';
   authGate.cancel();
   jest.mocked(Keychain.setGenericPassword).mockClear();

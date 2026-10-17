@@ -1,23 +1,57 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useEffect, useState } from 'react';
 
 import { RecoveryPhoneScreen } from '../../features/auth/screens/RecoveryPhoneScreen';
 import { DebugScreen } from '../../features/debug/screens/DebugScreen';
 import { StatusScreen } from '../../features/health/screens/StatusScreen';
+import { OnboardingNavigator } from '../../features/onboarding/OnboardingNavigator';
+import { isOnboardingDone, markOnboardingDone } from '../../features/onboarding/onboardingStore';
 import { SafetyScreen } from '../../features/auth/screens/SafetyScreen';
 import { appConfig } from '../../shared/constants/config';
+import { useAuth } from '../../shared/contexts/auth';
 import { AuthNavigator } from './AuthNavigator';
 import { TabNavigator } from './TabNavigator';
 import type { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+type InitialRoute = 'Onboarding' | 'MainTabs';
+
 /**
- * Root stack. Cold start lands on the tabs, never behind a log-in wall (AC1). Auth is a modal
- * stack over the tabs. Debug and Status are registered outside production only (AC7, AC10).
+ * First launch opens onboarding: no `onboarding.done` and no session. Anyone else lands on the
+ * tabs, never behind a log-in wall. Null while the stored session is still being read.
+ */
+function useInitialRoute(): InitialRoute | null {
+  const { status } = useAuth();
+  const [done] = useState(isOnboardingDone);
+
+  useEffect(() => {
+    if (status === 'signedIn') {
+      markOnboardingDone();
+    }
+  }, [status]);
+
+  if (done) {
+    return 'MainTabs';
+  }
+  if (status === 'loading') {
+    return null;
+  }
+  return status === 'signedIn' ? 'MainTabs' : 'Onboarding';
+}
+
+/**
+ * Root stack. Onboarding on first launch (onboarding AC1), otherwise the tabs (auth AC1). Auth is
+ * a modal stack over both. Debug and Status are registered outside production only (AC7, AC10).
  */
 export function RootNavigator() {
+  const initialRoute = useInitialRoute();
+  if (!initialRoute) {
+    return null;
+  }
   return (
-    <Stack.Navigator initialRouteName="MainTabs" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Onboarding" component={OnboardingNavigator} />
       <Stack.Screen name="MainTabs" component={TabNavigator} />
       <Stack.Screen
         name="Auth"

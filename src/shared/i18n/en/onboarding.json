@@ -1,0 +1,29 @@
+{
+  "splash": {
+    "wordmark": "irbis",
+    "tagline": "Explore. Learn. Come back safe."
+  },
+  "welcome": {
+    "bubble": "Salom! I'm Irbis. I'll guide you to peaks, lakes and caves — and back home safely.",
+    "title": "Explore Central Asia, one summit at a time",
+    "body": "Weekly paths built for your level, the season and the weather.",
+    "getStarted": "Get started",
+    "haveAccount": "I already have an account",
+    "langChip": "Change language"
+  },
+  "header": {
+    "back": "Back",
+    "close": "Close",
+    "progress": "Step %{n} of 4"
+  },
+  "language": {
+    "bubble": "Which language should I speak?",
+    "sub": {
+      "uz": "Uzbek · Lotin yozuvi",
+      "ru": "Russian",
+      "en": "English"
+    },
+    "footnote": "You can change this any time in Profile › Settings. Place names stay in their local spelling."
+  },
+  "continue": "Continue"
+}

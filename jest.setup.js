@@ -65,3 +65,11 @@ jest.mock('@gorhom/bottom-sheet', () => {
   }
   return { ...base, BottomSheetModal };
 });
+
+/*
+ * Every app-level test runs on a returning device (onboarding already ended) unless it opts into
+ * first launch by removing `onboarding.done` (see src/app/__tests__/onboarding).
+ */
+beforeEach(() => {
+  require('./src/shared/storage').storage.setString('onboarding.done', '1');
+});

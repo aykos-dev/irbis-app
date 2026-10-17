@@ -1,13 +1,13 @@
 import { StyleSheet } from 'react-native';
 
-import { AppText } from '../../../shared/components/AppText';
-import { Icon } from '../../../shared/components/Icon';
-import { Pressable } from '../../../shared/components/Pressable';
-import { Sheet } from '../../../shared/components/Sheet';
-import { spacing } from '../../../shared/constants/spacing';
-import { useTheme } from '../../../shared/contexts/theme';
-import { getLocale, languageNames, setLocale, supportedLocales, t, type Locale } from '../../../shared/i18n';
-import { haptics } from '../../../shared/utils/haptics';
+import { AppText } from './AppText';
+import { Icon } from './Icon';
+import { Pressable } from './Pressable';
+import { Sheet } from './Sheet';
+import { spacing } from '../constants/spacing';
+import { useTheme } from '../contexts/theme';
+import { getLocale, languageNames, setLocale, supportedLocales, t, type Locale } from '../i18n';
+import { haptics } from '../utils/haptics';
 
 type Props = { closing: boolean; onDismiss: () => void; onPick: () => void };
 
