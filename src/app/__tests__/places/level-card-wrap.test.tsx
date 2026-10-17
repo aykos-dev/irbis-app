@@ -6,6 +6,7 @@ import { navigationRef } from '../../navigation/navigationRef';
 import { i18n } from '../../../shared/i18n';
 
 let http: HttpStub;
+let previousLocale: string;
 
 const ID = '00000000-0000-4000-8000-0000000000a1';
 const URL = `/v1/places/${ID}`;
@@ -39,10 +40,12 @@ async function openPlace() {
 }
 
 beforeEach(async () => {
+  previousLocale = i18n.locale;
   http = await setUpApp();
 });
 afterEach(async () => {
   await tearDownApp(http);
+  i18n.locale = previousLocale;
 });
 
 describe('places — level card lock text (D3)', () => {
