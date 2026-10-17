@@ -9,6 +9,7 @@ import {
   type FilterSpecification,
   type GeoJSONSourceProps,
   type GeoJSONSourceRef,
+  type MapRef,
   type PressEventWithFeatures,
 } from '@maplibre/maplibre-react-native';
 import { memo, useMemo, useRef } from 'react';
@@ -35,6 +36,8 @@ const PIN_RADIUS = 15;
 const CLUSTER_RADII = [18, 22, 28] as const;
 const CLUSTER_STEPS = [10, 50] as const;
 const CLUSTER_TEXT = 14;
+/** Zoom step when the cluster's expansion zoom cannot be read. */
+const CLUSTER_ZOOM_STEP = 2;
 /** Glyph font of the OpenFreeMap styles (`MAP_STYLE_URL` default). */
 const LABEL_FONT = ['Noto Sans Bold'];
 
@@ -72,9 +75,20 @@ function toFeatures(places: PlaceListItemDto[]): GeoJSONSourceProps['data'] {
  * open the place.
  */
 export const PlacesMap = memo(function PlacesMap({ places, view, onOpenPlace }: Props) {
+  const map = useRef<MapRef>(null);
   const camera = useRef<CameraRef>(null);
   const source = useRef<GeoJSONSourceRef>(null);
   const data = useMemo(() => toFeatures(places), [places]);
+
+  /** The cluster's expansion zoom; if the source cannot tell, two steps in from the current zoom. */
+  const expansionZoom = async (clusterId: number): Promise<number> => {
+    const zoom = await source.current?.getClusterExpansionZoom(clusterId).catch(() => undefined);
+    if (zoom !== undefined) {
+      return zoom;
+    }
+    const current = await map.current?.getZoom().catch(() => undefined);
+    return (current ?? view.zoom) + CLUSTER_ZOOM_STEP;
+  };
 
   const onPress = async (event: NativeSyntheticEvent<PressEventWithFeatures>) => {
     const feature = event.nativeEvent.features[0];
@@ -84,10 +98,8 @@ export const PlacesMap = memo(function PlacesMap({ places, view, onOpenPlace }: 
     const [lng, lat] = feature.geometry.coordinates;
     const clusterId = feature.properties?.cluster_id;
     if (typeof clusterId === 'number' && lng !== undefined && lat !== undefined) {
-      const zoom = await source.current?.getClusterExpansionZoom(clusterId);
-      if (zoom !== undefined) {
-        camera.current?.easeTo({ center: [lng, lat], zoom, duration: motion.layout });
-      }
+      const zoom = await expansionZoom(clusterId);
+      camera.current?.easeTo({ center: [lng, lat], zoom, duration: motion.layout });
       return;
     }
     const place = places.find(item => item.id === feature.properties?.id);
@@ -98,6 +110,7 @@ export const PlacesMap = memo(function PlacesMap({ places, view, onOpenPlace }: 
 
   return (
     <MapLibreMap
+      ref={map}
       testID="explore.map"
       style={StyleSheet.absoluteFill}
       mapStyle={appConfig.mapStyleUrl}

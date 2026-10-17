@@ -102,15 +102,25 @@ export function useOrigin() {
     }
   }, []);
 
+  /** A failing permission or location call leaves Explore on the Tashkent origin, never pending. */
+  const fallBack = useCallback(() => {
+    qaLog('location_permission', { result: 'unavailable' });
+    setState({ status: 'none', permission: 'denied' });
+  }, []);
+
   const ask = useCallback(async () => {
-    const permission = await requestPermission();
-    if (permission === 'granted') {
-      await resolveGranted();
-      return;
+    try {
+      const permission = await requestPermission();
+      if (permission === 'granted') {
+        await resolveGranted();
+        return;
+      }
+      qaLog('location_permission', { result: permission });
+      setState({ status: 'none', permission });
+    } catch {
+      fallBack();
     }
-    qaLog('location_permission', { result: permission });
-    setState({ status: 'none', permission });
-  }, [resolveGranted]);
+  }, [resolveGranted, fallBack]);
 
   useEffect(() => {
     void ask();
@@ -123,13 +133,17 @@ export function useOrigin() {
         return;
       }
       void (async () => {
-        if (current.permission === 'granted' || (await isGranted())) {
-          await resolveGranted();
+        try {
+          if (current.permission === 'granted' || (await isGranted())) {
+            await resolveGranted();
+          }
+        } catch {
+          fallBack();
         }
       })();
     });
     return () => subscription.remove();
-  }, [resolveGranted]);
+  }, [resolveGranted, fallBack]);
 
   /** "Turn on": ask again while the OS still can, otherwise open the app's settings. */
   const turnOn = useCallback(() => {

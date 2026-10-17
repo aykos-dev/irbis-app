@@ -1,6 +1,6 @@
 import { LocationManager } from '@maplibre/maplibre-react-native';
 import { fireEvent, screen } from '@testing-library/react-native';
-import { Linking } from 'react-native';
+import { Linking, PermissionsAndroid, Platform } from 'react-native';
 
 import {
   openTab,
@@ -115,6 +115,41 @@ describe('places — Explore list and origin (AC4, AC6)', () => {
     await press('explore.location-turn-on');
     expect(openSettings).toHaveBeenCalledTimes(1);
     openSettings.mockRestore();
+  });
+
+  it('AC6: a throwing permission request falls back to Tashkent with the banner, never an endless skeleton', async () => {
+    jest.mocked(LocationManager.requestPermissions).mockRejectedValue(new Error('location services unavailable'));
+    http.reply(URL, { status: 200, body: listBody([item(1)], 'tashkent') });
+    await openExplore();
+
+    expect(await screen.findByTestId('explore.count')).toHaveTextContent('1 place from Tashkent');
+    expect(screen.getByTestId('explore.location-banner')).toBeOnTheScreen();
+    expect(http.callsTo(URL)[0]?.params).toEqual({ limit: 200 });
+    expect(qaEvents()).toContainEqual({ event: 'location_permission', result: 'unavailable' });
+  });
+
+  it('AC6: Android — PermissionsAndroid denied shows the banner and sends no coords', async () => {
+    const os = Platform.OS;
+    Platform.OS = 'android';
+    const request = jest
+      .spyOn(PermissionsAndroid, 'requestMultiple')
+      .mockResolvedValue({
+        [PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION]: PermissionsAndroid.RESULTS.DENIED,
+        [PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION]: PermissionsAndroid.RESULTS.DENIED,
+      } as Awaited<ReturnType<typeof PermissionsAndroid.requestMultiple>>);
+    try {
+      http.reply(URL, { status: 200, body: listBody([item(1)], 'tashkent') });
+      await openExplore();
+
+      expect(await screen.findByTestId('explore.count')).toHaveTextContent('1 place from Tashkent');
+      expect(screen.getByTestId('explore.location-banner')).toBeOnTheScreen();
+      expect(http.callsTo(URL)[0]?.params).toEqual({ limit: 200 });
+      expect(request).toHaveBeenCalledTimes(1);
+      expect(qaEvents()).toContainEqual({ event: 'location_permission', result: 'denied' });
+    } finally {
+      request.mockRestore();
+      Platform.OS = os;
+    }
   });
 });
 
