@@ -18,7 +18,7 @@ import { staleTimes } from '../api/query';
 import { tokenManager } from '../api/tokenManager';
 import { toast } from '../components/toastBus';
 import { collectGuestData, guestMergeDone, markGuestMergeDone } from '../guest/guestStore';
-import { t } from '../i18n';
+import { getLocale, setLocale, t } from '../i18n';
 import { qaLog } from '../utils/qaLog';
 
 /**
@@ -32,6 +32,8 @@ export type SessionStatus = 'loading' | 'guest' | 'signedIn';
 /** The "Your account is blocked" card on A1; `reasonCode` is the category, when known. */
 export type BlockedNotice = { reasonCode: string | null };
 
+export type StartSessionOptions = { applyAccountLocale?: boolean };
+
 type AuthState = {
   status: SessionStatus;
   user: MeResponseDto | null;
@@ -39,8 +41,11 @@ type AuthState = {
   userError: unknown;
   reloadUser: () => void;
   blockedNotice: BlockedNotice | null;
-  /** Store the tokens from a sign-up / log-in / reset response and move to signed in. */
-  startSession: (session: AuthSessionResponseDto) => Promise<void>;
+  /**
+   * Store the tokens from a sign-up / log-in / reset response and move to signed in. After a
+   * log-in (`applyAccountLocale`) the account language replaces the device one (AC8).
+   */
+  startSession: (session: AuthSessionResponseDto, options?: StartSessionOptions) => Promise<void>;
   /** Replace the cached user (after the recovery phone was verified). */
   setUser: (me: MeResponseDto) => void;
   signOut: () => Promise<void>;
@@ -124,7 +129,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [mergeAsync]);
 
   const startSession = useCallback(
-    async (session: AuthSessionResponseDto) => {
+    async (session: AuthSessionResponseDto, options?: StartSessionOptions) => {
       await tokenManager.setTokens({
         accessToken: session.accessToken,
         refreshToken: session.refreshToken,
@@ -133,6 +138,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setBlockedNotice(null);
       setStatus('signedIn');
       await mergeGuestData();
+      if (options?.applyAccountLocale && session.me.locale !== getLocale()) {
+        setLocale(session.me.locale);
+        qaLog('locale_applied', { locale: session.me.locale });
+      }
     },
     [queryClient, mergeGuestData],
   );

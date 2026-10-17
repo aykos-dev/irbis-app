@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import type { AuthSessionResponseDto } from '../../../shared/api/generated/model';
 import { toast } from '../../../shared/components/toastBus';
 import { authGate } from '../../../shared/auth/gateBus';
-import { useAuth } from '../../../shared/contexts/auth';
+import { useAuth, type StartSessionOptions } from '../../../shared/contexts/auth';
 import { t } from '../../../shared/i18n';
 import { haptics } from '../../../shared/utils/haptics';
 import { useCloseAuth } from './useCloseAuth';
@@ -13,13 +13,17 @@ import { useCloseAuth } from './useCloseAuth';
  * data once), tell the user, close the modal back to where it started, then continue the gated
  * action that opened it, once.
  */
-export function useFinishAuth(): (session: AuthSessionResponseDto, toastKey: string) => Promise<void> {
+export function useFinishAuth(): (
+  session: AuthSessionResponseDto,
+  toastKey: string,
+  options?: StartSessionOptions,
+) => Promise<void> {
   const { startSession } = useAuth();
   const close = useCloseAuth();
 
   return useCallback(
-    async (session, toastKey) => {
-      await startSession(session);
+    async (session, toastKey, options) => {
+      await startSession(session, options);
       haptics.success();
       toast.show({ variant: 'success', message: t(toastKey) });
       close();

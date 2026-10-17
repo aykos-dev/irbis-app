@@ -1,3 +1,9 @@
+import {
+  Experience as ApiExperience,
+  Interest as ApiInterest,
+  type GuestOnboardingDto,
+} from '../../shared/api/generated/model';
+import { registerGuestItem } from '../../shared/guest/guestStore';
 import { storage } from '../../shared/storage';
 
 /** Hiking experience picked on the Experience step (features/onboarding.md AC4). */
@@ -65,3 +71,39 @@ export function clearOnboardingChoices(): void {
   storage.remove('onboarding.experience');
   storage.remove('onboarding.interests');
 }
+
+const apiExperiences: readonly string[] = Object.values(ApiExperience);
+const apiInterests: readonly string[] = Object.values(ApiInterest);
+
+function isApiExperience(value: string | undefined): value is ApiExperience {
+  return value !== undefined && apiExperiences.includes(value);
+}
+
+function isApiInterest(value: string): value is ApiInterest {
+  return apiInterests.includes(value);
+}
+
+/**
+ * The guest's onboarding choices for `/v1/me/guest-merge` (AC7): unset or empty keys are left out,
+ * nothing at all after ✕. Values the API does not know are dropped. The local copy stays after merge.
+ */
+export function collectOnboardingChoices(): GuestOnboardingDto | undefined {
+  const onboarding: GuestOnboardingDto = {};
+  const experience = getExperience();
+  if (isApiExperience(experience)) {
+    onboarding.experience = experience;
+  }
+  const chosen = getInterests().filter(isApiInterest);
+  if (chosen.length > 0) {
+    onboarding.interests = chosen;
+  }
+  return onboarding.experience || onboarding.interests ? onboarding : undefined;
+}
+
+registerGuestItem({
+  id: 'onboarding',
+  collect: () => {
+    const onboarding = collectOnboardingChoices();
+    return onboarding ? { onboarding } : undefined;
+  },
+});

@@ -65,7 +65,7 @@ export function LogInScreen({ navigation }: AuthStackScreenProps<'LogIn'>) {
         data: { username: values.username.trim(), password: values.password },
       });
       qaLog('logged_in');
-      await finish(session, 'auth.login.welcomeToast');
+      await finish(session, 'auth.login.welcomeToast', { applyAccountLocale: true });
     } catch (error) {
       haptics.error();
       const mapped = mapAuthError(error);
