@@ -33,6 +33,11 @@ export function markGuestMergeDone(): void {
   storage.setString('guest.merged', '1');
 }
 
+/** QA harness only (`irbis://debug/onboarding/reset`): the next sign-in merges again, like a fresh install. */
+export function resetGuestMerge(): void {
+  storage.remove('guest.merged');
+}
+
 /** The merge request body: every registered item folded together (onboarding keys merge). */
 export function collectGuestData(): GuestMergeDto {
   const body: GuestMergeDto = {};

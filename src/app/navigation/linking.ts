@@ -2,6 +2,7 @@ import { getStateFromPath, type LinkingOptions } from '@react-navigation/native'
 
 import { markOnboardingDone, resetOnboarding } from '../../features/onboarding/onboardingStore';
 import { appConfig } from '../../shared/constants/config';
+import { resetGuestMerge } from '../../shared/guest/guestStore';
 import { setLocale, supportedLocales } from '../../shared/i18n';
 import type { RootStackParamList } from './types';
 
@@ -21,12 +22,14 @@ const DEBUG_ONBOARDING = /^\/?debug\/onboarding\/(reset|done)(?:[/?#]|$)/;
 type LinkState = ReturnType<typeof getStateFromPath<RootStackParamList>>;
 
 /**
- * `irbis://debug/onboarding/reset` forgets that onboarding ended and restarts it at Splash;
+ * `irbis://debug/onboarding/reset` forgets that onboarding ended (and that guest data was merged,
+ * so the next sign-in merges again like a fresh install) and restarts it at Splash;
  * `irbis://debug/onboarding/done` marks it ended and opens Debug.
  */
 function debugOnboardingState(action: string, options: Parameters<typeof getStateFromPath>[1]): LinkState {
   if (action === 'reset') {
     resetOnboarding();
+    resetGuestMerge();
     return { routes: [{ name: 'Onboarding', state: { routes: [{ name: 'Splash' }] } }] };
   }
   markOnboardingDone();

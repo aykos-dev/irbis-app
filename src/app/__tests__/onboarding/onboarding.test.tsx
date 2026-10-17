@@ -91,6 +91,17 @@ describe('onboarding — gate, splash and ending (AC1)', () => {
   });
 });
 
+describe('onboarding — QA reset (D1)', () => {
+  it('D1: the reset link also forgets the guest merge, so the next sign-in merges again', () => {
+    const parse = linking.getStateFromPath ?? getStateFromPath;
+    storage.setString('guest.merged', '1');
+
+    parse('debug/onboarding/reset', linking.config);
+
+    expect(storage.getString('guest.merged')).toBeUndefined();
+  });
+});
+
 describe('onboarding — Meet Irbis (AC2)', () => {
   it('AC2: "I already have an account" opens Log in; closing it returns to Welcome', async () => {
     await firstLaunch();

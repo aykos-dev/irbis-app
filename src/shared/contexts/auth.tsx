@@ -127,8 +127,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         merged: result.merged.join(','),
         skipped: result.skipped.join(','),
       });
-    } catch {
+    } catch (error) {
       // Not marked done: the next sign-in on this device retries. The guest data stays on the phone.
+      qaLog('guest_merge_failed', { code: isApiError(error) ? error.code : 'unknown' });
     }
   }, [mergeAsync]);
 
