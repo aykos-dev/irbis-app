@@ -1,7 +1,6 @@
 {
   "title": "Status",
   "apiUp": "API is up",
-  "apiDegraded": "API is degraded",
   "dbUp": "Database is up",
   "dbDown": "Database is down",
   "version": "v%{version}",

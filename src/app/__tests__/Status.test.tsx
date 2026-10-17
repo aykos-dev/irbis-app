@@ -75,12 +75,12 @@ describe('Status screen (features/health.md)', () => {
     expect(qaEvents()).toEqual(['IRBIS_QA {"event":"health_checked","status":"ok","db":"up"}']);
   });
 
-  it('AC3: a 503 degraded body is a result, not an error — Not-now chips', async () => {
+  it('AC3: a 503 degraded body is a result, not an error — DB chip Not-now, API chip stays up (Q4, health/D1)', async () => {
     http.reply('/health', degraded);
     await renderApp();
 
     expect(await screen.findByTestId('health.db-chip')).toHaveTextContent('Database is down');
-    expect(screen.getByTestId('health.api-chip')).toHaveTextContent('API is degraded');
+    expect(screen.getByTestId('health.api-chip')).toHaveTextContent('API is up');
     expect(screen.queryByTestId('health.retry')).not.toBeOnTheScreen();
     expect(qaEvents()).toEqual([
       'IRBIS_QA {"event":"health_checked","status":"degraded","db":"down"}',

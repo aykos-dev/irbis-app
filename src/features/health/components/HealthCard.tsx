@@ -29,8 +29,8 @@ export function HealthCard({ result, checkedAt, stale }: Props) {
         <Animated.View entering={entering} style={layout.body}>
           <StatusChip
             testID="health.api-chip"
-            variant={result.status === 'ok' ? 'go' : 'notNow'}
-            label={t(result.status === 'ok' ? 'health.apiUp' : 'health.apiDegraded')}
+            variant="go"
+            label={t('health.apiUp')}
           />
           <StatusChip
             testID="health.db-chip"

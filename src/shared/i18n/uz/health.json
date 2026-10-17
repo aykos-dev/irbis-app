@@ -1,7 +1,6 @@
 {
   "title": "Holat",
   "apiUp": "API ishlayapti",
-  "apiDegraded": "API uzilishlar bilan ishlayapti",
   "dbUp": "Ma’lumotlar bazasi ishlayapti",
   "dbDown": "Ma’lumotlar bazasi ishlamayapti",
   "version": "v%{version}",
