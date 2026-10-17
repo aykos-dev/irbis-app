@@ -25,5 +25,44 @@
     },
     "footnote": "You can change this any time in Profile › Settings. Place names stay in their local spelling."
   },
+  "experience": {
+    "bubble": "How much hiking have you done?",
+    "beginner": {
+      "title": "Beginner",
+      "sub": "New to the mountains — short, easy walks"
+    },
+    "weekend": {
+      "title": "Weekend hiker",
+      "sub": "A few trails a season, day hikes up to 15 km"
+    },
+    "experienced": {
+      "title": "Experienced",
+      "sub": "Multi-day treks, scrambles, high passes"
+    },
+    "boots": "Difficulty %{n} of 4",
+    "quizCard": "Everyone starts as a Wanderer. Experienced? Pass a short safety quiz to unlock harder places sooner."
+  },
+  "interests": {
+    "bubble": "What do you want to discover? Pick as many as you like.",
+    "peaks": "Peaks",
+    "caves": "Caves",
+    "lakes": "Lakes",
+    "camping": "Camping",
+    "trails": "Trails",
+    "count": {
+      "one": "%{count} selected",
+      "other": "%{count} selected"
+    },
+    "hint": "Your weekly path mixes these with safe options for the season."
+  },
+  "companion": {
+    "eyebrow": "Your starting companion",
+    "title": "Meet Bao, your panda cub!",
+    "level": "Wanderer",
+    "trait": "clumsy & cozy",
+    "body": "Bao grows as you learn safety skills and check in at real places. Six more forms are waiting.",
+    "locked": "Locked companions",
+    "letsGo": "Let's go!"
+  },
   "continue": "Continue"
 }

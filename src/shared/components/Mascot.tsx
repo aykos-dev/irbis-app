@@ -7,6 +7,7 @@ import { irbisExcitedSvg } from '../../assets/svg/irbisExcited';
 import { irbisProudSvg } from '../../assets/svg/irbisProud';
 import { irbisSleepySvg } from '../../assets/svg/irbisSleepy';
 import { irbisWorriedSvg } from '../../assets/svg/irbisWorried';
+import { pandaCheeringSvg } from '../../assets/svg/pandaCheering';
 
 /** Canvas mascot and companion art (irbis-docs/design/assets.md), final per owner (Q10). */
 const artwork = {
@@ -16,6 +17,7 @@ const artwork = {
   worried: irbisWorriedSvg,
   sleepy: irbisSleepySvg,
   panda: companionPandaSvg,
+  pandaCheering: pandaCheeringSvg,
   fox: companionFoxSvg,
 } as const;
 

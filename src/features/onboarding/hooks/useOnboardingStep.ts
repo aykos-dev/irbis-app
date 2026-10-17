@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 
 import { qaLog } from '../../../shared/utils/qaLog';
 
-export type OnboardingStep = 'splash' | 'welcome' | 'language';
+export type OnboardingStep = 'splash' | 'welcome' | 'language' | 'experience' | 'interests' | 'companion';
 
 /** Logs `onboarding_step` each time the step's screen gains focus. */
 export function useOnboardingStep(step: OnboardingStep): void {

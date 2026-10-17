@@ -5,6 +5,9 @@ import { useEffect, useState } from 'react';
 import type { OnboardingStackParamList } from '../../app/navigation/types';
 import { useAuth } from '../../shared/contexts/auth';
 import { useEndOnboarding } from './hooks/useEndOnboarding';
+import { CompanionScreen } from './screens/CompanionScreen';
+import { ExperienceScreen } from './screens/ExperienceScreen';
+import { InterestsScreen } from './screens/InterestsScreen';
 import { LanguageScreen } from './screens/LanguageScreen';
 import { SplashScreen } from './screens/SplashScreen';
 import { WelcomeScreen } from './screens/WelcomeScreen';
@@ -32,6 +35,9 @@ export function OnboardingNavigator() {
       <Stack.Screen name="Splash" component={SplashScreen} options={{ animation: 'fade' }} />
       <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ animation: 'fade' }} />
       <Stack.Screen name="Language" component={LanguageScreen} />
+      <Stack.Screen name="Experience" component={ExperienceScreen} />
+      <Stack.Screen name="Interests" component={InterestsScreen} />
+      <Stack.Screen name="Companion" component={CompanionScreen} options={{ animation: 'fade' }} />
     </Stack.Navigator>
   );
 }

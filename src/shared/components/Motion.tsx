@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 import { useReducedMotion } from 'react-native-reanimated';
 
 /** Every named mascot animation the app plays. */
-export type MotionName = 'irbis-wave' | 'irbis-nod';
+export type MotionName = 'irbis-wave' | 'irbis-nod' | 'irbis-clap' | 'onb5-reveal';
 
 /**
  * The only place animation sources are registered. None exist yet (owner Q13: placeholders), so

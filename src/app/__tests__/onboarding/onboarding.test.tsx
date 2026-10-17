@@ -149,14 +149,14 @@ describe('onboarding — Language step (AC3)', () => {
     expect(events('onboarding_language')).toEqual([{ event: 'onboarding_language', locale: 'uz' }]);
   });
 
-  it('AC3: Continue ends onboarding (via "finish") on the tabs and it never shows again', async () => {
+  it('AC3: Continue opens the Experience step without ending onboarding', async () => {
     await openLanguage();
 
     await fireEvent.press(screen.getByTestId('onboarding.continue'));
 
-    expect(await screen.findByTestId('nav.tab-path')).toBeOnTheScreen();
-    expect(storage.getString('onboarding.done')).toBe('1');
-    expect(events('onboarding_end')).toEqual([{ event: 'onboarding_end', via: 'finish', interestsCount: 0 }]);
+    expect(await screen.findByTestId('onboarding.experience')).toBeOnTheScreen();
+    expect(storage.getString('onboarding.done')).toBeUndefined();
+    expect(events('onboarding_end')).toEqual([]);
   });
 
   it('AC3: back returns to Welcome; ✕ ends onboarding with via "close"', async () => {

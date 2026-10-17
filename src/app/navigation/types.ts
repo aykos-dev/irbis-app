@@ -20,12 +20,15 @@ export type AuthStackParamList = {
 
 /**
  * Onboarding stack (features/onboarding.md): Splash → Welcome → Language → Experience → Interests
- * → Companion. Screens are added with the slice that builds them.
+ * → Companion.
  */
 export type OnboardingStackParamList = {
   Splash: undefined;
   Welcome: undefined;
   Language: undefined;
+  Experience: undefined;
+  Interests: undefined;
+  Companion: undefined;
 };
 
 /** Bottom tabs, per canvas Nav. */

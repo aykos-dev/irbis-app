@@ -84,7 +84,11 @@ export function LanguageScreen({ navigation }: OnboardingStackScreenProps<'Langu
         {t('onboarding.language.footnote')}
       </AppText>
       <View style={layout.grow} />
-      <AppButton testID="onboarding.continue" label={t('onboarding.continue')} onPress={() => end('finish')} />
+      <AppButton
+        testID="onboarding.continue"
+        label={t('onboarding.continue')}
+        onPress={() => navigation.navigate('Experience')}
+      />
     </Screen>
   );
 }

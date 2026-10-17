@@ -25,5 +25,44 @@
     },
     "footnote": "Tilni istalgan vaqt Profil › Sozlamalar bo‘limida o‘zgartirish mumkin. Joy nomlari mahalliy yozilishida qoladi."
   },
+  "experience": {
+    "bubble": "Piyoda sayohatda tajribang qanday?",
+    "beginner": {
+      "title": "Yangi boshlovchi",
+      "sub": "Tog‘lar men uchun yangi — qisqa, oson sayrlar"
+    },
+    "weekend": {
+      "title": "Dam olish kunlari sayyohi",
+      "sub": "Mavsumda bir necha yo‘l, 15 km gacha bir kunlik sayrlar"
+    },
+    "experienced": {
+      "title": "Tajribali",
+      "sub": "Ko‘p kunlik yurishlar, qoyalar, baland dovonlar"
+    },
+    "boots": "Qiyinlik: %{n} / 4",
+    "quizCard": "Hamma Sayyoh bo‘lib boshlaydi. Tajribalimisan? Qiyinroq joylarni tezroq ochish uchun xavfsizlik bo‘yicha qisqa testdan o‘t."
+  },
+  "interests": {
+    "bubble": "Nimalarni kashf qilmoqchisan? Xohlagancha tanla.",
+    "peaks": "Cho‘qqilar",
+    "caves": "G‘orlar",
+    "lakes": "Ko‘llar",
+    "camping": "Kemping",
+    "trails": "So‘qmoqlar",
+    "count": {
+      "one": "%{count} ta tanlandi",
+      "other": "%{count} ta tanlandi"
+    },
+    "hint": "Haftalik yo‘nalishing ularni mavsumga mos xavfsiz variantlar bilan aralashtiradi."
+  },
+  "companion": {
+    "eyebrow": "Ilk hamrohing",
+    "title": "Tanish bo‘l: Bao, sening panda bolachang!",
+    "level": "Sayyoh",
+    "trait": "beo‘xshov va yoqimtoy",
+    "body": "Bao sen xavfsizlikni o‘rganib, haqiqiy joylarda belgilanganingda o‘sadi. Yana oltita ko‘rinish kutmoqda.",
+    "locked": "Yopiq hamrohlar",
+    "letsGo": "Ketdik!"
+  },
   "continue": "Davom etish"
 }

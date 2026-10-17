@@ -14,6 +14,10 @@ type StorageSchema = {
   'guest.merged': string;
   /** '1' once onboarding ended (finished, closed or logged in) or the app opened signed in. */
   'onboarding.done': string;
+  /** Onboarding experience choice (`beginner` | `weekend` | `experienced`), saved on Continue. */
+  'onboarding.experience': string;
+  /** Onboarding interests: JSON array of ids in canonical order, saved on Continue. */
+  'onboarding.interests': string;
 };
 
 export type StorageKey = keyof StorageSchema;

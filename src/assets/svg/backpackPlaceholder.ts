@@ -1,0 +1,4 @@
+/**
+ * Orange backpack, placeholder art (MEDIA.md) for the Onb5 reveal (irbis-docs/design/media/onboarding/backpack-placeholder.svg). Artwork, not UI tokens — rendered with `SvgXml`.
+ */
+export const backpackPlaceholderSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120"><path d="M44 30 V22 a16 16 0 0 1 32 0 V30" fill="none" stroke="#E0850A" stroke-width="8" stroke-linecap="round"/><rect x="22" y="28" width="76" height="80" rx="24" fill="#FF9F1C"/><rect x="22" y="80" width="76" height="28" rx="14" fill="#E0850A"/><rect x="36" y="62" width="48" height="34" rx="12" fill="#E0850A"/><rect x="36" y="62" width="48" height="12" rx="6" fill="#FFB64D"/><rect x="56" y="70" width="8" height="10" rx="3" fill="#FFFFFF"/><rect x="32" y="38" width="10" height="20" rx="5" fill="#FFFFFF" fill-opacity=".35"/></svg>`;
