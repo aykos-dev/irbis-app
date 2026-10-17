@@ -63,7 +63,8 @@ jest.mock('@gorhom/bottom-sheet', () => {
       }
     }
   }
-  return { ...base, BottomSheetModal };
+  // __esModule: the stock mock is CommonJS, so `import BottomSheet from` would get the module.
+  return { ...base, __esModule: true, BottomSheetModal };
 });
 
 /*
@@ -72,4 +73,30 @@ jest.mock('@gorhom/bottom-sheet', () => {
  */
 beforeEach(() => {
   require('./src/shared/storage').storage.setString('onboarding.done', '1');
+});
+
+/*
+ * MapLibre has no Jest double. The map renders as a plain View (sources and layers draw nothing);
+ * LocationManager is controlled per test (default: permission refused, no fix).
+ */
+jest.mock('@maplibre/maplibre-react-native', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  const Map = ({ children, testID, accessibilityLabel }) =>
+    React.createElement(View, { testID, accessibilityLabel }, children);
+  const Nothing = () => null;
+  const GeoJSONSource = ({ children }) => React.createElement(React.Fragment, null, children);
+  return {
+    Map,
+    Camera: Nothing,
+    Images: Nothing,
+    Layer: Nothing,
+    GeoJSONSource,
+    LocationManager: {
+      requestPermissions: jest.fn(async () => false),
+      getCurrentPosition: jest.fn(async () => undefined),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+    },
+  };
 });

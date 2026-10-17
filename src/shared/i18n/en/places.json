@@ -52,5 +52,45 @@
     "heat": "Heat",
     "road": "Road"
   },
-  "notFound": "This place isn't available"
+  "notFound": "This place isn't available",
+  "explore": {
+    "countDevice": {
+      "one": "%{count} place near you",
+      "other": "%{count} places near you"
+    },
+    "countTashkent": {
+      "one": "%{count} place from Tashkent",
+      "other": "%{count} places from Tashkent"
+    },
+    "sorted": "Sorted by distance",
+    "cardMeta": "%{type} · %{distance}",
+    "empty": "No places match these filters",
+    "map": "Map of places",
+    "list": "Places list"
+  },
+  "typePlural": {
+    "peak": "Peaks",
+    "lake": "Lakes",
+    "cave": "Caves",
+    "camping": "Camping",
+    "trail": "Trails",
+    "waterfall": "Waterfalls",
+    "canyon": "Canyons"
+  },
+  "filter": {
+    "type": "Type",
+    "difficulty": "Difficulty",
+    "distance": "Distance",
+    "difficultyRange": "Difficulty %{min}–%{max}",
+    "maxKm": "≤ %{km} km",
+    "any": "Any",
+    "apply": "Show places",
+    "reset": "Reset filters",
+    "min": "From",
+    "max": "To"
+  },
+  "location": {
+    "banner": "Turn on location to see distances from you",
+    "turnOn": "Turn on"
+  }
 }

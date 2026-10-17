@@ -52,5 +52,45 @@
     "heat": "Issiq",
     "road": "Yo‘l"
   },
-  "notFound": "Bu joy mavjud emas"
+  "notFound": "Bu joy mavjud emas",
+  "explore": {
+    "countDevice": {
+      "one": "Yaqiningizda %{count} ta joy",
+      "other": "Yaqiningizda %{count} ta joy"
+    },
+    "countTashkent": {
+      "one": "Toshkentdan %{count} ta joy",
+      "other": "Toshkentdan %{count} ta joy"
+    },
+    "sorted": "Masofa bo‘yicha",
+    "cardMeta": "%{type} · %{distance}",
+    "empty": "Bu filtrlarga mos joy yo‘q",
+    "map": "Joylar xaritasi",
+    "list": "Joylar ro‘yxati"
+  },
+  "typePlural": {
+    "peak": "Cho‘qqilar",
+    "lake": "Ko‘llar",
+    "cave": "G‘orlar",
+    "camping": "Lagerlar",
+    "trail": "So‘qmoqlar",
+    "waterfall": "Sharsharalar",
+    "canyon": "Kanyonlar"
+  },
+  "filter": {
+    "type": "Turi",
+    "difficulty": "Qiyinlik",
+    "distance": "Masofa",
+    "difficultyRange": "Qiyinlik %{min}–%{max}",
+    "maxKm": "≤ %{km} km",
+    "any": "Istalgan",
+    "apply": "Joylarni ko‘rsatish",
+    "reset": "Filtrlarni tozalash",
+    "min": "Dan",
+    "max": "Gacha"
+  },
+  "location": {
+    "banner": "Sizdan masofani ko‘rish uchun joylashuvni yoqing",
+    "turnOn": "Yoqish"
+  }
 }
