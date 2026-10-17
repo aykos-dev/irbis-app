@@ -1,6 +1,6 @@
 import { LocationManager } from '@maplibre/maplibre-react-native';
-import { fireEvent, screen } from '@testing-library/react-native';
-import { Linking, PermissionsAndroid, Platform } from 'react-native';
+import { fireEvent, screen, within } from '@testing-library/react-native';
+import { Linking, PermissionsAndroid, Platform, StyleSheet } from 'react-native';
 
 import {
   openTab,
@@ -211,5 +211,30 @@ describe('places — Explore filters (AC5)', () => {
     expect(screen.getByTestId('explore.filter.type')).toHaveTextContent('Type');
     expect(screen.getByTestId('explore.filter.distance')).toHaveTextContent('Distance');
     expect(http.callsTo(URL).at(-1)?.params).toEqual({ limit: 200 });
+  });
+
+  it('AC5 (D1): the empty state sits in a sheet with a real height, sized to its content, not collapsed', async () => {
+    http.reply(URL, { status: 200, body: listBody([], 'tashkent') });
+    exploreFilters.set({ types: ['cave'], difficulty: { min: 5, max: 5 }, maxKm: null });
+    const sheetProps: Record<string, unknown>[] = [];
+    const MockSheet = jest.requireMock<{
+      default: { prototype: { props: Record<string, unknown>; render: () => unknown } };
+    }>('@gorhom/bottom-sheet').default;
+    const render = MockSheet.prototype.render;
+    const spy = jest.spyOn(MockSheet.prototype, 'render').mockImplementation(function (this: { props: Record<string, unknown> }) {
+      sheetProps.push(this.props);
+      return render.call(this);
+    });
+    await openExplore();
+
+    const empty = await screen.findByTestId('explore.empty');
+    spy.mockRestore();
+    // Dynamic sizing only measures BottomSheetView/scrollables; a plain child leaves the mask
+    // without a height, so a flex:1 empty state collapses to 0 and its children are clipped.
+    expect(sheetProps.at(-1)?.enableDynamicSizing).toBe(false);
+    // Centred in the 88 % content, the text and button fall below the collapsed 40 % snap.
+    expect(StyleSheet.flatten(empty.props.style)).not.toHaveProperty('flex', 1);
+    expect(within(empty).getByText('No places match these filters')).toBeOnTheScreen();
+    expect(within(empty).getByTestId('explore.filter.reset')).toBeOnTheScreen();
   });
 });

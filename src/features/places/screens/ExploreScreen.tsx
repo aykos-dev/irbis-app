@@ -75,6 +75,7 @@ export function ExploreScreen({ navigation }: MainTabScreenProps<'Explore'>) {
       ) : (
         <EmptyState
           testID="explore.empty"
+          inline
           mascot="worried"
           mascotLabel={t('places.explore.empty')}
           title={t('places.explore.empty')}
@@ -120,6 +121,7 @@ export function ExploreScreen({ navigation }: MainTabScreenProps<'Explore'>) {
       <BottomSheet
         index={0}
         snapPoints={SNAP_POINTS}
+        enableDynamicSizing={false}
         backgroundStyle={styles.sheet}
         handleIndicatorStyle={styles.handle}
       >
