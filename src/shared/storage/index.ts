@@ -18,6 +18,8 @@ type StorageSchema = {
   'onboarding.experience': string;
   /** Onboarding interests: JSON array of ids in canonical order, saved on Continue. */
   'onboarding.interests': string;
+  /** Explore's last loaded list for offline restarts: JSON `{ filters, data }` (no personal data). */
+  'explore.lastList': string;
 };
 
 export type StorageKey = keyof StorageSchema;
