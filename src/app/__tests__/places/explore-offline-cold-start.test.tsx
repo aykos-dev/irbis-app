@@ -7,9 +7,11 @@ import {
   renderApp,
   setUpApp,
   tearDownApp,
+  qaEvents,
   type HttpStub,
 } from '../auth/harness';
 import { exploreFilters } from '../../../features/places/exploreFilters';
+import { storage } from '../../../shared/storage';
 
 let http: HttpStub;
 
@@ -78,4 +80,21 @@ describe('conditions — Explore offline after a restart (AC8, Q11, D1)', () => 
 
     expect(qaEventNames().filter(name => name === 'explore_loaded')).toHaveLength(loads);
   });
+
+  it.each([
+    ['invalid_json', '{"filters":'],
+    ['invalid_shape', JSON.stringify({ filters: '[{}]', data: { total: 1, origin: 'tashkent' } })],
+  ])(
+    'D1: an unreadable saved list (%s) offline after a restart shows the offline state, is removed and logged',
+    async (reason, raw) => {
+      storage.setString('explore.lastList', raw);
+
+      await coldStartOffline();
+      await openTab('explore');
+
+      expect(await screen.findByTestId('explore.offline')).toBeOnTheScreen();
+      expect(storage.getString('explore.lastList')).toBeUndefined();
+      expect(qaEvents()).toContainEqual({ event: 'explore_saved_list_invalid', reason });
+    },
+  );
 });
