@@ -1,12 +1,36 @@
+import { hashKey, useQueryClient, type QueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 
-import { usePlacesList } from '../../../shared/api/generated';
+import { getPlacesListQueryKey, usePlacesList } from '../../../shared/api/generated';
+import type { PlaceListResponseDto, PlacesListParams } from '../../../shared/api/generated/model';
+import { useNetworkStatus } from '../../../shared/hooks/useNetworkStatus';
 import { qaLog } from '../../../shared/utils/qaLog';
 import { EXPLORE_LIMIT, toListParams, type ExploreFilters } from '../exploreFilters';
 import type { Coords } from './useOrigin';
 
 /** `types=peak&types=lake` — the API accepts a repeated key, not `types[]`. */
 const REPEAT_KEYS = { paramsSerializer: { indexes: null } } as const;
+
+/** Filters and limit of a list query, without the origin (lat/lng). */
+function withoutOrigin(params: PlacesListParams | undefined): string {
+  const { lat: _lat, lng: _lng, ...rest } = params ?? {};
+  return hashKey([rest]);
+}
+
+/**
+ * Offline (AC8): the newest cached list for the same filters, whatever origin it was loaded from,
+ * so a changed origin (e.g. a location fix arriving while offline) still shows the last list.
+ */
+function lastCachedList(client: QueryClient, params: PlacesListParams): PlaceListResponseDto | undefined {
+  const wanted = withoutOrigin(params);
+  const newest = client
+    .getQueryCache()
+    .findAll({ queryKey: getPlacesListQueryKey() })
+    .filter(cached => cached.state.data !== undefined)
+    .filter(cached => withoutOrigin(cached.queryKey[1] as PlacesListParams | undefined) === wanted)
+    .sort((a, b) => b.state.dataUpdatedAt - a.state.dataUpdatedAt)[0];
+  return newest?.state.data as PlaceListResponseDto | undefined;
+}
 
 /**
  * Explore's one list query (AC4, AC5): map and list share it, so a filter change refetches both
@@ -19,16 +43,22 @@ export function useExplorePlaces(
   originReady: boolean,
   appliedAt: number,
 ) {
-  const query = usePlacesList(
-    { ...coords, ...toListParams(filters), limit: EXPLORE_LIMIT },
-    { query: { enabled: originReady }, request: REPEAT_KEYS },
-  );
-  const { data, dataUpdatedAt } = query;
+  const client = useQueryClient();
+  const { isOnline } = useNetworkStatus();
+  const params = { ...coords, ...toListParams(filters), limit: EXPLORE_LIMIT };
+  const query = usePlacesList(params, {
+    query: {
+      enabled: originReady,
+      placeholderData: isOnline ? undefined : () => lastCachedList(client, params),
+    },
+    request: REPEAT_KEYS,
+  });
+  const { data, dataUpdatedAt, isPlaceholderData } = query;
   const loggedAt = useRef(0);
   const loggedApply = useRef(0);
 
   useEffect(() => {
-    if (!data || dataUpdatedAt === loggedAt.current) {
+    if (!data || isPlaceholderData || dataUpdatedAt === loggedAt.current) {
       return;
     }
     loggedAt.current = dataUpdatedAt;
@@ -47,7 +77,7 @@ export function useExplorePlaces(
         count: data.total,
       });
     }
-  }, [data, dataUpdatedAt, appliedAt, filters]);
+  }, [data, dataUpdatedAt, isPlaceholderData, appliedAt, filters]);
 
   return query;
 }
