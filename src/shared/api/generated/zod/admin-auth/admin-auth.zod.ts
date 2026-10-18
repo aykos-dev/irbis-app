@@ -16,6 +16,10 @@ export const AdminAuthLogInBody = zod.object({
   "password": zod.string()
 })
 
+export const adminAuthLogInResponseMeLevelMax = 7;
+
+
+
 export const AdminAuthLogInResponse = zod.object({
   "accessToken": zod.string(),
   "expiresIn": zod.number(),
@@ -28,7 +32,9 @@ export const AdminAuthLogInResponse = zod.object({
   "role": zod.enum(['user', 'admin']),
   "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
-  "createdAt": zod.iso.datetime({"offset":true})
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "level": zod.int().min(1).max(adminAuthLogInResponseMeLevelMax),
+  "xpTotal": zod.int().describe('Lifetime XP.')
 })
 })
 

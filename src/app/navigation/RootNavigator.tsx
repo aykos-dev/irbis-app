@@ -5,6 +5,7 @@ import { RecoveryPhoneScreen } from '../../features/auth/screens/RecoveryPhoneSc
 import { DebugScreen } from '../../features/debug/screens/DebugScreen';
 import { StatusScreen } from '../../features/health/screens/StatusScreen';
 import { CompanionsScreen } from '../../features/levels/screens/CompanionsScreen';
+import { LevelUpScreen } from '../../features/levels/screens/LevelUpScreen';
 import { LevelScreen } from '../../features/levels/screens/LevelScreen';
 import { PlaceScreen } from '../../features/places/screens/PlaceScreen';
 import { OnboardingNavigator } from '../../features/onboarding/OnboardingNavigator';
@@ -66,6 +67,11 @@ export function RootNavigator() {
       <Stack.Screen name="Place" component={PlaceScreen} />
       <Stack.Screen name="Level" component={LevelScreen} />
       <Stack.Screen name="Companions" component={CompanionsScreen} />
+      <Stack.Screen
+        name="LevelUp"
+        component={LevelUpScreen}
+        options={{ presentation: 'fullScreenModal', animation: 'fade', gestureEnabled: false }}
+      />
       {appConfig.isQaEnabled ? (
         <>
           <Stack.Screen name="Debug" component={DebugScreen} />

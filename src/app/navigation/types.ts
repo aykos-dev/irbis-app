@@ -40,6 +40,20 @@ export type MainTabParamList = {
   Profile: undefined;
 };
 
+/**
+ * QA level grant from `irbis://debug/levels/grant` (levels AC8): `grant` marks a grant request,
+ * the rest are counts, every one optional.
+ */
+export type DebugGrantParams = {
+  grant: true;
+  xp?: number;
+  lessons?: number;
+  tier?: string;
+  checkins?: number;
+  difficulty?: number;
+  spots?: number;
+};
+
 export type RootStackParamList = {
   /** First launch only (no `onboarding.done`, no session). */
   Onboarding: NavigatorScreenParams<OnboardingStackParamList> | undefined;
@@ -48,8 +62,8 @@ export type RootStackParamList = {
   RecoveryPhone: undefined;
   /** Safety & SOS: its empty state until `safety-center` ships. */
   Safety: undefined;
-  /** Dev and staging builds only. */
-  Debug: undefined;
+  /** Dev and staging builds only. Grant params come from the QA grant link (levels AC8). */
+  Debug: DebugGrantParams | undefined;
   Status: undefined;
   /** Place screen (places AC7). Explore passes the device position when it has one. */
   Place: { id: string; lat?: number; lng?: number };
@@ -57,6 +71,14 @@ export type RootStackParamList = {
   Level: undefined;
   /** All seven companions (levels AC6). */
   Companions: undefined;
+  /** Full-screen level-up celebration for one pending level-up (levels AC7). */
+  LevelUp: {
+    id: string;
+    fromLevel: number;
+    toLevel: number;
+    maxDifficulty: number;
+    newPlacesCount: number;
+  };
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<

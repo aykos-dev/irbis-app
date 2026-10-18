@@ -19,6 +19,10 @@ export const AuthSignUpBody = zod.object({
   "acceptTerms": zod.boolean()
 })
 
+export const authSignUpResponseMeLevelMax = 7;
+
+
+
 export const AuthSignUpResponse = zod.object({
   "accessToken": zod.string().describe('JWT, sent as `Authorization: Bearer`.'),
   "refreshToken": zod.string().describe('Opaque; rotate on every refresh.'),
@@ -32,7 +36,9 @@ export const AuthSignUpResponse = zod.object({
   "role": zod.enum(['user', 'admin']),
   "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
-  "createdAt": zod.iso.datetime({"offset":true})
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "level": zod.int().min(1).max(authSignUpResponseMeLevelMax),
+  "xpTotal": zod.int().describe('Lifetime XP.')
 })
 })
 
@@ -56,6 +62,10 @@ export const AuthLogInBody = zod.object({
   "password": zod.string()
 })
 
+export const authLogInResponseMeLevelMax = 7;
+
+
+
 export const AuthLogInResponse = zod.object({
   "accessToken": zod.string().describe('JWT, sent as `Authorization: Bearer`.'),
   "refreshToken": zod.string().describe('Opaque; rotate on every refresh.'),
@@ -69,7 +79,9 @@ export const AuthLogInResponse = zod.object({
   "role": zod.enum(['user', 'admin']),
   "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
-  "createdAt": zod.iso.datetime({"offset":true})
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "level": zod.int().min(1).max(authLogInResponseMeLevelMax),
+  "xpTotal": zod.int().describe('Lifetime XP.')
 })
 })
 
@@ -115,6 +127,10 @@ export const AuthResetPasswordBody = zod.object({
   "newPassword": zod.string().describe('6-64 chars, not the username, not a common password.')
 })
 
+export const authResetPasswordResponseMeLevelMax = 7;
+
+
+
 export const AuthResetPasswordResponse = zod.object({
   "accessToken": zod.string().describe('JWT, sent as `Authorization: Bearer`.'),
   "refreshToken": zod.string().describe('Opaque; rotate on every refresh.'),
@@ -128,7 +144,9 @@ export const AuthResetPasswordResponse = zod.object({
   "role": zod.enum(['user', 'admin']),
   "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
-  "createdAt": zod.iso.datetime({"offset":true})
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "level": zod.int().min(1).max(authResetPasswordResponseMeLevelMax),
+  "xpTotal": zod.int().describe('Lifetime XP.')
 })
 })
 

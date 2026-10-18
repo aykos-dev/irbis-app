@@ -110,6 +110,26 @@ export const levelRequirementColors = {
   spotsBar: palette.pine,
 } as const;
 
+/**
+ * LevelUp screen (canvas LevelUp, brief levels-4): teal backdrop, sunburst rays, flash and glow,
+ * the yellow headline and boots, the gold Continue button and the four confetti rects.
+ * `bg` and `headline` are not in design.md yet.
+ */
+export const levelUpColors = {
+  bg: '#0B6F6A',
+  headline: '#FFD95A',
+  boots: '#FFD95A',
+  ray: palette.white,
+  flash: palette.white,
+  glow: palette.white,
+  card: palette.white,
+  continue: palette.gold,
+  continueEdge: palette.goldEdge,
+  onContinue: palette.onGold,
+  path: palette.white,
+  confetti: [palette.gold, palette.orange, palette.sky, palette.red],
+} as const;
+
 export const mascotColors = {
   fur: '#EDF0F3',
   rosettes: '#8E99A6',

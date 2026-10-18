@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import type { RootStackParamList, RootStackScreenProps } from '../../../app/navigation/types';
+import { useGrantLink } from '../hooks/useGrantLink';
 import { AppText } from '../../../shared/components/AppText';
 import { Icon } from '../../../shared/components/Icon';
 import { ListCard, ListRow } from '../../../shared/components/ListRow';
@@ -18,9 +19,11 @@ const ROW_ICON = 22;
 
 /**
  * Dev and staging tools (AC7, AC10). Registered in the root stack only outside production, so a
- * production build has no route, no row and no deep link to it.
+ * production build has no route, no row and no deep link to it. Opened by the QA grant link, it
+ * runs the level grant (levels AC8).
  */
-export function DebugScreen(_props: RootStackScreenProps<'Debug'>) {
+export function DebugScreen({ route }: RootStackScreenProps<'Debug'>) {
+  useGrantLink(route.params);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { colors } = useTheme();
   const requireAccount = useRequireAccount('progress');

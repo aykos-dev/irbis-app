@@ -5,6 +5,8 @@ import { SvgXml } from 'react-native-svg';
 import { bootSvg } from '../../../assets/svg/boot';
 import type { PlaceListItemDto } from '../../../shared/api/generated/model';
 import { AppText } from '../../../shared/components/AppText';
+import { Icon } from '../../../shared/components/Icon';
+import { levelMeta } from '../../../shared/components/levels/levelMeta';
 import { statusVariant } from '../../../shared/components/conditions/reasonText';
 import { Pressable } from '../../../shared/components/Pressable';
 import { StatusChip } from '../../../shared/components/StatusChip';
@@ -21,18 +23,22 @@ const BOOT = 14;
 /** Thumb shows the type hero in a 390×240-aspect frame. */
 const THUMB_HEIGHT = 56;
 const THUMB_WIDTH = (THUMB_HEIGHT * 390) / 240;
+const LOCK_ICON = 12;
 
 type Props = {
   place: PlaceListItemDto;
   locale: Locale;
+  /** The viewer's level (1 for a guest or before it loads); places above it show a lock (levels AC8). */
+  viewerLevel: number;
   onPress: (place: PlaceListItemDto) => void;
 };
 
 /**
  * One Explore row (AC4): type illustration, name (locale → uz), "Type · distance" with the weekend
- * status chip when there is one (conditions AC8), boots.
+ * status chip when there is one (conditions AC8), boots, and a "Level N" lock chip in the level colour
+ * when the place needs a higher level than the viewer's (levels AC8).
  */
-export const PlaceCard = memo(function PlaceCard({ place, locale, onPress }: Props) {
+export const PlaceCard = memo(function PlaceCard({ place, locale, viewerLevel, onPress }: Props) {
   const { colors } = useTheme();
   const styles = useStyles();
   const info = placeTypes[place.type];
@@ -44,7 +50,9 @@ export const PlaceCard = memo(function PlaceCard({ place, locale, onPress }: Pro
   const difficulty = t('places.difficulty', { d: place.difficulty });
   const status = place.conditionStatus ?? null;
   const statusLabel = status ? t(`conditions.status.${status}`) : null;
-  const a11yLabel = [name, meta, statusLabel, difficulty].filter(Boolean).join(', ');
+  const locked = place.requiredLevel > viewerLevel ? levelMeta(place.requiredLevel) : null;
+  const lockLabel = locked ? t('levels.lockA11y', { n: locked.level }) : null;
+  const a11yLabel = [name, meta, statusLabel, difficulty, lockLabel].filter(Boolean).join(', ');
 
   return (
     <Pressable
@@ -74,6 +82,17 @@ export const PlaceCard = memo(function PlaceCard({ place, locale, onPress }: Pro
           ) : null}
         </View>
         <View style={layout.boots}>
+          {locked ? (
+            <View
+              testID={`explore.card.${place.slug}.lock`}
+              style={[layout.lock, { backgroundColor: locked.tint, borderColor: locked.color }]}
+            >
+              <Icon name="lock" color={locked.text} size={LOCK_ICON} />
+              <AppText variant="chip" style={{ color: locked.text }}>
+                {t('levels.lockChip', { n: locked.level })}
+              </AppText>
+            </View>
+          ) : null}
           {Array.from({ length: BOOTS_MAX }, (_, index) => (
             <SvgXml
               key={index}
@@ -98,7 +117,16 @@ const layout = StyleSheet.create({
   },
   image: { width: '100%', height: '100%' },
   text: { flex: 1, gap: spacing[4] },
-  boots: { flexDirection: 'row', gap: spacing[4] },
+  boots: { flexDirection: 'row', alignItems: 'center', gap: spacing[4] },
+  lock: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[4],
+    paddingHorizontal: spacing[6],
+    borderRadius: radii.pill,
+    borderWidth: borders.card,
+    marginEnd: spacing[4],
+  },
   meta: { flexDirection: 'row', alignItems: 'center', gap: spacing[8] },
   metaText: { flexShrink: 1 },
 });

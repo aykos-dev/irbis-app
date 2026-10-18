@@ -4,6 +4,7 @@ import { StatusBar, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { MainTabScreenProps } from '../../../app/navigation/types';
+import { useMeLevelGet } from '../../../shared/api/generated';
 import type { PlaceListItemDto, PlaceListResponseDto } from '../../../shared/api/generated/model';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
@@ -11,7 +12,9 @@ import { EmptyState } from '../../../shared/components/EmptyState';
 import { ErrorState } from '../../../shared/components/ErrorState';
 import { OfflineBanner } from '../../../shared/components/OfflineBanner';
 import { Skeleton } from '../../../shared/components/Skeleton';
+import { MIN_LEVEL } from '../../../shared/components/levels/levelMeta';
 import { radii, screenPadding, spacing } from '../../../shared/constants/spacing';
+import { useAuth } from '../../../shared/contexts/auth';
 import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
 import { useLocale } from '../../../shared/hooks/useLocale';
 import { useNetworkStatus } from '../../../shared/hooks/useNetworkStatus';
@@ -47,6 +50,7 @@ export function ExploreScreen({ navigation }: MainTabScreenProps<'Explore'>) {
   const [sheet, setSheet] = useState<{ kind: FilterKind; closing: boolean } | null>(null);
   const query = useExplorePlaces(filters, origin.coords, origin.state.status !== 'pending', appliedAt);
   const { coords } = origin;
+  const viewerLevel = useViewerLevel();
 
   const camera: MapCamera = coords ? { ...coords, zoom: USER_ZOOM } : TASHKENT;
 
@@ -71,7 +75,7 @@ export function ExploreScreen({ navigation }: MainTabScreenProps<'Explore'>) {
   if (data) {
     body =
       data.items.length > 0 ? (
-        <PlacesList data={data} locale={locale} onOpenPlace={openPlace} />
+        <PlacesList data={data} locale={locale} viewerLevel={viewerLevel} onOpenPlace={openPlace} />
       ) : (
         <EmptyState
           testID="explore.empty"
@@ -145,11 +149,19 @@ export function ExploreScreen({ navigation }: MainTabScreenProps<'Explore'>) {
 type ListProps = {
   data: PlaceListResponseDto;
   locale: Locale;
+  viewerLevel: number;
   onOpenPlace: (place: PlaceListItemDto) => void;
 };
 
 /** Header (count by origin, "Sorted by distance") and the cards, in API order (AC4). */
-function PlacesList({ data, locale, onOpenPlace }: ListProps) {
+/** The signed-in level for the lock chips (levels AC8); a guest, or a level not loaded yet, is level 1. */
+function useViewerLevel(): number {
+  const { status } = useAuth();
+  const { data } = useMeLevelGet({ query: { enabled: status === 'signedIn' } });
+  return status === 'signedIn' ? (data?.level ?? MIN_LEVEL) : MIN_LEVEL;
+}
+
+function PlacesList({ data, locale, viewerLevel, onOpenPlace }: ListProps) {
   const countKey = data.origin === 'device' ? 'places.explore.countDevice' : 'places.explore.countTashkent';
   return (
     <BottomSheetFlatList
@@ -167,7 +179,7 @@ function PlacesList({ data, locale, onOpenPlace }: ListProps) {
         </View>
       }
       renderItem={({ item }: { item: PlaceListItemDto }) => (
-        <PlaceCard place={item} locale={locale} onPress={onOpenPlace} />
+        <PlaceCard place={item} locale={locale} viewerLevel={viewerLevel} onPress={onOpenPlace} />
       )}
     />
   );

@@ -17,4 +17,10 @@ export interface AdminUserListItemDto {
   lastActiveAt: string;
   /** @nullable */
   recoveryPhoneMasked: string | null;
+  /**
+     * The user's current level (User.level).
+     * @minimum 1
+     * @maximum 7
+     */
+  level: number;
 }

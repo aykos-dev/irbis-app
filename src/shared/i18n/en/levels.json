@@ -96,5 +96,24 @@
     "join": " · "
   },
   "error": "Couldn't load your level",
-  "offline": "You're offline — level not loaded"
+  "offline": "You're offline — level not loaded",
+  "up": {
+    "eyebrow": "LEVEL UP!",
+    "title": "You're a %{name}",
+    "unlocked": "NEWLY UNLOCKED",
+    "places": {
+      "one": "%{unlock} · %{count} new place",
+      "other": "%{unlock} · %{count} new places"
+    },
+    "share": "Share",
+    "continue": "Continue",
+    "shareText": "I'm now a %{name} on Irbis!",
+    "skipHint": "Tap to skip"
+  },
+  "lockChip": "Level %{n}",
+  "lockA11y": "Locked — needs Level %{n}",
+  "debug": {
+    "granted": "Granted",
+    "grantFailed": "Grant failed"
+  }
 }

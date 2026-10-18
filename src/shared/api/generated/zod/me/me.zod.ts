@@ -11,6 +11,10 @@ import * as zod from 'zod';
 /**
  * @summary The signed-in user
  */
+export const meGetResponseLevelMax = 7;
+
+
+
 export const MeGetResponse = zod.object({
   "id": zod.uuid(),
   "username": zod.string(),
@@ -20,7 +24,9 @@ export const MeGetResponse = zod.object({
   "role": zod.enum(['user', 'admin']),
   "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
-  "createdAt": zod.iso.datetime({"offset":true})
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "level": zod.int().min(1).max(meGetResponseLevelMax),
+  "xpTotal": zod.int().describe('Lifetime XP.')
 })
 
 /**
@@ -41,6 +47,10 @@ export const MeVerifyRecoveryPhoneBody = zod.object({
   "code": zod.string()
 })
 
+export const meVerifyRecoveryPhoneResponseLevelMax = 7;
+
+
+
 export const MeVerifyRecoveryPhoneResponse = zod.object({
   "id": zod.uuid(),
   "username": zod.string(),
@@ -50,7 +60,9 @@ export const MeVerifyRecoveryPhoneResponse = zod.object({
   "role": zod.enum(['user', 'admin']),
   "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
-  "createdAt": zod.iso.datetime({"offset":true})
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "level": zod.int().min(1).max(meVerifyRecoveryPhoneResponseLevelMax),
+  "xpTotal": zod.int().describe('Lifetime XP.')
 })
 
 /**

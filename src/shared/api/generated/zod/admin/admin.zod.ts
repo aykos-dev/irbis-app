@@ -42,6 +42,10 @@ export const AdminListUsersQueryParams = zod.object({
   "limit": zod.number().min(1).max(adminListUsersQueryLimitMax).default(adminListUsersQueryLimitDefault)
 })
 
+export const adminListUsersResponseItemsItemLevelMax = 7;
+
+
+
 export const AdminListUsersResponse = zod.object({
   "items": zod.array(zod.object({
   "id": zod.uuid(),
@@ -50,7 +54,8 @@ export const AdminListUsersResponse = zod.object({
   "status": zod.enum(['active', 'blocked', 'locked']),
   "joinedAt": zod.iso.datetime({"offset":true}),
   "lastActiveAt": zod.iso.datetime({"offset":true}),
-  "recoveryPhoneMasked": zod.string().nullable()
+  "recoveryPhoneMasked": zod.string().nullable(),
+  "level": zod.int().min(1).max(adminListUsersResponseItemsItemLevelMax).describe('The user\'s current level (User.level).')
 })),
   "nextCursor": zod.string().nullable(),
   "total": zod.number().describe('Users matching the filters, ignoring the cursor.')
@@ -63,6 +68,10 @@ export const AdminGetUserParams = zod.object({
   "id": zod.uuid()
 })
 
+export const adminGetUserResponseLevelMax = 7;
+
+
+
 export const AdminGetUserResponse = zod.object({
   "id": zod.uuid(),
   "username": zod.string(),
@@ -71,13 +80,13 @@ export const AdminGetUserResponse = zod.object({
   "joinedAt": zod.iso.datetime({"offset":true}),
   "lastActiveAt": zod.iso.datetime({"offset":true}),
   "recoveryPhoneMasked": zod.string().nullable(),
+  "level": zod.int().min(1).max(adminGetUserResponseLevelMax).describe('The user\'s current level (User.level).'),
   "locale": zod.enum(['uz', 'ru', 'en']),
   "recoveryPhoneVerified": zod.boolean(),
   "blockedAt": zod.iso.datetime({"offset":true}).nullable(),
   "blockReasonCode": zod.union([zod.enum(['spam', 'harassment', 'unsafe', 'fake_content', 'other']),zod.null()]),
   "lockedForSec": zod.number().nullable().describe('Seconds the log-in lockout still lasts; null when not locked.'),
-  "sessionsCount": zod.number().describe('Signed-in sessions (refresh tokens still valid).'),
-  "level": zod.number().nullable().describe('Always null until the levels feature exists.')
+  "sessionsCount": zod.number().describe('Signed-in sessions (refresh tokens still valid).')
 })
 
 /**
@@ -96,6 +105,10 @@ export const AdminBlockUserBody = zod.object({
   "note": zod.string().max(adminBlockUserBodyNoteMax)
 })
 
+export const adminBlockUserResponseLevelMax = 7;
+
+
+
 export const AdminBlockUserResponse = zod.object({
   "id": zod.uuid(),
   "username": zod.string(),
@@ -104,13 +117,13 @@ export const AdminBlockUserResponse = zod.object({
   "joinedAt": zod.iso.datetime({"offset":true}),
   "lastActiveAt": zod.iso.datetime({"offset":true}),
   "recoveryPhoneMasked": zod.string().nullable(),
+  "level": zod.int().min(1).max(adminBlockUserResponseLevelMax).describe('The user\'s current level (User.level).'),
   "locale": zod.enum(['uz', 'ru', 'en']),
   "recoveryPhoneVerified": zod.boolean(),
   "blockedAt": zod.iso.datetime({"offset":true}).nullable(),
   "blockReasonCode": zod.union([zod.enum(['spam', 'harassment', 'unsafe', 'fake_content', 'other']),zod.null()]),
   "lockedForSec": zod.number().nullable().describe('Seconds the log-in lockout still lasts; null when not locked.'),
-  "sessionsCount": zod.number().describe('Signed-in sessions (refresh tokens still valid).'),
-  "level": zod.number().nullable().describe('Always null until the levels feature exists.')
+  "sessionsCount": zod.number().describe('Signed-in sessions (refresh tokens still valid).')
 })
 
 /**
@@ -129,6 +142,10 @@ export const AdminUnblockUserBody = zod.object({
   "note": zod.string().max(adminUnblockUserBodyNoteMax)
 })
 
+export const adminUnblockUserResponseLevelMax = 7;
+
+
+
 export const AdminUnblockUserResponse = zod.object({
   "id": zod.uuid(),
   "username": zod.string(),
@@ -137,13 +154,13 @@ export const AdminUnblockUserResponse = zod.object({
   "joinedAt": zod.iso.datetime({"offset":true}),
   "lastActiveAt": zod.iso.datetime({"offset":true}),
   "recoveryPhoneMasked": zod.string().nullable(),
+  "level": zod.int().min(1).max(adminUnblockUserResponseLevelMax).describe('The user\'s current level (User.level).'),
   "locale": zod.enum(['uz', 'ru', 'en']),
   "recoveryPhoneVerified": zod.boolean(),
   "blockedAt": zod.iso.datetime({"offset":true}).nullable(),
   "blockReasonCode": zod.union([zod.enum(['spam', 'harassment', 'unsafe', 'fake_content', 'other']),zod.null()]),
   "lockedForSec": zod.number().nullable().describe('Seconds the log-in lockout still lasts; null when not locked.'),
-  "sessionsCount": zod.number().describe('Signed-in sessions (refresh tokens still valid).'),
-  "level": zod.number().nullable().describe('Always null until the levels feature exists.')
+  "sessionsCount": zod.number().describe('Signed-in sessions (refresh tokens still valid).')
 })
 
 /**
@@ -180,6 +197,10 @@ export const AdminSetUserRecoveryPhoneBody = zod.object({
   "note": zod.string().max(adminSetUserRecoveryPhoneBodyNoteMax)
 })
 
+export const adminSetUserRecoveryPhoneResponseLevelMax = 7;
+
+
+
 export const AdminSetUserRecoveryPhoneResponse = zod.object({
   "id": zod.uuid(),
   "username": zod.string(),
@@ -188,13 +209,13 @@ export const AdminSetUserRecoveryPhoneResponse = zod.object({
   "joinedAt": zod.iso.datetime({"offset":true}),
   "lastActiveAt": zod.iso.datetime({"offset":true}),
   "recoveryPhoneMasked": zod.string().nullable(),
+  "level": zod.int().min(1).max(adminSetUserRecoveryPhoneResponseLevelMax).describe('The user\'s current level (User.level).'),
   "locale": zod.enum(['uz', 'ru', 'en']),
   "recoveryPhoneVerified": zod.boolean(),
   "blockedAt": zod.iso.datetime({"offset":true}).nullable(),
   "blockReasonCode": zod.union([zod.enum(['spam', 'harassment', 'unsafe', 'fake_content', 'other']),zod.null()]),
   "lockedForSec": zod.number().nullable().describe('Seconds the log-in lockout still lasts; null when not locked.'),
-  "sessionsCount": zod.number().describe('Signed-in sessions (refresh tokens still valid).'),
-  "level": zod.number().nullable().describe('Always null until the levels feature exists.')
+  "sessionsCount": zod.number().describe('Signed-in sessions (refresh tokens still valid).')
 })
 
 /**
@@ -213,6 +234,10 @@ export const AdminSetUserRoleBody = zod.object({
   "note": zod.string().max(adminSetUserRoleBodyNoteMax)
 })
 
+export const adminSetUserRoleResponseLevelMax = 7;
+
+
+
 export const AdminSetUserRoleResponse = zod.object({
   "id": zod.uuid(),
   "username": zod.string(),
@@ -221,13 +246,13 @@ export const AdminSetUserRoleResponse = zod.object({
   "joinedAt": zod.iso.datetime({"offset":true}),
   "lastActiveAt": zod.iso.datetime({"offset":true}),
   "recoveryPhoneMasked": zod.string().nullable(),
+  "level": zod.int().min(1).max(adminSetUserRoleResponseLevelMax).describe('The user\'s current level (User.level).'),
   "locale": zod.enum(['uz', 'ru', 'en']),
   "recoveryPhoneVerified": zod.boolean(),
   "blockedAt": zod.iso.datetime({"offset":true}).nullable(),
   "blockReasonCode": zod.union([zod.enum(['spam', 'harassment', 'unsafe', 'fake_content', 'other']),zod.null()]),
   "lockedForSec": zod.number().nullable().describe('Seconds the log-in lockout still lasts; null when not locked.'),
-  "sessionsCount": zod.number().describe('Signed-in sessions (refresh tokens still valid).'),
-  "level": zod.number().nullable().describe('Always null until the levels feature exists.')
+  "sessionsCount": zod.number().describe('Signed-in sessions (refresh tokens still valid).')
 })
 
 /**

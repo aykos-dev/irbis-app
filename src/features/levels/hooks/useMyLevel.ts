@@ -53,6 +53,10 @@ export function useMyLevel() {
   const query = useMeLevelGet({
     query: {
       enabled: status === 'signedIn',
+      // The app shell's level-up queue loads the level at start. Online, a screen opened after
+      // that load failed shows the error with Try again; offline it refetches (paused) and shows
+      // the saved level or the offline state.
+      retryOnMount: !isOnline,
       placeholderData: isOnline ? undefined : () => savedLevel(userId),
     },
   });

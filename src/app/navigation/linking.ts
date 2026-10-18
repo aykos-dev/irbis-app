@@ -1,5 +1,6 @@
 import { getStateFromPath, type LinkingOptions } from '@react-navigation/native';
 
+import { DEBUG_GRANT, parseGrantQuery } from '../../features/debug/grantLink';
 import { markOnboardingDone, resetOnboarding } from '../../features/onboarding/onboardingStore';
 import { appConfig } from '../../shared/constants/config';
 import { resetGuestMerge } from '../../shared/guest/guestStore';
@@ -9,7 +10,8 @@ import type { RootStackParamList } from './types';
 /**
  * Deep-link config. `irbis://profile` opens the Profile tab; `irbis://place/<id>` opens a place. The debug links
  * (`irbis://debug`, `irbis://debug/status`, `irbis://debug/lang/<uz|ru|en>`,
- * `irbis://debug/onboarding/<reset|done>`) exist only outside production (AC10). Other planned routes (docs/architecture.md: trips, lessons) are added
+ * `irbis://debug/onboarding/<reset|done>`, `irbis://debug/levels/grant?xp=&lessons=&tier=&checkins=&difficulty=&spots=`)
+ * exist only outside production (AC10). Other planned routes (docs/architecture.md: trips, lessons) are added
  * with the screen they open.
  */
 const debugScreens: Record<string, string> = appConfig.isQaEnabled
@@ -44,6 +46,10 @@ const debugLangParser: Pick<LinkingOptions<RootStackParamList>, 'getStateFromPat
   appConfig.isQaEnabled
     ? {
         getStateFromPath: (path, options) => {
+          const grant = DEBUG_GRANT.exec(path);
+          if (grant) {
+            return { routes: [{ name: 'Debug', params: parseGrantQuery(grant[1] ?? '') }] };
+          }
           const onboarding = DEBUG_ONBOARDING.exec(path);
           if (onboarding?.[1]) {
             return debugOnboardingState(onboarding[1], options);

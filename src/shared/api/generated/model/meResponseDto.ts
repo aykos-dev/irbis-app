@@ -22,4 +22,11 @@ export interface MeResponseDto {
   /** A recovery phone was added and its code is waiting to be verified. */
   recoveryPhonePending: boolean;
   createdAt: string;
+  /**
+     * @minimum 1
+     * @maximum 7
+     */
+  level: number;
+  /** Lifetime XP. */
+  xpTotal: number;
 }

@@ -96,5 +96,24 @@
     "join": " · "
   },
   "error": "Darajani yuklab bo‘lmadi",
-  "offline": "Internet yo‘q — daraja yuklanmadi"
+  "offline": "Internet yo‘q — daraja yuklanmadi",
+  "up": {
+    "eyebrow": "YANGI DARAJA!",
+    "title": "Siz endi — %{name}",
+    "unlocked": "YANGI OCHILDI",
+    "places": {
+      "one": "%{unlock} · %{count} ta yangi joy",
+      "other": "%{unlock} · %{count} ta yangi joy"
+    },
+    "share": "Ulashish",
+    "continue": "Davom etish",
+    "shareText": "Men endi Irbis’da — %{name}!",
+    "skipHint": "O‘tkazib yuborish uchun bosing"
+  },
+  "lockChip": "%{n}-daraja",
+  "lockA11y": "Yopiq — %{n}-daraja kerak",
+  "debug": {
+    "granted": "Berildi",
+    "grantFailed": "Berib bo‘lmadi"
+  }
 }

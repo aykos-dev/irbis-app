@@ -19,6 +19,12 @@ export interface AdminUserDetailDto {
   lastActiveAt: string;
   /** @nullable */
   recoveryPhoneMasked: string | null;
+  /**
+     * The user's current level (User.level).
+     * @minimum 1
+     * @maximum 7
+     */
+  level: number;
   locale: Locale;
   recoveryPhoneVerified: boolean;
   /** @nullable */
@@ -31,9 +37,4 @@ export interface AdminUserDetailDto {
   lockedForSec: number | null;
   /** Signed-in sessions (refresh tokens still valid). */
   sessionsCount: number;
-  /**
-     * Always null until the levels feature exists.
-     * @nullable
-     */
-  level: number | null;
 }
