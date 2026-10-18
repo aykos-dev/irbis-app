@@ -1,0 +1,100 @@
+{
+  "title": "Sizning darajangiz",
+  "pill": "%{n}-DARAJA",
+  "since": "%{animal} · %{year}-yil %{month}dan beri",
+  "months": {
+    "1": "yanvar",
+    "2": "fevral",
+    "3": "mart",
+    "4": "aprel",
+    "5": "may",
+    "6": "iyun",
+    "7": "iyul",
+    "8": "avgust",
+    "9": "sentabr",
+    "10": "oktabr",
+    "11": "noyabr",
+    "12": "dekabr"
+  },
+  "animal": {
+    "1": "Panda bolasi",
+    "2": "Sug‘ur",
+    "3": "Tulki",
+    "4": "Tog‘ echkisi",
+    "5": "Qo‘ng‘ir ayiq",
+    "6": "Burgut",
+    "7": "Qor qoploni"
+  },
+  "trait": {
+    "1": "beo‘xshov va yoqimtoy",
+    "2": "qiziquvchan",
+    "3": "aqlli",
+    "4": "qoyada ishonchli",
+    "5": "kuchli va g‘amxo‘r",
+    "6": "o‘tkir ko‘zli",
+    "7": "noyob va hurmatli"
+  },
+  "unlock": {
+    "1": "1-qiyinlikdagi joylar",
+    "2": "2-qiyinlikdagi joylar",
+    "3": "3-qiyinlik va tunab qolinadigan sayohatlar",
+    "4": "qoyaga tirmashish va baland dovonlar",
+    "5": "4-qiyinlik va guruh sayohatlarini boshqarish",
+    "6": "boshqa sayyohlar joylarini tasdiqlash",
+    "7": "5-qiyinlik va Afsona ramkasi"
+  },
+  "toReach": "%{n}-darajaga yetish uchun · %{name}",
+  "req": {
+    "xp": "XP to‘plang",
+    "lessonsCount": "Xavfsizlik darslari",
+    "lessonsTier": "%{tier}-bosqich xavfsizlik darslari",
+    "lessonsFirstAid": "Birinchi yordam darslari",
+    "lessonsAll": "Barcha xavfsizlik darslari",
+    "checkIns": "%{d}+ qiyinlikda tasdiqlangan belgilar",
+    "checkInsNote": "Joyida GPS orqali belgilanish hisoblanadi; faqat suratlar hisoblanmaydi.",
+    "spots": "Tasdiqlangan joylar"
+  },
+  "next": {
+    "cap": "Keyingi hamroh",
+    "name": "%{name} · ???",
+    "unlocks": "Ochadi: %{unlock}."
+  },
+  "max": "Siz Qor afsonasisiz — bu eng yuqori daraja.",
+  "continue": "O‘qishni davom ettirish",
+  "seeAll": "Barcha hamrohlar",
+  "guest": {
+    "title": "XP yig‘ish va darajani oshirish uchun akkaunt yarating"
+  },
+  "companions": {
+    "title": "Hamrohlar",
+    "eyebrow": "Yetti hamroh, bitta ryukzak",
+    "start": "Har bir sayyoh shu yerdan boshlaydi.",
+    "you": "Siz",
+    "unlocks": "Ochadi: %{unlock}"
+  },
+  "fmt": {
+    "lessonsCount": {
+      "one": "%{count} ta xavfsizlik darsi",
+      "other": "%{count} ta xavfsizlik darsi"
+    },
+    "lessonsTier": "%{tier}-bosqich darslari",
+    "lessonsFirstAid": "Birinchi yordam bosqichi",
+    "lessonsAll": "barcha bosqichlar",
+    "checkIns": {
+      "one": "%{count} ta tasdiqlangan belgi",
+      "other": "%{count} ta tasdiqlangan belgi"
+    },
+    "checkInsAt": {
+      "one": "%{d}+ qiyinlikda %{count} ta belgi",
+      "other": "%{d}+ qiyinlikda %{count} ta belgi"
+    },
+    "spots": {
+      "one": "%{count} ta tasdiqlangan joy",
+      "other": "%{count} ta tasdiqlangan joy"
+    },
+    "xp": "%{xp} XP",
+    "join": " · "
+  },
+  "error": "Darajani yuklab bo‘lmadi",
+  "offline": "Internet yo‘q — daraja yuklanmadi"
+}

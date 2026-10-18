@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { RecoveryPhoneScreen } from '../../features/auth/screens/RecoveryPhoneScreen';
 import { DebugScreen } from '../../features/debug/screens/DebugScreen';
 import { StatusScreen } from '../../features/health/screens/StatusScreen';
+import { CompanionsScreen } from '../../features/levels/screens/CompanionsScreen';
+import { LevelScreen } from '../../features/levels/screens/LevelScreen';
 import { PlaceScreen } from '../../features/places/screens/PlaceScreen';
 import { OnboardingNavigator } from '../../features/onboarding/OnboardingNavigator';
 import { isOnboardingDone, markOnboardingDone } from '../../features/onboarding/onboardingStore';
@@ -62,6 +64,8 @@ export function RootNavigator() {
       <Stack.Screen name="RecoveryPhone" component={RecoveryPhoneScreen} />
       <Stack.Screen name="Safety" component={SafetyScreen} />
       <Stack.Screen name="Place" component={PlaceScreen} />
+      <Stack.Screen name="Level" component={LevelScreen} />
+      <Stack.Screen name="Companions" component={CompanionsScreen} />
       {appConfig.isQaEnabled ? (
         <>
           <Stack.Screen name="Debug" component={DebugScreen} />

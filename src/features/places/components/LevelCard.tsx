@@ -1,11 +1,14 @@
+import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '../../../shared/components/AppText';
 import { Icon } from '../../../shared/components/Icon';
+import { Pressable } from '../../../shared/components/Pressable';
 import { conditionColors, levelColors, palette } from '../../../shared/constants/colors';
 import { borders, radii, sizes, spacing } from '../../../shared/constants/spacing';
 import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
 import { t } from '../../../shared/i18n';
+import { haptics } from '../../../shared/utils/haptics';
 
 type Props = {
   requiredLevel: number;
@@ -22,10 +25,12 @@ function levelKey(level: number): LevelKey {
 
 /**
  * Required level (AC8): "Requires · Level n · name · or higher", then "You qualify" with a green
- * check, or a lock with "Reach Level n to go here". Read-only — never optimistic.
+ * check, or a lock with "Reach Level n to go here". Read-only — never optimistic. Opens the Level
+ * screen (levels AC8).
  */
 export function LevelCard({ requiredLevel, qualifies }: Props) {
   const { colors, scheme } = useTheme();
+  const navigation = useNavigation();
   const styles = useStyles();
   const tone = levelColors[levelKey(requiredLevel)];
   const lineColor = { color: scheme === 'dark' ? tone.color : tone.text };
@@ -35,7 +40,16 @@ export function LevelCard({ requiredLevel, qualifies }: Props) {
   });
 
   return (
-    <View testID="place.level-card" style={[styles.card, { borderColor: tone.color }]}>
+    <Pressable
+      testID="place.level-card"
+      accessibilityRole="button"
+      accessibilityLabel={line}
+      onPress={() => {
+        haptics.tap();
+        navigation.navigate('Level');
+      }}
+      style={[styles.card, { borderColor: tone.color }]}
+    >
       <View style={[layout.badge, { backgroundColor: qualifies ? tone.color : colors.soft }]}>
         {qualifies ? (
           <AppText variant="h3" tone="white">
@@ -67,7 +81,7 @@ export function LevelCard({ requiredLevel, qualifies }: Props) {
           </View>
         )}
       </View>
-    </View>
+    </Pressable>
   );
 }
 

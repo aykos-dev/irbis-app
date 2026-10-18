@@ -145,6 +145,7 @@ export function usePlacesList<TData = Awaited<ReturnType<typeof placesList>>, TE
 
 
 /**
+ * Public. With a valid bearer token, `viewer` is the signed-in user; otherwise a guest at level 1.
  * @summary One place
  */
 export const placesGet = (

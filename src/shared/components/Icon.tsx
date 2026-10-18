@@ -25,6 +25,9 @@ export type IconName =
   | 'phone'
   | 'chevron'
   | 'lock'
+  /** Level requirement rows (canvas Level): XP and safety lessons. */
+  | 'bolt'
+  | 'cross'
   /** Place-type glyphs — placeholders (owner Q8) until the owner supplies final icons. */
   | 'waterfall'
   | 'canyon';
@@ -182,6 +185,10 @@ function draw(name: IconName, color: string, accent: string) {
           <Path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke={color} strokeWidth={2.4} {...STROKE} />
         </>
       );
+    case 'bolt':
+      return <Path d="M13.5 2L4.5 13.5h6L9.5 22l9-11.5h-6z" fill={color} />;
+    case 'cross':
+      return <Path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z" fill={color} />;
     case 'waterfall':
       return (
         <>

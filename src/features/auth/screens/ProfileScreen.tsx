@@ -4,15 +4,17 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import type { MainTabScreenProps, RootStackParamList } from '../../../app/navigation/types';
+import { useMeLevelGet } from '../../../shared/api/generated';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
 import { ErrorState } from '../../../shared/components/ErrorState';
 import { Icon } from '../../../shared/components/Icon';
 import { ListCard, ListRow } from '../../../shared/components/ListRow';
-import { Mascot } from '../../../shared/components/Mascot';
+import { CompanionArt } from '../../../shared/components/levels/CompanionArt';
+import { levelMeta, MIN_LEVEL } from '../../../shared/components/levels/levelMeta';
+import { Pressable } from '../../../shared/components/Pressable';
 import { Screen } from '../../../shared/components/Screen';
 import { Skeleton } from '../../../shared/components/Skeleton';
-import { levelColors } from '../../../shared/constants/colors';
 import { appConfig } from '../../../shared/constants/config';
 import { borders, spacing } from '../../../shared/constants/spacing';
 import { useAuth } from '../../../shared/contexts/auth';
@@ -43,13 +45,33 @@ export function ProfileScreen(_props: MainTabScreenProps<'Profile'>) {
   return status === 'signedIn' ? <AccountProfile /> : <GuestProfile />;
 }
 
-function CompanionBadge() {
-  const ring = levelColors[1];
+/**
+ * The user's companion in their level's colour (levels AC8); opens the Level screen. Guests, and a
+ * level that has not loaded yet, show level 1 — never a guessed level.
+ */
+function CompanionBadge({ level }: { level: number }) {
+  const navigation = useNavigation<RootNav>();
+  const meta = levelMeta(level);
+  const name = t(meta.nameKey);
   return (
-    <View style={[styles.ring, { backgroundColor: ring.tint, borderColor: ring.color }]}>
-      <Mascot kind="panda" size={COMPANION_ART} accessibilityLabel={t('auth.mascot.panda')} />
-    </View>
+    <Pressable
+      testID="profile.companion-badge"
+      accessibilityRole="button"
+      accessibilityLabel={`${t('levels.pill', { n: meta.level })}, ${name}`}
+      onPress={() => {
+        haptics.tap();
+        navigation.navigate('Level');
+      }}
+      style={[styles.ring, { backgroundColor: meta.tint, borderColor: meta.color }]}
+    >
+      <CompanionArt level={meta.level} size={COMPANION_ART} />
+    </Pressable>
   );
+}
+
+function AccountCompanionBadge() {
+  const { data } = useMeLevelGet();
+  return <CompanionBadge level={data?.level ?? MIN_LEVEL} />;
 }
 
 function useProfileRows() {
@@ -111,7 +133,7 @@ function GuestProfile() {
   return (
     <Screen testID="profile.guest" scroll bottomInset={false}>
       <View style={styles.hero}>
-        <CompanionBadge />
+        <CompanionBadge level={MIN_LEVEL} />
         <AppText variant="h2" accessibilityRole="header" style={styles.centered}>
           {t('auth.profile.guestTitle')}
         </AppText>
@@ -189,7 +211,7 @@ function AccountProfile() {
   return (
     <Screen testID="profile.account" scroll bottomInset={false}>
       <View style={styles.hero}>
-        <CompanionBadge />
+        <AccountCompanionBadge />
         <AppText variant="h2" testID="profile.username" accessibilityRole="header" style={styles.centered}>
           {user.username}
         </AppText>

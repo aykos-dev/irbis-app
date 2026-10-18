@@ -69,6 +69,7 @@ export const PlacesListResponse = zod.object({
 })
 
 /**
+ * Public. With a valid bearer token, `viewer` is the signed-in user; otherwise a guest at level 1.
  * @summary One place
  */
 export const PlacesGetParams = zod.object({

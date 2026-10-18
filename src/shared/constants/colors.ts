@@ -95,6 +95,21 @@ export const levelColors = {
 
 export const difficultyBootColor = '#7A4E2D';
 
+/**
+ * Level-screen requirement rows (canvas Level, brief levels-3): icon tile and bar fill per row.
+ * `checkInsTile` is not in design.md yet.
+ */
+export const levelRequirementColors = {
+  xpTile: palette.gold,
+  xpBar: palette.gold,
+  lessonsTile: palette.red700,
+  lessonsBar: palette.teal,
+  checkInsTile: '#8C5A33',
+  checkInsBar: levelColors[3].color,
+  spotsTile: palette.pine,
+  spotsBar: palette.pine,
+} as const;
+
 export const mascotColors = {
   fur: '#EDF0F3',
   rosettes: '#8E99A6',

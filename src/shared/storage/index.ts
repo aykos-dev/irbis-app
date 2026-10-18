@@ -20,6 +20,10 @@ type StorageSchema = {
   'onboarding.interests': string;
   /** Explore's last loaded list for offline restarts: JSON `{ filters, data }` (no personal data). */
   'explore.lastList': string;
+  /** The signed-in user's last loaded level for offline opens: JSON `{ userId, data }` (MyLevelDto). */
+  'levels.lastMyLevel': string;
+  /** The last loaded level table (`/v1/levels`) for offline opens: JSON LevelListResponseDto. */
+  'levels.defs': string;
 };
 
 export type StorageKey = keyof StorageSchema;

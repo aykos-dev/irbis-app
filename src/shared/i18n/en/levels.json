@@ -1,0 +1,100 @@
+{
+  "title": "Your level",
+  "pill": "LEVEL %{n}",
+  "since": "%{animal} · since %{month} %{year}",
+  "months": {
+    "1": "January",
+    "2": "February",
+    "3": "March",
+    "4": "April",
+    "5": "May",
+    "6": "June",
+    "7": "July",
+    "8": "August",
+    "9": "September",
+    "10": "October",
+    "11": "November",
+    "12": "December"
+  },
+  "animal": {
+    "1": "Panda cub",
+    "2": "Marmot",
+    "3": "Fox",
+    "4": "Ibex",
+    "5": "Brown bear",
+    "6": "Golden eagle",
+    "7": "Snow leopard"
+  },
+  "trait": {
+    "1": "clumsy & cozy",
+    "2": "curious",
+    "3": "clever",
+    "4": "sure-footed",
+    "5": "strong & protective",
+    "6": "sharp-eyed",
+    "7": "rare & respected"
+  },
+  "unlock": {
+    "1": "difficulty 1 places",
+    "2": "difficulty 2 places",
+    "3": "difficulty 3 and overnight trips",
+    "4": "scrambles and high passes",
+    "5": "difficulty 4 and leading group trips",
+    "6": "verifying other explorers' spots",
+    "7": "difficulty 5 and the Legend frame"
+  },
+  "toReach": "To reach Level %{n} · %{name}",
+  "req": {
+    "xp": "Earn XP",
+    "lessonsCount": "Safety lessons",
+    "lessonsTier": "Tier %{tier} safety lessons",
+    "lessonsFirstAid": "First-aid safety lessons",
+    "lessonsAll": "All safety lessons",
+    "checkIns": "Verified check-ins at difficulty %{d}+",
+    "checkInsNote": "GPS check-in on site counts; photos alone don't.",
+    "spots": "Verified spots"
+  },
+  "next": {
+    "cap": "Next companion",
+    "name": "%{name} · ???",
+    "unlocks": "Unlocks %{unlock}."
+  },
+  "max": "You're a Snow Legend — the top level.",
+  "continue": "Continue learning",
+  "seeAll": "See all companions",
+  "guest": {
+    "title": "Create an account to earn XP and level up"
+  },
+  "companions": {
+    "title": "Companions",
+    "eyebrow": "Seven companions, one backpack",
+    "start": "Where every explorer starts.",
+    "you": "You",
+    "unlocks": "Unlocks: %{unlock}"
+  },
+  "fmt": {
+    "lessonsCount": {
+      "one": "%{count} safety lesson",
+      "other": "%{count} safety lessons"
+    },
+    "lessonsTier": "Tier %{tier} lessons",
+    "lessonsFirstAid": "First-aid tier",
+    "lessonsAll": "all tiers",
+    "checkIns": {
+      "one": "%{count} verified check-in",
+      "other": "%{count} verified check-ins"
+    },
+    "checkInsAt": {
+      "one": "%{count} check-in at difficulty %{d}+",
+      "other": "%{count} check-ins at difficulty %{d}+"
+    },
+    "spots": {
+      "one": "%{count} verified spot",
+      "other": "%{count} verified spots"
+    },
+    "xp": "%{xp} XP",
+    "join": " · "
+  },
+  "error": "Couldn't load your level",
+  "offline": "You're offline — level not loaded"
+}

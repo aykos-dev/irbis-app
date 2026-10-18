@@ -53,6 +53,10 @@ export type RootStackParamList = {
   Status: undefined;
   /** Place screen (places AC7). Explore passes the device position when it has one. */
   Place: { id: string; lat?: number; lng?: number };
+  /** Level screen (levels AC5): your level, or level 1 for a guest. */
+  Level: undefined;
+  /** All seven companions (levels AC6). */
+  Companions: undefined;
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<

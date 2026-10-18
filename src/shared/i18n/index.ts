@@ -9,6 +9,7 @@ import enConditions from './en/conditions.json';
 import enDebug from './en/debug.json';
 import enErrors from './en/errors.json';
 import enHealth from './en/health.json';
+import enLevels from './en/levels.json';
 import enNav from './en/nav.json';
 import enOnboarding from './en/onboarding.json';
 import enPlaces from './en/places.json';
@@ -18,6 +19,7 @@ import ruConditions from './ru/conditions.json';
 import ruDebug from './ru/debug.json';
 import ruErrors from './ru/errors.json';
 import ruHealth from './ru/health.json';
+import ruLevels from './ru/levels.json';
 import ruNav from './ru/nav.json';
 import ruOnboarding from './ru/onboarding.json';
 import ruPlaces from './ru/places.json';
@@ -27,6 +29,7 @@ import uzConditions from './uz/conditions.json';
 import uzDebug from './uz/debug.json';
 import uzErrors from './uz/errors.json';
 import uzHealth from './uz/health.json';
+import uzLevels from './uz/levels.json';
 import uzNav from './uz/nav.json';
 import uzOnboarding from './uz/onboarding.json';
 import uzPlaces from './uz/places.json';
@@ -56,6 +59,7 @@ export const i18n = new I18n({
     nav: enNav,
     errors: enErrors,
     health: enHealth,
+    levels: enLevels,
     onboarding: enOnboarding,
     places: enPlaces,
   },
@@ -67,6 +71,7 @@ export const i18n = new I18n({
     nav: ruNav,
     errors: ruErrors,
     health: ruHealth,
+    levels: ruLevels,
     onboarding: ruOnboarding,
     places: ruPlaces,
   },
@@ -78,6 +83,7 @@ export const i18n = new I18n({
     nav: uzNav,
     errors: uzErrors,
     health: uzHealth,
+    levels: uzLevels,
     onboarding: uzOnboarding,
     places: uzPlaces,
   },
