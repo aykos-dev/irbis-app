@@ -90,7 +90,7 @@ describe('places — Explore list and origin (AC4, AC6)', () => {
     expect(qaEvents()).toEqual(
       expect.arrayContaining([
         { event: 'location_permission', result: 'granted' },
-        { event: 'explore_loaded', count: 2, origin: 'device' },
+        { event: 'explore_loaded', count: 2, origin: 'device', withStatus: 0 },
       ]),
     );
 

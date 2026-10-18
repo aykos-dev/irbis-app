@@ -60,7 +60,8 @@ export const PlacesListResponse = zod.object({
   "elevationM": zod.int(),
   "difficulty": zod.int().min(1).max(placesListResponseItemsItemDifficultyMax),
   "requiredLevel": zod.int().min(1).max(placesListResponseItemsItemRequiredLevelMax),
-  "distanceM": zod.int().describe('Great-circle distance from the origin, metres.')
+  "distanceM": zod.int().describe('Great-circle distance from the origin, metres.'),
+  "conditionStatus": zod.union([zod.enum(['go', 'caution', 'not_now', 'seasonal_lock']).describe('Weekend condition. Absent until one was computed for the place; null when there is no status.'),zod.null()]).optional().describe('Weekend condition. Absent until one was computed for the place; null when there is no status.')
 })),
   "nextCursor": zod.string().nullable(),
   "origin": zod.enum(['device', 'tashkent']),

@@ -1,0 +1,47 @@
+{
+  "status": { "go": "Go", "caution": "Caution", "not_now": "Not now", "seasonal_lock": "Seasonal lock" },
+  "title": {
+    "go": "Go this weekend",
+    "caution": "Caution this weekend",
+    "not_now": "Not now this weekend",
+    "seasonal": "Closed for the season",
+    "seasonalOpens": "Closed for the season · Opens in %{month}"
+  },
+  "empty": "Condition not available yet",
+  "updated": "Updated %{time} · %{source}",
+  "ago": { "now": "just now", "min": "%{n} min ago", "h": "%{n} h ago", "d": "%{n} d ago" },
+  "source": {
+    "forecast": "forecast",
+    "hazard_rule": "hazard rules",
+    "closure": "closure",
+    "season": "season",
+    "manual": "Irbis team"
+  },
+  "reason": {
+    "THUNDERSTORM": "Thunderstorm on %{day}",
+    "GUSTS": "Gusts up to %{value} km/h on %{day}",
+    "HEAVY_PRECIP": "Heavy rain or snow on %{day} — %{value} mm",
+    "WIND": "Strong wind on %{day} — %{value} km/h",
+    "PRECIP_LIKELY": "Rain likely on %{day} — %{value}%",
+    "HEAT": "Heat on %{day} — up to %{value}°",
+    "COLD": "Severe cold on %{day} — down to %{value}°",
+    "MUDSLIDE_RISK": "Mudslide risk after rain on %{day}",
+    "FLOOD_RISK": "Flood risk after rain on %{day}",
+    "AVALANCHE_RISK": "Avalanche risk — %{value} cm of fresh snow",
+    "GOOD_WEATHER": "Good weather on %{day}, wind up to %{value} km/h"
+  },
+  "day": { "sat": "Saturday", "sun": "Sunday" },
+  "dayShort": { "sat": "Sat", "sun": "Sun" },
+  "weather": {
+    "title": "Weather this weekend",
+    "temps": "%{day} %{max}° / %{min}°",
+    "wind": "Wind %{kmh} km/h",
+    "rain": "Rain %{pct}%",
+    "credit": "Weather data by Open-Meteo.com"
+  },
+  "hazards": { "title": "Hazards now" },
+  "level": { "low": "Low", "raised": "Raised", "high": "High", "open": "Open", "closed": "Closed" },
+  "offline": "You're offline — condition not loaded",
+  "error": "Couldn't load the condition",
+  "retry": "Try again"
+}

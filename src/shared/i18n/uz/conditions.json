@@ -1,0 +1,47 @@
+{
+  "status": { "go": "Borsa boʻladi", "caution": "Ehtiyot boʻling", "not_now": "Hozir emas", "seasonal_lock": "Mavsumiy yopiq" },
+  "title": {
+    "go": "Bu dam olish kunlari borsa boʻladi",
+    "caution": "Bu dam olishda ehtiyot boʻling",
+    "not_now": "Bu dam olishda hozir emas",
+    "seasonal": "Mavsum uchun yopiq",
+    "seasonalOpens": "Mavsum uchun yopiq · %{month} oyida ochiladi"
+  },
+  "empty": "Holat hozircha mavjud emas",
+  "updated": "Yangilangan: %{time} · %{source}",
+  "ago": { "now": "hozirgina", "min": "%{n} daqiqa oldin", "h": "%{n} soat oldin", "d": "%{n} kun oldin" },
+  "source": {
+    "forecast": "prognoz",
+    "hazard_rule": "xavf qoidalari",
+    "closure": "yopilish",
+    "season": "mavsum",
+    "manual": "Irbis jamoasi"
+  },
+  "reason": {
+    "THUNDERSTORM": "%{day} kuni momaqaldiroq",
+    "GUSTS": "%{day} kuni shamol %{value} km/soatgacha esadi",
+    "HEAVY_PRECIP": "%{day} kuni kuchli yogʻin — %{value} mm",
+    "WIND": "%{day} kuni kuchli shamol — %{value} km/soat",
+    "PRECIP_LIKELY": "%{day} kuni yogʻin ehtimoli — %{value}%",
+    "HEAT": "%{day} kuni issiq — %{value}° gacha",
+    "COLD": "%{day} kuni qattiq sovuq — %{value}° gacha",
+    "MUDSLIDE_RISK": "%{day} kuni yomgʻirdan keyin sel xavfi",
+    "FLOOD_RISK": "%{day} kuni yomgʻirdan keyin toshqin xavfi",
+    "AVALANCHE_RISK": "Qor koʻchkisi xavfi — %{value} sm yangi qor",
+    "GOOD_WEATHER": "%{day} kuni ob-havo yaxshi, shamol %{value} km/soatgacha"
+  },
+  "day": { "sat": "Shanba", "sun": "Yakshanba" },
+  "dayShort": { "sat": "Sha", "sun": "Yak" },
+  "weather": {
+    "title": "Dam olish kunlari ob-havosi",
+    "temps": "%{day} %{max}° / %{min}°",
+    "wind": "Shamol %{kmh} km/soat",
+    "rain": "Yogʻin %{pct}%",
+    "credit": "Ob-havo maʼlumotlari: Open-Meteo.com"
+  },
+  "hazards": { "title": "Hozirgi xavflar" },
+  "level": { "low": "Past", "raised": "Oshgan", "high": "Yuqori", "open": "Ochiq", "closed": "Yopiq" },
+  "offline": "Internet yoʻq — holat yuklanmadi",
+  "error": "Holatni yuklab boʻlmadi",
+  "retry": "Qayta urinish"
+}

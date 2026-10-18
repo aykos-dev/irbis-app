@@ -5,6 +5,7 @@ import { storage } from '../storage';
 
 import enAuth from './en/auth.json';
 import enCommon from './en/common.json';
+import enConditions from './en/conditions.json';
 import enDebug from './en/debug.json';
 import enErrors from './en/errors.json';
 import enHealth from './en/health.json';
@@ -13,6 +14,7 @@ import enOnboarding from './en/onboarding.json';
 import enPlaces from './en/places.json';
 import ruAuth from './ru/auth.json';
 import ruCommon from './ru/common.json';
+import ruConditions from './ru/conditions.json';
 import ruDebug from './ru/debug.json';
 import ruErrors from './ru/errors.json';
 import ruHealth from './ru/health.json';
@@ -21,6 +23,7 @@ import ruOnboarding from './ru/onboarding.json';
 import ruPlaces from './ru/places.json';
 import uzAuth from './uz/auth.json';
 import uzCommon from './uz/common.json';
+import uzConditions from './uz/conditions.json';
 import uzDebug from './uz/debug.json';
 import uzErrors from './uz/errors.json';
 import uzHealth from './uz/health.json';
@@ -48,6 +51,7 @@ export const i18n = new I18n({
   en: {
     auth: enAuth,
     common: enCommon,
+    conditions: enConditions,
     debug: enDebug,
     nav: enNav,
     errors: enErrors,
@@ -58,6 +62,7 @@ export const i18n = new I18n({
   ru: {
     auth: ruAuth,
     common: ruCommon,
+    conditions: ruConditions,
     debug: ruDebug,
     nav: ruNav,
     errors: ruErrors,
@@ -68,6 +73,7 @@ export const i18n = new I18n({
   uz: {
     auth: uzAuth,
     common: uzCommon,
+    conditions: uzConditions,
     debug: uzDebug,
     nav: uzNav,
     errors: uzErrors,

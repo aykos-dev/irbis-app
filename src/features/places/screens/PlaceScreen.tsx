@@ -1,9 +1,13 @@
+import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import type { RootStackScreenProps } from '../../../app/navigation/types';
-import type { PlaceDetailDto } from '../../../shared/api/generated/model';
+import type { PlaceConditionDto, PlaceDetailDto } from '../../../shared/api/generated/model';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
+import { ConditionCard } from '../../../shared/components/conditions/ConditionCard';
+import { HazardsNow } from '../../../shared/components/conditions/HazardsNow';
+import { WeatherCard } from '../../../shared/components/conditions/WeatherCard';
 import { EmptyState } from '../../../shared/components/EmptyState';
 import { ErrorState } from '../../../shared/components/ErrorState';
 import { Icon } from '../../../shared/components/Icon';
@@ -23,6 +27,7 @@ import { SeasonBar } from '../components/SeasonBar';
 import { TypePill } from '../components/TypePill';
 import { formatDistance } from '../formatDistance';
 import { usePlace } from '../hooks/usePlace';
+import { usePlaceCondition } from '../hooks/usePlaceCondition';
 
 const SKELETON_HERO = 200;
 const SKELETON_TITLE = 32;
@@ -37,13 +42,17 @@ export function localized<T extends string | null>(
   return text[locale] ?? text.uz;
 }
 
-/** Place screen (AC7, AC8): one place's facts, required level, season and hazards. */
+/**
+ * Place screen (AC7, AC8): one place's facts, required level, weekend condition and weather,
+ * season and hazards. The condition loads alongside the place; its failure never hides the place.
+ */
 export function PlaceScreen({ navigation, route }: RootStackScreenProps<'Place'>) {
   const { id, lat, lng } = route.params;
   const coords = lat !== undefined && lng !== undefined ? { lat, lng } : undefined;
   const locale = useLocale();
   const { isOnline } = useNetworkStatus();
   const { data, error, isNotFound, refetch } = usePlace(id, coords);
+  const condition = usePlaceCondition(id, data?.slug);
   // A cold deep link leaves Place alone in the stack: fall back to the Explore tab (D2).
   const goBack = () =>
     navigation.canGoBack()
@@ -52,7 +61,22 @@ export function PlaceScreen({ navigation, route }: RootStackScreenProps<'Place'>
 
   let body;
   if (data) {
-    body = <PlaceBody place={data} locale={locale} />;
+    body = (
+      <PlaceBody
+        place={data}
+        locale={locale}
+        condition={
+          <ConditionCard
+            condition={condition.data}
+            error={condition.data ? null : condition.error}
+            isOnline={isOnline}
+            onRetry={() => void condition.refetch()}
+            locale={locale}
+          />
+        }
+        conditionData={condition.data}
+      />
+    );
   } else if (isNotFound) {
     body = (
       <EmptyState
@@ -124,7 +148,15 @@ function PlaceSkeleton() {
   );
 }
 
-function PlaceBody({ place, locale }: { place: PlaceDetailDto; locale: Locale }) {
+type BodyProps = {
+  place: PlaceDetailDto;
+  locale: Locale;
+  /** The condition card, already wired to its query and the network state. */
+  condition: ReactNode;
+  conditionData: PlaceConditionDto | undefined;
+};
+
+function PlaceBody({ place, locale, condition, conditionData }: BodyProps) {
   const styles = useStyles();
   const description = localized(place.description, locale);
   const paragraphs = description ? description.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean) : [];
@@ -156,6 +188,8 @@ function PlaceBody({ place, locale }: { place: PlaceDetailDto; locale: Locale })
       </View>
       <DifficultyBoots difficulty={place.difficulty} />
       <LevelCard requiredLevel={place.requiredLevel} qualifies={place.viewer.qualifies} />
+      {condition}
+      {conditionData ? <WeatherCard weekend={conditionData.weekend} /> : null}
       {paragraphs.length > 0 ? (
         <View testID="place.description" style={layout.section}>
           <AppText variant="h3" accessibilityRole="header">
@@ -174,28 +208,38 @@ function PlaceBody({ place, locale }: { place: PlaceDetailDto; locale: Locale })
         </AppText>
         <SeasonBar season={place.season} locale={locale} />
       </View>
-      <View style={layout.section}>
-        <AppText variant="h3" accessibilityRole="header">
-          {t('places.hazards.title')}
-        </AppText>
-        {place.hazards.length > 0 ? (
-          <View testID="place.hazards" style={layout.chips}>
-            {place.hazards.map(hazard => (
-              <StatusChip
-                key={hazard}
-                testID={`place.hazard-${hazard}`}
-                variant="caution"
-                label={t(`places.hazard.${hazard}`)}
-              />
-            ))}
-          </View>
-        ) : (
-          <AppText testID="place.hazards-empty" variant="body" tone="muted">
-            {t('places.hazards.empty')}
-          </AppText>
-        )}
-      </View>
+      {conditionData && conditionData.hazards.length > 0 ? (
+        <HazardsNow hazards={conditionData.hazards} />
+      ) : (
+        <PlaceHazards hazards={place.hazards} />
+      )}
     </>
+  );
+}
+
+function PlaceHazards({ hazards }: { hazards: PlaceDetailDto['hazards'] }) {
+  return (
+    <View style={layout.section}>
+      <AppText variant="h3" accessibilityRole="header">
+        {t('places.hazards.title')}
+      </AppText>
+      {hazards.length > 0 ? (
+        <View testID="place.hazards" style={layout.chips}>
+          {hazards.map(hazard => (
+            <StatusChip
+              key={hazard}
+              testID={`place.hazard-${hazard}`}
+              variant="caution"
+              label={t(`places.hazard.${hazard}`)}
+            />
+          ))}
+        </View>
+      ) : (
+        <AppText testID="place.hazards-empty" variant="body" tone="muted">
+          {t('places.hazards.empty')}
+        </AppText>
+      )}
+    </View>
   );
 }
 

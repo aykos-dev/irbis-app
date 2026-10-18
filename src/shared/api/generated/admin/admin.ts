@@ -26,12 +26,20 @@ import type {
 
 import type {
   AdminAuditListResponseDto,
+  AdminConditionListResponseDto,
+  AdminListConditionsParams,
   AdminListUsersParams,
   AdminUserAuditParams,
   AdminUserDetailDto,
   AdminUserListResponseDto,
   BlockUserDto,
+  ClosureDto,
+  ConditionControlsDto,
+  CreateClosureDto,
+  CreateOverrideDto,
   ErrorResponseDto,
+  OverrideDto,
+  RecomputeStartedDto,
   SetUserPasswordDto,
   SetUserRecoveryPhoneDto,
   SetUserRoleDto,
@@ -779,3 +787,519 @@ export function useAdminUserAudit<TData = Awaited<ReturnType<typeof adminUserAud
 
 
 
+/**
+ * @summary Every place with its condition, by name
+ */
+export const adminListConditions = (
+    params?: AdminListConditionsParams,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<AdminConditionListResponseDto>(
+      {url: `/v1/admin/conditions`, method: 'GET',
+        params, signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminListConditionsQueryKey = (params?: AdminListConditionsParams,) => {
+    return [
+    `/v1/admin/conditions`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getAdminListConditionsQueryOptions = <TData = Awaited<ReturnType<typeof adminListConditions>>, TError = ErrorType<ErrorResponseDto>>(params?: AdminListConditionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListConditions>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAdminListConditionsQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminListConditions>>> = ({ signal }) => adminListConditions(params, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminListConditions>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AdminListConditionsQueryResult = NonNullable<Awaited<ReturnType<typeof adminListConditions>>>
+export type AdminListConditionsQueryError = ErrorType<ErrorResponseDto>
+
+
+export function useAdminListConditions<TData = Awaited<ReturnType<typeof adminListConditions>>, TError = ErrorType<ErrorResponseDto>>(
+ params: undefined |  AdminListConditionsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListConditions>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminListConditions>>,
+          TError,
+          Awaited<ReturnType<typeof adminListConditions>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAdminListConditions<TData = Awaited<ReturnType<typeof adminListConditions>>, TError = ErrorType<ErrorResponseDto>>(
+ params?: AdminListConditionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListConditions>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminListConditions>>,
+          TError,
+          Awaited<ReturnType<typeof adminListConditions>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAdminListConditions<TData = Awaited<ReturnType<typeof adminListConditions>>, TError = ErrorType<ErrorResponseDto>>(
+ params?: AdminListConditionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListConditions>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Every place with its condition, by name
+ */
+
+export function useAdminListConditions<TData = Awaited<ReturnType<typeof adminListConditions>>, TError = ErrorType<ErrorResponseDto>>(
+ params?: AdminListConditionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListConditions>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getAdminListConditionsQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary Fetch forecasts and recompute every place, in the background
+ */
+export const adminRecomputeConditions = (
+
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<RecomputeStartedDto>(
+      {url: `/v1/admin/conditions/recompute`, method: 'POST', signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminRecomputeConditionsMutationKey = () => ['adminRecomputeConditions'] as const;
+
+export const getAdminRecomputeConditionsMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminRecomputeConditions>>, TError,void, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminRecomputeConditions>>, TError,void, TContext> => {
+
+const mutationKey = getAdminRecomputeConditionsMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminRecomputeConditions>>, void> = () => {
+
+
+          return  adminRecomputeConditions(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminRecomputeConditionsMutationResult = NonNullable<Awaited<ReturnType<typeof adminRecomputeConditions>>>
+
+    export type AdminRecomputeConditionsMutationError = ErrorType<ErrorResponseDto>
+
+
+    /**
+ * @summary Fetch forecasts and recompute every place, in the background
+ */
+export const useAdminRecomputeConditions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminRecomputeConditions>>, TError,void, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminRecomputeConditions>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getAdminRecomputeConditionsMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary A place's condition with its closures and overrides
+ */
+export const adminGetConditionControls = (
+    id: string,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<ConditionControlsDto>(
+      {url: `/v1/admin/places/${id}/condition-controls`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminGetConditionControlsQueryKey = (id: string,) => {
+    return [
+    `/v1/admin/places/${id}/condition-controls`
+    ] as const;
+    }
+
+
+export const getAdminGetConditionControlsQueryOptions = <TData = Awaited<ReturnType<typeof adminGetConditionControls>>, TError = ErrorType<ErrorResponseDto>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetConditionControls>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAdminGetConditionControlsQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetConditionControls>>> = ({ signal }) => adminGetConditionControls(id, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminGetConditionControls>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AdminGetConditionControlsQueryResult = NonNullable<Awaited<ReturnType<typeof adminGetConditionControls>>>
+export type AdminGetConditionControlsQueryError = ErrorType<ErrorResponseDto>
+
+
+export function useAdminGetConditionControls<TData = Awaited<ReturnType<typeof adminGetConditionControls>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetConditionControls>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminGetConditionControls>>,
+          TError,
+          Awaited<ReturnType<typeof adminGetConditionControls>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAdminGetConditionControls<TData = Awaited<ReturnType<typeof adminGetConditionControls>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetConditionControls>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminGetConditionControls>>,
+          TError,
+          Awaited<ReturnType<typeof adminGetConditionControls>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAdminGetConditionControls<TData = Awaited<ReturnType<typeof adminGetConditionControls>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetConditionControls>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary A place's condition with its closures and overrides
+ */
+
+export function useAdminGetConditionControls<TData = Awaited<ReturnType<typeof adminGetConditionControls>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetConditionControls>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getAdminGetConditionControlsQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary Close a place
+ */
+export const adminCreateClosure = (
+    id: string,
+    createClosureDto: BodyType<CreateClosureDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<ClosureDto>(
+      {url: `/v1/admin/places/${id}/closures`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createClosureDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminCreateClosureMutationKey = () => ['adminCreateClosure'] as const;
+
+export const getAdminCreateClosureMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminCreateClosure>>, TError,AdminCreateClosureMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminCreateClosure>>, TError,AdminCreateClosureMutationVariables, TContext> => {
+
+const mutationKey = getAdminCreateClosureMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminCreateClosure>>, AdminCreateClosureMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  adminCreateClosure(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminCreateClosureMutationResult = NonNullable<Awaited<ReturnType<typeof adminCreateClosure>>>
+    export type AdminCreateClosureMutationBody = BodyType<CreateClosureDto>
+    export type AdminCreateClosureMutationError = ErrorType<ErrorResponseDto>
+    export type AdminCreateClosureMutationVariables = {id: string;data: BodyType<CreateClosureDto>}
+
+    /**
+ * @summary Close a place
+ */
+export const useAdminCreateClosure = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminCreateClosure>>, TError,AdminCreateClosureMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminCreateClosure>>,
+        TError,
+        AdminCreateClosureMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminCreateClosureMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary End a closure
+ */
+export const adminEndClosure = (
+    id: string,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<ClosureDto>(
+      {url: `/v1/admin/closures/${id}/end`, method: 'POST', signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminEndClosureMutationKey = () => ['adminEndClosure'] as const;
+
+export const getAdminEndClosureMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminEndClosure>>, TError,AdminEndClosureMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminEndClosure>>, TError,AdminEndClosureMutationVariables, TContext> => {
+
+const mutationKey = getAdminEndClosureMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminEndClosure>>, AdminEndClosureMutationVariables> = (props) => {
+          const {id} = props ?? {};
+
+          return  adminEndClosure(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminEndClosureMutationResult = NonNullable<Awaited<ReturnType<typeof adminEndClosure>>>
+
+    export type AdminEndClosureMutationError = ErrorType<ErrorResponseDto>
+    export type AdminEndClosureMutationVariables = {id: string}
+
+    /**
+ * @summary End a closure
+ */
+export const useAdminEndClosure = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminEndClosure>>, TError,AdminEndClosureMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminEndClosure>>,
+        TError,
+        AdminEndClosureMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminEndClosureMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Override a place's status (ends the current override)
+ */
+export const adminCreateOverride = (
+    id: string,
+    createOverrideDto: BodyType<CreateOverrideDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<OverrideDto>(
+      {url: `/v1/admin/places/${id}/overrides`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createOverrideDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminCreateOverrideMutationKey = () => ['adminCreateOverride'] as const;
+
+export const getAdminCreateOverrideMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminCreateOverride>>, TError,AdminCreateOverrideMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminCreateOverride>>, TError,AdminCreateOverrideMutationVariables, TContext> => {
+
+const mutationKey = getAdminCreateOverrideMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminCreateOverride>>, AdminCreateOverrideMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  adminCreateOverride(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminCreateOverrideMutationResult = NonNullable<Awaited<ReturnType<typeof adminCreateOverride>>>
+    export type AdminCreateOverrideMutationBody = BodyType<CreateOverrideDto>
+    export type AdminCreateOverrideMutationError = ErrorType<ErrorResponseDto>
+    export type AdminCreateOverrideMutationVariables = {id: string;data: BodyType<CreateOverrideDto>}
+
+    /**
+ * @summary Override a place's status (ends the current override)
+ */
+export const useAdminCreateOverride = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminCreateOverride>>, TError,AdminCreateOverrideMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminCreateOverride>>,
+        TError,
+        AdminCreateOverrideMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminCreateOverrideMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary End an override
+ */
+export const adminEndOverride = (
+    id: string,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<OverrideDto>(
+      {url: `/v1/admin/overrides/${id}/end`, method: 'POST', signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminEndOverrideMutationKey = () => ['adminEndOverride'] as const;
+
+export const getAdminEndOverrideMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminEndOverride>>, TError,AdminEndOverrideMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminEndOverride>>, TError,AdminEndOverrideMutationVariables, TContext> => {
+
+const mutationKey = getAdminEndOverrideMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminEndOverride>>, AdminEndOverrideMutationVariables> = (props) => {
+          const {id} = props ?? {};
+
+          return  adminEndOverride(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminEndOverrideMutationResult = NonNullable<Awaited<ReturnType<typeof adminEndOverride>>>
+
+    export type AdminEndOverrideMutationError = ErrorType<ErrorResponseDto>
+    export type AdminEndOverrideMutationVariables = {id: string}
+
+    /**
+ * @summary End an override
+ */
+export const useAdminEndOverride = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminEndOverride>>, TError,AdminEndOverrideMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminEndOverride>>,
+        TError,
+        AdminEndOverrideMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminEndOverrideMutationOptions(options), queryClient);
+    }

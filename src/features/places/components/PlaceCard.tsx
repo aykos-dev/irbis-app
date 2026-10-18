@@ -5,7 +5,9 @@ import { SvgXml } from 'react-native-svg';
 import { bootSvg } from '../../../assets/svg/boot';
 import type { PlaceListItemDto } from '../../../shared/api/generated/model';
 import { AppText } from '../../../shared/components/AppText';
+import { statusVariant } from '../../../shared/components/conditions/reasonText';
 import { Pressable } from '../../../shared/components/Pressable';
+import { StatusChip } from '../../../shared/components/StatusChip';
 import { difficultyBootColor } from '../../../shared/constants/colors';
 import { borders, radii, sizes, spacing } from '../../../shared/constants/spacing';
 import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
@@ -26,7 +28,10 @@ type Props = {
   onPress: (place: PlaceListItemDto) => void;
 };
 
-/** One Explore row (AC4): type illustration, name (locale → uz), "Type · distance", boots. */
+/**
+ * One Explore row (AC4): type illustration, name (locale → uz), "Type · distance" with the weekend
+ * status chip when there is one (conditions AC8), boots.
+ */
 export const PlaceCard = memo(function PlaceCard({ place, locale, onPress }: Props) {
   const { colors } = useTheme();
   const styles = useStyles();
@@ -37,12 +42,15 @@ export const PlaceCard = memo(function PlaceCard({ place, locale, onPress }: Pro
     distance: t('places.distanceKm', { d: formatDistance(place.distanceM, locale) }),
   });
   const difficulty = t('places.difficulty', { d: place.difficulty });
+  const status = place.conditionStatus ?? null;
+  const statusLabel = status ? t(`conditions.status.${status}`) : null;
+  const a11yLabel = [name, meta, statusLabel, difficulty].filter(Boolean).join(', ');
 
   return (
     <Pressable
       testID={`explore.card.${place.slug}`}
       accessibilityRole="button"
-      accessibilityLabel={`${name}, ${meta}, ${difficulty}`}
+      accessibilityLabel={a11yLabel}
       onPress={() => onPress(place)}
       style={styles.card}
     >
@@ -53,9 +61,18 @@ export const PlaceCard = memo(function PlaceCard({ place, locale, onPress }: Pro
         <AppText variant="h3" numberOfLines={1}>
           {name}
         </AppText>
-        <AppText variant="small" tone="muted" numberOfLines={1}>
-          {meta}
-        </AppText>
+        <View style={layout.meta}>
+          <AppText variant="small" tone="muted" numberOfLines={1} style={layout.metaText}>
+            {meta}
+          </AppText>
+          {status && statusLabel ? (
+            <StatusChip
+              testID={`explore.card.${place.slug}.status`}
+              variant={statusVariant[status]}
+              label={statusLabel}
+            />
+          ) : null}
+        </View>
         <View style={layout.boots}>
           {Array.from({ length: BOOTS_MAX }, (_, index) => (
             <SvgXml
@@ -82,6 +99,8 @@ const layout = StyleSheet.create({
   image: { width: '100%', height: '100%' },
   text: { flex: 1, gap: spacing[4] },
   boots: { flexDirection: 'row', gap: spacing[4] },
+  meta: { flexDirection: 'row', alignItems: 'center', gap: spacing[8] },
+  metaText: { flexShrink: 1 },
 });
 
 const useStyles = createThemedStyles(c => ({

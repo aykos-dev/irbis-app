@@ -5,6 +5,7 @@
  * Backend for the Irbis app and admin web. This document is the contract (ADR-003).
  * OpenAPI spec version: 0.0.1
  */
+import type { ConditionStatus } from './conditionStatus.ts';
 import type { PlaceNameDto } from './placeNameDto.ts';
 import type { PlaceType } from './placeType.ts';
 
@@ -28,4 +29,6 @@ export interface PlaceListItemDto {
   requiredLevel: number;
   /** Great-circle distance from the origin, metres. */
   distanceM: number;
+  /** Weekend condition. Absent until one was computed for the place; null when there is no status. */
+  conditionStatus?: ConditionStatus | null;
 }

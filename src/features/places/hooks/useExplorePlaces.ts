@@ -32,7 +32,11 @@ export function useExplorePlaces(
       return;
     }
     loggedAt.current = dataUpdatedAt;
-    qaLog('explore_loaded', { count: data.total, origin: data.origin });
+    qaLog('explore_loaded', {
+      count: data.total,
+      origin: data.origin,
+      withStatus: data.items.filter(item => (item.conditionStatus ?? null) !== null).length,
+    });
     if (appliedAt > loggedApply.current) {
       loggedApply.current = appliedAt;
       qaLog('explore_filters_applied', {

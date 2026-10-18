@@ -263,3 +263,249 @@ export const AdminUserAuditResponse = zod.object({
   "nextCursor": zod.string().nullable()
 })
 
+/**
+ * @summary Every place with its condition, by name
+ */
+export const adminListConditionsQueryLimitDefault = 50;
+export const adminListConditionsQueryLimitMax = 200;
+
+
+
+export const AdminListConditionsQueryParams = zod.object({
+  "status": zod.enum(['go', 'caution', 'not_now', 'seasonal_lock', 'none']).optional().describe('A status, or `none` for places without one.'),
+  "cursor": zod.string().optional().describe('Opaque; the previous page\'s nextCursor.'),
+  "limit": zod.number().min(1).max(adminListConditionsQueryLimitMax).default(adminListConditionsQueryLimitDefault)
+})
+
+export const AdminListConditionsResponse = zod.object({
+  "items": zod.array(zod.object({
+  "placeId": zod.uuid(),
+  "slug": zod.string(),
+  "name": zod.object({
+  "uz": zod.string(),
+  "ru": zod.string().nullable(),
+  "en": zod.string().nullable()
+}),
+  "type": zod.enum(['peak', 'lake', 'cave', 'camping', 'trail', 'waterfall', 'canyon']),
+  "status": zod.union([zod.enum(['go', 'caution', 'not_now', 'seasonal_lock']).describe('Weekend condition. Absent until one was computed for the place; null when there is no status.'),zod.null()]),
+  "source": zod.union([zod.enum(['forecast', 'hazard_rule', 'closure', 'season', 'manual']),zod.null()]),
+  "computedAt": zod.iso.datetime({"offset":true}).nullable(),
+  "forecastAt": zod.iso.datetime({"offset":true}).nullable(),
+  "activeClosureId": zod.uuid().nullable(),
+  "activeOverrideId": zod.uuid().nullable()
+})),
+  "nextCursor": zod.string().nullable(),
+  "total": zod.int().describe('Places matching the filter.')
+})
+
+/**
+ * @summary Fetch forecasts and recompute every place, in the background
+ */
+export const AdminRecomputeConditionsResponse = zod.object({
+  "startedAt": zod.iso.datetime({"offset":true})
+})
+
+/**
+ * @summary A place's condition with its closures and overrides
+ */
+export const AdminGetConditionControlsParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const adminGetConditionControlsResponseConditionOpensMonthMax = 12;
+
+
+
+export const AdminGetConditionControlsResponse = zod.object({
+  "condition": zod.object({
+  "placeId": zod.uuid(),
+  "status": zod.union([zod.enum(['go', 'caution', 'not_now', 'seasonal_lock']).describe('Weekend condition. Absent until one was computed for the place; null when there is no status.'),zod.null()]),
+  "source": zod.union([zod.enum(['forecast', 'hazard_rule', 'closure', 'season', 'manual']),zod.null()]),
+  "reasons": zod.array(zod.object({
+  "code": zod.enum(['THUNDERSTORM', 'GUSTS', 'HEAVY_PRECIP', 'WIND', 'PRECIP_LIKELY', 'HEAT', 'COLD', 'MUDSLIDE_RISK', 'FLOOD_RISK', 'AVALANCHE_RISK', 'GOOD_WEATHER', 'OVERRIDE', 'CLOSURE']),
+  "day": zod.enum(['sat', 'sun']).optional(),
+  "value": zod.int().optional().describe('The measured value (km/h, mm, %, °C, cm or WMO code).')
+})).describe('Worst first, at most 3.'),
+  "text": zod.object({
+  "uz": zod.string(),
+  "ru": zod.string().nullable(),
+  "en": zod.string().nullable()
+}).nullable().describe('Closure / override reason when source is closure / manual.'),
+  "opensMonth": zod.int().min(1).max(adminGetConditionControlsResponseConditionOpensMonthMax).nullable().describe('Next open month (Asia/Tashkent) for seasonal_lock.'),
+  "hazards": zod.array(zod.object({
+  "hazard": zod.enum(['avalanche', 'flood', 'mudslide', 'heat', 'road']),
+  "level": zod.enum(['low', 'raised', 'high', 'open', 'closed'])
+})),
+  "weekend": zod.array(zod.object({
+  "date": zod.string(),
+  "day": zod.enum(['sat', 'sun']),
+  "weatherCode": zod.int(),
+  "tMaxC": zod.int(),
+  "tMinC": zod.int(),
+  "windKmh": zod.int(),
+  "gustKmh": zod.int(),
+  "precipMm": zod.int(),
+  "precipProbPct": zod.int(),
+  "snowCm": zod.int()
+})),
+  "forecastAt": zod.iso.datetime({"offset":true}).nullable(),
+  "computedAt": zod.iso.datetime({"offset":true}).nullable()
+}),
+  "closures": zod.array(zod.object({
+  "id": zod.uuid(),
+  "placeId": zod.uuid(),
+  "startsAt": zod.iso.datetime({"offset":true}),
+  "endsAt": zod.iso.datetime({"offset":true}).nullable(),
+  "reason": zod.object({
+  "uz": zod.string(),
+  "ru": zod.string().nullable(),
+  "en": zod.string().nullable()
+}),
+  "source": zod.enum(['official', 'admin']),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "endedAt": zod.iso.datetime({"offset":true}).nullable(),
+  "active": zod.boolean().describe('Not ended, started, and endsAt not passed.')
+})).describe('Newest first.'),
+  "overrides": zod.array(zod.object({
+  "id": zod.uuid(),
+  "placeId": zod.uuid(),
+  "status": zod.enum(['go', 'caution', 'not_now', 'seasonal_lock']).describe('Weekend condition. Absent until one was computed for the place; null when there is no status.'),
+  "reason": zod.object({
+  "uz": zod.string(),
+  "ru": zod.string().nullable(),
+  "en": zod.string().nullable()
+}),
+  "expiresAt": zod.iso.datetime({"offset":true}),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "endedAt": zod.iso.datetime({"offset":true}).nullable(),
+  "active": zod.boolean().describe('Not ended and not expired.')
+})).describe('Newest first.')
+})
+
+/**
+ * @summary Close a place
+ */
+export const AdminCreateClosureParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const adminCreateClosureBodyReasonUzMax = 280;
+
+export const adminCreateClosureBodyReasonRuMax = 280;
+
+export const adminCreateClosureBodyReasonEnMax = 280;
+
+
+
+export const AdminCreateClosureBody = zod.object({
+  "startsAt": zod.iso.datetime({"offset":true}),
+  "endsAt": zod.iso.datetime({"offset":true}).optional().describe('After startsAt. Omit for an open-ended closure.'),
+  "reason": zod.object({
+  "uz": zod.string().min(1).max(adminCreateClosureBodyReasonUzMax),
+  "ru": zod.string().max(adminCreateClosureBodyReasonRuMax).optional(),
+  "en": zod.string().max(adminCreateClosureBodyReasonEnMax).optional()
+}),
+  "source": zod.enum(['official', 'admin'])
+})
+
+export const AdminCreateClosureResponse = zod.object({
+  "id": zod.uuid(),
+  "placeId": zod.uuid(),
+  "startsAt": zod.iso.datetime({"offset":true}),
+  "endsAt": zod.iso.datetime({"offset":true}).nullable(),
+  "reason": zod.object({
+  "uz": zod.string(),
+  "ru": zod.string().nullable(),
+  "en": zod.string().nullable()
+}),
+  "source": zod.enum(['official', 'admin']),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "endedAt": zod.iso.datetime({"offset":true}).nullable(),
+  "active": zod.boolean().describe('Not ended, started, and endsAt not passed.')
+})
+
+/**
+ * @summary End a closure
+ */
+export const AdminEndClosureParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const AdminEndClosureResponse = zod.object({
+  "id": zod.uuid(),
+  "placeId": zod.uuid(),
+  "startsAt": zod.iso.datetime({"offset":true}),
+  "endsAt": zod.iso.datetime({"offset":true}).nullable(),
+  "reason": zod.object({
+  "uz": zod.string(),
+  "ru": zod.string().nullable(),
+  "en": zod.string().nullable()
+}),
+  "source": zod.enum(['official', 'admin']),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "endedAt": zod.iso.datetime({"offset":true}).nullable(),
+  "active": zod.boolean().describe('Not ended, started, and endsAt not passed.')
+})
+
+/**
+ * @summary Override a place's status (ends the current override)
+ */
+export const AdminCreateOverrideParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const adminCreateOverrideBodyReasonUzMax = 280;
+
+export const adminCreateOverrideBodyReasonRuMax = 280;
+
+export const adminCreateOverrideBodyReasonEnMax = 280;
+
+
+
+export const AdminCreateOverrideBody = zod.object({
+  "status": zod.enum(['go', 'caution', 'not_now', 'seasonal_lock']).describe('Weekend condition. Absent until one was computed for the place; null when there is no status.'),
+  "reason": zod.object({
+  "uz": zod.string().min(1).max(adminCreateOverrideBodyReasonUzMax),
+  "ru": zod.string().max(adminCreateOverrideBodyReasonRuMax).optional(),
+  "en": zod.string().max(adminCreateOverrideBodyReasonEnMax).optional()
+}),
+  "expiresAt": zod.iso.datetime({"offset":true}).describe('After now and at most 14 days ahead.')
+})
+
+export const AdminCreateOverrideResponse = zod.object({
+  "id": zod.uuid(),
+  "placeId": zod.uuid(),
+  "status": zod.enum(['go', 'caution', 'not_now', 'seasonal_lock']).describe('Weekend condition. Absent until one was computed for the place; null when there is no status.'),
+  "reason": zod.object({
+  "uz": zod.string(),
+  "ru": zod.string().nullable(),
+  "en": zod.string().nullable()
+}),
+  "expiresAt": zod.iso.datetime({"offset":true}),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "endedAt": zod.iso.datetime({"offset":true}).nullable(),
+  "active": zod.boolean().describe('Not ended and not expired.')
+})
+
+/**
+ * @summary End an override
+ */
+export const AdminEndOverrideParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const AdminEndOverrideResponse = zod.object({
+  "id": zod.uuid(),
+  "placeId": zod.uuid(),
+  "status": zod.enum(['go', 'caution', 'not_now', 'seasonal_lock']).describe('Weekend condition. Absent until one was computed for the place; null when there is no status.'),
+  "reason": zod.object({
+  "uz": zod.string(),
+  "ru": zod.string().nullable(),
+  "en": zod.string().nullable()
+}),
+  "expiresAt": zod.iso.datetime({"offset":true}),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "endedAt": zod.iso.datetime({"offset":true}).nullable(),
+  "active": zod.boolean().describe('Not ended and not expired.')
+})
+
