@@ -2,7 +2,11 @@ import { hashKey, useQueryClient, type QueryClient } from '@tanstack/react-query
 import { useEffect, useRef } from 'react';
 
 import { getPlacesListQueryKey, usePlacesList } from '../../../shared/api/generated';
-import type { PlaceListResponseDto, PlacesListParams } from '../../../shared/api/generated/model';
+import {
+  PlaceOrigin,
+  type PlaceListResponseDto,
+  type PlacesListParams,
+} from '../../../shared/api/generated/model';
 import { useNetworkStatus } from '../../../shared/hooks/useNetworkStatus';
 import { storage } from '../../../shared/storage';
 import { qaLog } from '../../../shared/utils/qaLog';
@@ -41,14 +45,42 @@ function saveList(filters: string, data: PlaceListResponseDto): void {
   storage.setString('explore.lastList', JSON.stringify(saved));
 }
 
-/** The saved list when it was loaded with the same filters. */
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+/** Shape check of the stored value: anything else (an older payload, a broken write) is dropped. */
+function isSavedList(value: unknown): value is SavedList {
+  if (!isRecord(value) || typeof value.filters !== 'string' || !isRecord(value.data)) {
+    return false;
+  }
+  const { items, origin } = value.data;
+  return Array.isArray(items) && Object.values<unknown>(PlaceOrigin).includes(origin);
+}
+
+/** Forgets an unreadable saved list, so the next successful load rewrites it. */
+function dropSavedList(reason: 'invalid_json' | 'invalid_shape'): undefined {
+  storage.remove('explore.lastList');
+  qaLog('explore_saved_list_invalid', { reason });
+  return undefined;
+}
+
+/** The saved list when it was loaded with the same filters; an unreadable one counts as none. */
 function savedList(params: PlacesListParams): PlaceListResponseDto | undefined {
   const raw = storage.getString('explore.lastList');
   if (raw === undefined) {
     return undefined;
   }
-  const saved = JSON.parse(raw) as SavedList;
-  return saved.filters === withoutOrigin(params) ? saved.data : undefined;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return dropSavedList('invalid_json');
+  }
+  if (!isSavedList(parsed)) {
+    return dropSavedList('invalid_shape');
+  }
+  return parsed.filters === withoutOrigin(params) ? parsed.data : undefined;
 }
 
 /**
