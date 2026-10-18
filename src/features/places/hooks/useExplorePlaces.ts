@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { getPlacesListQueryKey, usePlacesList } from '../../../shared/api/generated';
 import type { PlaceListResponseDto, PlacesListParams } from '../../../shared/api/generated/model';
 import { useNetworkStatus } from '../../../shared/hooks/useNetworkStatus';
+import { storage } from '../../../shared/storage';
 import { qaLog } from '../../../shared/utils/qaLog';
 import { EXPLORE_LIMIT, toListParams, type ExploreFilters } from '../exploreFilters';
 import type { Coords } from './useOrigin';
@@ -32,6 +33,24 @@ function lastCachedList(client: QueryClient, params: PlacesListParams): PlaceLis
   return newest?.state.data as PlaceListResponseDto | undefined;
 }
 
+type SavedList = { filters: string; data: PlaceListResponseDto };
+
+/** Keeps the last loaded list on the device, so an offline restart still has it (Q11). */
+function saveList(filters: string, data: PlaceListResponseDto): void {
+  const saved: SavedList = { filters, data };
+  storage.setString('explore.lastList', JSON.stringify(saved));
+}
+
+/** The saved list when it was loaded with the same filters. */
+function savedList(params: PlacesListParams): PlaceListResponseDto | undefined {
+  const raw = storage.getString('explore.lastList');
+  if (raw === undefined) {
+    return undefined;
+  }
+  const saved = JSON.parse(raw) as SavedList;
+  return saved.filters === withoutOrigin(params) ? saved.data : undefined;
+}
+
 /**
  * Explore's one list query (AC4, AC5): map and list share it, so a filter change refetches both
  * together. Waits until the origin is settled so it never loads twice on open. Logs
@@ -49,11 +68,14 @@ export function useExplorePlaces(
   const query = usePlacesList(params, {
     query: {
       enabled: originReady,
-      placeholderData: isOnline ? undefined : () => lastCachedList(client, params),
+      placeholderData: isOnline
+        ? undefined
+        : () => lastCachedList(client, params) ?? savedList(params),
     },
     request: REPEAT_KEYS,
   });
   const { data, dataUpdatedAt, isPlaceholderData } = query;
+  const filtersKey = withoutOrigin(params);
   const loggedAt = useRef(0);
   const loggedApply = useRef(0);
 
@@ -62,6 +84,7 @@ export function useExplorePlaces(
       return;
     }
     loggedAt.current = dataUpdatedAt;
+    saveList(filtersKey, data);
     qaLog('explore_loaded', {
       count: data.total,
       origin: data.origin,
@@ -77,7 +100,7 @@ export function useExplorePlaces(
         count: data.total,
       });
     }
-  }, [data, dataUpdatedAt, isPlaceholderData, appliedAt, filters]);
+  }, [data, dataUpdatedAt, isPlaceholderData, appliedAt, filters, filtersKey]);
 
   return query;
 }
