@@ -29,6 +29,7 @@ import {
   encode,
   PING_INTERVAL_MS,
   SILENCE_TIMEOUT_MS,
+  type MafiaWinner,
   type OutgoingHostMessage,
   type WyrPick,
 } from '../protocol/codec';
@@ -86,6 +87,10 @@ export type HostServer = {
   mafMarkOut: (seatId: string) => void;
   /** Mafia: the narrator takes a mark back. */
   mafMarkBack: (seatId: string) => void;
+  /** Mafia: game over with `winner` — every phone gets all roles and the result (AC6). */
+  mafEnd: (winner: MafiaWinner) => void;
+  /** Mafia, after game over: a new deal over the connected players, else back to the lobby (setup). */
+  mafPlayAgain: (rng?: Rng) => void;
 };
 
 type Options = {
@@ -436,6 +441,22 @@ export function createHostServer({
     zeroconf.unpublishService(serviceName);
   };
 
+  /** Everyone back to the lobby (a Mafia game over was already logged by `mafEnd`). */
+  const endGame = () => {
+    const ended = game;
+    if (!ended || !applyGame({ type: 'end' })) {
+      return;
+    }
+    conns.forEach(conn => {
+      if (conn.seated) {
+        send(conn, { type: 'lobby' });
+      }
+    });
+    if (ended.game !== 'mafia' || !ended.ended) {
+      qaLog('camp_game_ended', { game: ended.game, rounds: ended.round });
+    }
+  };
+
   return {
     start: () =>
       new Promise<void>((resolve, reject) => {
@@ -535,6 +556,24 @@ export function createHostServer({
       broadcastGame(true);
       qaLog('camp_round_started', { game: game.game, round: game.round });
     },
+    mafPlayAgain: (rng = Math.random) => {
+      if (game?.game !== 'mafia' || !game.ended) {
+        return;
+      }
+      const hostSeats = new Set(
+        state.seats.filter(seat => seat.host).map(seat => seat.seatId),
+      );
+      const seats = gameSeats().filter(seat => !hostSeats.has(seat.seatId));
+      if (!applyGame({ type: 'playAgain', seats, rng })) {
+        endGame();
+        return;
+      }
+      broadcastGame(true);
+      const next = current();
+      if (next?.game === 'mafia') {
+        qaLog('camp_round_started', { game: 'mafia', round: next.round });
+      }
+    },
     vote: (seatId, pick) => {
       if (game?.game === 'rather') {
         vote(seatId, game.round, game.qIndex, pick);
@@ -590,18 +629,18 @@ export function createHostServer({
       broadcastGame(false);
       qaLog('camp_imposter_revealed', { imposters: game.imposterSeats.length });
     },
-    endGame: () => {
-      const ended = game;
-      if (!ended || !applyGame({ type: 'end' })) {
+    mafEnd: winner => {
+      if (game?.game !== 'mafia' || !applyGame({ type: 'end', winner })) {
         return;
       }
-      conns.forEach(conn => {
-        if (conn.seated) {
-          send(conn, { type: 'lobby' });
-        }
+      broadcastGame(false);
+      qaLog('camp_game_ended', {
+        game: 'mafia',
+        rounds: game.round,
+        winner,
       });
-      qaLog('camp_game_ended', { game: ended.game, rounds: ended.round });
     },
+    endGame,
     close: () => {
       apply({ type: 'close' });
       conns.forEach(conn => send(conn, { type: 'closed' }));

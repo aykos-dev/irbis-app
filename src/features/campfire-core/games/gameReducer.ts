@@ -5,11 +5,13 @@ import {
   mafiaOutSchema,
   mafiaPhaseSchema,
   mafiaSecretSchema,
+  mafiaWinnerSchema,
   partyGameSchema,
   secretSchema,
   wyrPickSchema,
   type MafiaPublic,
   type MafiaSecret,
+  type MafiaWinner,
   type PublicGame,
   type Secret,
   type WyrPick,
@@ -20,6 +22,7 @@ import {
   mafiaCountsSchema,
   type MafiaSettings,
 } from './mafia/roles';
+import { dealtRoles } from './mafia/winCheck';
 import type { PartyGame } from './packs';
 import { shuffle, type Rng } from './usedStore';
 
@@ -78,6 +81,8 @@ export const mafiaStateSchema = z.object({
   ready: z.array(z.string()),
   /** `roleId` is stored only when the host reveals roles of players who are out. */
   out: z.array(mafiaOutSchema),
+  /** Game over (AC6): every phone shows the result until the host plays again or goes to the lobby. */
+  ended: z.object({ winner: mafiaWinnerSchema }).optional(),
 });
 export type MafiaState = z.infer<typeof mafiaStateSchema>;
 
@@ -101,7 +106,8 @@ export type GameAction =
       rng: Rng;
     }
   | { type: 'newRound'; seats: GameSeat[]; ids: string[]; rng: Rng }
-  | { type: 'end' }
+  /** Back to the lobby; Mafia with a `winner` stays on its game-over screen instead. */
+  | { type: 'end'; winner?: MafiaWinner }
   | { type: 'seatJoined'; seatId: string }
   | { type: 'seatRemoved'; seatId: string }
   | { type: 'reveal' }
@@ -125,7 +131,9 @@ export type MafiaAction =
   | { type: 'mafPhaseNext' }
   /** The narrator marks a player out: killed at night, exiled by day. */
   | { type: 'mafMarkOut'; seatId: string; reason: 'killed' | 'exiled' }
-  | { type: 'mafMarkBack'; seatId: string };
+  | { type: 'mafMarkBack'; seatId: string }
+  /** After game over: same counts and reveal setting, a new deal over `seats` (players only). */
+  | { type: 'playAgain'; seats: GameSeat[]; rng: Rng };
 
 export type HostAction = GameAction | MafiaAction;
 
@@ -273,6 +281,7 @@ export function gameReducer(
     case 'mafPhaseNext':
     case 'mafMarkOut':
     case 'mafMarkBack':
+    case 'playAgain':
       return state;
     case 'newRound': {
       const players = roundSeats(action.seats);
@@ -383,6 +392,7 @@ function startMafia(
   settings: MafiaSettings,
   seats: GameSeat[],
   rng: Rng,
+  round = 1,
 ): MafiaState | null {
   const players = roundSeats(seats);
   if (dealBlocked(settings.counts, players.length)) {
@@ -398,7 +408,7 @@ function startMafia(
   });
   return {
     game: 'mafia',
-    round: 1,
+    round,
     phase: { kind: 'night', n: 1 },
     players,
     waiting: [],
@@ -412,9 +422,12 @@ function startMafia(
 
 /** Mafia: a mid-game joiner waits for the next game; a removed player is out (exiled) this phase. */
 function mafiaReducer(state: MafiaState, action: HostAction): MafiaState | null {
+  if (state.ended) {
+    return endedReducer(state, action);
+  }
   switch (action.type) {
     case 'end':
-      return null;
+      return action.winner ? { ...state, ended: { winner: action.winner } } : null;
     case 'seatJoined':
       if (
         state.players.includes(action.seatId) ||
@@ -496,6 +509,47 @@ function mafiaReducer(state: MafiaState, action: HostAction): MafiaState | null 
   }
 }
 
+/** Game over: only the lobby, play again and mid-game joiners still change the state. */
+function endedReducer(state: MafiaState, action: HostAction): MafiaState | null {
+  switch (action.type) {
+    case 'end':
+      return action.winner ? state : null;
+    case 'playAgain':
+      return (
+        startMafia(
+          { counts: state.counts, revealOut: state.revealOut },
+          action.seats,
+          action.rng,
+          state.round + 1,
+        ) ?? state
+      );
+    case 'seatJoined':
+    case 'seatRemoved':
+      return withWaiting(state, action);
+    default:
+      return state;
+  }
+}
+
+/** A seat joining or leaving while the game is over only changes who waits for the next game. */
+function withWaiting(
+  state: MafiaState,
+  action: Extract<HostAction, { type: 'seatJoined' | 'seatRemoved' }>,
+): MafiaState {
+  if (action.type === 'seatRemoved') {
+    return state.waiting.includes(action.seatId)
+      ? {
+          ...state,
+          waiting: state.waiting.filter(seat => seat !== action.seatId),
+        }
+      : state;
+  }
+  return state.waiting.includes(action.seatId) ||
+    state.players.includes(action.seatId)
+    ? state
+    : { ...state, waiting: [...state.waiting, action.seatId] };
+}
+
 /** Mafia broadcast: phase, ready and out (with roles only when the host reveals them). */
 export function toMafiaPublic(state: MafiaState): MafiaPublic {
   return {
@@ -507,6 +561,14 @@ export function toMafiaPublic(state: MafiaState): MafiaPublic {
       return state.revealOut && roleId ? { ...entry, roleId } : entry;
     }),
     revealOut: state.revealOut,
+    ...(state.ended
+      ? {
+          ended: {
+            winner: state.ended.winner,
+            roles: dealtRoles(state.players, state.deals),
+          },
+        }
+      : {}),
   };
 }
 

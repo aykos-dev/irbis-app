@@ -296,6 +296,26 @@
     "markExiled": "Exiled by day",
     "markBack": "Back in game",
     "startDay": "Start Day %{n}",
-    "startNight": "Start Night %{n}"
+    "startNight": "Start Night %{n}",
+    "winQ": {
+      "town": "Town wins?",
+      "mafia": "Mafia wins?",
+      "maniac": "Maniac wins?"
+    },
+    "endGame": "End game",
+    "keepPlaying": "Keep playing",
+    "endNoWinner": "End without a winner?",
+    "overLine": "GAME OVER · %{phase}",
+    "win": {
+      "town": "Town wins!",
+      "mafia": "Mafia wins!",
+      "maniac": "Maniac wins!",
+      "none": "Game over"
+    },
+    "survived": "%{s} players survived",
+    "everyone": "Everyone's role",
+    "lobby": "Lobby",
+    "playAgain": "Play again",
+    "waitHost": "Waiting for the host"
   }
 }

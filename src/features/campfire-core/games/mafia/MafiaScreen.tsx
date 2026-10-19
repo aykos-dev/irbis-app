@@ -6,21 +6,37 @@ import { borders, radii, spacing } from '../../../../shared/constants/spacing';
 import { createThemedStyles } from '../../../../shared/contexts/theme';
 import { t } from '../../../../shared/i18n';
 import { haptics } from '../../../../shared/utils/haptics';
+import { qaLog } from '../../../../shared/utils/qaLog';
 import type {
   MafiaPublic,
   MafiaSecret,
+  MafiaWinner,
   RosterPlayer,
 } from '../../protocol/codec';
-import type { MafiaState } from '../gameReducer';
+import { toMafiaPublic, type MafiaState } from '../gameReducer';
+import { GameOver } from './GameOver';
 import { HostControl } from './HostControl';
 import { fateLabel, OutList, phaseLabel } from './OutList';
 import { RoleCard } from './RoleCard';
+import { dealtRoles, winCheck, type MafiaWinningTeam } from './winCheck';
+import { WinSheet } from './WinSheet';
 
 export type MafiaHostControls = {
   onPhaseNext: () => void;
   onMarkOut: (seatId: string) => void;
   onMarkBack: (seatId: string) => void;
+  onEnd: (winner: MafiaWinner) => void;
+  onLobby: () => void;
+  onPlayAgain: () => void;
 };
+
+/** The winner the host's game points to now (AC6), or null. */
+export function mafiaWinner(game: MafiaState): MafiaWinningTeam | null {
+  return winCheck(
+    dealtRoles(game.players, game.deals),
+    game.out.map(entry => entry.seatId),
+  );
+}
 
 type Props =
   | {
@@ -42,17 +58,77 @@ type Props =
 /** Mafia on every phone: the narrator's control (AC4) or the player's view with its card (AC3, AC5). */
 export function MafiaScreen(props: Props) {
   if (props.kind === 'host') {
+    const { game, roster, controls } = props;
+    const info = toMafiaPublic(game);
+    if (info.ended) {
+      return (
+        <GameOver
+          key={game.round}
+          phase={info.phase}
+          winner={info.ended.winner}
+          roles={info.ended.roles}
+          out={info.out}
+          roster={roster}
+          host={{ onLobby: controls.onLobby, onPlayAgain: controls.onPlayAgain }}
+        />
+      );
+    }
+    return <HostView key={game.round} {...props} />;
+  }
+  if (props.info.ended) {
     return (
-      <HostControl
-        game={props.game}
+      <GameOver
+        key={props.round}
+        phase={props.info.phase}
+        winner={props.info.ended.winner}
+        roles={props.info.ended.roles}
+        out={props.info.out}
         roster={props.roster}
-        onPhaseNext={props.controls.onPhaseNext}
-        onMarkOut={props.controls.onMarkOut}
-        onMarkBack={props.controls.onMarkBack}
       />
     );
   }
   return <PlayerView key={props.round} {...props} />;
+}
+
+type HostProps = Extract<Props, { kind: 'host' }>;
+
+/** The narrator's control plus the win question after each mark (asked once per out-set). */
+function HostView({ game, roster, controls }: HostProps) {
+  const [dismissed, setDismissed] = useState<string | null>(null);
+  const winner = mafiaWinner(game);
+  const outSet = game.out
+    .map(entry => entry.seatId)
+    .sort()
+    .join(',');
+  const asking = winner !== null && dismissed !== outSet;
+
+  useEffect(() => {
+    if (winner && asking) {
+      qaLog('maf_win_suggested', { winner });
+    }
+  }, [winner, asking, outSet]);
+
+  return (
+    <>
+      <HostControl
+        game={game}
+        roster={roster}
+        onPhaseNext={controls.onPhaseNext}
+        onMarkOut={controls.onMarkOut}
+        onMarkBack={controls.onMarkBack}
+      />
+      {winner && asking ? (
+        <WinSheet
+          winner={winner}
+          onEnd={() => {
+            haptics.warning();
+            controls.onEnd(winner);
+          }}
+          onKeepPlaying={() => setDismissed(outSet)}
+        />
+      ) : null}
+    </>
+  );
 }
 
 type PlayerProps = Extract<Props, { kind: 'player' }>;

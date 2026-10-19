@@ -115,13 +115,24 @@ export const mafiaOutSchema = z.object({
 });
 export type MafiaOut = z.infer<typeof mafiaOutSchema>;
 
-/** What every phone may see about the Mafia game. Never a role of a seat still in. */
+/** Who won a Mafia game; `none` when the host ended it without a winner. */
+export const mafiaWinnerSchema = z.enum(['town', 'mafia', 'maniac', 'none']);
+export type MafiaWinner = z.infer<typeof mafiaWinnerSchema>;
+
+/** What every phone may see about the Mafia game. Never a role of a seat still in, until `ended`. */
 export const mafiaPublicSchema = z.object({
   phase: mafiaPhaseSchema,
   readyCount: z.number().int().min(0),
   playerCount: z.number().int().min(0),
   out: z.array(mafiaOutSchema),
   revealOut: z.boolean(),
+  /** Game over: the winner and every dealt seat's role (the only time players see others' roles). */
+  ended: z
+    .object({
+      winner: mafiaWinnerSchema,
+      roles: z.record(seatId, mafiaRoleIdSchema),
+    })
+    .optional(),
 });
 export type MafiaPublic = z.infer<typeof mafiaPublicSchema>;
 

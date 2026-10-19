@@ -296,6 +296,26 @@
     "markExiled": "Kunduzi quvildi",
     "markBack": "O'yinga qaytarish",
     "startDay": "%{n}-kunni boshlash",
-    "startNight": "%{n}-tunni boshlash"
+    "startNight": "%{n}-tunni boshlash",
+    "winQ": {
+      "town": "Shahar yutdimi?",
+      "mafia": "Mafiya yutdimi?",
+      "maniac": "Manyak yutdimi?"
+    },
+    "endGame": "O'yinni tugatish",
+    "keepPlaying": "Davom etish",
+    "endNoWinner": "G'olibsiz tugatilsinmi?",
+    "overLine": "O'YIN TUGADI · %{phase}",
+    "win": {
+      "town": "Shahar yutdi!",
+      "mafia": "Mafiya yutdi!",
+      "maniac": "Manyak yutdi!",
+      "none": "O'yin tugadi"
+    },
+    "survived": "%{s} o'yinchi omon qoldi",
+    "everyone": "Hammaning roli",
+    "lobby": "Lobbi",
+    "playAgain": "Yana o'ynash",
+    "waitHost": "Boshlovchi kutilmoqda"
   }
 }

@@ -90,4 +90,21 @@ export const mafiaSizes = {
   cardGlyph: 40,
   chipGlyph: 14,
   rowAvatar: 40,
+  /** Game over: players who are out are drawn dimmed. */
+  outOpacity: 0.6,
+  confettiWidth: 10,
+  confettiHeight: 16,
+  confettiRadius: 2,
+  /** Confetti falls this far, fading out, within `confettiMs`. */
+  confettiFall: 120,
+  confettiMs: 1500,
 } as const;
+
+/** Game-over confetti rects: colour, start position (fraction of the width) and tilt. */
+export const mafiaConfetti = [
+  { color: palette.gold, left: '10%', rotate: '-18deg' },
+  { color: palette.orange, left: '30%', rotate: '24deg' },
+  { color: palette.sky, left: '50%', rotate: '38deg' },
+  { color: palette.red, left: '70%', rotate: '-30deg' },
+  { color: palette.teal, left: '88%', rotate: '12deg' },
+] as const;

@@ -8,7 +8,12 @@ import type { PartyGame } from '../games/packs';
 import { campNet } from '../native/campNet';
 import { hostsWithGuide } from '../native/hostPlatform';
 import { initialProfile, readProfile } from '../playerProfile';
-import { CAMP_PORT, type RosterPlayer, type WyrPick } from '../protocol/codec';
+import {
+  CAMP_PORT,
+  type MafiaWinner,
+  type RosterPlayer,
+  type WyrPick,
+} from '../protocol/codec';
 import { buildJoinUrl } from '../protocol/qr';
 import { createHostServer, type HostServer } from './hostServer';
 import {
@@ -82,6 +87,8 @@ export const hostGame = {
   mafPhaseNext: (): void => hostGameServer?.mafPhaseNext(),
   mafMarkOut: (seatId: string): void => hostGameServer?.mafMarkOut(seatId),
   mafMarkBack: (seatId: string): void => hostGameServer?.mafMarkBack(seatId),
+  mafEnd: (winner: MafiaWinner): void => hostGameServer?.mafEnd(winner),
+  mafPlayAgain: (): void => hostGameServer?.mafPlayAgain(),
 };
 
 /** Random 4-digit room code, 1000–9999. */

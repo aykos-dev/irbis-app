@@ -18,6 +18,7 @@ import type {
   ImposterSecret,
   MafiaPublic,
   MafiaSecret,
+  MafiaWinner,
   PublicGame,
   RosterPlayer,
   Secret,
@@ -28,7 +29,9 @@ import { HOST_SEAT_ID } from '../room/roomReducer';
 import { hostGame } from '../room/useHostRoom';
 import { toPublic, type MafiaState } from './gameReducer';
 import { ImposterScreen } from './imposter/ImposterScreen';
-import { MafiaScreen } from './mafia/MafiaScreen';
+import { GameOver } from './mafia/GameOver';
+import { MafiaScreen, mafiaWinner } from './mafia/MafiaScreen';
+import { WinSheet } from './mafia/WinSheet';
 import type { PartyGame } from './packs';
 import { RatherScreen } from './rather/RatherScreen';
 import { WhoAmIScreen } from './whoami/WhoAmIScreen';
@@ -66,6 +69,9 @@ const mafiaHostControls = {
   onPhaseNext: () => hostGame.mafPhaseNext(),
   onMarkOut: (seatId: string) => hostGame.mafMarkOut(seatId),
   onMarkBack: (seatId: string) => hostGame.mafMarkBack(seatId),
+  onEnd: (winner: MafiaWinner) => hostGame.mafEnd(winner),
+  onLobby: () => hostGame.end(),
+  onPlayAgain: () => hostGame.mafPlayAgain(),
 };
 
 /** Mafia: the narrator's game, a player's dealt view, or a mid-game joiner who waits. */
@@ -78,7 +84,8 @@ type MafiaView =
       secret: MafiaSecret;
       selfSeatId: string | null;
     }
-  | { kind: 'waiting' };
+  /** Not dealt in; `info` once the game is over (every phone shows the result). */
+  | { kind: 'waiting'; info: MafiaPublic };
 
 const ratherHostControls = {
   onReveal: () => hostGame.revealVotes(),
@@ -127,7 +134,7 @@ export function GameWaiting({
             secret: deal.secret,
             selfSeatId: player.seatId,
           }
-        : { kind: 'waiting' };
+        : { kind: 'waiting', info: player.game.public };
   } else if (hosted) {
     view = {
       game: hosted.game,
@@ -157,9 +164,17 @@ export function GameWaiting({
     };
   }
   const active = view !== null || mafia !== null;
+  const mafiaHost = mafia?.kind === 'host' ? mafia.game : null;
+  const mafiaOver = mafiaHost?.ended !== undefined;
 
-  // Host: leaving the game screen ends the game, so Back asks first.
-  usePreventRemove(!isPlayer && active, () => setConfirmEnd(true));
+  // Host: leaving the game screen ends the game, so Back asks first (after a Mafia game over: lobby).
+  usePreventRemove(!isPlayer && active, () => {
+    if (mafiaOver) {
+      hostGame.end();
+      return;
+    }
+    setConfirmEnd(true);
+  });
 
   useEffect(() => {
     if (!active && navigation.canGoBack()) {
@@ -172,11 +187,17 @@ export function GameWaiting({
   const showMine = () =>
     isPlayer ? client?.showMine() : hostGame.showMine();
 
-  const endGame = () => {
+  const endGame = (winner?: MafiaWinner) => {
     haptics.warning();
     setConfirmEnd(false);
+    if (mafiaHost) {
+      hostGame.mafEnd(winner ?? 'none');
+      return;
+    }
     hostGame.end();
   };
+  // Mafia End game: a matching winner asks "<team> wins?", else "End without a winner?" (AC6).
+  const endWinner = mafiaHost && confirmEnd ? mafiaWinner(mafiaHost) : null;
 
   if (!view && !mafia) {
     return null;
@@ -203,12 +224,21 @@ export function GameWaiting({
             onReady={() => client?.mafReady()}
           />
         ) : null}
-        {mafia?.kind === 'waiting' ? (
+        {mafia?.kind === 'waiting' && mafia.info.ended ? (
+          <GameOver
+            phase={mafia.info.phase}
+            winner={mafia.info.ended.winner}
+            roles={mafia.info.ended.roles}
+            out={mafia.info.out}
+            roster={player?.players ?? noRoster}
+          />
+        ) : null}
+        {mafia?.kind === 'waiting' && !mafia.info.ended ? (
           <AppText variant="h1" accessibilityRole="header" style={layout.center}>
             {t('camp.games.mafia')}
           </AppText>
         ) : null}
-        {mafia?.kind === 'waiting' ? (
+        {mafia?.kind === 'waiting' && !mafia.info.ended ? (
           <AppText
             testID="camp.game.in-progress"
             variant="body"
@@ -261,7 +291,7 @@ export function GameWaiting({
             {t('camp.game.inProgress')}
           </AppText>
         )}
-        {isPlayer ? null : (
+        {isPlayer || mafiaOver ? null : (
           <AppButton
             testID="camp.game.end"
             label={t('camp.game.end')}
@@ -272,14 +302,27 @@ export function GameWaiting({
             }}
           />
         )}
-        {confirmEnd ? (
+        {confirmEnd && endWinner ? (
+          <WinSheet
+            winner={endWinner}
+            onEnd={() => endGame(endWinner)}
+            onKeepPlaying={() => setConfirmEnd(false)}
+          />
+        ) : null}
+        {confirmEnd && !endWinner ? (
           <ConfirmSheet
             testID="camp.game.end-sheet"
-            title={t('camp.game.endConfirm')}
-            confirmLabel={t('camp.game.end')}
+            title={
+              mafiaHost
+                ? t('camp.maf.endNoWinner')
+                : t('camp.game.endConfirm')
+            }
+            confirmLabel={
+              mafiaHost ? t('camp.maf.endGame') : t('camp.game.end')
+            }
             confirmTestID="camp.game.end-confirm"
             cancelTestID="camp.game.end-cancel"
-            onConfirm={endGame}
+            onConfirm={() => endGame()}
             onDismiss={() => setConfirmEnd(false)}
           />
         ) : null}

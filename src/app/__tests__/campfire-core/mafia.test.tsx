@@ -198,6 +198,8 @@ describe('campfire-mafia — deal (AC2)', () => {
 
     await press('camp.game.end');
     await press('camp.game.end-confirm');
+    await screen.findByTestId('maf.over');
+    await press('maf.lobby');
     expect(await screen.findByTestId('maf.setup')).toBeOnTheScreen();
     clients.forEach(client => expect(client.received().at(-1)).toEqual({ v: 3, type: 'lobby' }));
   });
