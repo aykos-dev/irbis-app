@@ -26,3 +26,13 @@ export const campSizes = {
   heroHeight: 180,
   heroArt: 84,
 } as const;
+
+/** Lobby sizes from the canvas (CampLobby). */
+export const lobbySizes = {
+  qr: 200,
+  codeFont: 40,
+  seat: 64,
+  seatArtRatio: 0.8,
+  /** Reconnecting seats are drawn at half opacity. */
+  dimmed: 0.5,
+} as const;

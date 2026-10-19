@@ -79,8 +79,8 @@ export type RootStackParamList = {
     maxDifficulty: number;
     newPlacesCount: number;
   };
-  /** Campfire host lobby (campfire-core slice 2; coming-soon stub until then). */
-  CampLobby: undefined;
+  /** Campfire host lobby (campfire-core AC4, AC6, AC7); `resume` reopens the saved room. */
+  CampLobby: { resume?: boolean } | undefined;
   /** Campfire join screen (campfire-core slice 3; coming-soon stub until then). */
   CampJoin: undefined;
 };

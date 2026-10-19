@@ -4,5 +4,6 @@
   "close": "Yopish",
   "offline": "Internet yo‘q. Oxirgi saqlangan ma’lumotlar ko‘rsatilmoqda.",
   "loading": "Yuklanmoqda",
-  "environment": "Muhit: %{env}"
+  "environment": "Muhit: %{env}",
+  "cancel": "Bekor qilish"
 }

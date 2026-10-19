@@ -13,7 +13,8 @@
     "join": "Join",
     "games": "Games",
     "tripGroup": "Play with your trip group",
-    "badges": "Campfire badges"
+    "badges": "Campfire badges",
+    "resume": "Resume room %{code}"
   },
   "games": {
     "imposter": "Imposter",
@@ -41,5 +42,30 @@
     "marmot": "Marmot",
     "eagle": "Eagle",
     "panda": "Panda"
+  },
+  "lobby": {
+    "youHost": "You're the host",
+    "room": "Campfire room",
+    "hotspotOn": "Hotspot on",
+    "wifiChip": "Hosting on %{name}",
+    "scan": "Scan to join Wi-Fi and room",
+    "pwInQr": "Wi-Fi password in the QR",
+    "players": "Players · %{n} / 15",
+    "allConnected": "All connected",
+    "reconnectingCount": "%{k} reconnecting",
+    "waiting": "waiting",
+    "reconnecting": "reconnecting…",
+    "empty": "Waiting for players…",
+    "game": "Game",
+    "gameRather": "Rather",
+    "start": "Start",
+    "startSoon": "Games arrive in the next update",
+    "removeConfirm": "Remove %{name}?",
+    "remove": "Remove",
+    "close": "Close room",
+    "closeConfirm": "Close the room for everyone?",
+    "hotspotError": "Couldn't start the hotspot",
+    "tryAgain": "Try again",
+    "permission": "Allow nearby Wi-Fi devices to start the hotspot"
   }
 }

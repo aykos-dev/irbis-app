@@ -67,6 +67,10 @@ jest.mock('@gorhom/bottom-sheet', () => {
   return { ...base, __esModule: true, BottomSheetModal };
 });
 
+/* Campfire local network: in-memory TCP server and zeroconf (see jest/campNetFakes.ts). */
+jest.mock('react-native-tcp-socket', () => require('./jest/campNetFakes').tcpSocketModule);
+jest.mock('react-native-zeroconf', () => require('./jest/campNetFakes').zeroconfModule);
+
 /*
  * Every app-level test runs on a returning device (onboarding already ended) unless it opts into
  * first launch by removing `onboarding.done` (see src/app/__tests__/onboarding).

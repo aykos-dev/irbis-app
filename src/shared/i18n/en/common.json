@@ -4,5 +4,6 @@
   "close": "Close",
   "offline": "You're offline. Showing the last saved data.",
   "loading": "Loading",
-  "environment": "Environment: %{env}"
+  "environment": "Environment: %{env}",
+  "cancel": "Cancel"
 }

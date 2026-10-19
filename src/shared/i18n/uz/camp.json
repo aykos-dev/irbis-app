@@ -13,7 +13,8 @@
     "join": "Qo'shilish",
     "games": "O'yinlar",
     "tripGroup": "Sayohat guruhingiz bilan o'ynang",
-    "badges": "Gulxan nishonlari"
+    "badges": "Gulxan nishonlari",
+    "resume": "%{code} xonasiga qaytish"
   },
   "games": {
     "imposter": "Sotqin",
@@ -41,5 +42,30 @@
     "marmot": "Sug'ur",
     "eagle": "Burgut",
     "panda": "Panda"
+  },
+  "lobby": {
+    "youHost": "Siz boshlovchisiz",
+    "room": "Gulxan xonasi",
+    "hotspotOn": "Hotspot yoqilgan",
+    "wifiChip": "%{name} orqali",
+    "scan": "Wi-Fi va xonaga kirish uchun skanerlang",
+    "pwInQr": "Wi-Fi paroli QR kodda",
+    "players": "O'yinchilar · %{n} / 15",
+    "allConnected": "Hamma ulangan",
+    "reconnectingCount": "%{k} kishi qayta ulanmoqda",
+    "waiting": "kutmoqda",
+    "reconnecting": "qayta ulanmoqda…",
+    "empty": "O'yinchilar kutilmoqda…",
+    "game": "O'yin",
+    "gameRather": "Tanlov",
+    "start": "Boshlash",
+    "startSoon": "O'yinlar keyingi yangilanishda chiqadi",
+    "removeConfirm": "%{name}ni chiqarasizmi?",
+    "remove": "Chiqarish",
+    "close": "Xonani yopish",
+    "closeConfirm": "Xona hamma uchun yopilsinmi?",
+    "hotspotError": "Hotspotni yoqib bo'lmadi",
+    "tryAgain": "Qayta urinish",
+    "permission": "Yaqin Wi-Fi qurilmalariga ruxsat bering"
   }
 }

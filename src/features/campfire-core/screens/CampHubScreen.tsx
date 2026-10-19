@@ -1,5 +1,5 @@
-import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useCallback, useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
@@ -19,6 +19,7 @@ import { campSizes, type GameId } from '../campTheme';
 import { ComingSoonTag } from '../components/ComingSoonTag';
 import { GameTile } from '../components/GameTile';
 import { PlayerSheet, type CampRole } from '../components/PlayerSheet';
+import { loadHostRoom } from '../room/hostRoomStore';
 
 const games: GameId[] = ['imposter', 'mafia', 'whoami', 'rather'];
 
@@ -31,6 +32,14 @@ export function CampHubScreen() {
   const { show } = useToast();
   const styles = useStyles();
   const [sheet, setSheet] = useState<CampRole | null>(null);
+  const [savedCode, setSavedCode] = useState<string | null>(null);
+
+  // A room hosted in the last 12 h can be resumed (AC7); re-read whenever the hub is back in view.
+  useFocusEffect(
+    useCallback(() => {
+      setSavedCode(loadHostRoom()?.code ?? null);
+    }, []),
+  );
 
   const comingSoon = () => {
     haptics.tap();
@@ -75,6 +84,14 @@ export function CampHubScreen() {
           <AppButton testID="camp.hub.join" label={t('camp.hub.join')} variant="white" onPress={() => setSheet('join')} />
         </View>
       </View>
+      {savedCode ? (
+        <AppButton
+          testID="camp.hub.resume"
+          label={t('camp.hub.resume', { code: savedCode })}
+          variant="primary"
+          onPress={() => navigation.navigate('CampLobby', { resume: true })}
+        />
+      ) : null}
 
       <AppText variant="h3" accessibilityRole="header">
         {t('camp.hub.games')}

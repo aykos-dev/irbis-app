@@ -26,6 +26,8 @@ type StorageSchema = {
   'levels.defs': string;
   /** Campfire player profile, saved on the player sheet's Continue: JSON `{ nickname, animal }`. */
   'camp.profile': string;
+  /** The hosted Campfire room for resume (12 h): JSON `{ savedAt, room }` with seats and seat tokens. */
+  'camp.hostRoom': string;
 };
 
 export type StorageKey = keyof StorageSchema;

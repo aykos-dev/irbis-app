@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 
+import { CampLobbyScreen } from '../../features/campfire-core/screens/CampLobbyScreen';
 import { RecoveryPhoneScreen } from '../../features/auth/screens/RecoveryPhoneScreen';
 import { DebugScreen } from '../../features/debug/screens/DebugScreen';
 import { StatusScreen } from '../../features/health/screens/StatusScreen';
@@ -73,7 +74,7 @@ export function RootNavigator() {
         component={LevelUpScreen}
         options={{ presentation: 'fullScreenModal', animation: 'fade', gestureEnabled: false }}
       />
-      <Stack.Screen name="CampLobby" component={ComingSoon} options={{ headerShown: true, title: '' }} />
+      <Stack.Screen name="CampLobby" component={CampLobbyScreen} options={{ gestureEnabled: false }} />
       <Stack.Screen name="CampJoin" component={ComingSoon} options={{ headerShown: true, title: '' }} />
       {appConfig.isQaEnabled ? (
         <>
