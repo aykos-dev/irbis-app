@@ -130,5 +130,32 @@
       "whoami": "Who am I?",
       "rather": "Would you rather"
     }
+  },
+  "secret": {
+    "hold": "Hold to see",
+    "release": "Release to hide",
+    "recording": "Hidden while the screen is recorded"
+  },
+  "imp": {
+    "roundLine": "Round %{n} · %{m} players",
+    "hostLine": "Offline · host %{name}",
+    "yourWord": "YOUR SECRET WORD",
+    "clueOrder": "Clue order · one word each",
+    "you": "You",
+    "hint": "Give a clue that proves you know the word — but don't hand it to the imposter.",
+    "shh": "SHH…",
+    "youAre": "You are the imposter",
+    "noWord": "You don't know the word. The category is:",
+    "noWordOnly": "You don't know the word.",
+    "howToWin": "How to win",
+    "win1": "Listen to the clues before yours and blend in with something vague.",
+    "win2": "Not voted out? You win. Caught? Guess the word to steal the win.",
+    "gotIt": "Got it",
+    "reveal": "Reveal imposter",
+    "newRound": "New round",
+    "wasImposter": "The imposter was %{names}",
+    "wasWord": "The word was %{word}",
+    "waitHost": "The host starts the next round",
+    "mascot": "Irbis the snow leopard"
   }
 }

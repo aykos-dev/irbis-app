@@ -54,6 +54,7 @@ export const imposterSecretSchema = z.object({
   packId: z.string().min(1),
   showCategory: z.boolean(),
 });
+export type ImposterSecret = z.infer<typeof imposterSecretSchema>;
 /** Who am I: everyone's character except your own. */
 export const whoamiSecretSchema = z.object({
   others: z.array(z.object({ seatId, characterId: z.string().min(1) })),
@@ -72,6 +73,11 @@ export const publicGameSchema = z.object({
   waiting: z.array(seatId),
   imposters: z.number().int().min(1).max(2).optional(),
   showCategory: z.boolean().optional(),
+  /** Imposter: clue order for the round, fixed by the host. */
+  order: z.array(seatId).optional(),
+  /** Imposter, after the reveal only. */
+  imposterSeatIds: z.array(seatId).optional(),
+  wordId: z.string().min(1).optional(),
   questionId: z.string().min(1).optional(),
   qIndex: z.number().int().min(0).optional(),
   total: z.number().int().min(0).optional(),

@@ -61,6 +61,8 @@ export type HostServer = {
   newRound: (rng?: Rng) => void;
   /** Ends the game for everyone: `lobby` to all. */
   endGame: () => void;
+  /** Imposter: shows every phone who the imposters were and the word. */
+  reveal: () => void;
 };
 
 type Options = {
@@ -377,6 +379,13 @@ export function createHostServer({
       }
       broadcastGame(true);
       qaLog('camp_round_started', { game: game.game, round: game.round });
+    },
+    reveal: () => {
+      if (!game || !applyGame({ type: 'reveal' })) {
+        return;
+      }
+      broadcastGame(false);
+      qaLog('camp_imposter_revealed', { imposters: game.imposterSeats.length });
     },
     endGame: () => {
       const ended = game;

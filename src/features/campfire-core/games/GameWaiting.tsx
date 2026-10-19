@@ -14,8 +14,17 @@ import { haptics } from '../../../shared/utils/haptics';
 import { campScheme } from '../campTheme';
 import { ConfirmSheet } from '../components/ConfirmSheet';
 import { playerSession } from '../join/playerClient';
+import type {
+  GamePhase,
+  ImposterSecret,
+  PublicGame,
+  RosterPlayer,
+  Secret,
+} from '../protocol/codec';
 import { HOST_SEAT_ID } from '../room/roomReducer';
 import { hostGame } from '../room/useHostRoom';
+import { toPublic } from './gameReducer';
+import { ImposterScreen } from './imposter/ImposterScreen';
 import { findPack, localized, type PartyGame } from './packs';
 
 type GameView = {
@@ -23,14 +32,30 @@ type GameView = {
   packId: string;
   /** This phone's seat is dealt into the round (else it waits for the next one). */
   dealt: boolean;
+  round: number;
+  phase: GamePhase;
+  info: PublicGame;
+  secret: Secret | null;
+  selfSeatId: string | null;
+  roster: RosterPlayer[];
 };
 
 const noSubscribe = () => () => undefined;
 const noSnapshot = () => null;
+const noRoster: RosterPlayer[] = [];
+const noRosterSnapshot = () => noRoster;
+
+const imposterSecret = (secret: Secret | null): ImposterSecret | null =>
+  secret && 'role' in secret ? secret : null;
+
+const hostControls = {
+  onReveal: () => hostGame.reveal(),
+  onNewRound: () => hostGame.newRound(),
+};
 
 /**
- * The game route every phone opens on Start (AC2). Until the game screens ship (slices 2–3) the
- * body is the dealt state, or "Round in progress" for a seat that joined mid-round. The host ends
+ * The game route every phone opens on Start (AC2). Imposter renders its round (slice 2); the other
+ * games show the dealt state until slice 3, and a mid-round joiner sees "Round in progress". The host ends
  * the game for everyone; the end (or `lobby` from the host) returns to the lobby.
  */
 export function GameWaiting({
@@ -44,6 +69,10 @@ export function GameWaiting({
     isPlayer ? noSubscribe : hostGame.subscribe,
     isPlayer ? noSnapshot : hostGame.getSnapshot,
   );
+  const hostRoster = useSyncExternalStore(
+    isPlayer ? noSubscribe : hostGame.subscribe,
+    isPlayer ? noRosterSnapshot : hostGame.getRoster,
+  );
   const player = useSyncExternalStore(
     client?.subscribe ?? noSubscribe,
     client?.getSnapshot ?? noSnapshot,
@@ -56,6 +85,12 @@ export function GameWaiting({
       game: hosted.game,
       packId: hosted.settings.packId,
       dealt: hosted.players.includes(HOST_SEAT_ID),
+      round: hosted.round,
+      phase: hosted.phase,
+      info: toPublic(hosted),
+      secret: hosted.deals[HOST_SEAT_ID] ?? null,
+      selfSeatId: HOST_SEAT_ID,
+      roster: hostRoster,
     };
   } else if (player?.game) {
     view = {
@@ -64,6 +99,12 @@ export function GameWaiting({
       dealt: player.seatId
         ? player.game.public.players.includes(player.seatId)
         : false,
+      round: player.game.round,
+      phase: player.game.phase,
+      info: player.game.public,
+      secret: player.deal?.secret ?? null,
+      selfSeatId: player.seatId,
+      roster: player.players,
     };
   }
   const active = view !== null;
@@ -90,14 +131,26 @@ export function GameWaiting({
   return (
     <ThemeProvider scheme={campScheme}>
       <Screen testID="camp.game.waiting" scroll>
-        <View style={layout.header}>
-          <AppText variant="h1" accessibilityRole="header">
-            {t(`camp.game.name.${view.game}`)}
-          </AppText>
-          {pack ? (
-            <AppText variant="caption">{localized(pack.name)}</AppText>
-          ) : null}
-        </View>
+        {view.game === 'imposter' ? (
+          <ImposterScreen
+            round={view.round}
+            phase={view.phase}
+            info={view.info}
+            secret={view.dealt ? imposterSecret(view.secret) : null}
+            selfSeatId={view.selfSeatId}
+            roster={view.roster}
+            host={isPlayer ? undefined : hostControls}
+          />
+        ) : (
+          <View style={layout.header}>
+            <AppText variant="h1" accessibilityRole="header">
+              {t(`camp.game.name.${view.game}`)}
+            </AppText>
+            {pack ? (
+              <AppText variant="caption">{localized(pack.name)}</AppText>
+            ) : null}
+          </View>
+        )}
         {view.dealt ? null : (
           <AppText
             testID="camp.game.in-progress"

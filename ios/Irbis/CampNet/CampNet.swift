@@ -1,5 +1,6 @@
 import Darwin
 import Foundation
+import UIKit
 
 /// iOS side of the `CampNet` native module (Campfire, AC4). iOS has no API to start a hotspot,
 /// so the host turns on Personal Hotspot in Settings and the app only reads the phone's
@@ -44,6 +45,17 @@ final class CampNet: NSObject {
     reject: @escaping (String?, String?, Error?) -> Void
   ) {
     resolve(CampNet.address(of: CampNet.hotspotIface))
+  }
+
+  /// Whether the screen is being recorded or mirrored (campfire-party AC3), as a Bool.
+  @objc(isCaptured:reject:)
+  func isCaptured(
+    _ resolve: @escaping (Any?) -> Void,
+    reject: @escaping (String?, String?, Error?) -> Void
+  ) {
+    DispatchQueue.main.async {
+      resolve(UIScreen.main.isCaptured)
+    }
   }
 
   /// First IPv4 address of `iface` that is up, as `{ ip, iface }`, or nil.

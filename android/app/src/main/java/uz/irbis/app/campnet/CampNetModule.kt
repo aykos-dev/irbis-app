@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.view.WindowManager
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
@@ -79,6 +80,19 @@ class CampNetModule(context: ReactApplicationContext) : ReactContextBaseJavaModu
         ?.firstOrNull { it is Inet4Address && !it.isLoopbackAddress }
         ?.hostAddress
     promise.resolve(ip)
+  }
+
+  /** Secret screens (campfire-party AC3): FLAG_SECURE blocks screenshots and screen recording. */
+  @ReactMethod
+  fun setSecure(on: Boolean) {
+    val activity = reactApplicationContext.currentActivity ?: return
+    activity.runOnUiThread {
+      if (on) {
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+      } else {
+        activity.window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+      }
+    }
   }
 
   override fun invalidate() {

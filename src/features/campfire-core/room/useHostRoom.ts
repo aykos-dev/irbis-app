@@ -7,7 +7,7 @@ import type { PartyGame } from '../games/packs';
 import { campNet } from '../native/campNet';
 import { hostsWithGuide } from '../native/hostPlatform';
 import { initialProfile, readProfile } from '../playerProfile';
-import { CAMP_PORT } from '../protocol/codec';
+import { CAMP_PORT, type RosterPlayer } from '../protocol/codec';
 import { buildJoinUrl } from '../protocol/qr';
 import { createHostServer, type HostServer } from './hostServer';
 import {
@@ -16,7 +16,12 @@ import {
   loadHostRoom,
   saveHostRoom,
 } from './hostRoomStore';
-import { createRoom, resumeRoom, type RoomState } from './roomReducer';
+import {
+  createRoom,
+  resumeRoom,
+  toRoster,
+  type RoomState,
+} from './roomReducer';
 
 export type HostNetwork =
   | { mode: 'hotspot'; ip: string; ssid: string; password: string }
@@ -40,24 +45,34 @@ export type HostRoom =
  * (`useSyncExternalStore`). `end` sends everyone back to the lobby.
  */
 let hostGameState: GameState | null = null;
-let hostGameEnd: (() => void) | null = null;
+let hostGameRoster: RosterPlayer[] = [];
+let hostGameServer: HostServer | null = null;
 const hostGameListeners = new Set<() => void>();
 
-function publishHostGame(game: GameState | null, end: (() => void) | null) {
+function publishHostGame(
+  game: GameState | null,
+  room: RoomState | null,
+  server: HostServer | null,
+) {
   hostGameState = game;
-  hostGameEnd = end;
+  hostGameRoster = room ? toRoster(room) : [];
+  hostGameServer = server;
   hostGameListeners.forEach(listener => listener());
 }
 
 export const hostGame = {
   getSnapshot: (): GameState | null => hostGameState,
+  /** Names for the game screen (same `subscribe`). */
+  getRoster: (): RosterPlayer[] => hostGameRoster,
   subscribe: (listener: () => void) => {
     hostGameListeners.add(listener);
     return () => {
       hostGameListeners.delete(listener);
     };
   },
-  end: (): void => hostGameEnd?.(),
+  end: (): void => hostGameServer?.endGame(),
+  reveal: (): void => hostGameServer?.reveal(),
+  newRound: (): void => hostGameServer?.newRound(),
 };
 
 /** Random 4-digit room code, 1000–9999. */
@@ -188,7 +203,7 @@ export function useHostRoom(resume: boolean) {
           if (!next.closed) {
             saveHostRoom(next, Date.now(), game);
           }
-          publishHostGame(game, server.endGame);
+          publishHostGame(game, next, server);
           setState({
             phase: 'ready',
             network,
@@ -218,7 +233,7 @@ export function useHostRoom(resume: boolean) {
       }
       live.current = { server, network, room };
       saveHostRoom(room, Date.now(), savedGame);
-      publishHostGame(savedGame, server.endGame);
+      publishHostGame(savedGame, room, server);
       setState({
         phase: 'ready',
         network,
@@ -250,7 +265,7 @@ export function useHostRoom(resume: boolean) {
         current.server.stop();
         stopNetwork(current.network);
       }
-      publishHostGame(null, null);
+      publishHostGame(null, null, null);
     };
   }, [resume, attempt]);
 

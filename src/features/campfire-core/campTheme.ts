@@ -47,3 +47,11 @@ export const joinSizes = {
   codeBox: 60,
   codeDigits: 4,
 } as const;
+
+/** Party-game secret cards (canvas ImpReveal / ImpImposter). */
+export const secretSizes = {
+  cardMinHeight: 260,
+  mascot: 56,
+  /** Lake art behind the word, dimmed so the word reads. */
+  backdropOpacity: 0.35,
+} as const;

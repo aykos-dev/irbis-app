@@ -43,6 +43,9 @@ export const gameStateSchema = z.object({
   waiting: z.array(z.string()),
   deals: z.record(z.string(), secretSchema),
   imposterSeats: z.array(z.string()),
+  /** Imposter: the round's word and the clue order (shuffled once per round). */
+  wordId: z.string().optional(),
+  order: z.array(z.string()).optional(),
   questions: z.array(z.string()),
   qIndex: z.number().int().min(0),
   votes: z.record(z.string(), wyrPickSchema),
@@ -101,7 +104,8 @@ export function idsNeeded(game: PartyGame, players: number): number {
 type Dealt = Pick<
   GameState,
   'phase' | 'deals' | 'imposterSeats' | 'questions' | 'qIndex' | 'votes'
->;
+> &
+  Partial<Pick<GameState, 'wordId' | 'order'>>;
 
 function deal(
   game: PartyGame,
@@ -131,7 +135,14 @@ function deal(
           ? { role: 'imposter', ...base }
           : { role: 'word', wordId: ids[0], ...base };
       });
-      return { ...empty, phase: 'dealt', deals, imposterSeats };
+      return {
+        ...empty,
+        phase: 'dealt',
+        deals,
+        imposterSeats,
+        wordId: ids[0],
+        order: shuffle(players, rng),
+      };
     }
     case 'whoami': {
       const characters = shuffle(ids, rng);
@@ -237,6 +248,9 @@ export function gameReducer(
         ...state,
         players: state.players.filter(seat => seat !== action.seatId),
         waiting: state.waiting.filter(seat => seat !== action.seatId),
+        ...(state.order
+          ? { order: state.order.filter(seat => seat !== action.seatId) }
+          : {}),
         deals,
         votes,
       };
@@ -287,6 +301,13 @@ export function toPublic(state: GameState): PublicGame {
         ...base,
         imposters: state.imposterSeats.length,
         showCategory: state.settings.showCategory,
+        order: state.order ?? state.players,
+        ...(state.phase === 'revealed'
+          ? {
+              imposterSeatIds: state.imposterSeats,
+              ...(state.wordId ? { wordId: state.wordId } : {}),
+            }
+          : {}),
       };
     case 'whoami':
       return base;

@@ -130,5 +130,32 @@
       "whoami": "Men kimman?",
       "rather": "Qaysi birini tanlarding"
     }
+  },
+  "secret": {
+    "hold": "Ko'rish uchun bosib turing",
+    "release": "Yashirish uchun qo'yib yuboring",
+    "recording": "Ekran yozilayotganda yashirin"
+  },
+  "imp": {
+    "roundLine": "%{n}-raund · %{m} o'yinchi",
+    "hostLine": "Oflayn · boshlovchi %{name}",
+    "yourWord": "SIZNING MAXFIY SO'ZINGIZ",
+    "clueOrder": "Ishora navbati · har kim bitta so'z",
+    "you": "Siz",
+    "hint": "So'zni bilishingizni ko'rsatadigan ishora bering — lekin uni sotqinga oshkor qilmang.",
+    "shh": "JIM…",
+    "youAre": "Siz sotqinsiz",
+    "noWord": "Siz so'zni bilmaysiz. Toifa:",
+    "noWordOnly": "Siz so'zni bilmaysiz.",
+    "howToWin": "Qanday yutish mumkin",
+    "win1": "O'zingizdan oldingi ishoralarni tinglang va noaniq so'z bilan aralashib keting.",
+    "win2": "Sizni topishmadimi? Yutdingiz. Qo'lga tushdingizmi? So'zni topib, g'alabani tortib oling.",
+    "gotIt": "Tushunarli",
+    "reveal": "Sotqinni ko'rsatish",
+    "newRound": "Yangi raund",
+    "wasImposter": "Sotqin: %{names}",
+    "wasWord": "So'z: %{word} edi",
+    "waitHost": "Keyingi raundni boshlovchi boshlaydi",
+    "mascot": "Irbis — qor qoploni"
   }
 }
