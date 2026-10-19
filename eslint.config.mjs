@@ -135,5 +135,10 @@ export default tseslint.config(
       'no-restricted-imports': 'off',
       '@typescript-eslint/no-require-imports': 'off',
     },
+  },  {
+    // Node dev tooling (CommonJS), not bundled into the app.
+    files: ['scripts/**/*.js'],
+    languageOptions: { sourceType: 'commonjs', globals: { ...globals.node } },
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
 );
