@@ -58,18 +58,22 @@ function GameGlyph({ game }: { game: GameId }) {
 
 type Props = {
   game: GameId;
+  /** Games that are not playable yet show the "Coming soon" tag. */
+  comingSoon: boolean;
   onPress: () => void;
 };
 
-/** One CampHub game tile (AC2): icon, name, players · length, coming-soon tag. */
-export function GameTile({ game, onPress }: Props) {
+/** One CampHub game tile (AC2): icon, name, players · length, coming-soon tag when not live. */
+export function GameTile({ game, comingSoon, onPress }: Props) {
   const styles = useStyles();
   const name = t(`camp.games.${game}`);
   const meta = t(`camp.games.${game}Meta`);
   return (
     <Pressable
       testID={`camp.hub.game.${game}`}
-      accessibilityLabel={`${name}, ${meta}, ${t('camp.comingSoon')}`}
+      accessibilityLabel={
+        comingSoon ? `${name}, ${meta}, ${t('camp.comingSoon')}` : `${name}, ${meta}`
+      }
       onPress={onPress}
       style={[layout.tile, styles.tile]}
     >
@@ -78,7 +82,7 @@ export function GameTile({ game, onPress }: Props) {
       </View>
       <AppText variant="h3">{name}</AppText>
       <AppText variant="small">{meta}</AppText>
-      <ComingSoonTag />
+      {comingSoon ? <ComingSoonTag /> : null}
     </Pressable>
   );
 }

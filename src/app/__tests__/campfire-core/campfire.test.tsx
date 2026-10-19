@@ -65,7 +65,7 @@ describe('campfire-core — CampHub (AC2)', () => {
     expect(screen.getByTestId('camp.hub.game.mafia')).toHaveTextContent(/Mafia.*6–15 · 20–40 min.*Coming soon/);
     expect(screen.getByTestId('camp.hub.badges')).toHaveTextContent(/Campfire badges.*Coming soon/);
 
-    await fireEvent.press(screen.getByTestId('camp.hub.game.imposter'));
+    await fireEvent.press(screen.getByTestId('camp.hub.game.mafia'));
     expect(await screen.findByTestId('app.toast')).toHaveTextContent('Coming in the next update');
     await fireEvent.press(screen.getByTestId('app.toast'));
 

@@ -31,6 +31,8 @@ type StorageSchema = {
 } & {
   /** Campfire seat token per room code, so a player gets the same seat back (rejoin, restart). */
   [key: `camp.seats.${string}`]: string;
+  /** Campfire pack items already dealt, per `<game>.<packId>`: JSON array of item ids (no-repeat). */
+  [key: `camp.used.${string}`]: string;
 };
 
 export type StorageKey = keyof StorageSchema;

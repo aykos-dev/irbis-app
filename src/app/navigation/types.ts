@@ -81,9 +81,14 @@ export type RootStackParamList = {
   };
   /**
    * Campfire lobby (campfire-core AC4, AC6, AC7): the host's by default, `resume` reopens the saved
-   * room; `player` shows the seated player's lobby (the live session is in `playerSession`).
+   * room; `player` shows the seated player's lobby (the live session is in `playerSession`);
+   * `game` preselects a party game (CampHub tile, campfire-party AC1).
    */
-  CampLobby: { resume?: boolean; player?: boolean } | undefined;
+  CampLobby:
+    | { resume?: boolean; player?: boolean; game?: 'imposter' | 'whoami' | 'rather' }
+    | undefined;
+  /** A party game round over the lobby (campfire-party AC2): the host's, or the player's with `player`. */
+  CampGame: { player?: boolean } | undefined;
   /** Campfire join: QR scan or room code (campfire-core AC5). */
   CampJoin: undefined;
 };

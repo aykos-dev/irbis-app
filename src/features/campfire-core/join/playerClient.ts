@@ -7,10 +7,14 @@ import {
   encode,
   PING_INTERVAL_MS,
   SILENCE_TIMEOUT_MS,
+  type GamePhase,
   type OutgoingClientMessage,
+  type PublicGame,
   type RejectReason,
   type RosterPlayer,
+  type Secret,
 } from '../protocol/codec';
+import type { PartyGame } from '../games/packs';
 import { connectOptions } from './discovery';
 import { clearSeatToken, readSeatToken, saveSeatToken } from './seatStore';
 
@@ -20,11 +24,26 @@ export const RETRY_INTERVAL_MS = 2000;
 /** Why the session ended: host's word, our own leave, or the first connect never got through. */
 export type PlayerEnd = 'removed' | 'closed' | 'left' | 'unreachable' | RejectReason;
 
+/** The round as every phone sees it (`game` message). */
+export type PlayerGame = {
+  game: PartyGame;
+  round: number;
+  phase: GamePhase;
+  public: PublicGame;
+};
+
+/** This seat's secret for one round (`deal` message). */
+export type PlayerDeal = { game: PartyGame; round: number; secret: Secret };
+
 export type PlayerSnapshot = {
   status: 'connecting' | 'connected' | 'reconnecting' | 'ended';
   seatId: string | null;
   players: RosterPlayer[];
   ended: PlayerEnd | null;
+  /** The running game; null in the lobby. */
+  game: PlayerGame | null;
+  /** Our deal for `game.round`; null when we wait for the next round (or in Would you rather). */
+  deal: PlayerDeal | null;
 };
 
 export type PlayerClient = {
@@ -69,6 +88,8 @@ export function createPlayerClient({
     seatId: null,
     players: [],
     ended: null,
+    game: null,
+    deal: null,
   };
   const listeners = new Set<() => void>();
   let socket: TcpConnection | null = null;
@@ -175,6 +196,30 @@ export function createPlayerClient({
       case 'removed':
       case 'closed':
         end(message.type);
+        return;
+      case 'deal':
+        update({
+          deal: { game: message.game, round: message.round, secret: message.secret },
+        });
+        return;
+      case 'game': {
+        const { deal } = snapshot;
+        update({
+          game: {
+            game: message.game,
+            round: message.round,
+            phase: message.phase,
+            public: message.public,
+          },
+          deal:
+            deal && deal.game === message.game && deal.round === message.round
+              ? deal
+              : null,
+        });
+        return;
+      }
+      case 'lobby':
+        update({ game: null, deal: null });
         return;
       case 'pong':
       case 'probeOk':

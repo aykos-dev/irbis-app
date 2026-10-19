@@ -1,0 +1,251 @@
+{
+  "id": "whoami-things",
+  "game": "whoami",
+  "name": {
+    "uz": "Hayvonlar va narsalar",
+    "ru": "Животные и вещи",
+    "en": "Animals & things"
+  },
+  "items": [
+    {
+      "id": "elephant",
+      "uz": "Fil",
+      "ru": "Слон",
+      "en": "Elephant"
+    },
+    {
+      "id": "giraffe",
+      "uz": "Jirafa",
+      "ru": "Жираф",
+      "en": "Giraffe"
+    },
+    {
+      "id": "penguin",
+      "uz": "Pingvin",
+      "ru": "Пингвин",
+      "en": "Penguin"
+    },
+    {
+      "id": "kangaroo",
+      "uz": "Kenguru",
+      "ru": "Кенгуру",
+      "en": "Kangaroo"
+    },
+    {
+      "id": "octopus",
+      "uz": "Sakkizoyoq",
+      "ru": "Осьминог",
+      "en": "Octopus"
+    },
+    {
+      "id": "camel",
+      "uz": "Tuya",
+      "ru": "Верблюд",
+      "en": "Camel"
+    },
+    {
+      "id": "snow-leopard",
+      "uz": "Qor qoploni",
+      "ru": "Снежный барс",
+      "en": "Snow leopard"
+    },
+    {
+      "id": "bee",
+      "uz": "Asalari",
+      "ru": "Пчела",
+      "en": "Bee"
+    },
+    {
+      "id": "snail",
+      "uz": "Shilliqqurt",
+      "ru": "Улитка",
+      "en": "Snail"
+    },
+    {
+      "id": "owl",
+      "uz": "Boyqush",
+      "ru": "Сова",
+      "en": "Owl"
+    },
+    {
+      "id": "dolphin",
+      "uz": "Delfin",
+      "ru": "Дельфин",
+      "en": "Dolphin"
+    },
+    {
+      "id": "crocodile",
+      "uz": "Timsoh",
+      "ru": "Крокодил",
+      "en": "Crocodile"
+    },
+    {
+      "id": "watermelon",
+      "uz": "Tarvuz",
+      "ru": "Арбуз",
+      "en": "Watermelon"
+    },
+    {
+      "id": "plov",
+      "uz": "Palov",
+      "ru": "Плов",
+      "en": "Plov"
+    },
+    {
+      "id": "samsa",
+      "uz": "Somsa",
+      "ru": "Самса",
+      "en": "Samsa"
+    },
+    {
+      "id": "ice-cream",
+      "uz": "Muzqaymoq",
+      "ru": "Мороженое",
+      "en": "Ice cream"
+    },
+    {
+      "id": "pizza",
+      "uz": "Pitsa",
+      "ru": "Пицца",
+      "en": "Pizza"
+    },
+    {
+      "id": "banana",
+      "uz": "Banan",
+      "ru": "Банан",
+      "en": "Banana"
+    },
+    {
+      "id": "honey",
+      "uz": "Asal",
+      "ru": "Мёд",
+      "en": "Honey"
+    },
+    {
+      "id": "non",
+      "uz": "Non",
+      "ru": "Лепёшка",
+      "en": "Flatbread"
+    },
+    {
+      "id": "tent",
+      "uz": "Chodir",
+      "ru": "Палатка",
+      "en": "Tent"
+    },
+    {
+      "id": "guitar",
+      "uz": "Gitara",
+      "ru": "Гитара",
+      "en": "Guitar"
+    },
+    {
+      "id": "smartphone",
+      "uz": "Smartfon",
+      "ru": "Смартфон",
+      "en": "Smartphone"
+    },
+    {
+      "id": "umbrella",
+      "uz": "Soyabon",
+      "ru": "Зонт",
+      "en": "Umbrella"
+    },
+    {
+      "id": "mirror",
+      "uz": "Koʻzgu",
+      "ru": "Зеркало",
+      "en": "Mirror"
+    },
+    {
+      "id": "clock",
+      "uz": "Soat",
+      "ru": "Часы",
+      "en": "Clock"
+    },
+    {
+      "id": "bicycle",
+      "uz": "Velosiped",
+      "ru": "Велосипед",
+      "en": "Bicycle"
+    },
+    {
+      "id": "airplane",
+      "uz": "Samolyot",
+      "ru": "Самолёт",
+      "en": "Airplane"
+    },
+    {
+      "id": "toothbrush",
+      "uz": "Tish choʻtkasi",
+      "ru": "Зубная щётка",
+      "en": "Toothbrush"
+    },
+    {
+      "id": "fridge",
+      "uz": "Muzlatgich",
+      "ru": "Холодильник",
+      "en": "Fridge"
+    },
+    {
+      "id": "candle",
+      "uz": "Sham",
+      "ru": "Свеча",
+      "en": "Candle"
+    },
+    {
+      "id": "balloon",
+      "uz": "Havo shari",
+      "ru": "Воздушный шарик",
+      "en": "Balloon"
+    },
+    {
+      "id": "scissors",
+      "uz": "Qaychi",
+      "ru": "Ножницы",
+      "en": "Scissors"
+    },
+    {
+      "id": "doppi",
+      "uz": "Doʻppi",
+      "ru": "Тюбетейка",
+      "en": "Skullcap (doppi)"
+    },
+    {
+      "id": "teapot",
+      "uz": "Choynak",
+      "ru": "Чайник",
+      "en": "Teapot"
+    },
+    {
+      "id": "chess",
+      "uz": "Shaxmat",
+      "ru": "Шахматы",
+      "en": "Chess"
+    },
+    {
+      "id": "compass",
+      "uz": "Kompas",
+      "ru": "Компас",
+      "en": "Compass"
+    },
+    {
+      "id": "kite",
+      "uz": "Varrak",
+      "ru": "Воздушный змей",
+      "en": "Kite"
+    },
+    {
+      "id": "pillow",
+      "uz": "Yostiq",
+      "ru": "Подушка",
+      "en": "Pillow"
+    },
+    {
+      "id": "ladder",
+      "uz": "Narvon",
+      "ru": "Лестница",
+      "en": "Ladder"
+    }
+  ]
+}

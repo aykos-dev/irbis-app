@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 
+import { GameWaiting } from '../../features/campfire-core/games/GameWaiting';
 import { CampJoinScreen } from '../../features/campfire-core/screens/CampJoinScreen';
 import { CampLobbyScreen } from '../../features/campfire-core/screens/CampLobbyScreen';
 import { RecoveryPhoneScreen } from '../../features/auth/screens/RecoveryPhoneScreen';
@@ -76,6 +77,7 @@ export function RootNavigator() {
       />
       <Stack.Screen name="CampLobby" component={CampLobbyScreen} options={{ gestureEnabled: false }} />
       <Stack.Screen name="CampJoin" component={CampJoinScreen} />
+      <Stack.Screen name="CampGame" component={GameWaiting} options={{ gestureEnabled: false }} />
       {appConfig.isQaEnabled ? (
         <>
           <Stack.Screen name="Debug" component={DebugScreen} />

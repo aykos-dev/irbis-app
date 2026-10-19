@@ -1,0 +1,371 @@
+{
+  "id": "imposter-food",
+  "game": "imposter",
+  "name": {
+    "uz": "Taomlar",
+    "ru": "Еда",
+    "en": "Food"
+  },
+  "items": [
+    {
+      "id": "plov",
+      "uz": "Palov",
+      "ru": "Плов",
+      "en": "Plov"
+    },
+    {
+      "id": "lagman",
+      "uz": "Lagʻmon",
+      "ru": "Лагман",
+      "en": "Lagman"
+    },
+    {
+      "id": "manti",
+      "uz": "Manti",
+      "ru": "Манты",
+      "en": "Manti"
+    },
+    {
+      "id": "samsa",
+      "uz": "Somsa",
+      "ru": "Самса",
+      "en": "Samsa"
+    },
+    {
+      "id": "shashlik",
+      "uz": "Shashlik",
+      "ru": "Шашлык",
+      "en": "Shashlik"
+    },
+    {
+      "id": "non",
+      "uz": "Non",
+      "ru": "Лепёшка",
+      "en": "Flatbread"
+    },
+    {
+      "id": "shurpa",
+      "uz": "Shoʻrva",
+      "ru": "Шурпа",
+      "en": "Shurpa"
+    },
+    {
+      "id": "mastava",
+      "uz": "Mastava",
+      "ru": "Мастава",
+      "en": "Mastava"
+    },
+    {
+      "id": "chuchvara",
+      "uz": "Chuchvara",
+      "ru": "Чучвара",
+      "en": "Chuchvara"
+    },
+    {
+      "id": "dimlama",
+      "uz": "Dimlama",
+      "ru": "Димлама",
+      "en": "Dimlama"
+    },
+    {
+      "id": "norin",
+      "uz": "Norin",
+      "ru": "Нарын",
+      "en": "Norin"
+    },
+    {
+      "id": "kazy",
+      "uz": "Qazi",
+      "ru": "Казы",
+      "en": "Kazy"
+    },
+    {
+      "id": "sumalak",
+      "uz": "Sumalak",
+      "ru": "Сумаляк",
+      "en": "Sumalak"
+    },
+    {
+      "id": "halva",
+      "uz": "Holva",
+      "ru": "Халва",
+      "en": "Halva"
+    },
+    {
+      "id": "navat",
+      "uz": "Novvot",
+      "ru": "Нават",
+      "en": "Navat"
+    },
+    {
+      "id": "chak-chak",
+      "uz": "Chak-chak",
+      "ru": "Чак-чак",
+      "en": "Chak-chak"
+    },
+    {
+      "id": "kurt",
+      "uz": "Qurt",
+      "ru": "Курт",
+      "en": "Kurt"
+    },
+    {
+      "id": "suzma",
+      "uz": "Suzma",
+      "ru": "Сузьма",
+      "en": "Suzma"
+    },
+    {
+      "id": "katyk",
+      "uz": "Qatiq",
+      "ru": "Катык",
+      "en": "Katyk"
+    },
+    {
+      "id": "beshbarmak",
+      "uz": "Beshbarmoq",
+      "ru": "Бешбармак",
+      "en": "Beshbarmak"
+    },
+    {
+      "id": "khanum",
+      "uz": "Xonim",
+      "ru": "Ханум",
+      "en": "Khanum"
+    },
+    {
+      "id": "tandir-gosht",
+      "uz": "Tandir goʻsht",
+      "ru": "Тандыр-гошт",
+      "en": "Tandir meat"
+    },
+    {
+      "id": "achichuk",
+      "uz": "Achchiq-chuchuk",
+      "ru": "Ачичук",
+      "en": "Achichuk salad"
+    },
+    {
+      "id": "green-tea",
+      "uz": "Koʻk choy",
+      "ru": "Зелёный чай",
+      "en": "Green tea"
+    },
+    {
+      "id": "black-tea",
+      "uz": "Qora choy",
+      "ru": "Чёрный чай",
+      "en": "Black tea"
+    },
+    {
+      "id": "melon",
+      "uz": "Qovun",
+      "ru": "Дыня",
+      "en": "Melon"
+    },
+    {
+      "id": "watermelon",
+      "uz": "Tarvuz",
+      "ru": "Арбуз",
+      "en": "Watermelon"
+    },
+    {
+      "id": "grapes",
+      "uz": "Uzum",
+      "ru": "Виноград",
+      "en": "Grapes"
+    },
+    {
+      "id": "pomegranate",
+      "uz": "Anor",
+      "ru": "Гранат",
+      "en": "Pomegranate"
+    },
+    {
+      "id": "apricot",
+      "uz": "Oʻrik",
+      "ru": "Абрикос",
+      "en": "Apricot"
+    },
+    {
+      "id": "apple",
+      "uz": "Olma",
+      "ru": "Яблоко",
+      "en": "Apple"
+    },
+    {
+      "id": "cherry",
+      "uz": "Gilos",
+      "ru": "Черешня",
+      "en": "Cherry"
+    },
+    {
+      "id": "fig",
+      "uz": "Anjir",
+      "ru": "Инжир",
+      "en": "Fig"
+    },
+    {
+      "id": "persimmon",
+      "uz": "Xurmo",
+      "ru": "Хурма",
+      "en": "Persimmon"
+    },
+    {
+      "id": "walnut",
+      "uz": "Yongʻoq",
+      "ru": "Грецкий орех",
+      "en": "Walnut"
+    },
+    {
+      "id": "almond",
+      "uz": "Bodom",
+      "ru": "Миндаль",
+      "en": "Almond"
+    },
+    {
+      "id": "pistachios",
+      "uz": "Pista",
+      "ru": "Фисташки",
+      "en": "Pistachios"
+    },
+    {
+      "id": "raisins",
+      "uz": "Mayiz",
+      "ru": "Изюм",
+      "en": "Raisins"
+    },
+    {
+      "id": "honey",
+      "uz": "Asal",
+      "ru": "Мёд",
+      "en": "Honey"
+    },
+    {
+      "id": "pizza",
+      "uz": "Pitsa",
+      "ru": "Пицца",
+      "en": "Pizza"
+    },
+    {
+      "id": "burger",
+      "uz": "Burger",
+      "ru": "Бургер",
+      "en": "Burger"
+    },
+    {
+      "id": "hot-dog",
+      "uz": "Hot-dog",
+      "ru": "Хот-дог",
+      "en": "Hot dog"
+    },
+    {
+      "id": "pasta",
+      "uz": "Makaron",
+      "ru": "Макароны",
+      "en": "Pasta"
+    },
+    {
+      "id": "sushi",
+      "uz": "Sushi",
+      "ru": "Суши",
+      "en": "Sushi"
+    },
+    {
+      "id": "pancakes",
+      "uz": "Quymoq",
+      "ru": "Блины",
+      "en": "Pancakes"
+    },
+    {
+      "id": "borscht",
+      "uz": "Borsh",
+      "ru": "Борщ",
+      "en": "Borscht"
+    },
+    {
+      "id": "pelmeni",
+      "uz": "Pelmen",
+      "ru": "Пельмени",
+      "en": "Pelmeni"
+    },
+    {
+      "id": "omelette",
+      "uz": "Omlet",
+      "ru": "Омлет",
+      "en": "Omelette"
+    },
+    {
+      "id": "ice-cream",
+      "uz": "Muzqaymoq",
+      "ru": "Мороженое",
+      "en": "Ice cream"
+    },
+    {
+      "id": "chocolate",
+      "uz": "Shokolad",
+      "ru": "Шоколад",
+      "en": "Chocolate"
+    },
+    {
+      "id": "cake",
+      "uz": "Tort",
+      "ru": "Торт",
+      "en": "Cake"
+    },
+    {
+      "id": "popcorn",
+      "uz": "Popkorn",
+      "ru": "Попкорн",
+      "en": "Popcorn"
+    },
+    {
+      "id": "canned-meat",
+      "uz": "Goʻsht konservasi",
+      "ru": "Тушёнка",
+      "en": "Canned meat"
+    },
+    {
+      "id": "buckwheat",
+      "uz": "Grechka",
+      "ru": "Гречка",
+      "en": "Buckwheat"
+    },
+    {
+      "id": "potato",
+      "uz": "Kartoshka",
+      "ru": "Картошка",
+      "en": "Potato"
+    },
+    {
+      "id": "tomato",
+      "uz": "Pomidor",
+      "ru": "Помидор",
+      "en": "Tomato"
+    },
+    {
+      "id": "cucumber",
+      "uz": "Bodring",
+      "ru": "Огурец",
+      "en": "Cucumber"
+    },
+    {
+      "id": "cheese",
+      "uz": "Pishloq",
+      "ru": "Сыр",
+      "en": "Cheese"
+    },
+    {
+      "id": "banana",
+      "uz": "Banan",
+      "ru": "Банан",
+      "en": "Banana"
+    },
+    {
+      "id": "ayran",
+      "uz": "Ayron",
+      "ru": "Айран",
+      "en": "Ayran"
+    }
+  ]
+}

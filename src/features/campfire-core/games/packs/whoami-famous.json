@@ -1,0 +1,251 @@
+{
+  "id": "whoami-famous",
+  "game": "whoami",
+  "name": {
+    "uz": "Markaziy Osiyo mashhurlari",
+    "ru": "Знаменитости Центральной Азии",
+    "en": "Famous in Central Asia"
+  },
+  "items": [
+    {
+      "id": "amir-temur",
+      "uz": "Amir Temur",
+      "ru": "Амир Темур",
+      "en": "Amir Timur"
+    },
+    {
+      "id": "ulugh-beg",
+      "uz": "Mirzo Ulugʻbek",
+      "ru": "Мирзо Улугбек",
+      "en": "Ulugh Beg"
+    },
+    {
+      "id": "alisher-navoi",
+      "uz": "Alisher Navoiy",
+      "ru": "Алишер Навои",
+      "en": "Alisher Navoi"
+    },
+    {
+      "id": "ibn-sina",
+      "uz": "Ibn Sino",
+      "ru": "Ибн Сина (Авиценна)",
+      "en": "Ibn Sina (Avicenna)"
+    },
+    {
+      "id": "al-khwarizmi",
+      "uz": "Al-Xorazmiy",
+      "ru": "Аль-Хорезми",
+      "en": "Al-Khwarizmi"
+    },
+    {
+      "id": "al-biruni",
+      "uz": "Abu Rayhon Beruniy",
+      "ru": "Абу Рейхан Бируни",
+      "en": "Al-Biruni"
+    },
+    {
+      "id": "babur",
+      "uz": "Zahiriddin Muhammad Bobur",
+      "ru": "Захириддин Мухаммад Бабур",
+      "en": "Babur"
+    },
+    {
+      "id": "al-bukhari",
+      "uz": "Imom al-Buxoriy",
+      "ru": "Имам аль-Бухари",
+      "en": "Imam al-Bukhari"
+    },
+    {
+      "id": "al-farabi",
+      "uz": "Abu Nasr Forobiy",
+      "ru": "Аль-Фараби",
+      "en": "Al-Farabi"
+    },
+    {
+      "id": "afandi",
+      "uz": "Nasriddin Afandi",
+      "ru": "Ходжа Насреддин",
+      "en": "Nasreddin Hodja"
+    },
+    {
+      "id": "jaloliddin",
+      "uz": "Jaloliddin Manguberdi",
+      "ru": "Джалолиддин Мангуберды",
+      "en": "Jalal ad-Din Mingburnu"
+    },
+    {
+      "id": "bibi-khanym",
+      "uz": "Bibixonim",
+      "ru": "Биби-Ханым",
+      "en": "Bibi-Khanym"
+    },
+    {
+      "id": "tomyris",
+      "uz": "Toʻmaris",
+      "ru": "Томирис",
+      "en": "Tomyris"
+    },
+    {
+      "id": "shiraq",
+      "uz": "Shiroq",
+      "ru": "Ширак",
+      "en": "Shiraq"
+    },
+    {
+      "id": "spitamenes",
+      "uz": "Spitamen",
+      "ru": "Спитамен",
+      "en": "Spitamenes"
+    },
+    {
+      "id": "genghis-khan",
+      "uz": "Chingizxon",
+      "ru": "Чингисхан",
+      "en": "Genghis Khan"
+    },
+    {
+      "id": "alexander",
+      "uz": "Iskandar Zulqarnayn",
+      "ru": "Александр Македонский",
+      "en": "Alexander the Great"
+    },
+    {
+      "id": "marco-polo",
+      "uz": "Marko Polo",
+      "ru": "Марко Поло",
+      "en": "Marco Polo"
+    },
+    {
+      "id": "nodira",
+      "uz": "Nodirabegim",
+      "ru": "Нодира",
+      "en": "Nodira"
+    },
+    {
+      "id": "mashrab",
+      "uz": "Boborahim Mashrab",
+      "ru": "Бабарахим Машраб",
+      "en": "Mashrab"
+    },
+    {
+      "id": "naqshband",
+      "uz": "Bahouddin Naqshband",
+      "ru": "Бахауддин Накшбанд",
+      "en": "Baha-ud-Din Naqshband"
+    },
+    {
+      "id": "ahmad-yasawi",
+      "uz": "Xoja Ahmad Yassaviy",
+      "ru": "Ходжа Ахмед Ясави",
+      "en": "Ahmad Yasawi"
+    },
+    {
+      "id": "abdulla-qodiriy",
+      "uz": "Abdulla Qodiriy",
+      "ru": "Абдулла Кадыри",
+      "en": "Abdulla Qodiriy"
+    },
+    {
+      "id": "cholpon",
+      "uz": "Abdulhamid Choʻlpon",
+      "ru": "Абдулхамид Чулпан",
+      "en": "Cholpon"
+    },
+    {
+      "id": "fitrat",
+      "uz": "Abdurauf Fitrat",
+      "ru": "Абдурауф Фитрат",
+      "en": "Abdurauf Fitrat"
+    },
+    {
+      "id": "gafur-gulom",
+      "uz": "Gʻafur Gʻulom",
+      "ru": "Гафур Гулям",
+      "en": "Gafur Gulyam"
+    },
+    {
+      "id": "behbudiy",
+      "uz": "Mahmudxoʻja Behbudiy",
+      "ru": "Махмудходжа Бехбуди",
+      "en": "Mahmudkhodja Behbudi"
+    },
+    {
+      "id": "hamid-olimjon",
+      "uz": "Hamid Olimjon",
+      "ru": "Хамид Алимджан",
+      "en": "Hamid Olimjon"
+    },
+    {
+      "id": "kamoliddin-behzod",
+      "uz": "Kamoliddin Behzod",
+      "ru": "Камолиддин Бехзод",
+      "en": "Kamoliddin Behzod"
+    },
+    {
+      "id": "tamara-khanum",
+      "uz": "Tamaraxonim",
+      "ru": "Тамара Ханум",
+      "en": "Tamara Khanum"
+    },
+    {
+      "id": "mukarrama",
+      "uz": "Mukarrama Turgʻunboyeva",
+      "ru": "Мукаррама Тургунбаева",
+      "en": "Mukarrama Turgunbaeva"
+    },
+    {
+      "id": "yunus-rajabiy",
+      "uz": "Yunus Rajabiy",
+      "ru": "Юнус Раджаби",
+      "en": "Yunus Rajabi"
+    },
+    {
+      "id": "mahmud-kashgari",
+      "uz": "Mahmud Koshgʻariy",
+      "ru": "Махмуд Кашгари",
+      "en": "Mahmud al-Kashgari"
+    },
+    {
+      "id": "alpamysh",
+      "uz": "Alpomish",
+      "ru": "Алпамыш",
+      "en": "Alpamysh"
+    },
+    {
+      "id": "gorogly",
+      "uz": "Goʻroʻgʻli",
+      "ru": "Гёроглы",
+      "en": "Gorogly"
+    },
+    {
+      "id": "farhod",
+      "uz": "Farhod",
+      "ru": "Фархад",
+      "en": "Farhad"
+    },
+    {
+      "id": "aladdin",
+      "uz": "Aloviddin",
+      "ru": "Аладдин",
+      "en": "Aladdin"
+    },
+    {
+      "id": "scheherazade",
+      "uz": "Shahrizoda",
+      "ru": "Шахерезада",
+      "en": "Scheherazade"
+    },
+    {
+      "id": "ali-baba",
+      "uz": "Alibobo",
+      "ru": "Али-Баба",
+      "en": "Ali Baba"
+    },
+    {
+      "id": "sinbad",
+      "uz": "Dengizchi Sindbod",
+      "ru": "Синдбад-мореход",
+      "en": "Sinbad the Sailor"
+    }
+  ]
+}

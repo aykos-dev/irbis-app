@@ -2,8 +2,11 @@ import { z } from 'zod';
 
 import { animals } from '../playerProfile';
 
-/** Local Campfire protocol (spec § Local protocol): newline-delimited JSON over TCP, `v: 1`. */
-export const PROTOCOL_VERSION = 1;
+/**
+ * Local Campfire protocol (spec § Local protocol): newline-delimited JSON over TCP, `v: 2`
+ * (v2 adds the party games: `deal`, `game`, `lobby`, `wyrVote`, `showMine`).
+ */
+export const PROTOCOL_VERSION = 2;
 export const CAMP_PORT = 47821;
 export const MAX_SEATS = 15;
 /** Clients ping this often; the host answers `pong`. */
@@ -37,6 +40,47 @@ export const helloSchema = z.object({
 export type Hello = z.infer<typeof helloSchema>;
 
 const roomCode = z.string().regex(/^\d{4}$/);
+const seatId = z.string().min(1);
+const round = z.number().int().min(1);
+
+export const partyGameSchema = z.enum(['imposter', 'whoami', 'rather']);
+export const wyrPickSchema = z.enum(['a', 'b']);
+export type WyrPick = z.infer<typeof wyrPickSchema>;
+
+/** One seat's Imposter card: the word, or "you're the imposter" (with the category if allowed). */
+export const imposterSecretSchema = z.object({
+  role: z.enum(['word', 'imposter']),
+  wordId: z.string().min(1).optional(),
+  packId: z.string().min(1),
+  showCategory: z.boolean(),
+});
+/** Who am I: everyone's character except your own. */
+export const whoamiSecretSchema = z.object({
+  others: z.array(z.object({ seatId, characterId: z.string().min(1) })),
+});
+export const secretSchema = z.union([imposterSecretSchema, whoamiSecretSchema]);
+export type Secret = z.infer<typeof secretSchema>;
+
+export const gamePhaseSchema = z.enum(['dealt', 'voting', 'revealed']);
+export type GamePhase = z.infer<typeof gamePhaseSchema>;
+
+/** What every phone may see about the round. Never a word or character id from a deal. */
+export const publicGameSchema = z.object({
+  packId: z.string().min(1),
+  players: z.array(seatId),
+  /** Joined mid-round: they play from the next round. */
+  waiting: z.array(seatId),
+  imposters: z.number().int().min(1).max(2).optional(),
+  showCategory: z.boolean().optional(),
+  questionId: z.string().min(1).optional(),
+  qIndex: z.number().int().min(0).optional(),
+  total: z.number().int().min(0).optional(),
+  voted: z.array(seatId).optional(),
+  tally: z
+    .object({ a: z.number().int().min(0), b: z.number().int().min(0) })
+    .optional(),
+});
+export type PublicGame = z.infer<typeof publicGameSchema>;
 
 export const clientMessageSchema = z.discriminatedUnion('type', [
   helloSchema,
@@ -44,6 +88,14 @@ export const clientMessageSchema = z.discriminatedUnion('type', [
   z.object({ v: version, type: z.literal('probe'), code: roomCode }),
   z.object({ v: version, type: z.literal('ping') }),
   z.object({ v: version, type: z.literal('leave') }),
+  z.object({
+    v: version,
+    type: z.literal('wyrVote'),
+    round,
+    qIndex: z.number().int().min(0),
+    pick: wyrPickSchema,
+  }),
+  z.object({ v: version, type: z.literal('showMine'), round }),
 ]);
 export type ClientMessage = z.infer<typeof clientMessageSchema>;
 
@@ -78,6 +130,25 @@ export const hostMessageSchema = z.discriminatedUnion('type', [
     players: z.number().int().min(0),
     network: z.string(),
   }),
+  /** Host → one seat: that seat's secret for the round (no deal in Would you rather). */
+  z.object({
+    v: version,
+    type: z.literal('deal'),
+    game: partyGameSchema,
+    round,
+    secret: secretSchema,
+  }),
+  /** Host → all: the public round state. */
+  z.object({
+    v: version,
+    type: z.literal('game'),
+    game: partyGameSchema,
+    round,
+    phase: gamePhaseSchema,
+    public: publicGameSchema,
+  }),
+  /** Host → all: the game ended, back to the lobby. */
+  z.object({ v: version, type: z.literal('lobby') }),
 ]);
 export type HostMessage = z.infer<typeof hostMessageSchema>;
 
@@ -85,7 +156,7 @@ type Unversioned<T> = T extends unknown ? Omit<T, 'v'> : never;
 export type OutgoingHostMessage = Unversioned<HostMessage>;
 export type OutgoingClientMessage = Unversioned<ClientMessage>;
 
-/** One NDJSON line (with the trailing newline) for a message, stamped `v: 1`. */
+/** One NDJSON line (with the trailing newline) for a message, stamped with `PROTOCOL_VERSION`. */
 export function encode(
   message: OutgoingHostMessage | OutgoingClientMessage,
 ): string {

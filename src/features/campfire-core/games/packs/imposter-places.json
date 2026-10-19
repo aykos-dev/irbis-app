@@ -1,0 +1,371 @@
+{
+  "id": "imposter-places",
+  "game": "imposter",
+  "name": {
+    "uz": "Oʻzbekiston joylari",
+    "ru": "Места Узбекистана",
+    "en": "Places in Uzbekistan"
+  },
+  "items": [
+    {
+      "id": "tashkent",
+      "uz": "Toshkent",
+      "ru": "Ташкент",
+      "en": "Tashkent"
+    },
+    {
+      "id": "samarkand",
+      "uz": "Samarqand",
+      "ru": "Самарканд",
+      "en": "Samarkand"
+    },
+    {
+      "id": "bukhara",
+      "uz": "Buxoro",
+      "ru": "Бухара",
+      "en": "Bukhara"
+    },
+    {
+      "id": "khiva",
+      "uz": "Xiva",
+      "ru": "Хива",
+      "en": "Khiva"
+    },
+    {
+      "id": "fergana",
+      "uz": "Fargʻona",
+      "ru": "Фергана",
+      "en": "Fergana"
+    },
+    {
+      "id": "andijan",
+      "uz": "Andijon",
+      "ru": "Андижан",
+      "en": "Andijan"
+    },
+    {
+      "id": "namangan",
+      "uz": "Namangan",
+      "ru": "Наманган",
+      "en": "Namangan"
+    },
+    {
+      "id": "kokand",
+      "uz": "Qoʻqon",
+      "ru": "Коканд",
+      "en": "Kokand"
+    },
+    {
+      "id": "margilan",
+      "uz": "Margʻilon",
+      "ru": "Маргилан",
+      "en": "Margilan"
+    },
+    {
+      "id": "nukus",
+      "uz": "Nukus",
+      "ru": "Нукус",
+      "en": "Nukus"
+    },
+    {
+      "id": "urgench",
+      "uz": "Urganch",
+      "ru": "Ургенч",
+      "en": "Urgench"
+    },
+    {
+      "id": "karshi",
+      "uz": "Qarshi",
+      "ru": "Карши",
+      "en": "Karshi"
+    },
+    {
+      "id": "termez",
+      "uz": "Termiz",
+      "ru": "Термез",
+      "en": "Termez"
+    },
+    {
+      "id": "shahrisabz",
+      "uz": "Shahrisabz",
+      "ru": "Шахрисабз",
+      "en": "Shahrisabz"
+    },
+    {
+      "id": "navoi",
+      "uz": "Navoiy",
+      "ru": "Навои",
+      "en": "Navoi"
+    },
+    {
+      "id": "jizzakh",
+      "uz": "Jizzax",
+      "ru": "Джизак",
+      "en": "Jizzakh"
+    },
+    {
+      "id": "gulistan",
+      "uz": "Guliston",
+      "ru": "Гулистан",
+      "en": "Gulistan"
+    },
+    {
+      "id": "chirchiq",
+      "uz": "Chirchiq",
+      "ru": "Чирчик",
+      "en": "Chirchiq"
+    },
+    {
+      "id": "charvak",
+      "uz": "Chorvoq suv ombori",
+      "ru": "Чарвакское водохранилище",
+      "en": "Charvak Reservoir"
+    },
+    {
+      "id": "chimgan",
+      "uz": "Chimyon",
+      "ru": "Чимган",
+      "en": "Chimgan"
+    },
+    {
+      "id": "beldersay",
+      "uz": "Beldersoy",
+      "ru": "Бельдерсай",
+      "en": "Beldersay"
+    },
+    {
+      "id": "amirsoy",
+      "uz": "Amirsoy",
+      "ru": "Амирсай",
+      "en": "Amirsoy"
+    },
+    {
+      "id": "big-chimgan",
+      "uz": "Katta Chimyon choʻqqisi",
+      "ru": "Пик Большой Чимган",
+      "en": "Big Chimgan Peak"
+    },
+    {
+      "id": "aral-sea",
+      "uz": "Orol dengizi",
+      "ru": "Аральское море",
+      "en": "Aral Sea"
+    },
+    {
+      "id": "aydarkul",
+      "uz": "Aydarkoʻl",
+      "ru": "Озеро Айдаркуль",
+      "en": "Aydarkul Lake"
+    },
+    {
+      "id": "registan",
+      "uz": "Registon",
+      "ru": "Регистан",
+      "en": "Registan"
+    },
+    {
+      "id": "chorsu",
+      "uz": "Chorsu bozori",
+      "ru": "Базар Чорсу",
+      "en": "Chorsu Bazaar"
+    },
+    {
+      "id": "ark",
+      "uz": "Ark qalʼasi",
+      "ru": "Крепость Арк",
+      "en": "Ark Fortress"
+    },
+    {
+      "id": "shah-i-zinda",
+      "uz": "Shohi Zinda",
+      "ru": "Шахи-Зинда",
+      "en": "Shah-i-Zinda"
+    },
+    {
+      "id": "gur-emir",
+      "uz": "Goʻri Amir",
+      "ru": "Гур-Эмир",
+      "en": "Gur-e-Amir"
+    },
+    {
+      "id": "bibi-khanym",
+      "uz": "Bibixonim masjidi",
+      "ru": "Мечеть Биби-Ханым",
+      "en": "Bibi-Khanym Mosque"
+    },
+    {
+      "id": "ulugh-beg-observatory",
+      "uz": "Ulugʻbek rasadxonasi",
+      "ru": "Обсерватория Улугбека",
+      "en": "Ulugh Beg Observatory"
+    },
+    {
+      "id": "poi-kalyan",
+      "uz": "Poyi Kalon",
+      "ru": "Пои-Калян",
+      "en": "Poi Kalyan"
+    },
+    {
+      "id": "itchan-kala",
+      "uz": "Ichan qalʼa",
+      "ru": "Ичан-Кала",
+      "en": "Itchan Kala"
+    },
+    {
+      "id": "kalta-minor",
+      "uz": "Kalta Minor",
+      "ru": "Кальта-Минор",
+      "en": "Kalta Minor"
+    },
+    {
+      "id": "tv-tower",
+      "uz": "Toshkent teleminorasi",
+      "ru": "Ташкентская телебашня",
+      "en": "Tashkent TV Tower"
+    },
+    {
+      "id": "amir-temur-square",
+      "uz": "Amir Temur xiyoboni",
+      "ru": "Сквер Амира Темура",
+      "en": "Amir Temur Square"
+    },
+    {
+      "id": "tashkent-metro",
+      "uz": "Toshkent metrosi",
+      "ru": "Ташкентское метро",
+      "en": "Tashkent Metro"
+    },
+    {
+      "id": "hazrati-imam",
+      "uz": "Hazrati Imom majmuasi",
+      "ru": "Комплекс Хазрати Имам",
+      "en": "Hazrati Imam Complex"
+    },
+    {
+      "id": "magic-city",
+      "uz": "Magic City",
+      "ru": "Мэджик Сити",
+      "en": "Magic City"
+    },
+    {
+      "id": "zaamin",
+      "uz": "Zomin",
+      "ru": "Заамин",
+      "en": "Zaamin"
+    },
+    {
+      "id": "nuratau",
+      "uz": "Nurota togʻlari",
+      "ru": "Горы Нуратау",
+      "en": "Nuratau Mountains"
+    },
+    {
+      "id": "sarmishsay",
+      "uz": "Sarmishsoy",
+      "ru": "Сармишсай",
+      "en": "Sarmishsay"
+    },
+    {
+      "id": "tian-shan",
+      "uz": "Tyan-Shan",
+      "ru": "Тянь-Шань",
+      "en": "Tian Shan"
+    },
+    {
+      "id": "pamir",
+      "uz": "Pomir",
+      "ru": "Памир",
+      "en": "Pamir"
+    },
+    {
+      "id": "amu-darya",
+      "uz": "Amudaryo",
+      "ru": "Амударья",
+      "en": "Amu Darya"
+    },
+    {
+      "id": "syr-darya",
+      "uz": "Sirdaryo",
+      "ru": "Сырдарья",
+      "en": "Syr Darya"
+    },
+    {
+      "id": "kyzylkum",
+      "uz": "Qizilqum",
+      "ru": "Пустыня Кызылкум",
+      "en": "Kyzylkum Desert"
+    },
+    {
+      "id": "ugam-chatkal",
+      "uz": "Ugom-Chotqol milliy bogʻi",
+      "ru": "Угам-Чаткальский нацпарк",
+      "en": "Ugam-Chatkal National Park"
+    },
+    {
+      "id": "chatkal-river",
+      "uz": "Chotqol daryosi",
+      "ru": "Река Чаткал",
+      "en": "Chatkal River"
+    },
+    {
+      "id": "pskem",
+      "uz": "Piskom daryosi",
+      "ru": "Река Пскем",
+      "en": "Pskem River"
+    },
+    {
+      "id": "urungach",
+      "uz": "Urungach koʻllari",
+      "ru": "Озёра Урунгач",
+      "en": "Urungach Lakes"
+    },
+    {
+      "id": "khazret-sultan",
+      "uz": "Hazrati Sulton choʻqqisi",
+      "ru": "Пик Хазрет-Султан",
+      "en": "Khazret Sultan Peak"
+    },
+    {
+      "id": "baysun",
+      "uz": "Boysun",
+      "ru": "Байсун",
+      "en": "Baysun"
+    },
+    {
+      "id": "independence-square",
+      "uz": "Mustaqillik maydoni",
+      "ru": "Площадь Мустакиллик",
+      "en": "Independence Square"
+    },
+    {
+      "id": "gazalkent",
+      "uz": "Gʻazalkent",
+      "ru": "Газалкент",
+      "en": "Gazalkent"
+    },
+    {
+      "id": "kukeldash",
+      "uz": "Koʻkaldosh madrasasi",
+      "ru": "Медресе Кукельдаш",
+      "en": "Kukeldash Madrasa"
+    },
+    {
+      "id": "sitorai-mohi-khosa",
+      "uz": "Sitorai Mohi Xosa saroyi",
+      "ru": "Дворец Ситораи Мохи-Хаса",
+      "en": "Sitorai Mohi-Khosa Palace"
+    },
+    {
+      "id": "savitsky-museum",
+      "uz": "Savitskiy muzeyi",
+      "ru": "Музей Савицкого",
+      "en": "Savitsky Museum"
+    },
+    {
+      "id": "moynaq",
+      "uz": "Moʻynoq",
+      "ru": "Муйнак",
+      "en": "Moynaq"
+    }
+  ]
+}

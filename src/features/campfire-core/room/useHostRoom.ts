@@ -2,13 +2,20 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import DeviceInfo from 'react-native-device-info';
 
 import { qaLog } from '../../../shared/utils/qaLog';
+import type { GameSettings, GameState } from '../games/gameReducer';
+import type { PartyGame } from '../games/packs';
 import { campNet } from '../native/campNet';
 import { hostsWithGuide } from '../native/hostPlatform';
 import { initialProfile, readProfile } from '../playerProfile';
 import { CAMP_PORT } from '../protocol/codec';
 import { buildJoinUrl } from '../protocol/qr';
 import { createHostServer, type HostServer } from './hostServer';
-import { clearHostRoom, loadHostRoom, saveHostRoom } from './hostRoomStore';
+import {
+  clearHostRoom,
+  loadHostGame,
+  loadHostRoom,
+  saveHostRoom,
+} from './hostRoomStore';
 import { createRoom, resumeRoom, type RoomState } from './roomReducer';
 
 export type HostNetwork =
@@ -20,7 +27,38 @@ export type HostNetwork =
 export type HostRoom =
   | { phase: 'starting' }
   | { phase: 'error'; permissionDenied: boolean }
-  | { phase: 'ready'; network: HostNetwork; room: RoomState; joinUrl: string };
+  | {
+      phase: 'ready';
+      network: HostNetwork;
+      room: RoomState;
+      joinUrl: string;
+      game: GameState | null;
+    };
+
+/**
+ * The host's running game for the game screen, which sits on top of the lobby that owns the room
+ * (`useSyncExternalStore`). `end` sends everyone back to the lobby.
+ */
+let hostGameState: GameState | null = null;
+let hostGameEnd: (() => void) | null = null;
+const hostGameListeners = new Set<() => void>();
+
+function publishHostGame(game: GameState | null, end: (() => void) | null) {
+  hostGameState = game;
+  hostGameEnd = end;
+  hostGameListeners.forEach(listener => listener());
+}
+
+export const hostGame = {
+  getSnapshot: (): GameState | null => hostGameState,
+  subscribe: (listener: () => void) => {
+    hostGameListeners.add(listener);
+    return () => {
+      hostGameListeners.delete(listener);
+    };
+  },
+  end: (): void => hostGameEnd?.(),
+};
 
 /** Random 4-digit room code, 1000–9999. */
 function randomCode(): string {
@@ -130,6 +168,7 @@ export function useHostRoom(resume: boolean) {
       }
       const network = opened.network;
       const saved = resume ? loadHostRoom() : null;
+      const savedGame = saved ? loadHostGame() : null;
       const profile = readProfile() ?? initialProfile(null, undefined);
       const room = saved
         ? resumeRoom(saved)
@@ -141,14 +180,22 @@ export function useHostRoom(resume: boolean) {
       const server = createHostServer({
         room,
         network: network.mode === 'hotspot' ? network.ssid : network.name,
-        onChange: next => {
+        game: savedGame,
+        onChange: (next, game) => {
           if (live.current) {
             live.current.room = next;
           }
           if (!next.closed) {
-            saveHostRoom(next);
+            saveHostRoom(next, Date.now(), game);
           }
-          setState({ phase: 'ready', network, room: next, joinUrl: url });
+          publishHostGame(game, server.endGame);
+          setState({
+            phase: 'ready',
+            network,
+            room: next,
+            joinUrl: url,
+            game,
+          });
         },
       });
       try {
@@ -170,8 +217,15 @@ export function useHostRoom(resume: boolean) {
         return;
       }
       live.current = { server, network, room };
-      saveHostRoom(room);
-      setState({ phase: 'ready', network, room, joinUrl: url });
+      saveHostRoom(room, Date.now(), savedGame);
+      publishHostGame(savedGame, server.endGame);
+      setState({
+        phase: 'ready',
+        network,
+        room,
+        joinUrl: url,
+        game: savedGame,
+      });
       if (saved) {
         qaLog('camp_room_resumed', { seats: room.seats.length });
       } else {
@@ -196,6 +250,7 @@ export function useHostRoom(resume: boolean) {
         current.server.stop();
         stopNetwork(current.network);
       }
+      publishHostGame(null, null);
     };
   }, [resume, attempt]);
 
@@ -203,6 +258,10 @@ export function useHostRoom(resume: boolean) {
 
   const remove = useCallback((seatId: string) => {
     live.current?.server.remove(seatId);
+  }, []);
+
+  const startGame = useCallback((game: PartyGame, settings: GameSettings) => {
+    live.current?.server.startGame(game, settings);
   }, []);
 
   /** Broadcasts `closed`, stops server, hotspot and zeroconf, forgets the saved room. */
@@ -218,5 +277,5 @@ export function useHostRoom(resume: boolean) {
     qaLog('camp_room_closed', { seats: current.room.seats.length });
   }, []);
 
-  return { state, retry, remove, close };
+  return { state, retry, remove, close, startGame };
 }

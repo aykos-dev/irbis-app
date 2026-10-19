@@ -99,5 +99,36 @@
     "step3": "Irbisga qayting va \"Yoqildi\"ni bosing",
     "done": "Yoqildi",
     "notOn": "Hotspot yoki Wi-Fi hali ko'rinmayapti. Tekshirib, qayta urining."
+  },
+  "game": {
+    "start": "%{game}ni boshlash",
+    "needsMin": "Kamida %{n} o'yinchi kerak",
+    "max": "Ko'pi bilan %{n} o'yinchi",
+    "youPlayToo": "Siz ham o'ynaysiz — so'zingiz bu telefonda yashirin qoladi.",
+    "pack": "So'zlar to'plami",
+    "packWhoami": "To'plam",
+    "words": {
+      "one": "%{count} ta so'z",
+      "other": "%{count} ta so'z"
+    },
+    "characters": {
+      "one": "%{count} ta qahramon",
+      "other": "%{count} ta qahramon"
+    },
+    "questions": {
+      "one": "%{count} ta savol",
+      "other": "%{count} ta savol"
+    },
+    "imposters": "Sotqinlar",
+    "seesCategory": "Sotqin toifani ko'radi",
+    "seesCategorySub": "Aldash osonroq bo'ladi",
+    "inProgress": "Raund ketmoqda — keyingisida qatnashasiz",
+    "end": "O'yinni tugatish",
+    "endConfirm": "O'yin hamma uchun tugatilsinmi?",
+    "name": {
+      "imposter": "Sotqin",
+      "whoami": "Men kimman?",
+      "rather": "Qaysi birini tanlarding"
+    }
   }
 }

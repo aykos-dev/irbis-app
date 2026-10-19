@@ -1,0 +1,371 @@
+{
+  "id": "imposter-animals",
+  "game": "imposter",
+  "name": {
+    "uz": "Hayvonlar",
+    "ru": "Животные",
+    "en": "Animals"
+  },
+  "items": [
+    {
+      "id": "snow-leopard",
+      "uz": "Qor qoploni",
+      "ru": "Снежный барс",
+      "en": "Snow leopard"
+    },
+    {
+      "id": "marmot",
+      "uz": "Sugʻur",
+      "ru": "Сурок",
+      "en": "Marmot"
+    },
+    {
+      "id": "ibex",
+      "uz": "Togʻ echkisi",
+      "ru": "Горный козёл",
+      "en": "Ibex"
+    },
+    {
+      "id": "markhor",
+      "uz": "Morxoʻr",
+      "ru": "Винторогий козёл",
+      "en": "Markhor"
+    },
+    {
+      "id": "argali",
+      "uz": "Arxar",
+      "ru": "Архар",
+      "en": "Argali"
+    },
+    {
+      "id": "brown-bear",
+      "uz": "Qoʻngʻir ayiq",
+      "ru": "Бурый медведь",
+      "en": "Brown bear"
+    },
+    {
+      "id": "wolf",
+      "uz": "Boʻri",
+      "ru": "Волк",
+      "en": "Wolf"
+    },
+    {
+      "id": "fox",
+      "uz": "Tulki",
+      "ru": "Лиса",
+      "en": "Fox"
+    },
+    {
+      "id": "jackal",
+      "uz": "Chiyaboʻri",
+      "ru": "Шакал",
+      "en": "Jackal"
+    },
+    {
+      "id": "lynx",
+      "uz": "Silovsin",
+      "ru": "Рысь",
+      "en": "Lynx"
+    },
+    {
+      "id": "wild-boar",
+      "uz": "Yovvoyi choʻchqa",
+      "ru": "Кабан",
+      "en": "Wild boar"
+    },
+    {
+      "id": "saiga",
+      "uz": "Saygʻoq",
+      "ru": "Сайгак",
+      "en": "Saiga"
+    },
+    {
+      "id": "gazelle",
+      "uz": "Jayron",
+      "ru": "Джейран",
+      "en": "Gazelle"
+    },
+    {
+      "id": "camel",
+      "uz": "Tuya",
+      "ru": "Верблюд",
+      "en": "Camel"
+    },
+    {
+      "id": "horse",
+      "uz": "Ot",
+      "ru": "Лошадь",
+      "en": "Horse"
+    },
+    {
+      "id": "donkey",
+      "uz": "Eshak",
+      "ru": "Осёл",
+      "en": "Donkey"
+    },
+    {
+      "id": "sheep",
+      "uz": "Qoʻy",
+      "ru": "Овца",
+      "en": "Sheep"
+    },
+    {
+      "id": "goat",
+      "uz": "Echki",
+      "ru": "Коза",
+      "en": "Goat"
+    },
+    {
+      "id": "cow",
+      "uz": "Sigir",
+      "ru": "Корова",
+      "en": "Cow"
+    },
+    {
+      "id": "dog",
+      "uz": "It",
+      "ru": "Собака",
+      "en": "Dog"
+    },
+    {
+      "id": "cat",
+      "uz": "Mushuk",
+      "ru": "Кошка",
+      "en": "Cat"
+    },
+    {
+      "id": "rabbit",
+      "uz": "Quyon",
+      "ru": "Кролик",
+      "en": "Rabbit"
+    },
+    {
+      "id": "hedgehog",
+      "uz": "Tipratikan",
+      "ru": "Ёж",
+      "en": "Hedgehog"
+    },
+    {
+      "id": "squirrel",
+      "uz": "Olmaxon",
+      "ru": "Белка",
+      "en": "Squirrel"
+    },
+    {
+      "id": "porcupine",
+      "uz": "Jayra",
+      "ru": "Дикобраз",
+      "en": "Porcupine"
+    },
+    {
+      "id": "badger",
+      "uz": "Boʻrsiq",
+      "ru": "Барсук",
+      "en": "Badger"
+    },
+    {
+      "id": "tortoise",
+      "uz": "Toshbaqa",
+      "ru": "Черепаха",
+      "en": "Tortoise"
+    },
+    {
+      "id": "lizard",
+      "uz": "Kaltakesak",
+      "ru": "Ящерица",
+      "en": "Lizard"
+    },
+    {
+      "id": "snake",
+      "uz": "Ilon",
+      "ru": "Змея",
+      "en": "Snake"
+    },
+    {
+      "id": "scorpion",
+      "uz": "Chayon",
+      "ru": "Скорпион",
+      "en": "Scorpion"
+    },
+    {
+      "id": "eagle",
+      "uz": "Burgut",
+      "ru": "Орёл",
+      "en": "Eagle"
+    },
+    {
+      "id": "falcon",
+      "uz": "Lochin",
+      "ru": "Сокол",
+      "en": "Falcon"
+    },
+    {
+      "id": "owl",
+      "uz": "Boyqush",
+      "ru": "Сова",
+      "en": "Owl"
+    },
+    {
+      "id": "stork",
+      "uz": "Laylak",
+      "ru": "Аист",
+      "en": "Stork"
+    },
+    {
+      "id": "hoopoe",
+      "uz": "Popishak",
+      "ru": "Удод",
+      "en": "Hoopoe"
+    },
+    {
+      "id": "pheasant",
+      "uz": "Qirgʻovul",
+      "ru": "Фазан",
+      "en": "Pheasant"
+    },
+    {
+      "id": "chukar",
+      "uz": "Kaklik",
+      "ru": "Кеклик",
+      "en": "Chukar"
+    },
+    {
+      "id": "pigeon",
+      "uz": "Kaptar",
+      "ru": "Голубь",
+      "en": "Pigeon"
+    },
+    {
+      "id": "sparrow",
+      "uz": "Chumchuq",
+      "ru": "Воробей",
+      "en": "Sparrow"
+    },
+    {
+      "id": "swallow",
+      "uz": "Qaldirgʻoch",
+      "ru": "Ласточка",
+      "en": "Swallow"
+    },
+    {
+      "id": "crow",
+      "uz": "Qargʻa",
+      "ru": "Ворона",
+      "en": "Crow"
+    },
+    {
+      "id": "nightingale",
+      "uz": "Bulbul",
+      "ru": "Соловей",
+      "en": "Nightingale"
+    },
+    {
+      "id": "trout",
+      "uz": "Gulmoy",
+      "ru": "Форель",
+      "en": "Trout"
+    },
+    {
+      "id": "frog",
+      "uz": "Qurbaqa",
+      "ru": "Лягушка",
+      "en": "Frog"
+    },
+    {
+      "id": "butterfly",
+      "uz": "Kapalak",
+      "ru": "Бабочка",
+      "en": "Butterfly"
+    },
+    {
+      "id": "bee",
+      "uz": "Asalari",
+      "ru": "Пчела",
+      "en": "Bee"
+    },
+    {
+      "id": "ant",
+      "uz": "Chumoli",
+      "ru": "Муравей",
+      "en": "Ant"
+    },
+    {
+      "id": "mosquito",
+      "uz": "Chivin",
+      "ru": "Комар",
+      "en": "Mosquito"
+    },
+    {
+      "id": "spider",
+      "uz": "Oʻrgimchak",
+      "ru": "Паук",
+      "en": "Spider"
+    },
+    {
+      "id": "silkworm",
+      "uz": "Ipak qurti",
+      "ru": "Тутовый шелкопряд",
+      "en": "Silkworm"
+    },
+    {
+      "id": "bat",
+      "uz": "Koʻrshapalak",
+      "ru": "Летучая мышь",
+      "en": "Bat"
+    },
+    {
+      "id": "mouse",
+      "uz": "Sichqon",
+      "ru": "Мышь",
+      "en": "Mouse"
+    },
+    {
+      "id": "lion",
+      "uz": "Sher",
+      "ru": "Лев",
+      "en": "Lion"
+    },
+    {
+      "id": "tiger",
+      "uz": "Yoʻlbars",
+      "ru": "Тигр",
+      "en": "Tiger"
+    },
+    {
+      "id": "elephant",
+      "uz": "Fil",
+      "ru": "Слон",
+      "en": "Elephant"
+    },
+    {
+      "id": "giraffe",
+      "uz": "Jirafa",
+      "ru": "Жираф",
+      "en": "Giraffe"
+    },
+    {
+      "id": "monkey",
+      "uz": "Maymun",
+      "ru": "Обезьяна",
+      "en": "Monkey"
+    },
+    {
+      "id": "penguin",
+      "uz": "Pingvin",
+      "ru": "Пингвин",
+      "en": "Penguin"
+    },
+    {
+      "id": "dolphin",
+      "uz": "Delfin",
+      "ru": "Дельфин",
+      "en": "Dolphin"
+    },
+    {
+      "id": "yak",
+      "uz": "Qoʻtos",
+      "ru": "Як",
+      "en": "Yak"
+    }
+  ]
+}

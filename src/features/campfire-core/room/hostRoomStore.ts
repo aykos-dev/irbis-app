@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { storage } from '../../../shared/storage';
+import { gameStateSchema, type GameState } from '../games/gameReducer';
 import { animals } from '../playerProfile';
 import { seatStatusSchema } from '../protocol/codec';
 import type { RoomState } from './roomReducer';
@@ -26,22 +27,40 @@ const savedSchema = z.object({
       )
       .min(1),
   }),
+  /** The running party game (round, deals) so a resumed room picks it up; absent in the lobby. */
+  game: gameStateSchema.nullable().optional(),
 });
 
-/** Saved after every room change; live connections are not saved. */
-export function saveHostRoom(room: RoomState, now: number = Date.now()): void {
+/** Saved after every room or game change; live connections are not saved. */
+export function saveHostRoom(
+  room: RoomState,
+  now: number = Date.now(),
+  game: GameState | null = null,
+): void {
   const seats = room.seats.map(({ connId: _connId, ...seat }) => seat);
   storage.setString(
     'camp.hostRoom',
     JSON.stringify({
       savedAt: now,
       room: { code: room.code, nextSeat: room.nextSeat, seats },
+      game,
     }),
   );
 }
 
 /** The saved room when it is younger than 12 h; an expired or unreadable entry is dropped. */
 export function loadHostRoom(now: number = Date.now()): RoomState | null {
+  return loadSaved(now)?.room ?? null;
+}
+
+/** The game running in the saved room, if any (same 12 h window as the room). */
+export function loadHostGame(now: number = Date.now()): GameState | null {
+  return loadSaved(now)?.game ?? null;
+}
+
+function loadSaved(
+  now: number,
+): { room: RoomState; game: GameState | null } | null {
   const raw = storage.getString('camp.hostRoom');
   if (!raw) {
     return null;
@@ -61,11 +80,14 @@ export function loadHostRoom(now: number = Date.now()): RoomState | null {
     clearHostRoom();
     return null;
   }
-  const { room } = result.data;
+  const { room, game } = result.data;
   return {
-    ...room,
-    closed: false,
-    seats: room.seats.map(seat => ({ ...seat, connId: null })),
+    room: {
+      ...room,
+      closed: false,
+      seats: room.seats.map(seat => ({ ...seat, connId: null })),
+    },
+    game: game ?? null,
   };
 }
 

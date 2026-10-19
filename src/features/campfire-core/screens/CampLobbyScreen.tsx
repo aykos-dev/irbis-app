@@ -3,12 +3,13 @@ import {
   type NavigationAction,
 } from '@react-navigation/native';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Switch, View } from 'react-native';
 
 import type { RootStackScreenProps } from '../../../app/navigation/types';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
 import { EmptyState } from '../../../shared/components/EmptyState';
+import { ListCard, ListRow } from '../../../shared/components/ListRow';
 import { Pressable } from '../../../shared/components/Pressable';
 import { Screen } from '../../../shared/components/Screen';
 import { Sheet } from '../../../shared/components/Sheet';
@@ -30,8 +31,22 @@ import { useAppState } from '../../../shared/hooks/useAppState';
 import { useLocale } from '../../../shared/hooks/useLocale';
 import { t } from '../../../shared/i18n';
 import { haptics } from '../../../shared/utils/haptics';
-import { campScheme, lobbySizes, type GameId } from '../campTheme';
+import { campColors, campScheme, lobbySizes, type GameId } from '../campTheme';
 import { ComingSoonTag } from '../components/ComingSoonTag';
+import { ConfirmSheet } from '../components/ConfirmSheet';
+import {
+  inRange,
+  playerRange,
+  TWO_IMPOSTERS_FROM,
+  type GameSettings,
+} from '../games/gameReducer';
+import {
+  localized,
+  packsFor,
+  partyGames,
+  type Pack,
+  type PartyGame,
+} from '../games/packs';
 import { PlayerAvatar } from '../components/PlayerAvatar';
 import { RoomQr } from '../components/RoomQr';
 import { useHostBattery } from '../hooks/useHostBattery';
@@ -41,9 +56,36 @@ import { reconnectingCount, toRoster } from '../room/roomReducer';
 import { useHostRoom, type HostNetwork } from '../room/useHostRoom';
 
 const lobbyGames: GameId[] = ['imposter', 'mafia', 'whoami', 'rather'];
-const SELECTED_GAME: GameId = 'imposter';
-/** Start stays disabled until games ship (`lobby.startSoon`). */
-const noop = () => undefined;
+
+function isPartyGame(game: GameId): game is PartyGame {
+  return partyGames.some(party => party === game);
+}
+
+const firstPacks = (): Record<PartyGame, string> => ({
+  imposter: packsFor('imposter')[0]?.id ?? '',
+  whoami: packsFor('whoami')[0]?.id ?? '',
+  rather: packsFor('rather')[0]?.id ?? '',
+});
+
+const countKey: Record<PartyGame, string> = {
+  imposter: 'camp.game.words',
+  whoami: 'camp.game.characters',
+  rather: 'camp.game.questions',
+};
+
+/** `<name> · <n> words` in the app language. */
+function packLabel(pack: Pack): string {
+  return `${localized(pack.name)} · ${t(countKey[pack.game], { count: pack.items.length })}`;
+}
+
+/** Why Start is disabled for this many connected players, or null when it is enabled. */
+function startBlocked(game: PartyGame, players: number): string | null {
+  const { min, max } = playerRange[game];
+  if (players < min) {
+    return t('camp.game.needsMin', { n: min });
+  }
+  return players > max ? t('camp.game.max', { n: max }) : null;
+}
 
 function gameLabel(game: GameId): string {
   return game === 'rather'
@@ -81,9 +123,17 @@ export function CampLobbyScreen(props: RootStackScreenProps<'CampLobby'>) {
  */
 function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
   useLocale();
-  const { state, retry, remove, close } = useHostRoom(
+  const { state, retry, remove, close, startGame } = useHostRoom(
     route.params?.resume === true,
   );
+  const [game, setGame] = useState<PartyGame>(
+    route.params?.game ?? 'imposter',
+  );
+  const [packIds, setPackIds] = useState(firstPacks);
+  const [imposters, setImposters] = useState(1);
+  const [showCategory, setShowCategory] = useState(true);
+  const [picking, setPicking] = useState(false);
+  const inGame = state.phase === 'ready' && state.game !== null;
   const [removing, setRemoving] = useState<RosterPlayer | null>(null);
   const [confirmClose, setConfirmClose] = useState(false);
   const [left, setLeft] = useState(false);
@@ -96,6 +146,13 @@ function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
     pendingAction.current = data.action;
     setConfirmClose(true);
   });
+
+  // Start (or a resumed room with a game) → the game route on the host too (AC2).
+  useEffect(() => {
+    if (inGame) {
+      navigation.navigate('CampGame');
+    }
+  }, [inGame, navigation]);
 
   useEffect(() => {
     if (!left) {
@@ -114,6 +171,22 @@ function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
       remove(removing.seatId);
       setRemoving(null);
     }
+  };
+
+  const connected =
+    state.phase === 'ready'
+      ? state.room.seats.filter(seat => seat.status === 'connected').length
+      : 0;
+  const twoImposters = connected >= TWO_IMPOSTERS_FROM;
+
+  const start = () => {
+    const settings: GameSettings = {
+      packId: packIds[game],
+      imposters: twoImposters ? imposters : 1,
+      showCategory,
+    };
+    haptics.success();
+    startGame(game, settings);
   };
 
   const closeRoom = () => {
@@ -206,17 +279,53 @@ function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
                 setRemoving(player);
               }}
             />
-            <Games />
+            <Games
+              selected={game}
+              onSelect={next => {
+                haptics.selection();
+                setGame(next);
+              }}
+            />
+            <Settings
+              game={game}
+              packId={packIds[game]}
+              imposters={twoImposters ? imposters : 1}
+              twoImposters={twoImposters}
+              showCategory={showCategory}
+              onPickPack={() => {
+                haptics.tap();
+                setPicking(true);
+              }}
+              onImposters={() => {
+                haptics.selection();
+                setImposters(value => (value === 1 ? 2 : 1));
+              }}
+              onShowCategory={value => {
+                haptics.selection();
+                setShowCategory(value);
+              }}
+            />
             <View style={layout.section}>
               <AppButton
                 testID="camp.lobby.start"
-                label={t('camp.lobby.start')}
+                label={t('camp.game.start', {
+                  game: t(`camp.game.name.${game}`),
+                })}
                 variant="secondary"
-                disabled
-                onPress={noop}
+                disabled={!inRange(game, connected)}
+                onPress={start}
               />
-              <AppText variant="small" style={layout.center}>
-                {t('camp.lobby.startSoon')}
+              {startBlocked(game, connected) ? (
+                <AppText
+                  testID="camp.lobby.start-reason"
+                  variant="small"
+                  style={layout.center}
+                >
+                  {startBlocked(game, connected)}
+                </AppText>
+              ) : null}
+              <AppText variant="small" tone="muted" style={layout.center}>
+                {t('camp.game.youPlayToo')}
               </AppText>
             </View>
             <AppButton
@@ -231,6 +340,18 @@ function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
           </>
         ) : null}
 
+        {picking ? (
+          <PackSheet
+            game={game}
+            selected={packIds[game]}
+            onPick={packId => {
+              haptics.selection();
+              setPackIds(current => ({ ...current, [game]: packId }));
+              setPicking(false);
+            }}
+            onDismiss={() => setPicking(false)}
+          />
+        ) : null}
         {removing ? (
           <ConfirmSheet
             testID="camp.lobby.remove-sheet"
@@ -289,6 +410,14 @@ function PlayerLobby({
     },
     [client],
   );
+
+  // The host started a round (or we joined mid-game) → the game route (AC2).
+  const inGame = Boolean(snapshot?.game) && !snapshot?.ended;
+  useEffect(() => {
+    if (inGame) {
+      navigation.navigate('CampGame', { player: true });
+    }
+  }, [inGame, navigation]);
 
   const ended = snapshot?.ended ?? (client ? null : 'left');
   useEffect(() => {
@@ -393,7 +522,14 @@ function Players({
   );
 }
 
-function Games() {
+/** Game pills (AC1): the party games are selectable, Mafia is still "Coming soon". */
+function Games({
+  selected: current,
+  onSelect,
+}: {
+  selected: PartyGame;
+  onSelect: (game: PartyGame) => void;
+}) {
   const styles = useStyles();
   const { show } = useToast();
   return (
@@ -403,14 +539,23 @@ function Games() {
       </AppText>
       <View style={layout.grid}>
         {lobbyGames.map(game => {
-          const selected = game === SELECTED_GAME;
+          const selected = game === current;
+          const live = isPartyGame(game);
           return (
             <Pressable
               key={game}
               testID={`camp.lobby.game.${game}`}
-              accessibilityLabel={`${gameLabel(game)}, ${t('camp.comingSoon')}`}
+              accessibilityLabel={
+                live
+                  ? gameLabel(game)
+                  : `${gameLabel(game)}, ${t('camp.comingSoon')}`
+              }
               accessibilityState={{ selected }}
               onPress={() => {
+                if (live) {
+                  onSelect(game);
+                  return;
+                }
                 haptics.selection();
                 show({ variant: 'info', message: t('camp.comingSoonToast') });
               }}
@@ -421,7 +566,7 @@ function Games() {
               ]}
             >
               <AppText variant="chip">{gameLabel(game)}</AppText>
-              <ComingSoonTag />
+              {live ? null : <ComingSoonTag />}
             </Pressable>
           );
         })}
@@ -430,43 +575,105 @@ function Games() {
   );
 }
 
-type ConfirmProps = {
-  testID: string;
-  title: string;
-  confirmLabel: string;
-  confirmTestID: string;
-  cancelTestID: string;
-  onConfirm: () => void;
-  onDismiss: () => void;
-};
-
-function ConfirmSheet({
-  testID,
-  title,
-  confirmLabel,
-  confirmTestID,
-  cancelTestID,
-  onConfirm,
-  onDismiss,
-}: ConfirmProps) {
+/** Settings rows for the selected game (canvas CampLobby). */
+function Settings({
+  game,
+  packId,
+  imposters,
+  twoImposters,
+  showCategory,
+  onPickPack,
+  onImposters,
+  onShowCategory,
+}: {
+  game: PartyGame;
+  packId: string;
+  imposters: number;
+  /** Two imposters can be picked only with 8+ players. */
+  twoImposters: boolean;
+  showCategory: boolean;
+  onPickPack: () => void;
+  onImposters: () => void;
+  onShowCategory: (value: boolean) => void;
+}) {
+  const pack = packsFor(game).find(candidate => candidate.id === packId);
   return (
-    <Sheet testID={testID} accessibilityLabel={title} onDismiss={onDismiss}>
+    <ListCard>
+      <ListRow
+        testID="camp.lobby.pack"
+        first
+        icon={null}
+        label={t(game === 'imposter' ? 'camp.game.pack' : 'camp.game.packWhoami')}
+        value={pack ? packLabel(pack) : undefined}
+        onPress={onPickPack}
+      />
+      {game === 'imposter' ? (
+        <>
+          <ListRow
+            testID="camp.lobby.imposters"
+            icon={null}
+            label={t('camp.game.imposters')}
+            value={String(imposters)}
+            onPress={twoImposters ? onImposters : undefined}
+          />
+          <View style={[layout.switchRow, layout.divider]}>
+            <View style={layout.flex}>
+              <AppText variant="h3">{t('camp.game.seesCategory')}</AppText>
+              <AppText variant="small" tone="muted">
+                {t('camp.game.seesCategorySub')}
+              </AppText>
+            </View>
+            <Switch
+              testID="camp.lobby.sees-category"
+              accessibilityLabel={t('camp.game.seesCategory')}
+              accessibilityHint={t('camp.game.seesCategorySub')}
+              value={showCategory}
+              onValueChange={onShowCategory}
+              trackColor={{ true: campColors.teal, false: campColors.line }}
+              thumbColor={campColors.white}
+            />
+          </View>
+        </>
+      ) : null}
+    </ListCard>
+  );
+}
+
+/** Simple list of the game's packs. */
+function PackSheet({
+  game,
+  selected,
+  onPick,
+  onDismiss,
+}: {
+  game: PartyGame;
+  selected: string;
+  onPick: (packId: string) => void;
+  onDismiss: () => void;
+}) {
+  const styles = useStyles();
+  const title = t(game === 'imposter' ? 'camp.game.pack' : 'camp.game.packWhoami');
+  return (
+    <Sheet testID="camp.lobby.pack-sheet" accessibilityLabel={title} onDismiss={onDismiss}>
       <View style={layout.section}>
         <AppText variant="h3" accessibilityRole="header">
           {title}
         </AppText>
-        <AppButton
-          testID={confirmTestID}
-          label={confirmLabel}
-          variant="danger"
-          onPress={onConfirm}
-        />
-        <AppButton
-          testID={cancelTestID}
-          label={t('common.cancel')}
-          variant="white"
-          onPress={onDismiss}
-        />
+        {packsFor(game).map(pack => {
+          const isSelected = pack.id === selected;
+          return (
+            <Pressable
+              key={pack.id}
+              testID={`camp.lobby.pack.${pack.id}`}
+              accessibilityLabel={packLabel(pack)}
+              accessibilityState={{ selected: isSelected }}
+              onPress={() => onPick(pack.id)}
+              style={[layout.packRow, styles.pill, isSelected && layout.pillSelected]}
+            >
+              <AppText variant="body">{packLabel(pack)}</AppText>
+            </Pressable>
+          );
+        })}
       </View>
     </Sheet>
   );
@@ -490,6 +697,22 @@ const layout = StyleSheet.create({
     borderWidth: borders.card,
   },
   pillSelected: { borderColor: palette.purple },
+  switchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[12],
+    paddingVertical: spacing[14],
+    paddingHorizontal: spacing[16],
+  },
+  divider: { borderTopWidth: borders.card, borderTopColor: campColors.soft },
+  packRow: {
+    minHeight: sizes.touchTarget,
+    justifyContent: 'center',
+    paddingHorizontal: spacing[16],
+    paddingVertical: spacing[12],
+    borderRadius: radii.tile,
+    borderWidth: borders.card,
+  },
   battery: {
     backgroundColor: conditionColors.caution.chipBg,
     borderRadius: radii.tile,

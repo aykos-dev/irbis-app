@@ -4,6 +4,19 @@ import Zeroconf from 'react-native-zeroconf';
 import { qaLog } from '../../../shared/utils/qaLog';
 import { uuidV4 } from '../../../shared/utils/uuid';
 import {
+  gameReducer,
+  idsNeeded,
+  inRange,
+  roundSeats,
+  toPublic,
+  type GameAction,
+  type GameSeat,
+  type GameSettings,
+  type GameState,
+} from '../games/gameReducer';
+import { findPack, type PartyGame } from '../games/packs';
+import { drawIds, type Rng } from '../games/usedStore';
+import {
   CAMP_PORT,
   createLineBuffer,
   decodeClient,
@@ -42,13 +55,21 @@ export type HostServer = {
   close: () => void;
   /** Stops listening and drops every socket (unmount); the room stays as it was. */
   stop: () => void;
+  /** Deals round 1 to the connected seats (host included) when their count is in range. */
+  startGame: (game: PartyGame, settings: GameSettings, rng?: Rng) => void;
+  /** Deals the next round to the seats connected now (mid-round joiners included). */
+  newRound: (rng?: Rng) => void;
+  /** Ends the game for everyone: `lobby` to all. */
+  endGame: () => void;
 };
 
 type Options = {
   room: RoomState;
   /** Network name players see after a probe ("Connected to …"): hotspot SSID or Wi-Fi name. */
   network?: string;
-  onChange: (room: RoomState) => void;
+  /** A running game restored with the room (resume). */
+  game?: GameState | null;
+  onChange: (room: RoomState, game: GameState | null) => void;
   now?: () => number;
 };
 
@@ -56,10 +77,12 @@ type Options = {
 export function createHostServer({
   room,
   network = '',
+  game: restoredGame = null,
   onChange,
   now = Date.now,
 }: Options): HostServer {
   let state = room;
+  let game = restoredGame;
   let server: TcpServer | null = null;
   let ticker: ReturnType<typeof setInterval> | null = null;
   const conns = new Map<string, Conn>();
@@ -84,11 +107,66 @@ export function createHostServer({
     });
   };
 
+  const seatOf = (conn: Conn) =>
+    state.seats.find(seat => seat.connId === conn.id)?.seatId ?? null;
+
+  /** Per-seat secret first, then the public round; a seat outside the round gets only the latter. */
+  const sendGame = (conn: Conn, withDeal: boolean) => {
+    if (!game) {
+      return;
+    }
+    const seatId = seatOf(conn);
+    const secret = seatId ? game.deals[seatId] : undefined;
+    if (withDeal && secret) {
+      send(conn, { type: 'deal', game: game.game, round: game.round, secret });
+    }
+    send(conn, {
+      type: 'game',
+      game: game.game,
+      round: game.round,
+      phase: game.phase,
+      public: toPublic(game),
+    });
+  };
+
+  const broadcastGame = (withDeals: boolean) => {
+    conns.forEach(conn => {
+      if (conn.seated) {
+        sendGame(conn, withDeals);
+      }
+    });
+  };
+
+  const applyGame = (action: GameAction): boolean => {
+    const next = gameReducer(game, action);
+    if (next === game) {
+      return false;
+    }
+    game = next;
+    onChange(state, game);
+    return true;
+  };
+
+  const gameSeats = (): GameSeat[] =>
+    state.seats.map(seat => ({
+      seatId: seat.seatId,
+      connected: seat.status === 'connected',
+    }));
+
+  /** Draws the round's pack items (no-repeat, AC8); null when the pack is unknown. */
+  const draw = (kind: PartyGame, packId: string, rng: Rng) => {
+    const pack = findPack(packId);
+    if (!pack || pack.game !== kind) {
+      return null;
+    }
+    return drawIds(kind, pack, idsNeeded(kind, roundSeats(gameSeats()).length), rng);
+  };
+
   const apply = (action: RoomAction): RoomOutcome => {
     const result = roomReducer(state, action);
     if (result.state !== state) {
       state = result.state;
-      onChange(state);
+      onChange(state, game);
       if (!state.closed) {
         broadcastRoster();
       }
@@ -131,8 +209,17 @@ export function createHostServer({
       case 'ping':
         send(conn, { type: 'pong' });
         return;
-      case 'leave':
+      case 'leave': {
+        const seatId = seatOf(conn);
         freed(apply({ type: 'leave', connId: conn.id }), null);
+        if (seatId && applyGame({ type: 'seatRemoved', seatId })) {
+          broadcastGame(false);
+        }
+        return;
+      }
+      // Handled with the game screens (slice 3).
+      case 'wyrVote':
+      case 'showMine':
         return;
       // The prober reads the answer and hangs up; an idle prober is dropped by the silence check.
       case 'probe':
@@ -168,6 +255,13 @@ export function createHostServer({
             room: { code: state.code },
           });
           send(conn, { type: 'roster', players: toRoster(state) });
+          if (game) {
+            if (applyGame({ type: 'seatJoined', seatId: outcome.seatId })) {
+              broadcastGame(false);
+            } else {
+              sendGame(conn, true);
+            }
+          }
           qaLog('camp_player_joined', {
             seats: state.seats.length,
             rejoin: outcome.rejoin,
@@ -241,7 +335,60 @@ export function createHostServer({
       if (outcome.kind === 'freed') {
         freed(outcome, { type: 'removed' });
         qaLog('camp_player_removed', { seats: state.seats.length });
+        if (applyGame({ type: 'seatRemoved', seatId })) {
+          broadcastGame(false);
+        }
       }
+    },
+    startGame: (kind, settings, rng = Math.random) => {
+      const players = roundSeats(gameSeats()).length;
+      if (game || !inRange(kind, players)) {
+        return;
+      }
+      const ids = draw(kind, settings.packId, rng);
+      if (
+        !ids ||
+        !applyGame({
+          type: 'start',
+          game: kind,
+          settings,
+          seats: gameSeats(),
+          ids,
+          rng,
+        })
+      ) {
+        return;
+      }
+      broadcastGame(true);
+      qaLog('camp_game_started', { game: kind, players });
+      qaLog('camp_round_started', { game: kind, round: 1 });
+    },
+    newRound: (rng = Math.random) => {
+      if (!game) {
+        return;
+      }
+      const ids = draw(game.game, game.settings.packId, rng);
+      if (
+        !ids ||
+        !applyGame({ type: 'newRound', seats: gameSeats(), ids, rng }) ||
+        !game
+      ) {
+        return;
+      }
+      broadcastGame(true);
+      qaLog('camp_round_started', { game: game.game, round: game.round });
+    },
+    endGame: () => {
+      const ended = game;
+      if (!ended || !applyGame({ type: 'end' })) {
+        return;
+      }
+      conns.forEach(conn => {
+        if (conn.seated) {
+          send(conn, { type: 'lobby' });
+        }
+      });
+      qaLog('camp_game_ended', { game: ended.game, rounds: ended.round });
     },
     close: () => {
       apply({ type: 'close' });

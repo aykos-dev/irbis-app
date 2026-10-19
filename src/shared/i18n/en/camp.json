@@ -99,5 +99,36 @@
     "step3": "Come back to Irbis and tap \"It's on\"",
     "done": "It's on",
     "notOn": "We can't see the hotspot or Wi-Fi yet. Check it's on and try again."
+  },
+  "game": {
+    "start": "Start %{game}",
+    "needsMin": "Needs %{n}+ players",
+    "max": "Max %{n} players",
+    "youPlayToo": "You play too — your word stays hidden on this phone.",
+    "pack": "Word pack",
+    "packWhoami": "Pack",
+    "words": {
+      "one": "%{count} word",
+      "other": "%{count} words"
+    },
+    "characters": {
+      "one": "%{count} character",
+      "other": "%{count} characters"
+    },
+    "questions": {
+      "one": "%{count} question",
+      "other": "%{count} questions"
+    },
+    "imposters": "Imposters",
+    "seesCategory": "Imposter sees the category",
+    "seesCategorySub": "Makes bluffing easier",
+    "inProgress": "Round in progress — you're in the next one",
+    "end": "End game",
+    "endConfirm": "End the game for everyone?",
+    "name": {
+      "imposter": "Imposter",
+      "whoami": "Who am I?",
+      "rather": "Would you rather"
+    }
   }
 }

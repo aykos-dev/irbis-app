@@ -1,0 +1,371 @@
+{
+  "id": "imposter-camping",
+  "game": "imposter",
+  "name": {
+    "uz": "Kemping",
+    "ru": "Кемпинг",
+    "en": "Camping"
+  },
+  "items": [
+    {
+      "id": "tent",
+      "uz": "Chodir",
+      "ru": "Палатка",
+      "en": "Tent"
+    },
+    {
+      "id": "sleeping-bag",
+      "uz": "Uyqu xaltasi",
+      "ru": "Спальный мешок",
+      "en": "Sleeping bag"
+    },
+    {
+      "id": "sleeping-mat",
+      "uz": "Karimat",
+      "ru": "Коврик",
+      "en": "Sleeping mat"
+    },
+    {
+      "id": "backpack",
+      "uz": "Ryukzak",
+      "ru": "Рюкзак",
+      "en": "Backpack"
+    },
+    {
+      "id": "trekking-poles",
+      "uz": "Trekking tayoqlari",
+      "ru": "Треккинговые палки",
+      "en": "Trekking poles"
+    },
+    {
+      "id": "headlamp",
+      "uz": "Peshona fonari",
+      "ru": "Налобный фонарь",
+      "en": "Headlamp"
+    },
+    {
+      "id": "flashlight",
+      "uz": "Fonar",
+      "ru": "Фонарик",
+      "en": "Flashlight"
+    },
+    {
+      "id": "campfire",
+      "uz": "Gulxan",
+      "ru": "Костёр",
+      "en": "Campfire"
+    },
+    {
+      "id": "firewood",
+      "uz": "Oʻtin",
+      "ru": "Дрова",
+      "en": "Firewood"
+    },
+    {
+      "id": "matches",
+      "uz": "Gugurt",
+      "ru": "Спички",
+      "en": "Matches"
+    },
+    {
+      "id": "lighter",
+      "uz": "Zajigalka",
+      "ru": "Зажигалка",
+      "en": "Lighter"
+    },
+    {
+      "id": "gas-burner",
+      "uz": "Gaz gorelkasi",
+      "ru": "Газовая горелка",
+      "en": "Gas burner"
+    },
+    {
+      "id": "cooking-pot",
+      "uz": "Qozon",
+      "ru": "Котелок",
+      "en": "Cooking pot"
+    },
+    {
+      "id": "kettle",
+      "uz": "Choynak",
+      "ru": "Чайник",
+      "en": "Kettle"
+    },
+    {
+      "id": "thermos",
+      "uz": "Termos",
+      "ru": "Термос",
+      "en": "Thermos"
+    },
+    {
+      "id": "flask",
+      "uz": "Suv flyagasi",
+      "ru": "Фляга",
+      "en": "Water flask"
+    },
+    {
+      "id": "mug",
+      "uz": "Krujka",
+      "ru": "Кружка",
+      "en": "Mug"
+    },
+    {
+      "id": "spoon",
+      "uz": "Qoshiq",
+      "ru": "Ложка",
+      "en": "Spoon"
+    },
+    {
+      "id": "knife",
+      "uz": "Pichoq",
+      "ru": "Нож",
+      "en": "Knife"
+    },
+    {
+      "id": "axe",
+      "uz": "Bolta",
+      "ru": "Топор",
+      "en": "Axe"
+    },
+    {
+      "id": "saw",
+      "uz": "Arra",
+      "ru": "Пила",
+      "en": "Saw"
+    },
+    {
+      "id": "rope",
+      "uz": "Arqon",
+      "ru": "Верёвка",
+      "en": "Rope"
+    },
+    {
+      "id": "carabiner",
+      "uz": "Karabin",
+      "ru": "Карабин",
+      "en": "Carabiner"
+    },
+    {
+      "id": "compass",
+      "uz": "Kompas",
+      "ru": "Компас",
+      "en": "Compass"
+    },
+    {
+      "id": "map",
+      "uz": "Xarita",
+      "ru": "Карта",
+      "en": "Map"
+    },
+    {
+      "id": "gps",
+      "uz": "Navigator",
+      "ru": "GPS-навигатор",
+      "en": "GPS navigator"
+    },
+    {
+      "id": "power-bank",
+      "uz": "Pauerbank",
+      "ru": "Пауэрбанк",
+      "en": "Power bank"
+    },
+    {
+      "id": "first-aid-kit",
+      "uz": "Birinchi yordam qutisi",
+      "ru": "Аптечка",
+      "en": "First aid kit"
+    },
+    {
+      "id": "sunscreen",
+      "uz": "Quyoshdan himoya kremi",
+      "ru": "Солнцезащитный крем",
+      "en": "Sunscreen"
+    },
+    {
+      "id": "sunglasses",
+      "uz": "Quyosh koʻzoynagi",
+      "ru": "Солнцезащитные очки",
+      "en": "Sunglasses"
+    },
+    {
+      "id": "cap",
+      "uz": "Kepka",
+      "ru": "Кепка",
+      "en": "Cap"
+    },
+    {
+      "id": "raincoat",
+      "uz": "Yomgʻirpoʻsh",
+      "ru": "Дождевик",
+      "en": "Raincoat"
+    },
+    {
+      "id": "hiking-boots",
+      "uz": "Trekking botinkalari",
+      "ru": "Треккинговые ботинки",
+      "en": "Hiking boots"
+    },
+    {
+      "id": "socks",
+      "uz": "Paypoq",
+      "ru": "Носки",
+      "en": "Socks"
+    },
+    {
+      "id": "gloves",
+      "uz": "Qoʻlqop",
+      "ru": "Перчатки",
+      "en": "Gloves"
+    },
+    {
+      "id": "fleece",
+      "uz": "Flis kofta",
+      "ru": "Флиска",
+      "en": "Fleece jacket"
+    },
+    {
+      "id": "down-jacket",
+      "uz": "Puxovik",
+      "ru": "Пуховик",
+      "en": "Down jacket"
+    },
+    {
+      "id": "hammock",
+      "uz": "Gamak",
+      "ru": "Гамак",
+      "en": "Hammock"
+    },
+    {
+      "id": "folding-chair",
+      "uz": "Yigʻma stul",
+      "ru": "Складной стул",
+      "en": "Folding chair"
+    },
+    {
+      "id": "tarp",
+      "uz": "Brezent soyabon",
+      "ru": "Тент",
+      "en": "Tarp"
+    },
+    {
+      "id": "bug-spray",
+      "uz": "Chivinga qarshi vosita",
+      "ru": "Средство от комаров",
+      "en": "Bug spray"
+    },
+    {
+      "id": "whistle",
+      "uz": "Hushtak",
+      "ru": "Свисток",
+      "en": "Whistle"
+    },
+    {
+      "id": "binoculars",
+      "uz": "Durbin",
+      "ru": "Бинокль",
+      "en": "Binoculars"
+    },
+    {
+      "id": "camera",
+      "uz": "Fotoapparat",
+      "ru": "Фотоаппарат",
+      "en": "Camera"
+    },
+    {
+      "id": "guitar",
+      "uz": "Gitara",
+      "ru": "Гитара",
+      "en": "Guitar"
+    },
+    {
+      "id": "marshmallows",
+      "uz": "Marshmallou",
+      "ru": "Маршмеллоу",
+      "en": "Marshmallows"
+    },
+    {
+      "id": "skewers",
+      "uz": "Sixlar",
+      "ru": "Шампуры",
+      "en": "Skewers"
+    },
+    {
+      "id": "grill",
+      "uz": "Mangal",
+      "ru": "Мангал",
+      "en": "Barbecue grill"
+    },
+    {
+      "id": "cooler-bag",
+      "uz": "Sumka-muzlatgich",
+      "ru": "Сумка-холодильник",
+      "en": "Cooler bag"
+    },
+    {
+      "id": "trash-bag",
+      "uz": "Axlat xaltasi",
+      "ru": "Мешок для мусора",
+      "en": "Trash bag"
+    },
+    {
+      "id": "toilet-paper",
+      "uz": "Hojatxona qogʻozi",
+      "ru": "Туалетная бумага",
+      "en": "Toilet paper"
+    },
+    {
+      "id": "wet-wipes",
+      "uz": "Nam salfetkalar",
+      "ru": "Влажные салфетки",
+      "en": "Wet wipes"
+    },
+    {
+      "id": "tent-pegs",
+      "uz": "Chodir qoziqlari",
+      "ru": "Колышки для палатки",
+      "en": "Tent pegs"
+    },
+    {
+      "id": "duct-tape",
+      "uz": "Skotch",
+      "ru": "Скотч",
+      "en": "Duct tape"
+    },
+    {
+      "id": "ice-axe",
+      "uz": "Muz boltasi",
+      "ru": "Ледоруб",
+      "en": "Ice axe"
+    },
+    {
+      "id": "crampons",
+      "uz": "Koshkalar",
+      "ru": "Кошки",
+      "en": "Crampons"
+    },
+    {
+      "id": "helmet",
+      "uz": "Kaska",
+      "ru": "Каска",
+      "en": "Helmet"
+    },
+    {
+      "id": "walkie-talkie",
+      "uz": "Ratsiya",
+      "ru": "Рация",
+      "en": "Walkie-talkie"
+    },
+    {
+      "id": "blanket",
+      "uz": "Adyol",
+      "ru": "Одеяло",
+      "en": "Blanket"
+    },
+    {
+      "id": "pillow",
+      "uz": "Yostiq",
+      "ru": "Подушка",
+      "en": "Pillow"
+    }
+  ]
+}

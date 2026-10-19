@@ -1,0 +1,531 @@
+{
+  "id": "rather-camping",
+  "game": "rather",
+  "name": {
+    "uz": "Kemping",
+    "ru": "Кемпинг",
+    "en": "Camping"
+  },
+  "items": [
+    {
+      "id": "tent-no-pillow",
+      "a": {
+        "uz": "3000 metr balandlikda chodirda yostiqsiz uxlash",
+        "ru": "Спать в палатке на 3000 м без подушки",
+        "en": "Sleep in a tent at 3,000 m without a pillow"
+      },
+      "b": {
+        "uz": "Hoʻl paypoqda yomgʻir ostida 25 km yurish",
+        "ru": "Пройти 25 км под дождём в мокрых носках",
+        "en": "Hike 25 km in the rain with wet socks"
+      }
+    },
+    {
+      "id": "cold-tea-burnt-plov",
+      "a": {
+        "uz": "Butun yurish davomida faqat sovuq choy ichish",
+        "ru": "Весь поход пить только холодный чай",
+        "en": "Drink only cold tea for the whole hike"
+      },
+      "b": {
+        "uz": "Har kecha kuygan palov yeyish",
+        "ru": "Каждый вечер есть подгоревший плов",
+        "en": "Eat burnt plov every evening"
+      }
+    },
+    {
+      "id": "snorer-or-ants",
+      "a": {
+        "uz": "Qattiq xurrak otadigan odam bilan bir chodirda yotish",
+        "ru": "Делить палатку с громким храпуном",
+        "en": "Share a tent with a loud snorer"
+      },
+      "b": {
+        "uz": "Bir oila chumolilar bilan bir chodirda yotish",
+        "ru": "Делить палатку с семьёй муравьёв",
+        "en": "Share a tent with a family of ants"
+      }
+    },
+    {
+      "id": "no-fire-or-no-light",
+      "a": {
+        "uz": "Tunni gulxansiz oʻtkazish",
+        "ru": "Провести ночь без костра",
+        "en": "Spend the night without a campfire"
+      },
+      "b": {
+        "uz": "Tunni fonarsiz oʻtkazish",
+        "ru": "Провести ночь без фонарика",
+        "en": "Spend the night without a flashlight"
+      }
+    },
+    {
+      "id": "carry-pot-or-water",
+      "a": {
+        "uz": "Kun boʻyi guruhning ogʻir qozonini koʻtarish",
+        "ru": "Весь день нести тяжёлый котёл группы",
+        "en": "Carry the group's heavy pot all day"
+      },
+      "b": {
+        "uz": "Hamma uchun 5 litr suv koʻtarish",
+        "ru": "Нести 5 литров воды на всех",
+        "en": "Carry 5 litres of water for everyone"
+      }
+    },
+    {
+      "id": "marmot-or-alarm",
+      "a": {
+        "uz": "Ertalab soat 5 da sugʻur hushtagidan uygʻonish",
+        "ru": "Просыпаться в 5 утра от свиста сурка",
+        "en": "Wake up to a marmot whistling at 5 a.m."
+      },
+      "b": {
+        "uz": "Tongda soat 4 da doʻstning budilnigidan uygʻonish",
+        "ru": "Просыпаться в 4 утра от будильника друга",
+        "en": "Wake up to a friend's alarm at 4 a.m."
+      }
+    },
+    {
+      "id": "cook-or-wash",
+      "a": {
+        "uz": "Har kuni butun guruhga ovqat pishirish",
+        "ru": "Каждый день готовить на всю группу",
+        "en": "Cook for the whole group every day"
+      },
+      "b": {
+        "uz": "Barcha idishlarni muzdek daryoda yuvish",
+        "ru": "Мыть всю посуду в ледяной реке",
+        "en": "Wash all the dishes in an icy river"
+      }
+    },
+    {
+      "id": "icy-lake-or-no-wash",
+      "a": {
+        "uz": "Muzdek togʻ koʻlida choʻmilish",
+        "ru": "Искупаться в ледяном горном озере",
+        "en": "Swim in an icy mountain lake"
+      },
+      "b": {
+        "uz": "Uch kun yuvinmaslik",
+        "ru": "Не мыться три дня",
+        "en": "Skip washing for three days"
+      }
+    },
+    {
+      "id": "leaky-tent-or-chase-tent",
+      "a": {
+        "uz": "Yomgʻirda chakka oʻtadigan chodirda uxlash",
+        "ru": "Спать в протекающей палатке в дождь",
+        "en": "Sleep in a leaking tent in the rain"
+      },
+      "b": {
+        "uz": "Shamolda uchib ketgan chodirni quvlash",
+        "ru": "Гоняться за палаткой, которую унёс ветер",
+        "en": "Chase your tent after the wind takes it"
+      }
+    },
+    {
+      "id": "only-samsa-or-buckwheat",
+      "a": {
+        "uz": "Bir haftalik yurishda faqat somsa yeyish",
+        "ru": "Неделю в походе есть только самсу",
+        "en": "Eat only samsa for a week-long hike"
+      },
+      "b": {
+        "uz": "Bir haftalik yurishda faqat grechka yeyish",
+        "ru": "Неделю в походе есть только гречку",
+        "en": "Eat only buckwheat for a week-long hike"
+      }
+    },
+    {
+      "id": "sunrise-or-sleep-in",
+      "a": {
+        "uz": "Quyosh chiqishi uchun soat 4 da choʻqqiga chiqish",
+        "ru": "Подняться на вершину к рассвету в 4 утра",
+        "en": "Climb to the summit at 4 a.m. for sunrise"
+      },
+      "b": {
+        "uz": "Tushgacha uxlab, manzarani oʻtkazib yuborish",
+        "ru": "Спать до обеда и пропустить вид",
+        "en": "Sleep until noon and miss the view"
+      }
+    },
+    {
+      "id": "one-song-or-no-music",
+      "a": {
+        "uz": "Gulxan yonida gitara chalish, lekin bitta qoʻshiq bilish",
+        "ru": "Играть у костра на гитаре, но знать одну песню",
+        "en": "Play guitar at the fire but know just one song"
+      },
+      "b": {
+        "uz": "Tun boʻyi cholgʻusiz qoʻshiq aytish",
+        "ru": "Всю ночь петь без музыки",
+        "en": "Sing all night with no music at all"
+      }
+    },
+    {
+      "id": "lost-map-or-dead-phone",
+      "a": {
+        "uz": "Xaritani yoʻqotib qoʻyish",
+        "ru": "Потерять карту",
+        "en": "Lose the map"
+      },
+      "b": {
+        "uz": "Birinchi kuniyoq quvvatsiz telefon bilan qolish",
+        "ru": "Остаться с разряженным телефоном в первый же день",
+        "en": "Have a dead phone from day one"
+      }
+    },
+    {
+      "id": "donkey-or-heavy-pack",
+      "a": {
+        "uz": "Soʻqmoqdan oʻjar eshakda chiqish",
+        "ru": "Подниматься по тропе на упрямом осле",
+        "en": "Ride a stubborn donkey up the trail"
+      },
+      "b": {
+        "uz": "30 kg ryukzakni oʻzingiz koʻtarish",
+        "ru": "Нести 30-килограммовый рюкзак самому",
+        "en": "Carry a 30 kg backpack yourself"
+      }
+    },
+    {
+      "id": "damp-bag-or-no-mat",
+      "a": {
+        "uz": "Nam uyqu xaltasida uxlash",
+        "ru": "Спать в сыром спальнике",
+        "en": "Sleep in a damp sleeping bag"
+      },
+      "b": {
+        "uz": "Karimatsiz toshlar ustida uxlash",
+        "ru": "Спать на камнях без коврика",
+        "en": "Sleep on rocks without a mat"
+      }
+    },
+    {
+      "id": "mosquitoes-or-wind",
+      "a": {
+        "uz": "Chivinlarga toʻla koʻl boʻyida tunash",
+        "ru": "Ночевать у озера, полного комаров",
+        "en": "Camp by a lake full of mosquitoes"
+      },
+      "b": {
+        "uz": "Toʻxtovsiz shamol esadigan dovonda tunash",
+        "ru": "Ночевать на перевале под непрерывным ветром",
+        "en": "Camp on a pass with nonstop wind"
+      }
+    },
+    {
+      "id": "tea-no-sugar-or-sugar-no-tea",
+      "a": {
+        "uz": "Butun yurish davomida qandsiz choy ichish",
+        "ru": "Весь поход пить чай без сахара",
+        "en": "Drink tea without sugar for the whole hike"
+      },
+      "b": {
+        "uz": "Butun yurish davomida choysiz qand yeyish",
+        "ru": "Весь поход есть сахар без чая",
+        "en": "Eat sugar without tea for the whole hike"
+      }
+    },
+    {
+      "id": "wolves-or-bear-tracks",
+      "a": {
+        "uz": "Tun boʻyi boʻrilarning uvillashini eshitish",
+        "ru": "Всю ночь слышать вой волков",
+        "en": "Hear wolves howling all night"
+      },
+      "b": {
+        "uz": "Chodir yonida yangi ayiq izlarini topish",
+        "ru": "Найти свежие следы медведя у палатки",
+        "en": "Find fresh bear tracks by your tent"
+      }
+    },
+    {
+      "id": "ford-or-detour",
+      "a": {
+        "uz": "Tizzagacha muzdek daryodan yalangoyoq oʻtish",
+        "ru": "Перейти босиком ледяную реку по колено",
+        "en": "Cross a knee-deep icy river barefoot"
+      },
+      "b": {
+        "uz": "Koʻprik izlab 3 soat aylanib yurish",
+        "ru": "Сделать крюк в 3 часа в поисках моста",
+        "en": "Take a 3-hour detour to find a bridge"
+      }
+    },
+    {
+      "id": "wet-wood-or-far-spring",
+      "a": {
+        "uz": "Hoʻl oʻtin bilan gulxan yoqish",
+        "ru": "Разжечь костёр сырыми дровами",
+        "en": "Light the fire with wet wood"
+      },
+      "b": {
+        "uz": "1 km naridagi buloqdan suv tashish",
+        "ru": "Носить воду из родника за 1 км",
+        "en": "Fetch water from a spring 1 km away"
+      }
+    },
+    {
+      "id": "stars-or-sunrises",
+      "a": {
+        "uz": "Tun boʻyi yulduzlarni tomosha qilish",
+        "ru": "Всю ночь смотреть на звёзды",
+        "en": "Stay up all night watching the stars"
+      },
+      "b": {
+        "uz": "Yurishdagi har bir tongni kutib olish",
+        "ru": "Встречать каждый рассвет похода",
+        "en": "Wake up for every sunrise of the hike"
+      }
+    },
+    {
+      "id": "hammock-or-open-sky",
+      "a": {
+        "uz": "Ikki daraxt orasidagi gamakda uxlash",
+        "ru": "Спать в гамаке между двумя деревьями",
+        "en": "Sleep in a hammock between two trees"
+      },
+      "b": {
+        "uz": "Gulxan yonida ochiq osmon ostida uxlash",
+        "ru": "Спать под открытым небом у костра",
+        "en": "Sleep under the open sky by the fire"
+      }
+    },
+    {
+      "id": "forgot-spoon-or-mug",
+      "a": {
+        "uz": "Qoshigʻingizni uyda unutib qoldirish",
+        "ru": "Забыть дома свою ложку",
+        "en": "Leave your spoon at home"
+      },
+      "b": {
+        "uz": "Krujkangizni uyda unutib qoldirish",
+        "ru": "Забыть дома свою кружку",
+        "en": "Leave your mug at home"
+      }
+    },
+    {
+      "id": "july-snow-or-steppe-heat",
+      "a": {
+        "uz": "Iyulda togʻda qor ostida qolish",
+        "ru": "Попасть под снег в горах в июле",
+        "en": "Get caught in snow in the mountains in July"
+      },
+      "b": {
+        "uz": "Dashtda 40 °C issiqda yurish",
+        "ru": "Идти по степи в 40 °C жару",
+        "en": "Hike across the steppe in 40 °C heat"
+      }
+    },
+    {
+      "id": "snacks-or-light",
+      "a": {
+        "uz": "Shirinliklarga toʻla ogʻir sumka koʻtarish",
+        "ru": "Нести тяжёлую сумку, полную вкусняшек",
+        "en": "Carry a heavy bag full of snacks"
+      },
+      "b": {
+        "uz": "Yengil, lekin umuman shirinliksiz yurish",
+        "ru": "Идти налегке, но совсем без вкусняшек",
+        "en": "Hike light with no snacks at all"
+      }
+    },
+    {
+      "id": "tell-or-fear-stories",
+      "a": {
+        "uz": "Gulxan atrofida qoʻrqinchli hikoyalar aytib berish",
+        "ru": "Рассказывать страшилки у костра",
+        "en": "Tell scary stories at the campfire"
+      },
+      "b": {
+        "uz": "Qoʻrqqanidan uxlay olmaydigan odam boʻlish",
+        "ru": "Быть тем, кто от страха не может уснуть",
+        "en": "Be the one too scared to sleep after"
+      }
+    },
+    {
+      "id": "squeaky-mat-or-stuck-zip",
+      "a": {
+        "uz": "Tun boʻyi gʻichirlaydigan karimatda yotish",
+        "ru": "Спать на коврике, который скрипит всю ночь",
+        "en": "Sleep on a mat that squeaks all night"
+      },
+      "b": {
+        "uz": "Molniyasi doim tiqilib qoladigan chodirda yashash",
+        "ru": "Жить в палатке с вечно заедающей молнией",
+        "en": "Live in a tent whose zip always sticks"
+      }
+    },
+    {
+      "id": "shashlik-or-fruit",
+      "a": {
+        "uz": "Kuniga uch mahal shashlik yeyish",
+        "ru": "Есть шашлык три раза в день",
+        "en": "Eat shashlik three times a day"
+      },
+      "b": {
+        "uz": "Butun yurish davomida faqat meva yeyish",
+        "ru": "Весь поход есть только фрукты",
+        "en": "Eat only fruit for the whole hike"
+      }
+    },
+    {
+      "id": "first-or-last",
+      "a": {
+        "uz": "Doim oldinda yurib, oʻrgimchak toʻrlarini yigʻish",
+        "ru": "Всегда идти первым и собирать паутину",
+        "en": "Always walk first and collect the cobwebs"
+      },
+      "b": {
+        "uz": "Doim eng oxirida yurib, guruhni yopish",
+        "ru": "Всегда идти последним и замыкать группу",
+        "en": "Always walk last and sweep the group"
+      }
+    },
+    {
+      "id": "no-paper-or-no-toothbrush",
+      "a": {
+        "uz": "Hojatxona qogʻozisiz qolish",
+        "ru": "Остаться без туалетной бумаги",
+        "en": "Run out of toilet paper"
+      },
+      "b": {
+        "uz": "Tish choʻtkasini unutib qoldirish",
+        "ru": "Забыть зубную щётку",
+        "en": "Forget your toothbrush"
+      }
+    },
+    {
+      "id": "goat-or-crow-thief",
+      "a": {
+        "uz": "Noningizni echkiga oʻgʻirlatib qoʻyish",
+        "ru": "Позволить козе стащить ваш хлеб",
+        "en": "Have a goat steal your bread"
+      },
+      "b": {
+        "uz": "Kolbasangizni qargʻaga oʻgʻirlatib qoʻyish",
+        "ru": "Позволить вороне стащить вашу колбасу",
+        "en": "Have a crow steal your sausage"
+      }
+    },
+    {
+      "id": "no-camera-or-lost-photos",
+      "a": {
+        "uz": "Kamerasiz, faqat xotiralar bilan yurish",
+        "ru": "Идти без камеры, только с воспоминаниями",
+        "en": "Hike with no camera, only memories"
+      },
+      "b": {
+        "uz": "1000 ta surat olib, hammasini yoʻqotish",
+        "ru": "Сделать 1000 фото и потерять их все",
+        "en": "Take 1,000 photos and lose them all"
+      }
+    },
+    {
+      "id": "ridge-or-scree",
+      "a": {
+        "uz": "Tik qoyali tizmaga tirmashib chiqish",
+        "ru": "Карабкаться по крутому скалистому гребню",
+        "en": "Scramble up a steep rocky ridge"
+      },
+      "b": {
+        "uz": "Uzun shagʻalli qiyalikdan sirpanib tushish",
+        "ru": "Съезжать по длинной осыпи",
+        "en": "Slide down a long scree slope"
+      }
+    },
+    {
+      "id": "cold-morning",
+      "a": {
+        "uz": "−5 °C da issiq uyqu xaltasidan chiqish",
+        "ru": "Вылезти из тёплого спальника при −5 °C",
+        "en": "Leave a warm sleeping bag at −5 °C"
+      },
+      "b": {
+        "uz": "Ichida qolib, nonushtani oʻtkazib yuborish",
+        "ru": "Остаться внутри и пропустить завтрак",
+        "en": "Stay inside and miss breakfast"
+      }
+    },
+    {
+      "id": "sing-or-dance",
+      "a": {
+        "uz": "Gulxan yonida guruhga qoʻshiq aytib berish",
+        "ru": "Спеть песню группе у костра",
+        "en": "Sing a song for the group at the fire"
+      },
+      "b": {
+        "uz": "Gulxan yonida guruh uchun raqs tushish",
+        "ru": "Станцевать для группы у костра",
+        "en": "Dance for the group at the fire"
+      }
+    },
+    {
+      "id": "share-or-hide-chocolate",
+      "a": {
+        "uz": "Yashirin shokoladingizni hamma bilan boʻlishish",
+        "ru": "Поделиться своим тайным шоколадом со всеми",
+        "en": "Share your secret chocolate with everyone"
+      },
+      "b": {
+        "uz": "Yashirin shokoladni chodirda yolgʻiz yeyish",
+        "ru": "Съесть тайный шоколад в палатке в одиночку",
+        "en": "Eat your secret chocolate alone in the tent"
+      }
+    },
+    {
+      "id": "cards-or-push-on",
+      "a": {
+        "uz": "Yomgʻirli kunni chodirda karta oʻynab oʻtkazish",
+        "ru": "Провести дождливый день в палатке за картами",
+        "en": "Spend a rainy day playing cards in the tent"
+      },
+      "b": {
+        "uz": "Koʻlga yetish uchun yomgʻirda yoʻlda davom etish",
+        "ru": "Идти дальше под дождём, чтобы дойти до озера",
+        "en": "Keep hiking in the rain to reach the lake"
+      }
+    },
+    {
+      "id": "new-boots-or-flip-flops",
+      "a": {
+        "uz": "Yangi, qattiq botinkada yurish",
+        "ru": "Идти в новых жёстких ботинках",
+        "en": "Hike in brand-new stiff boots"
+      },
+      "b": {
+        "uz": "Eski shippakda yurish",
+        "ru": "Идти в старых шлёпанцах",
+        "en": "Hike in old flip-flops"
+      }
+    },
+    {
+      "id": "guide-or-cook",
+      "a": {
+        "uz": "Bir kun guruhga yoʻlboshchi boʻlish",
+        "ru": "Один день быть проводником группы",
+        "en": "Be the group's guide for a day"
+      },
+      "b": {
+        "uz": "Bir kun guruhga oshpaz boʻlish",
+        "ru": "Один день быть поваром группы",
+        "en": "Be the group's cook for a day"
+      }
+    },
+    {
+      "id": "charvak-or-juniper",
+      "a": {
+        "uz": "Chorvoq manzarasi bilan uygʻonish",
+        "ru": "Просыпаться с видом на Чарвак",
+        "en": "Wake up with a view of Charvak"
+      },
+      "b": {
+        "uz": "Jimjit archazorda uygʻonish",
+        "ru": "Просыпаться в тихом арчовом лесу",
+        "en": "Wake up in a quiet juniper forest"
+      }
+    }
+  ]
+}

@@ -71,7 +71,7 @@ async function join(nickname: string, seatToken?: string): Promise<FakeSocket> {
   const client = fakeNet.server().connect();
   await act(() => {
     client.send({
-      v: 1,
+      v: 2,
       type: 'hello',
       code: code(),
       nickname,
@@ -132,7 +132,7 @@ describe('campfire-core — host on a hotspot or Wi-Fi (AC4)', () => {
     );
     expect(screen.getByTestId('camp.lobby.start')).toBeDisabled();
     expect(
-      within(lobby).getByText('Games arrive in the next update'),
+      within(lobby).getByText('Needs 3+ players'),
     ).toBeOnTheScreen();
   });
 
@@ -205,8 +205,8 @@ describe('campfire-core — lobby seats (AC6, host)', () => {
       rejoin: false,
     });
 
-    await act(() => second.send({ v: 1, type: 'ping' }));
-    expect(second.received().at(-1)).toEqual({ v: 1, type: 'pong' });
+    await act(() => second.send({ v: 2, type: 'ping' }));
+    expect(second.received().at(-1)).toEqual({ v: 2, type: 'pong' });
 
     await act(() => second.drop());
     expect(screen.getByText('1 reconnecting')).toBeOnTheScreen();
@@ -225,7 +225,7 @@ describe('campfire-core — lobby seats (AC6, host)', () => {
     ).toHaveTextContent(/Remove guest_2\?/);
     await fireEvent.press(screen.getByTestId('camp.lobby.remove-confirm'));
 
-    expect(client.received().at(-1)).toEqual({ v: 1, type: 'removed' });
+    expect(client.received().at(-1)).toEqual({ v: 2, type: 'removed' });
     expect(client.destroyed).toBe(true);
     expect(screen.queryByTestId('camp.lobby.player.p1')).not.toBeOnTheScreen();
     expect(screen.getByTestId('camp.lobby.count')).toHaveTextContent(
@@ -268,7 +268,7 @@ describe('campfire-core — save, resume and close (AC7, host)', () => {
       await screen.findByTestId('camp.lobby.close-confirm'),
     );
 
-    expect(client.received().at(-1)).toEqual({ v: 1, type: 'closed' });
+    expect(client.received().at(-1)).toEqual({ v: 2, type: 'closed' });
     expect(client.destroyed).toBe(true);
     expect(fakeNet.server().closed).toBe(true);
     expect(fakeNet.unpublished).toContain(fakeNet.published[0]?.name);
@@ -285,7 +285,7 @@ describe('campfire-core — save, resume and close (AC7, host)', () => {
       type: 'hello',
       connId: 'old',
       hello: {
-        v: 1,
+        v: 2,
         type: 'hello',
         code: '4821',
         nickname: 'guest_1',

@@ -1,0 +1,531 @@
+{
+  "id": "rather-travel",
+  "game": "rather",
+  "name": {
+    "uz": "Sayohat",
+    "ru": "Путешествия",
+    "en": "Travel"
+  },
+  "items": [
+    {
+      "id": "train-or-road-trip",
+      "a": {
+        "uz": "Samarqandga «Afrosiyob» poyezdida borish",
+        "ru": "Поехать в Самарканд на «Афросиябе»",
+        "en": "Take the Afrosiyob train to Samarkand"
+      },
+      "b": {
+        "uz": "Doʻstlar bilan mashinada, har joyda toʻxtab borish",
+        "ru": "Ехать с друзьями на машине, останавливаясь везде",
+        "en": "Drive with friends and stop everywhere"
+      }
+    },
+    {
+      "id": "yurt-or-mountain-hut",
+      "a": {
+        "uz": "Qizilqumda oʻtovda bir kecha oʻtkazish",
+        "ru": "Провести ночь в юрте в Кызылкуме",
+        "en": "Spend a night in a yurt in the Kyzylkum"
+      },
+      "b": {
+        "uz": "Togʻning baland qismidagi kulbada tunash",
+        "ru": "Провести ночь в хижине высоко в горах",
+        "en": "Spend a night in a hut high in the mountains"
+      }
+    },
+    {
+      "id": "window-or-legroom",
+      "a": {
+        "uz": "Doim deraza yonida oʻtirish",
+        "ru": "Всегда сидеть у окна",
+        "en": "Always get the window seat"
+      },
+      "b": {
+        "uz": "Doim oyoq uchun eng keng joyda oʻtirish",
+        "ru": "Всегда сидеть там, где больше места для ног",
+        "en": "Always get the seat with the most legroom"
+      }
+    },
+    {
+      "id": "light-or-heavy",
+      "a": {
+        "uz": "Bir oy faqat kichik ryukzak bilan sayohat qilish",
+        "ru": "Месяц путешествовать с одним маленьким рюкзаком",
+        "en": "Travel a month with one small backpack"
+      },
+      "b": {
+        "uz": "Bir hafta uchta ogʻir chamadon bilan sayohat qilish",
+        "ru": "Неделю путешествовать с тремя тяжёлыми чемоданами",
+        "en": "Travel a week with three heavy suitcases"
+      }
+    },
+    {
+      "id": "languages-or-teleport",
+      "a": {
+        "uz": "Dunyodagi barcha tillarda gapira olish",
+        "ru": "Говорить на всех языках мира",
+        "en": "Speak every language in the world"
+      },
+      "b": {
+        "uz": "Haftada bir marta istalgan joyga teleportatsiya qilish",
+        "ru": "Раз в неделю телепортироваться куда угодно",
+        "en": "Teleport anywhere once a week"
+      }
+    },
+    {
+      "id": "bazaar-or-museums",
+      "a": {
+        "uz": "Chorsu bozorida kun boʻyi savdolashish",
+        "ru": "Целый день торговаться на базаре Чорсу",
+        "en": "Spend a day bargaining at Chorsu Bazaar"
+      },
+      "b": {
+        "uz": "Buxoroda kun boʻyi muzeylarni aylanish",
+        "ru": "Целый день ходить по музеям Бухары",
+        "en": "Spend a day in the museums of Bukhara"
+      }
+    },
+    {
+      "id": "lost-luggage-or-missed-flight",
+      "a": {
+        "uz": "Yukingizni yoʻqotib qoʻyish",
+        "ru": "Потерять багаж",
+        "en": "Lose your luggage"
+      },
+      "b": {
+        "uz": "Reysga kechikib qolish",
+        "ru": "Опоздать на рейс",
+        "en": "Miss your flight"
+      }
+    },
+    {
+      "id": "sea-or-mountains",
+      "a": {
+        "uz": "Faqat dengizda dam olish",
+        "ru": "Отдыхать только на море",
+        "en": "Only ever vacation by the sea"
+      },
+      "b": {
+        "uz": "Faqat togʻlarda dam olish",
+        "ru": "Отдыхать только в горах",
+        "en": "Only ever vacation in the mountains"
+      }
+    },
+    {
+      "id": "night-bus-or-early-flight",
+      "a": {
+        "uz": "12 soatlik tungi avtobusda yurish",
+        "ru": "Ехать 12 часов на ночном автобусе",
+        "en": "Take a 12-hour night bus"
+      },
+      "b": {
+        "uz": "Ertalab soat 5 dagi reysga ulgurish",
+        "ru": "Успеть на рейс в 5 утра",
+        "en": "Catch a 5 a.m. flight"
+      }
+    },
+    {
+      "id": "spiciest-or-only-plov",
+      "a": {
+        "uz": "Har bir mamlakatda eng achchiq taomni yeyish",
+        "ru": "В каждой стране пробовать самое острое блюдо",
+        "en": "Eat the spiciest dish in every country"
+      },
+      "b": {
+        "uz": "Har bir mamlakatda faqat palov yeyish",
+        "ru": "В каждой стране есть только плов",
+        "en": "Eat only plov in every country"
+      }
+    },
+    {
+      "id": "chatty-guide-or-no-guide",
+      "a": {
+        "uz": "Toʻxtovsiz gapiradigan gid bilan sayohat qilish",
+        "ru": "Путешествовать с гидом, который не замолкает",
+        "en": "Travel with a guide who never stops talking"
+      },
+      "b": {
+        "uz": "Gidsiz va xaritasiz sayohat qilish",
+        "ru": "Путешествовать без гида и без карты",
+        "en": "Travel with no guide and no map"
+      }
+    },
+    {
+      "id": "balloon-or-paraglider",
+      "a": {
+        "uz": "Kapadokiya ustida havo sharida uchish",
+        "ru": "Полетать на воздушном шаре над Каппадокией",
+        "en": "Fly over Cappadocia in a hot-air balloon"
+      },
+      "b": {
+        "uz": "Chorvoq ustida paraplanda uchish",
+        "ru": "Полетать на параплане над Чарваком",
+        "en": "Paraglide over Charvak"
+      }
+    },
+    {
+      "id": "past-or-future",
+      "a": {
+        "uz": "Amir Temur davridagi Samarqandga borish",
+        "ru": "Побывать в Самарканде времён Амира Темура",
+        "en": "Visit Samarkand in Amir Temur's time"
+      },
+      "b": {
+        "uz": "100 yildan keyingi Toshkentga borish",
+        "ru": "Побывать в Ташкенте через 100 лет",
+        "en": "Visit Tashkent 100 years from now"
+      }
+    },
+    {
+      "id": "pamir-or-song-kul",
+      "a": {
+        "uz": "Pomir trakti boʻylab mashinada yurish",
+        "ru": "Проехать по Памирскому тракту",
+        "en": "Drive the Pamir Highway"
+      },
+      "b": {
+        "uz": "Sonkoʻl atrofida otda aylanish",
+        "ru": "Объехать озеро Сон-Куль верхом",
+        "en": "Ride a horse around Song-Kul Lake"
+      }
+    },
+    {
+      "id": "hostel-or-garden-tent",
+      "a": {
+        "uz": "20 oʻrinli hostel xonasida uxlash",
+        "ru": "Спать в хостеле в комнате на 20 мест",
+        "en": "Sleep in a 20-bed hostel dorm"
+      },
+      "b": {
+        "uz": "Mehmonxona bogʻida chodirda uxlash",
+        "ru": "Спать в палатке в саду гостиницы",
+        "en": "Sleep in a tent in the hotel garden"
+      }
+    },
+    {
+      "id": "no-phone-or-no-tea",
+      "a": {
+        "uz": "Bir hafta telefonsiz sayohat qilish",
+        "ru": "Неделю путешествовать без телефона",
+        "en": "Travel for a week without a phone"
+      },
+      "b": {
+        "uz": "Bir hafta choy va qahvasiz sayohat qilish",
+        "ru": "Неделю путешествовать без чая и кофе",
+        "en": "Travel for a week without tea or coffee"
+      }
+    },
+    {
+      "id": "sleeper-train-or-plane",
+      "a": {
+        "uz": "Xivaga kupeli poyezdda borish",
+        "ru": "Поехать в Хиву поездом в купе",
+        "en": "Ride a sleeper train to Khiva"
+      },
+      "b": {
+        "uz": "Xivaga samolyotda uchib, yoʻlni oʻtkazib yuborish",
+        "ru": "Долететь до Хивы и пропустить дорогу",
+        "en": "Fly to Khiva and skip the journey"
+      }
+    },
+    {
+      "id": "always-lost-or-always-late",
+      "a": {
+        "uz": "Yangi shaharlarda doim adashib qolish",
+        "ru": "Всегда теряться в новых городах",
+        "en": "Always get lost in new cities"
+      },
+      "b": {
+        "uz": "Doim joylar yopilayotganda yetib borish",
+        "ru": "Всегда приходить, когда всё закрывается",
+        "en": "Always arrive just as places close"
+      }
+    },
+    {
+      "id": "moynaq-or-khorezm",
+      "a": {
+        "uz": "Moʻynoqdagi kemalar qabristonini koʻrish",
+        "ru": "Увидеть кладбище кораблей в Муйнаке",
+        "en": "See the ship graveyard in Moynaq"
+      },
+      "b": {
+        "uz": "Xorazmning qadimiy qalʼalarini koʻrish",
+        "ru": "Увидеть древние крепости Хорезма",
+        "en": "See the ancient fortresses of Khorezm"
+      }
+    },
+    {
+      "id": "village-or-hotel",
+      "a": {
+        "uz": "Qishloqda mahalliy oila uyida yashash",
+        "ru": "Жить у местной семьи в кишлаке",
+        "en": "Stay with a local family in a village"
+      },
+      "b": {
+        "uz": "Shahardagi hashamatli mehmonxonada yashash",
+        "ru": "Жить в шикарном отеле в городе",
+        "en": "Stay in a fancy hotel in the city"
+      }
+    },
+    {
+      "id": "north-pole-or-sahara",
+      "a": {
+        "uz": "Shimoliy qutbga borish",
+        "ru": "Побывать на Северном полюсе",
+        "en": "Visit the North Pole"
+      },
+      "b": {
+        "uz": "Sahroi Kabirni tuyada kesib oʻtish",
+        "ru": "Пересечь Сахару на верблюде",
+        "en": "Cross the Sahara on a camel"
+      }
+    },
+    {
+      "id": "insects-or-shark",
+      "a": {
+        "uz": "Chet elda qovurilgan hasharotlarni tatib koʻrish",
+        "ru": "Попробовать жареных насекомых за границей",
+        "en": "Try fried insects abroad"
+      },
+      "b": {
+        "uz": "Islandiyada achitilgan akula goʻshtini tatib koʻrish",
+        "ru": "Попробовать ферментированную акулу в Исландии",
+        "en": "Try fermented shark in Iceland"
+      }
+    },
+    {
+      "id": "baby-or-snorer",
+      "a": {
+        "uz": "Samolyotda yigʻlayotgan chaqaloq yonida oʻtirish",
+        "ru": "Лететь рядом с плачущим младенцем",
+        "en": "Sit next to a crying baby on a flight"
+      },
+      "b": {
+        "uz": "Samolyotda qattiq xurrak otuvchi yonida oʻtirish",
+        "ru": "Лететь рядом с громко храпящим соседом",
+        "en": "Sit next to a loud snorer on a flight"
+      }
+    },
+    {
+      "id": "plov-or-dance",
+      "a": {
+        "uz": "Qishloq oshpazidan palov pishirishni oʻrganish",
+        "ru": "Научиться готовить плов у сельского ошпаза",
+        "en": "Learn to cook plov from a village oshpaz"
+      },
+      "b": {
+        "uz": "Xorazm toʻyida lazgi raqsini oʻrganish",
+        "ru": "Выучить лазги на хорезмской свадьбе",
+        "en": "Learn the lazgi dance at a Khorezm wedding"
+      }
+    },
+    {
+      "id": "walk-or-taxi",
+      "a": {
+        "uz": "Sayohatda hamma joyga piyoda borish",
+        "ru": "В поездке везде ходить пешком",
+        "en": "Walk everywhere on your trip"
+      },
+      "b": {
+        "uz": "Hamma joyga taksida borib, hech narsa koʻrmaslik",
+        "ru": "Везде ездить на такси и ничего не видеть",
+        "en": "Take taxis everywhere and see nothing"
+      }
+    },
+    {
+      "id": "one-country-or-twenty",
+      "a": {
+        "uz": "Bitta mamlakatga borib, uni toʻliq koʻrish",
+        "ru": "Посетить одну страну и увидеть её целиком",
+        "en": "Visit one country and see all of it"
+      },
+      "b": {
+        "uz": "20 ta mamlakatda bir kundan boʻlish",
+        "ru": "Побывать в 20 странах по одному дню",
+        "en": "Visit 20 countries for one day each"
+      }
+    },
+    {
+      "id": "rain-or-heat",
+      "a": {
+        "uz": "Butun taʼtilni yomgʻir ostida oʻtkazish",
+        "ru": "Провести весь отпуск под дождём",
+        "en": "Spend your whole vacation in the rain"
+      },
+      "b": {
+        "uz": "Butun taʼtilni 45 °C issiqda oʻtkazish",
+        "ru": "Провести весь отпуск в жару 45 °C",
+        "en": "Spend your whole vacation in 45 °C heat"
+      }
+    },
+    {
+      "id": "carpet-or-melons",
+      "a": {
+        "uz": "Esdalik uchun ulkan gilam olib kelish",
+        "ru": "Привезти на память огромный ковёр",
+        "en": "Bring home a huge carpet as a souvenir"
+      },
+      "b": {
+        "uz": "Har bir doʻstga bittadan qovun olib kelish",
+        "ru": "Привезти каждому другу по дыне",
+        "en": "Bring home a melon for every friend"
+      }
+    },
+    {
+      "id": "no-language-or-no-signs",
+      "a": {
+        "uz": "Hech kim tilingizni bilmaydigan joyga borish",
+        "ru": "Поехать туда, где никто не знает ваш язык",
+        "en": "Go where no one speaks your language"
+      },
+      "b": {
+        "uz": "Birorta yozuvni oʻqiy olmaydigan joyga borish",
+        "ru": "Поехать туда, где не прочесть ни одной вывески",
+        "en": "Go where you can't read a single sign"
+      }
+    },
+    {
+      "id": "cable-car-or-snow-walk",
+      "a": {
+        "uz": "Boʻronda Amirsoy kanat yoʻlida koʻtarilish",
+        "ru": "Подняться на канатке Амирсая в метель",
+        "en": "Ride the Amirsoy cable car in a blizzard"
+      },
+      "b": {
+        "uz": "Chuqur qorda qiyalikka piyoda chiqish",
+        "ru": "Подняться по склону пешком по глубокому снегу",
+        "en": "Walk up the slope in deep snow"
+      }
+    },
+    {
+      "id": "alone-or-relatives",
+      "a": {
+        "uz": "Bir oy yolgʻiz sayohat qilish",
+        "ru": "Месяц путешествовать в одиночку",
+        "en": "Travel alone for a month"
+      },
+      "b": {
+        "uz": "Bir oy 15 ta qarindosh bilan sayohat qilish",
+        "ru": "Месяц путешествовать с 15 родственниками",
+        "en": "Travel for a month with 15 relatives"
+      }
+    },
+    {
+      "id": "space-or-ocean",
+      "a": {
+        "uz": "Koinotga uchib borish",
+        "ru": "Слетать в космос",
+        "en": "Take a trip to space"
+      },
+      "b": {
+        "uz": "Okean tubiga shoʻngʻish",
+        "ru": "Нырнуть на дно океана",
+        "en": "Dive to the bottom of the ocean"
+      }
+    },
+    {
+      "id": "plan-or-no-plan",
+      "a": {
+        "uz": "Sayohatning har bir mayda-chuydasini rejalashtirish",
+        "ru": "Продумать каждую мелочь поездки",
+        "en": "Plan every detail of the trip"
+      },
+      "b": {
+        "uz": "Rejasiz borib, nima boʻlishini koʻrish",
+        "ru": "Ехать без плана и смотреть, что будет",
+        "en": "Go with no plan and see what happens"
+      }
+    },
+    {
+      "id": "photos-or-none",
+      "a": {
+        "uz": "Har qadamda suratga tushish",
+        "ru": "Фотографироваться на каждом шагу",
+        "en": "Pose for a photo at every step"
+      },
+      "b": {
+        "uz": "Uyga birorta ham suratsiz qaytish",
+        "ru": "Вернуться домой без единой фотографии",
+        "en": "Come home without a single photo"
+      }
+    },
+    {
+      "id": "street-food-or-restaurants",
+      "a": {
+        "uz": "Har mahal koʻcha taomlari bilan ovqatlanish",
+        "ru": "Всегда есть уличную еду",
+        "en": "Eat street food at every meal"
+      },
+      "b": {
+        "uz": "Faqat hashamatli restoranlarda ovqatlanish",
+        "ru": "Есть только в дорогих ресторанах",
+        "en": "Eat only in fancy restaurants"
+      }
+    },
+    {
+      "id": "no-internet-or-no-shower",
+      "a": {
+        "uz": "Bir hafta internetsiz yashash",
+        "ru": "Неделю жить без интернета",
+        "en": "Spend a week with no internet"
+      },
+      "b": {
+        "uz": "Bir hafta issiq dushsiz yashash",
+        "ru": "Неделю жить без горячего душа",
+        "en": "Spend a week with no hot shower"
+      }
+    },
+    {
+      "id": "boat-or-niva",
+      "a": {
+        "uz": "Kichik qayiqda toʻlqinli koʻldan suzib oʻtish",
+        "ru": "Переплыть бурное озеро на маленькой лодке",
+        "en": "Cross a stormy lake in a small boat"
+      },
+      "b": {
+        "uz": "Eski «Niva»da baland dovondan oʻtish",
+        "ru": "Перевалить через высокий перевал на старой «Ниве»",
+        "en": "Cross a high pass in an old Niva"
+      }
+    },
+    {
+      "id": "every-choyxona-or-no-stops",
+      "a": {
+        "uz": "Yoʻldagi har bir choyxonada choy ichish",
+        "ru": "Пить чай в каждой чайхане по дороге",
+        "en": "Drink tea in every choyxona on the way"
+      },
+      "b": {
+        "uz": "Birorta ham toʻxtamasdan yetib borish",
+        "ru": "Доехать без единой остановки",
+        "en": "Drive straight there without a single stop"
+      }
+    },
+    {
+      "id": "famous-or-hidden",
+      "a": {
+        "uz": "Faqat odam gavjum mashhur joylarni koʻrish",
+        "ru": "Смотреть только известные места с толпами",
+        "en": "See only famous sights with big crowds"
+      },
+      "b": {
+        "uz": "Hech kim bilmaydigan yashirin joylarni topish",
+        "ru": "Находить места, о которых никто не знает",
+        "en": "Find hidden spots no one knows about"
+      }
+    },
+    {
+      "id": "new-country-or-favorite-city",
+      "a": {
+        "uz": "Har tong yangi mamlakatda uygʻonish",
+        "ru": "Каждое утро просыпаться в новой стране",
+        "en": "Wake up in a new country every morning"
+      },
+      "b": {
+        "uz": "Butun bir yil sevimli shahringizda yashash",
+        "ru": "Целый год жить в любимом городе",
+        "en": "Live a whole year in your favorite city"
+      }
+    }
+  ]
+}
