@@ -55,3 +55,13 @@ export const secretSizes = {
   /** Lake art behind the word, dimmed so the word reads. */
   backdropOpacity: 0.35,
 } as const;
+
+/** Who am I / Would you rather boards (canvas WhoAmI / WYR). */
+export const partySizes = {
+  rowAvatar: 44,
+  voterAvatar: 32,
+  avatarArtRatio: 0.8,
+  barHeight: 12,
+  /** Vote bars grow from 0 to their share on reveal. */
+  revealMs: 600,
+} as const;

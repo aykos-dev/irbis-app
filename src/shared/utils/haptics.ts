@@ -28,4 +28,5 @@ export const haptics = {
   error: () => trigger('notificationError'),
   warning: () => trigger('notificationWarning'),
   pickUp: () => trigger('impactMedium'),
+  heavy: () => trigger('impactHeavy'),
 };

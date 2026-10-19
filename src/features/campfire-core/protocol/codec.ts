@@ -55,10 +55,12 @@ export const imposterSecretSchema = z.object({
   showCategory: z.boolean(),
 });
 export type ImposterSecret = z.infer<typeof imposterSecretSchema>;
-/** Who am I: everyone's character except your own. */
+/** Who am I: everyone's character except your own; `mine` once you asked to see it (`showMine`). */
 export const whoamiSecretSchema = z.object({
   others: z.array(z.object({ seatId, characterId: z.string().min(1) })),
+  mine: z.string().min(1).optional(),
 });
+export type WhoamiSecret = z.infer<typeof whoamiSecretSchema>;
 export const secretSchema = z.union([imposterSecretSchema, whoamiSecretSchema]);
 export type Secret = z.infer<typeof secretSchema>;
 
@@ -85,6 +87,8 @@ export const publicGameSchema = z.object({
   tally: z
     .object({ a: z.number().int().min(0), b: z.number().int().min(0) })
     .optional(),
+  /** Would you rather, after the reveal only: who picked what. */
+  picks: z.record(seatId, wyrPickSchema).optional(),
 });
 export type PublicGame = z.infer<typeof publicGameSchema>;
 

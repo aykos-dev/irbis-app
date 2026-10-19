@@ -7,7 +7,7 @@ import type { PartyGame } from '../games/packs';
 import { campNet } from '../native/campNet';
 import { hostsWithGuide } from '../native/hostPlatform';
 import { initialProfile, readProfile } from '../playerProfile';
-import { CAMP_PORT, type RosterPlayer } from '../protocol/codec';
+import { CAMP_PORT, type RosterPlayer, type WyrPick } from '../protocol/codec';
 import { buildJoinUrl } from '../protocol/qr';
 import { createHostServer, type HostServer } from './hostServer';
 import {
@@ -18,6 +18,7 @@ import {
 } from './hostRoomStore';
 import {
   createRoom,
+  HOST_SEAT_ID,
   resumeRoom,
   toRoster,
   type RoomState,
@@ -73,6 +74,10 @@ export const hostGame = {
   end: (): void => hostGameServer?.endGame(),
   reveal: (): void => hostGameServer?.reveal(),
   newRound: (): void => hostGameServer?.newRound(),
+  vote: (pick: WyrPick): void => hostGameServer?.vote(HOST_SEAT_ID, pick),
+  revealVotes: (): void => hostGameServer?.revealVotes(),
+  nextQuestion: (): void => hostGameServer?.nextQuestion(),
+  showMine: (): void => hostGameServer?.showMine(HOST_SEAT_ID),
 };
 
 /** Random 4-digit room code, 1000–9999. */

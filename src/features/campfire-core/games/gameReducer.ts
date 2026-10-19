@@ -69,6 +69,8 @@ export type GameAction =
   | { type: 'seatJoined'; seatId: string }
   | { type: 'seatRemoved'; seatId: string }
   | { type: 'reveal' }
+  /** Who am I: the seat asks for its own character. */
+  | { type: 'showMine'; seatId: string; round: number }
   | {
       type: 'wyrVote';
       seatId: string;
@@ -259,6 +261,28 @@ export function gameReducer(
       return state.game === 'imposter' && state.phase === 'dealt'
         ? { ...state, phase: 'revealed' }
         : state;
+    case 'showMine': {
+      const own = state.deals[action.seatId];
+      if (
+        state.game !== 'whoami' ||
+        action.round !== state.round ||
+        !own ||
+        !('others' in own) ||
+        own.mine
+      ) {
+        return state;
+      }
+      const mine = Object.values(state.deals)
+        .flatMap(dealt => ('others' in dealt ? dealt.others : []))
+        .find(other => other.seatId === action.seatId)?.characterId;
+      if (!mine) {
+        return state;
+      }
+      return {
+        ...state,
+        deals: { ...state.deals, [action.seatId]: { ...own, mine } },
+      };
+    }
     case 'wyrVote':
       if (
         state.game !== 'rather' ||
@@ -325,6 +349,7 @@ export function toPublic(state: GameState): PublicGame {
                 a: picks.filter(pick => pick === 'a').length,
                 b: picks.filter(pick => pick === 'b').length,
               },
+              picks: state.votes,
             }
           : {}),
       };

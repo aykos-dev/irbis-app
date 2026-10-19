@@ -24,6 +24,7 @@ import {
   PING_INTERVAL_MS,
   SILENCE_TIMEOUT_MS,
   type OutgoingHostMessage,
+  type WyrPick,
 } from '../protocol/codec';
 import {
   roomReducer,
@@ -63,6 +64,14 @@ export type HostServer = {
   endGame: () => void;
   /** Imposter: shows every phone who the imposters were and the word. */
   reveal: () => void;
+  /** Would you rather: a seat's pick for the current question (the host's own seat included). */
+  vote: (seatId: string, pick: WyrPick) => void;
+  /** Would you rather: the host reveals before everyone voted. */
+  revealVotes: () => void;
+  /** Would you rather: the next of the round's questions. */
+  nextQuestion: () => void;
+  /** Who am I: deals the seat its own character (`mine`), to that seat only. */
+  showMine: (seatId: string) => void;
 };
 
 type Options = {
@@ -164,6 +173,60 @@ export function createHostServer({
     return drawIds(kind, pack, idsNeeded(kind, roundSeats(gameSeats()).length), rng);
   };
 
+  const connOf = (seatId: string) => {
+    const connId = state.seats.find(seat => seat.seatId === seatId)?.connId;
+    return connId ? conns.get(connId) : undefined;
+  };
+
+  /** Would you rather: shows the picks on every phone; `forced` = the host didn't wait for all votes. */
+  const revealVotes = (forced: boolean) => {
+    if (!game || game.game !== 'rather' || !applyGame({ type: 'wyrReveal' })) {
+      return;
+    }
+    broadcastGame(false);
+    qaLog('camp_wyr_revealed', {
+      votes: Object.keys(game.votes).length,
+      forced,
+    });
+  };
+
+  /** Auto-reveal once every connected player of the round has voted. */
+  const revealIfAllVoted = () => {
+    if (!game || game.game !== 'rather' || game.phase !== 'voting') {
+      return;
+    }
+    const votes = game.votes;
+    const connected = roundSeats(gameSeats()).filter(seatId =>
+      game?.players.includes(seatId),
+    );
+    if (
+      connected.length > 0 &&
+      connected.every(seatId => votes[seatId] !== undefined)
+    ) {
+      revealVotes(false);
+    }
+  };
+
+  const vote = (seatId: string, round: number, qIndex: number, pick: WyrPick) => {
+    if (!applyGame({ type: 'wyrVote', seatId, round, qIndex, pick })) {
+      return;
+    }
+    broadcastGame(false);
+    revealIfAllVoted();
+  };
+
+  const showMine = (seatId: string, round: number) => {
+    if (!game || !applyGame({ type: 'showMine', seatId, round })) {
+      return;
+    }
+    const secret = game?.deals[seatId];
+    const conn = connOf(seatId);
+    if (game && secret && conn) {
+      send(conn, { type: 'deal', game: game.game, round: game.round, secret });
+    }
+    qaLog('camp_whoami_show_mine', { round });
+  };
+
   const apply = (action: RoomAction): RoomOutcome => {
     const result = roomReducer(state, action);
     if (result.state !== state) {
@@ -195,6 +258,7 @@ export function createHostServer({
     }
     conns.delete(conn.id);
     apply({ type: 'disconnect', connId: conn.id });
+    revealIfAllVoted();
   };
 
   const onLine = (conn: Conn, line: string) => {
@@ -216,13 +280,24 @@ export function createHostServer({
         freed(apply({ type: 'leave', connId: conn.id }), null);
         if (seatId && applyGame({ type: 'seatRemoved', seatId })) {
           broadcastGame(false);
+          revealIfAllVoted();
         }
         return;
       }
-      // Handled with the game screens (slice 3).
-      case 'wyrVote':
-      case 'showMine':
+      case 'wyrVote': {
+        const seatId = seatOf(conn);
+        if (seatId) {
+          vote(seatId, message.round, message.qIndex, message.pick);
+        }
         return;
+      }
+      case 'showMine': {
+        const seatId = seatOf(conn);
+        if (seatId) {
+          showMine(seatId, message.round);
+        }
+        return;
+      }
       // The prober reads the answer and hangs up; an idle prober is dropped by the silence check.
       case 'probe':
         send(
@@ -339,6 +414,7 @@ export function createHostServer({
         qaLog('camp_player_removed', { seats: state.seats.length });
         if (applyGame({ type: 'seatRemoved', seatId })) {
           broadcastGame(false);
+          revealIfAllVoted();
         }
       }
     },
@@ -379,6 +455,22 @@ export function createHostServer({
       }
       broadcastGame(true);
       qaLog('camp_round_started', { game: game.game, round: game.round });
+    },
+    vote: (seatId, pick) => {
+      if (game) {
+        vote(seatId, game.round, game.qIndex, pick);
+      }
+    },
+    revealVotes: () => revealVotes(true),
+    nextQuestion: () => {
+      if (applyGame({ type: 'wyrNext' })) {
+        broadcastGame(false);
+      }
+    },
+    showMine: seatId => {
+      if (game) {
+        showMine(seatId, game.round);
+      }
     },
     reveal: () => {
       if (!game || !applyGame({ type: 'reveal' })) {

@@ -1,12 +1,11 @@
 import { usePreventRemove } from '@react-navigation/native';
 import { useEffect, useState, useSyncExternalStore } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import type { RootStackScreenProps } from '../../../app/navigation/types';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
 import { Screen } from '../../../shared/components/Screen';
-import { spacing } from '../../../shared/constants/spacing';
 import { ThemeProvider } from '../../../shared/contexts/theme';
 import { useLocale } from '../../../shared/hooks/useLocale';
 import { t } from '../../../shared/i18n';
@@ -20,12 +19,16 @@ import type {
   PublicGame,
   RosterPlayer,
   Secret,
+  WhoamiSecret,
+  WyrPick,
 } from '../protocol/codec';
 import { HOST_SEAT_ID } from '../room/roomReducer';
 import { hostGame } from '../room/useHostRoom';
 import { toPublic } from './gameReducer';
 import { ImposterScreen } from './imposter/ImposterScreen';
-import { findPack, localized, type PartyGame } from './packs';
+import type { PartyGame } from './packs';
+import { RatherScreen } from './rather/RatherScreen';
+import { WhoAmIScreen } from './whoami/WhoAmIScreen';
 
 type GameView = {
   game: PartyGame;
@@ -48,15 +51,24 @@ const noRosterSnapshot = () => noRoster;
 const imposterSecret = (secret: Secret | null): ImposterSecret | null =>
   secret && 'role' in secret ? secret : null;
 
+const whoamiSecret = (secret: Secret | null): WhoamiSecret | null =>
+  secret && 'others' in secret ? secret : null;
+
 const hostControls = {
   onReveal: () => hostGame.reveal(),
   onNewRound: () => hostGame.newRound(),
 };
 
+const ratherHostControls = {
+  onReveal: () => hostGame.revealVotes(),
+  onNext: () => hostGame.nextQuestion(),
+  onNewRound: () => hostGame.newRound(),
+};
+
 /**
- * The game route every phone opens on Start (AC2). Imposter renders its round (slice 2); the other
- * games show the dealt state until slice 3, and a mid-round joiner sees "Round in progress". The host ends
- * the game for everyone; the end (or `lobby` from the host) returns to the lobby.
+ * The game route every phone opens on Start (AC2): the Imposter, Who am I or Would you rather board;
+ * a mid-round joiner sees "Round in progress". The host ends the game for everyone; the end (or
+ * `lobby` from the host) returns to the lobby.
  */
 export function GameWaiting({
   navigation,
@@ -118,6 +130,11 @@ export function GameWaiting({
     }
   }, [active, navigation]);
 
+  const vote = (pick: WyrPick) =>
+    isPlayer ? client?.vote(pick) : hostGame.vote(pick);
+  const showMine = () =>
+    isPlayer ? client?.showMine() : hostGame.showMine();
+
   const endGame = () => {
     haptics.warning();
     setConfirmEnd(false);
@@ -127,7 +144,6 @@ export function GameWaiting({
   if (!view) {
     return null;
   }
-  const pack = findPack(view.packId);
   return (
     <ThemeProvider scheme={campScheme}>
       <Screen testID="camp.game.waiting" scroll>
@@ -141,16 +157,29 @@ export function GameWaiting({
             roster={view.roster}
             host={isPlayer ? undefined : hostControls}
           />
-        ) : (
-          <View style={layout.header}>
-            <AppText variant="h1" accessibilityRole="header">
-              {t(`camp.game.name.${view.game}`)}
-            </AppText>
-            {pack ? (
-              <AppText variant="caption">{localized(pack.name)}</AppText>
-            ) : null}
-          </View>
-        )}
+        ) : null}
+        {view.game === 'whoami' ? (
+          <WhoAmIScreen
+            info={view.info}
+            secret={view.dealt ? whoamiSecret(view.secret) : null}
+            selfSeatId={view.selfSeatId}
+            roster={view.roster}
+            onShowMine={showMine}
+            host={isPlayer ? undefined : hostControls}
+          />
+        ) : null}
+        {view.game === 'rather' ? (
+          <RatherScreen
+            key={`${view.round}.${view.info.qIndex ?? 0}`}
+            phase={view.phase}
+            info={view.info}
+            selfSeatId={view.selfSeatId}
+            roster={view.roster}
+            canVote={view.dealt}
+            onVote={vote}
+            host={isPlayer ? undefined : ratherHostControls}
+          />
+        ) : null}
         {view.dealt ? null : (
           <AppText
             testID="camp.game.in-progress"
@@ -189,6 +218,5 @@ export function GameWaiting({
 }
 
 const layout = StyleSheet.create({
-  header: { gap: spacing[6], alignItems: 'flex-start' },
   center: { textAlign: 'center' },
 });

@@ -157,5 +157,30 @@
     "wasWord": "So'z: %{word} edi",
     "waitHost": "Keyingi raundni boshlovchi boshlaydi",
     "mascot": "Irbis — qor qoploni"
+  },
+  "who": {
+    "title": "Men kimman?",
+    "packLine": "To'plam: %{pack} · %{n} o'yinchi",
+    "you": "SIZ · %{name}",
+    "hidden": "Qahramoningiz telefoningizda yashirin",
+    "othersTitle": "Boshqalarning qahramoni",
+    "othersSub": "Faqat ular o'zinikini ko'rmaydi",
+    "knowIt": "Men kimligimni bilaman!",
+    "showConfirm": "Qahramoningiz ko'rsatilsinmi?",
+    "show": "Ko'rsatish",
+    "waitHost": "Keyingi raundni boshlovchi boshlaydi"
+  },
+  "wyr": {
+    "title": "Qaysi birini tanlarding",
+    "subLine": "%{pack} · 20 tadan %{i}-savol",
+    "voted": "%{n} / %{m} ovoz berdi",
+    "ask": "Qaysi birini tanlarding…",
+    "or": "YOKI",
+    "yourPick": "Sizning tanlovingiz",
+    "defend": "%{names} — tanlovingizni himoya qiling!",
+    "reveal": "Ko'rsatish",
+    "next": "Keyingi savol",
+    "done": "To'plam raundi tugadi",
+    "newRound": "Yangi raund"
   }
 }

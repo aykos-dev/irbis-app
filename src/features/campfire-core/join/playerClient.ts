@@ -13,6 +13,7 @@ import {
   type RejectReason,
   type RosterPlayer,
   type Secret,
+  type WyrPick,
 } from '../protocol/codec';
 import type { PartyGame } from '../games/packs';
 import { connectOptions } from './discovery';
@@ -56,6 +57,10 @@ export type PlayerClient = {
   leave: () => void;
   /** Closes the socket and stops retrying, without a word to the host. */
   stop: () => void;
+  /** Would you rather: our pick for the current question. */
+  vote: (pick: WyrPick) => void;
+  /** Who am I: asks the host for our own character. */
+  showMine: () => void;
   getSnapshot: () => PlayerSnapshot;
   subscribe: (listener: () => void) => () => void;
 };
@@ -306,6 +311,23 @@ export function createPlayerClient({
     leave: () => {
       send({ type: 'leave' });
       end('left');
+    },
+    vote: pick => {
+      const { game } = snapshot;
+      if (game?.game === 'rather') {
+        send({
+          type: 'wyrVote',
+          round: game.round,
+          qIndex: game.public.qIndex ?? 0,
+          pick,
+        });
+      }
+    },
+    showMine: () => {
+      const { game } = snapshot;
+      if (game?.game === 'whoami') {
+        send({ type: 'showMine', round: game.round });
+      }
     },
     stop: () => {
       clearTimers();

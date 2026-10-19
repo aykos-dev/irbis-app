@@ -157,5 +157,30 @@
     "wasWord": "The word was %{word}",
     "waitHost": "The host starts the next round",
     "mascot": "Irbis the snow leopard"
+  },
+  "who": {
+    "title": "Who am I?",
+    "packLine": "Pack: %{pack} · %{n} players",
+    "you": "YOU · %{name}",
+    "hidden": "Your character is hidden on your phone",
+    "othersTitle": "Everyone else's character",
+    "othersSub": "Only they can't see it",
+    "knowIt": "I know who I am!",
+    "showConfirm": "Show your character?",
+    "show": "Show",
+    "waitHost": "The host starts the next round"
+  },
+  "wyr": {
+    "title": "Would you rather",
+    "subLine": "%{pack} · question %{i} of 20",
+    "voted": "%{n} / %{m} voted",
+    "ask": "Would you rather…",
+    "or": "OR",
+    "yourPick": "Your pick",
+    "defend": "%{names} — defend your choice!",
+    "reveal": "Reveal",
+    "next": "Next question",
+    "done": "Pack round done",
+    "newRound": "New round"
   }
 }
