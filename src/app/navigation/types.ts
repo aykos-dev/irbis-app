@@ -79,9 +79,12 @@ export type RootStackParamList = {
     maxDifficulty: number;
     newPlacesCount: number;
   };
-  /** Campfire host lobby (campfire-core AC4, AC6, AC7); `resume` reopens the saved room. */
-  CampLobby: { resume?: boolean } | undefined;
-  /** Campfire join screen (campfire-core slice 3; coming-soon stub until then). */
+  /**
+   * Campfire lobby (campfire-core AC4, AC6, AC7): the host's by default, `resume` reopens the saved
+   * room; `player` shows the seated player's lobby (the live session is in `playerSession`).
+   */
+  CampLobby: { resume?: boolean; player?: boolean } | undefined;
+  /** Campfire join: QR scan or room code (campfire-core AC5). */
   CampJoin: undefined;
 };
 

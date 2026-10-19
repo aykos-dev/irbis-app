@@ -2,7 +2,7 @@ import {
   usePreventRemove,
   type NavigationAction,
 } from '@react-navigation/native';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import type { RootStackScreenProps } from '../../../app/navigation/types';
@@ -26,6 +26,7 @@ import {
   createThemedStyles,
   ThemeProvider,
 } from '../../../shared/contexts/theme';
+import { useAppState } from '../../../shared/hooks/useAppState';
 import { useLocale } from '../../../shared/hooks/useLocale';
 import { t } from '../../../shared/i18n';
 import { haptics } from '../../../shared/utils/haptics';
@@ -33,6 +34,7 @@ import { campScheme, lobbySizes, type GameId } from '../campTheme';
 import { ComingSoonTag } from '../components/ComingSoonTag';
 import { PlayerAvatar } from '../components/PlayerAvatar';
 import { RoomQr } from '../components/RoomQr';
+import { playerSession, type PlayerClient } from '../join/playerClient';
 import type { RosterPlayer } from '../protocol/codec';
 import { reconnectingCount, toRoster } from '../room/roomReducer';
 import { useHostRoom, type HostNetwork } from '../room/useHostRoom';
@@ -54,14 +56,20 @@ function chipLabel(network: HostNetwork): string {
     : t('camp.lobby.wifiChip', { name: network.name });
 }
 
+/** The host's lobby, or the seated player's when opened with `player` (AC6). */
+export function CampLobbyScreen(props: RootStackScreenProps<'CampLobby'>) {
+  const client = props.route.params?.player ? playerSession.get() : null;
+  if (props.route.params?.player) {
+    return <PlayerLobby {...props} client={client} />;
+  }
+  return <HostLobby {...props} />;
+}
+
 /**
  * Host lobby (AC4, AC6, AC7 host side): hotspot or Wi-Fi, room server, QR and code, seats with
  * remove, game pills (coming soon), close with confirm. Back asks before closing the room.
  */
-export function CampLobbyScreen({
-  navigation,
-  route,
-}: RootStackScreenProps<'CampLobby'>) {
+function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
   useLocale();
   const { state, retry, remove, close } = useHostRoom(
     route.params?.resume === true,
@@ -222,6 +230,93 @@ export function CampLobbyScreen({
   );
 }
 
+/**
+ * Player lobby (AC6, AC7 player side): the live roster from the host, "waiting for the host",
+ * Leave. A drop shows "Reconnecting…" while the client retries every 2 s and on foreground;
+ * removed / closed → toast and back to the hub. Back leaves the room too.
+ */
+function PlayerLobby({
+  navigation,
+  client,
+}: RootStackScreenProps<'CampLobby'> & { client: PlayerClient | null }) {
+  useLocale();
+  const { show } = useToast();
+  const appState = useAppState();
+  const snapshot = useSyncExternalStore(
+    client?.subscribe ?? noSubscribe,
+    client?.getSnapshot ?? noSnapshot,
+  );
+
+  useEffect(() => {
+    client?.setActive(appState !== 'background');
+  }, [client, appState]);
+
+  // Unmount (Leave, Back, removed / closed): the seat is given up unless the host already ended it.
+  useEffect(
+    () => () => {
+      if (client && !client.getSnapshot().ended) {
+        client.leave();
+      }
+      playerSession.set(null);
+    },
+    [client],
+  );
+
+  const ended = snapshot?.ended ?? (client ? null : 'left');
+  useEffect(() => {
+    if (!ended) {
+      return;
+    }
+    if (ended === 'removed' || ended === 'closed') {
+      haptics.warning();
+      show({
+        variant: 'info',
+        message: t(ended === 'removed' ? 'camp.join.removed' : 'camp.join.closed'),
+      });
+    }
+    navigation.popToTop();
+  }, [ended, navigation, show]);
+
+  const players = snapshot?.players ?? [];
+  return (
+    <ThemeProvider scheme={campScheme}>
+      <Screen testID="camp.lobby.screen" scroll>
+        <View style={layout.header}>
+          <AppText variant="h1" accessibilityRole="header">
+            {t('camp.lobby.room')}
+          </AppText>
+          {snapshot?.status === 'reconnecting' ? (
+            <StatusChip
+              testID="camp.lobby.reconnecting"
+              variant="caution"
+              label={t('camp.lobby.reconnectingSelf')}
+            />
+          ) : null}
+        </View>
+        <Players
+          players={players}
+          reconnecting={players.filter(p => p.status === 'reconnecting').length}
+        />
+        <AppText testID="camp.lobby.wait" variant="body" tone="muted" style={layout.center}>
+          {t('camp.lobby.waitHost')}
+        </AppText>
+        <AppButton
+          testID="camp.lobby.leave"
+          label={t('camp.lobby.leave')}
+          variant="white"
+          onPress={() => {
+            haptics.tap();
+            navigation.popToTop();
+          }}
+        />
+      </Screen>
+    </ThemeProvider>
+  );
+}
+
+const noSubscribe = () => () => undefined;
+const noSnapshot = () => null;
+
 function Players({
   players,
   reconnecting,
@@ -229,7 +324,8 @@ function Players({
 }: {
   players: RosterPlayer[];
   reconnecting: number;
-  onRemove: (player: RosterPlayer) => void;
+  /** Host only: long-press a player to remove them. */
+  onRemove?: (player: RosterPlayer) => void;
 }) {
   const onlyHost = players.length <= 1;
   return (
@@ -254,11 +350,13 @@ function Players({
           <PlayerAvatar
             key={player.seatId}
             player={player}
-            onLongPress={player.host ? undefined : () => onRemove(player)}
+            onLongPress={
+              player.host || !onRemove ? undefined : () => onRemove(player)
+            }
           />
         ))}
       </View>
-      {onlyHost ? (
+      {onlyHost && onRemove ? (
         <AppText testID="camp.lobby.empty" variant="body" tone="muted">
           {t('camp.lobby.empty')}
         </AppText>

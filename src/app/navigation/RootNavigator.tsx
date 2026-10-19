@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 
+import { CampJoinScreen } from '../../features/campfire-core/screens/CampJoinScreen';
 import { CampLobbyScreen } from '../../features/campfire-core/screens/CampLobbyScreen';
 import { RecoveryPhoneScreen } from '../../features/auth/screens/RecoveryPhoneScreen';
 import { DebugScreen } from '../../features/debug/screens/DebugScreen';
@@ -12,7 +13,6 @@ import { PlaceScreen } from '../../features/places/screens/PlaceScreen';
 import { OnboardingNavigator } from '../../features/onboarding/OnboardingNavigator';
 import { isOnboardingDone, markOnboardingDone } from '../../features/onboarding/onboardingStore';
 import { SafetyScreen } from '../../features/auth/screens/SafetyScreen';
-import { ComingSoon } from '../../shared/components/ComingSoon';
 import { appConfig } from '../../shared/constants/config';
 import { useAuth } from '../../shared/contexts/auth';
 import { AuthNavigator } from './AuthNavigator';
@@ -75,7 +75,7 @@ export function RootNavigator() {
         options={{ presentation: 'fullScreenModal', animation: 'fade', gestureEnabled: false }}
       />
       <Stack.Screen name="CampLobby" component={CampLobbyScreen} options={{ gestureEnabled: false }} />
-      <Stack.Screen name="CampJoin" component={ComingSoon} options={{ headerShown: true, title: '' }} />
+      <Stack.Screen name="CampJoin" component={CampJoinScreen} />
       {appConfig.isQaEnabled ? (
         <>
           <Stack.Screen name="Debug" component={DebugScreen} />

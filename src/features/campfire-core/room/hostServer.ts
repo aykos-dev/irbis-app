@@ -46,6 +46,8 @@ export type HostServer = {
 
 type Options = {
   room: RoomState;
+  /** Network name players see after a probe ("Connected to …"): hotspot SSID or Wi-Fi name. */
+  network?: string;
   onChange: (room: RoomState) => void;
   now?: () => number;
 };
@@ -53,6 +55,7 @@ type Options = {
 /** The socket layer around `roomReducer`: feeds it events and carries out each outcome. */
 export function createHostServer({
   room,
+  network = '',
   onChange,
   now = Date.now,
 }: Options): HostServer {
@@ -130,6 +133,15 @@ export function createHostServer({
         return;
       case 'leave':
         freed(apply({ type: 'leave', connId: conn.id }), null);
+        return;
+      // The prober reads the answer and hangs up; an idle prober is dropped by the silence check.
+      case 'probe':
+        send(
+          conn,
+          message.code === state.code
+            ? { type: 'probeOk', players: state.seats.length, network }
+            : { type: 'rejected', reason: 'wrong_code' },
+        );
         return;
       case 'hello': {
         const outcome = apply({

@@ -66,6 +66,28 @@
     "closeConfirm": "Xona hamma uchun yopilsinmi?",
     "hotspotError": "Hotspotni yoqib bo'lmadi",
     "tryAgain": "Qayta urinish",
-    "permission": "Yaqin Wi-Fi qurilmalariga ruxsat bering"
+    "permission": "Yaqin Wi-Fi qurilmalariga ruxsat bering",
+    "waitHost": "Boshlovchi boshlashini kutyapmiz",
+    "reconnectingSelf": "Boshlovchiga qayta ulanmoqda…",
+    "leave": "Chiqish"
+  },
+  "join": {
+    "title": "O'yinga qo'shilish",
+    "back": "Orqaga",
+    "point": "Boshlovchi telefonidagi QR kodga qarating",
+    "orCode": "yoki xona kodini kiriting",
+    "searching": "Xona qidirilmoqda…",
+    "connected": "\"%{network}\" ga ulandi",
+    "roomFound": "Xona topildi · %{n} o'yinchi kutmoqda",
+    "as": "%{name} sifatida kirish",
+    "hint": "Topilmayaptimi? Wi-Fi sozlamalarini oching va avval boshlovchining hotspotiga ulaning.",
+    "notFound": "Xona topilmadi. Avval boshlovchining Wi-Fi tarmog'iga ulaning va qayta urining.",
+    "full": "Xona to'la (15 / 15)",
+    "version": "Kirish uchun Irbisni yangilang",
+    "wifiFailed": "Boshlovchi Wi-Fi tarmog'iga ulanib bo'lmadi. Sozlamalardan ulaning.",
+    "cameraDenied": "Kamera o'chiq. Kodni kiritishingiz mumkin.",
+    "allowCamera": "Kameraga ruxsat berish",
+    "removed": "Boshlovchi sizni xonadan chiqardi",
+    "closed": "Boshlovchi xonani yopdi"
   }
 }

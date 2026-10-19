@@ -112,6 +112,7 @@ export function useHostRoom(resume: boolean) {
       const url = joinUrl(network, room.code);
       const server = createHostServer({
         room,
+        network: network.mode === 'hotspot' ? network.ssid : network.name,
         onChange: next => {
           if (live.current) {
             live.current.room = next;

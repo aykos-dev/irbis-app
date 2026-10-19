@@ -66,6 +66,28 @@
     "closeConfirm": "Close the room for everyone?",
     "hotspotError": "Couldn't start the hotspot",
     "tryAgain": "Try again",
-    "permission": "Allow nearby Wi-Fi devices to start the hotspot"
+    "permission": "Allow nearby Wi-Fi devices to start the hotspot",
+    "waitHost": "Waiting for the host to start",
+    "reconnectingSelf": "Reconnecting to the host…",
+    "leave": "Leave"
+  },
+  "join": {
+    "title": "Join a game",
+    "back": "Back",
+    "point": "Point at the QR code on the host's phone",
+    "orCode": "or enter the room code",
+    "searching": "Looking for the room…",
+    "connected": "Connected to \"%{network}\"",
+    "roomFound": "Room found · %{n} players waiting",
+    "as": "Join as %{name}",
+    "hint": "Not seeing it? Open Wi-Fi settings and join the host's hotspot first.",
+    "notFound": "Room not found. Join the host's Wi-Fi first, then try again.",
+    "full": "This room is full (15 / 15)",
+    "version": "Update Irbis to join this room",
+    "wifiFailed": "Couldn't join the host's Wi-Fi. Join it in Settings.",
+    "cameraDenied": "Camera is off. You can still type the code.",
+    "allowCamera": "Allow camera",
+    "removed": "The host removed you from the room",
+    "closed": "The host closed the room"
   }
 }

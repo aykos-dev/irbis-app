@@ -36,3 +36,14 @@ export const lobbySizes = {
   /** Reconnecting seats are drawn at half opacity. */
   dimmed: 0.5,
 } as const;
+
+/** Join screen sizes from the canvas (CampJoin). */
+export const joinSizes = {
+  cameraWidth: 342,
+  cameraHeight: 300,
+  /** Viewfinder corner arm length and stroke. */
+  corner: 44,
+  cornerStroke: 4,
+  codeBox: 60,
+  codeDigits: 4,
+} as const;

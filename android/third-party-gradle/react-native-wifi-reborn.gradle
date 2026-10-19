@@ -1,0 +1,29 @@
+// Build script used instead of react-native-wifi-reborn's own android/build.gradle (see settings.gradle).
+// Its script passes the SDK values (not their names) to `safeExtGet`, which fails on Gradle 9; this is
+// the same library build with the root project's SDK versions.
+apply plugin: "com.android.library"
+
+android {
+    namespace = "com.reactlibrary.rnwifi"
+    compileSdk = rootProject.ext.compileSdkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        minSdk = rootProject.ext.minSdkVersion
+        targetSdk = rootProject.ext.targetSdkVersion
+    }
+}
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+dependencies {
+    implementation "com.facebook.react:react-android"
+    implementation "io.github.thanosfisherman.wifiutils:wifiutils:1.6.6"
+}

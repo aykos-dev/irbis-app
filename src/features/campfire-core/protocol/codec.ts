@@ -36,8 +36,12 @@ export const helloSchema = z.object({
 });
 export type Hello = z.infer<typeof helloSchema>;
 
+const roomCode = z.string().regex(/^\d{4}$/);
+
 export const clientMessageSchema = z.discriminatedUnion('type', [
   helloSchema,
+  /** Discovery: "is room <code> here?" without taking a seat. */
+  z.object({ v: version, type: z.literal('probe'), code: roomCode }),
   z.object({ v: version, type: z.literal('ping') }),
   z.object({ v: version, type: z.literal('leave') }),
 ]);
@@ -67,6 +71,13 @@ export const hostMessageSchema = z.discriminatedUnion('type', [
   z.object({ v: version, type: z.literal('removed') }),
   z.object({ v: version, type: z.literal('closed') }),
   z.object({ v: version, type: z.literal('pong') }),
+  /** Answer to a matching `probe`: seats taken and the network name the room is on. */
+  z.object({
+    v: version,
+    type: z.literal('probeOk'),
+    players: z.number().int().min(0),
+    network: z.string(),
+  }),
 ]);
 export type HostMessage = z.infer<typeof hostMessageSchema>;
 

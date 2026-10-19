@@ -4,3 +4,5 @@ extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autoli
 rootProject.name = 'Irbis'
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
+// react-native-wifi-reborn 4.13.6 ships a build script that fails on Gradle 9 (see the file below).
+project(':react-native-wifi-reborn').buildFileName = '../../../android/third-party-gradle/react-native-wifi-reborn.gradle'
