@@ -1,4 +1,5 @@
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 import { fakeCamera, fakeNet, fakeWifi, type FakeSocket } from '../../../../jest/campNetFakes';
 import { navigationRef } from '../../navigation/navigationRef';
@@ -138,6 +139,48 @@ describe('campfire-party — hold to reveal, screen protection (AC3)', () => {
   });
 });
 
+/** Host elements under a node: type, flattened style, own text and a11y label (what a viewer sees). */
+type Node = ReturnType<typeof screen.getByTestId>;
+
+function shape(node: Node): unknown[] {
+  const self =
+    typeof node.type === 'string'
+      ? [
+          {
+            type: node.type,
+            style: JSON.stringify(StyleSheet.flatten(node.props.style)),
+            label: node.props.accessibilityLabel,
+            text: node.children.filter(child => typeof child === 'string'),
+          },
+        ]
+      : [];
+  return [...self, ...node.children.flatMap(child => (typeof child === 'string' ? [] : shape(child)))];
+}
+
+describe('campfire-party — covered card is the same for every role (AC3)', () => {
+  it('AC3: after release an imposter\'s card is identical to a word-holder\'s, no explainer or Got it left', async () => {
+    await startImposter(0.99);
+    const before = shape(card());
+    await fireEvent(card(), 'pressIn');
+    expect(screen.getByTestId('imp.imposter')).toBeOnTheScreen();
+    await fireEvent(card(), 'pressOut');
+    const imposterCovered = shape(card());
+    expect(imposterCovered).toEqual(before);
+    expect(screen.queryByText('How to win')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('imp.got-it')).not.toBeOnTheScreen();
+
+    // rng 0 on the next round: guest_1 is the imposter, this phone holds the word.
+    jest.spyOn(Math, 'random').mockReturnValue(0);
+    await fireEvent.press(screen.getByTestId('imp.new-round'));
+    await fireEvent(card(), 'pressIn');
+    expect(screen.getByTestId('imp.word')).toBeOnTheScreen();
+    await fireEvent(card(), 'pressOut');
+    expect(shape(card())).toEqual(imposterCovered);
+    expect(screen.queryByText('How to win')).not.toBeOnTheScreen();
+    expect(screen.queryByTestId('imp.got-it')).not.toBeOnTheScreen();
+  });
+});
+
 describe('campfire-party — Imposter cards (AC4)', () => {
   it('AC4: header, round line, host chip, clue order with "You" and the hint', async () => {
     await startImposter(0.99);
@@ -162,7 +205,7 @@ describe('campfire-party — Imposter cards (AC4)', () => {
     expect(screen.queryByTestId('imp.imposter')).not.toBeOnTheScreen();
   });
 
-  it('AC4: the imposter card shows the category; after release the explainer stays until Got it', async () => {
+  it('AC4: the imposter card shows the category and, while held, how to win with Got it', async () => {
     await startImposter(0.99);
     await fireEvent(card(), 'pressIn');
     const imposter = screen.getByTestId('imp.imposter');
@@ -170,15 +213,18 @@ describe('campfire-party — Imposter cards (AC4)', () => {
     expect(imposter).toHaveTextContent(/You are the imposter/);
     expect(imposter).toHaveTextContent(/You don't know the word\. The category is:.*Animals/);
     expect(screen.queryByTestId('imp.word')).not.toBeOnTheScreen();
+    expect(card()).toHaveTextContent(/How to win/);
+    expect(card()).toHaveTextContent(/Not voted out\? You win\. Caught\? Guess the word to steal the win\./);
 
-    await fireEvent(card(), 'pressOut');
-    expect(screen.getByText('How to win')).toBeOnTheScreen();
-    expect(
-      screen.getByText('Not voted out? You win. Caught? Guess the word to steal the win.'),
-    ).toBeOnTheScreen();
     await fireEvent.press(screen.getByTestId('imp.got-it'));
+    await fireEvent(card(), 'pressOut');
     expect(screen.queryByTestId('imp.imposter')).not.toBeOnTheScreen();
+    expect(screen.queryByText('How to win')).not.toBeOnTheScreen();
     expect(card()).toHaveTextContent('Hold to see');
+
+    await fireEvent(card(), 'pressIn');
+    expect(screen.getByTestId('imp.imposter')).toBeOnTheScreen();
+    expect(screen.queryByTestId('imp.got-it')).not.toBeOnTheScreen();
   });
 
   it('AC4: with "Imposter sees the category" off the imposter only reads "You don\'t know the word."', async () => {

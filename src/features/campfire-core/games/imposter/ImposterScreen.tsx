@@ -157,40 +157,26 @@ type CardProps = {
   category: string;
 };
 
-/** One round's card: word or imposter; the imposter's first release opens the explainer. */
+/**
+ * One round's card: word or imposter. The imposter's "How to win" and Got it are part of the held
+ * content, so a covered card looks the same on every phone (AC3); Got it drops them from later holds.
+ */
 function RoundCard({ secret, captured, word, category }: CardProps) {
-  const [explaining, setExplaining] = useState(false);
   const [explained, setExplained] = useState(false);
-  const imposter = secret.role === 'imposter';
   const shownCategory = secret.showCategory ? category : null;
 
-  if (imposter && explaining && !captured) {
-    return (
+  let content = <WordSecret word={word} category={category} />;
+  if (secret.role === 'imposter') {
+    content = explained ? (
+      <ImposterSecret category={shownCategory} />
+    ) : (
       <ImposterExplainer
         category={shownCategory}
-        onGotIt={() => {
-          setExplaining(false);
-          setExplained(true);
-        }}
+        onGotIt={() => setExplained(true)}
       />
     );
   }
-  return (
-    <SecretCard
-      captured={captured}
-      onHide={() => {
-        if (imposter && !explained) {
-          setExplaining(true);
-        }
-      }}
-    >
-      {imposter ? (
-        <ImposterSecret category={shownCategory} />
-      ) : (
-        <WordSecret word={word} category={category} />
-      )}
-    </SecretCard>
-  );
+  return <SecretCard captured={captured}>{content}</SecretCard>;
 }
 
 const layout = StyleSheet.create({

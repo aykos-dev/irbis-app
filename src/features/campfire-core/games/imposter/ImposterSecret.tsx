@@ -34,7 +34,7 @@ export function ImposterSecret({ category }: Props) {
 
 type ExplainerProps = Props & { onGotIt: () => void };
 
-/** After the imposter first lets go of the card: the role again plus how to win; Got it covers it. */
+/** Held imposter card until Got it: the role plus how to win (shown only while the card is held). */
 export function ImposterExplainer({ category, onGotIt }: ExplainerProps) {
   return (
     <View style={layout.explainer}>
