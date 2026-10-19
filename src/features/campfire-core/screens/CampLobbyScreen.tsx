@@ -32,7 +32,6 @@ import { useLocale } from '../../../shared/hooks/useLocale';
 import { t } from '../../../shared/i18n';
 import { haptics } from '../../../shared/utils/haptics';
 import { campColors, campScheme, lobbySizes, type GameId } from '../campTheme';
-import { ComingSoonTag } from '../components/ComingSoonTag';
 import { ConfirmSheet } from '../components/ConfirmSheet';
 import {
   inRange,
@@ -40,6 +39,7 @@ import {
   TWO_IMPOSTERS_FROM,
   type GameSettings,
 } from '../games/gameReducer';
+import { MafiaSetup } from '../games/mafia/MafiaSetup';
 import {
   localized,
   packsFor,
@@ -123,10 +123,10 @@ export function CampLobbyScreen(props: RootStackScreenProps<'CampLobby'>) {
  */
 function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
   useLocale();
-  const { state, retry, remove, close, startGame } = useHostRoom(
+  const { state, retry, remove, close, startGame, startMafia } = useHostRoom(
     route.params?.resume === true,
   );
-  const [game, setGame] = useState<PartyGame>(
+  const [game, setGame] = useState<GameId>(
     route.params?.game ?? 'imposter',
   );
   const [packIds, setPackIds] = useState(firstPacks);
@@ -180,6 +180,9 @@ function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
   const twoImposters = connected >= TWO_IMPOSTERS_FROM;
 
   const start = () => {
+    if (!isPartyGame(game)) {
+      return;
+    }
     const settings: GameSettings = {
       packId: packIds[game],
       imposters: twoImposters ? imposters : 1,
@@ -286,48 +289,57 @@ function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
                 setGame(next);
               }}
             />
-            <Settings
-              game={game}
-              packId={packIds[game]}
-              imposters={twoImposters ? imposters : 1}
-              twoImposters={twoImposters}
-              showCategory={showCategory}
-              onPickPack={() => {
-                haptics.tap();
-                setPicking(true);
-              }}
-              onImposters={() => {
-                haptics.selection();
-                setImposters(value => (value === 1 ? 2 : 1));
-              }}
-              onShowCategory={value => {
-                haptics.selection();
-                setShowCategory(value);
-              }}
-            />
-            <View style={layout.section}>
-              <AppButton
-                testID="camp.lobby.start"
-                label={t('camp.game.start', {
-                  game: t(`camp.game.name.${game}`),
-                })}
-                variant="secondary"
-                disabled={!inRange(game, connected)}
-                onPress={start}
+            {isPartyGame(game) ? (
+              <>
+                <Settings
+                  game={game}
+                  packId={packIds[game]}
+                  imposters={twoImposters ? imposters : 1}
+                  twoImposters={twoImposters}
+                  showCategory={showCategory}
+                  onPickPack={() => {
+                    haptics.tap();
+                    setPicking(true);
+                  }}
+                  onImposters={() => {
+                    haptics.selection();
+                    setImposters(value => (value === 1 ? 2 : 1));
+                  }}
+                  onShowCategory={value => {
+                    haptics.selection();
+                    setShowCategory(value);
+                  }}
+                />
+                <View style={layout.section}>
+                  <AppButton
+                    testID="camp.lobby.start"
+                    label={t('camp.game.start', {
+                      game: t(`camp.game.name.${game}`),
+                    })}
+                    variant="secondary"
+                    disabled={!inRange(game, connected)}
+                    onPress={start}
+                  />
+                  {startBlocked(game, connected) ? (
+                    <AppText
+                      testID="camp.lobby.start-reason"
+                      variant="small"
+                      style={layout.center}
+                    >
+                      {startBlocked(game, connected)}
+                    </AppText>
+                  ) : null}
+                  <AppText variant="small" tone="muted" style={layout.center}>
+                    {t('camp.game.youPlayToo')}
+                  </AppText>
+                </View>
+              </>
+            ) : (
+              <MafiaSetup
+                players={Math.max(0, connected - 1)}
+                onDeal={startMafia}
               />
-              {startBlocked(game, connected) ? (
-                <AppText
-                  testID="camp.lobby.start-reason"
-                  variant="small"
-                  style={layout.center}
-                >
-                  {startBlocked(game, connected)}
-                </AppText>
-              ) : null}
-              <AppText variant="small" tone="muted" style={layout.center}>
-                {t('camp.game.youPlayToo')}
-              </AppText>
-            </View>
+            )}
             <AppButton
               testID="camp.lobby.close"
               label={t('camp.lobby.close')}
@@ -340,7 +352,7 @@ function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
           </>
         ) : null}
 
-        {picking ? (
+        {picking && isPartyGame(game) ? (
           <PackSheet
             game={game}
             selected={packIds[game]}
@@ -522,16 +534,15 @@ function Players({
   );
 }
 
-/** Game pills (AC1): the party games are selectable, Mafia is still "Coming soon". */
+/** Game pills (AC1): every game is selectable (Mafia since campfire-mafia AC1). */
 function Games({
   selected: current,
   onSelect,
 }: {
-  selected: PartyGame;
-  onSelect: (game: PartyGame) => void;
+  selected: GameId;
+  onSelect: (game: GameId) => void;
 }) {
   const styles = useStyles();
-  const { show } = useToast();
   return (
     <View style={layout.section}>
       <AppText variant="h3" accessibilityRole="header">
@@ -540,25 +551,13 @@ function Games({
       <View style={layout.grid}>
         {lobbyGames.map(game => {
           const selected = game === current;
-          const live = isPartyGame(game);
           return (
             <Pressable
               key={game}
               testID={`camp.lobby.game.${game}`}
-              accessibilityLabel={
-                live
-                  ? gameLabel(game)
-                  : `${gameLabel(game)}, ${t('camp.comingSoon')}`
-              }
+              accessibilityLabel={gameLabel(game)}
               accessibilityState={{ selected }}
-              onPress={() => {
-                if (live) {
-                  onSelect(game);
-                  return;
-                }
-                haptics.selection();
-                show({ variant: 'info', message: t('camp.comingSoonToast') });
-              }}
+              onPress={() => onSelect(game)}
               style={[
                 layout.pill,
                 styles.pill,
@@ -566,7 +565,6 @@ function Games({
               ]}
             >
               <AppText variant="chip">{gameLabel(game)}</AppText>
-              {live ? null : <ComingSoonTag />}
             </Pressable>
           );
         })}

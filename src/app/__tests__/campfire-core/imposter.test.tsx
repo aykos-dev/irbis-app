@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 
 import { fakeCamera, fakeNet, fakeWifi, type FakeSocket } from '../../../../jest/campNetFakes';
 import { navigationRef } from '../../navigation/navigationRef';
-import type { GameState } from '../../../features/campfire-core/games/gameReducer';
+import type { GameState, HostGame } from '../../../features/campfire-core/games/gameReducer';
 import { findPack } from '../../../features/campfire-core/games/packs';
 import { campNet } from '../../../features/campfire-core/native/campNet';
 import { secureScreen } from '../../../features/campfire-core/native/secureScreen';
@@ -79,7 +79,7 @@ async function join(nickname: string): Promise<FakeSocket> {
   const code = String(screen.getByTestId('camp.lobby.code').props.children);
   const client = fakeNet.server().connect();
   await act(() => {
-    client.send({ v: 2, type: 'hello', code, nickname, avatar: 'bear' });
+    client.send({ v: 3, type: 'hello', code, nickname, avatar: 'bear' });
   });
   return client;
 }
@@ -273,7 +273,7 @@ describe('campfire-party — player phone (AC5)', () => {
   });
 
   it('AC5: a player has no host buttons, reads "The host starts the next round" and sees the reveal', async () => {
-    let game: GameState | null = null;
+    let game: HostGame | null = null;
     const server = createHostServer({
       room: createRoom('4821', { nickname: 'guest_0', avatar: 'fox' }),
       network: wifi.ssid,
@@ -284,7 +284,7 @@ describe('campfire-party — player phone (AC5)', () => {
     await server.start();
     fakeNet.serve(HOST_IP, fakeNet.server());
     const other = fakeNet.server().connect();
-    await act(() => other.send({ v: 2, type: 'hello', code: '4821', nickname: 'guest_2', avatar: 'eagle' }));
+    await act(() => other.send({ v: 3, type: 'hello', code: '4821', nickname: 'guest_2', avatar: 'eagle' }));
 
     await renderApp();
     await openTab('community');

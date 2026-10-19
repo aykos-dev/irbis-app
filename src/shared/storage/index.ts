@@ -28,6 +28,8 @@ type StorageSchema = {
   'camp.profile': string;
   /** The hosted Campfire room for resume (12 h): JSON `{ savedAt, room }` with seats and seat tokens. */
   'camp.hostRoom': string;
+  /** The host's last Mafia setup: JSON `{ counts, revealOut }` (no personal data). */
+  'camp.maf.setup': string;
 } & {
   /** Campfire seat token per room code, so a player gets the same seat back (rejoin, restart). */
   [key: `camp.seats.${string}`]: string;

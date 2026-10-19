@@ -8,12 +8,18 @@ import {
   idsNeeded,
   inRange,
   roundSeats,
+  toMafiaPublic,
   toPublic,
-  type GameAction,
   type GameSeat,
   type GameSettings,
-  type GameState,
+  type HostAction,
+  type HostGame,
 } from '../games/gameReducer';
+import {
+  mafiaRange,
+  teamCounts,
+  type MafiaSettings,
+} from '../games/mafia/roles';
 import { findPack, type PartyGame } from '../games/packs';
 import { drawIds, type Rng } from '../games/usedStore';
 import {
@@ -58,6 +64,8 @@ export type HostServer = {
   stop: () => void;
   /** Deals round 1 to the connected seats (host included) when their count is in range. */
   startGame: (game: PartyGame, settings: GameSettings, rng?: Rng) => void;
+  /** Mafia: deals one role to each connected player (host excluded) when the room has 6–15 seats. */
+  startMafia: (settings: MafiaSettings, rng?: Rng) => void;
   /** Deals the next round to the seats connected now (mid-round joiners included). */
   newRound: (rng?: Rng) => void;
   /** Ends the game for everyone: `lobby` to all. */
@@ -79,8 +87,8 @@ type Options = {
   /** Network name players see after a probe ("Connected to …"): hotspot SSID or Wi-Fi name. */
   network?: string;
   /** A running game restored with the room (resume). */
-  game?: GameState | null;
-  onChange: (room: RoomState, game: GameState | null) => void;
+  game?: HostGame | null;
+  onChange: (room: RoomState, game: HostGame | null) => void;
   now?: () => number;
 };
 
@@ -127,6 +135,20 @@ export function createHostServer({
       return;
     }
     const seatId = seatOf(conn);
+    if (game.game === 'mafia') {
+      const secret = seatId ? game.deals[seatId] : undefined;
+      if (withDeal && secret) {
+        send(conn, { type: 'deal', game: 'mafia', round: game.round, secret });
+      }
+      send(conn, {
+        type: 'game',
+        game: 'mafia',
+        round: game.round,
+        phase: game.phase,
+        public: toMafiaPublic(game),
+      });
+      return;
+    }
     const secret = seatId ? game.deals[seatId] : undefined;
     if (withDeal && secret) {
       send(conn, { type: 'deal', game: game.game, round: game.round, secret });
@@ -148,7 +170,7 @@ export function createHostServer({
     });
   };
 
-  const applyGame = (action: GameAction): boolean => {
+  const applyGame = (action: HostAction): boolean => {
     const next = gameReducer(game, action);
     if (next === game) {
       return false;
@@ -157,6 +179,9 @@ export function createHostServer({
     onChange(state, game);
     return true;
   };
+
+  /** The game now (read after `applyGame`, which replaces it). */
+  const current = (): HostGame | null => game;
 
   const gameSeats = (): GameSeat[] =>
     state.seats.map(seat => ({
@@ -219,9 +244,9 @@ export function createHostServer({
     if (!game || !applyGame({ type: 'showMine', seatId, round })) {
       return;
     }
-    const secret = game?.deals[seatId];
+    const secret = game?.game === 'whoami' ? game.deals[seatId] : undefined;
     const conn = connOf(seatId);
-    if (game && secret && conn) {
+    if (game && game.game === 'whoami' && secret && conn) {
       send(conn, { type: 'deal', game: game.game, round: game.round, secret });
     }
     qaLog('camp_whoami_show_mine', { round });
@@ -295,6 +320,16 @@ export function createHostServer({
         const seatId = seatOf(conn);
         if (seatId) {
           showMine(seatId, message.round);
+        }
+        return;
+      }
+      case 'mafReady': {
+        const seatId = seatOf(conn);
+        if (
+          seatId &&
+          applyGame({ type: 'mafReady', seatId, round: message.round })
+        ) {
+          broadcastGame(false);
         }
         return;
       }
@@ -441,8 +476,39 @@ export function createHostServer({
       qaLog('camp_game_started', { game: kind, players });
       qaLog('camp_round_started', { game: kind, round: 1 });
     },
+    startMafia: (settings, rng = Math.random) => {
+      const seats = gameSeats();
+      const room = roundSeats(seats).length;
+      if (game || room < mafiaRange.min || room > mafiaRange.max) {
+        return;
+      }
+      const hostSeats = new Set(
+        state.seats.filter(seat => seat.host).map(seat => seat.seatId),
+      );
+      const started = applyGame({
+        type: 'startMafia',
+        settings,
+        seats: seats.filter(seat => !hostSeats.has(seat.seatId)),
+        rng,
+      })
+        ? current()
+        : null;
+      if (started?.game !== 'mafia') {
+        return;
+      }
+      broadcastGame(true);
+      const players = started.players.length;
+      const teams = teamCounts(settings.counts, players);
+      qaLog('camp_game_started', { game: 'mafia', players });
+      qaLog('maf_dealt', {
+        players,
+        mafia: teams.mafia,
+        town: teams.town,
+        solo: teams.solo,
+      });
+    },
     newRound: (rng = Math.random) => {
-      if (!game) {
+      if (!game || game.game === 'mafia') {
         return;
       }
       const ids = draw(game.game, game.settings.packId, rng);
@@ -457,7 +523,7 @@ export function createHostServer({
       qaLog('camp_round_started', { game: game.game, round: game.round });
     },
     vote: (seatId, pick) => {
-      if (game) {
+      if (game?.game === 'rather') {
         vote(seatId, game.round, game.qIndex, pick);
       }
     },
@@ -473,7 +539,7 @@ export function createHostServer({
       }
     },
     reveal: () => {
-      if (!game || !applyGame({ type: 'reveal' })) {
+      if (!game || !applyGame({ type: 'reveal' }) || game.game === 'mafia') {
         return;
       }
       broadcastGame(false);

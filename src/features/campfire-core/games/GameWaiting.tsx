@@ -91,8 +91,14 @@ export function GameWaiting({
   );
   const [confirmEnd, setConfirmEnd] = useState(false);
 
+  /** Mafia until its board ships (slice 2): `dealt` = this phone plays (or narrates) this game. */
+  let mafia: { dealt: boolean } | null = null;
   let view: GameView | null = null;
-  if (hosted) {
+  if (hosted?.game === 'mafia') {
+    mafia = { dealt: true };
+  } else if (player?.game?.game === 'mafia') {
+    mafia = { dealt: player.deal?.game === 'mafia' };
+  } else if (hosted) {
     view = {
       game: hosted.game,
       packId: hosted.settings.packId,
@@ -105,6 +111,7 @@ export function GameWaiting({
       roster: hostRoster,
     };
   } else if (player?.game) {
+    const { deal } = player;
     view = {
       game: player.game.game,
       packId: player.game.public.packId,
@@ -114,12 +121,12 @@ export function GameWaiting({
       round: player.game.round,
       phase: player.game.phase,
       info: player.game.public,
-      secret: player.deal?.secret ?? null,
+      secret: deal && deal.game !== 'mafia' ? deal.secret : null,
       selfSeatId: player.seatId,
       roster: player.players,
     };
   }
-  const active = view !== null;
+  const active = view !== null || mafia !== null;
 
   // Host: leaving the game screen ends the game, so Back asks first.
   usePreventRemove(!isPlayer && active, () => setConfirmEnd(true));
@@ -141,13 +148,28 @@ export function GameWaiting({
     hostGame.end();
   };
 
-  if (!view) {
+  if (!view && !mafia) {
     return null;
   }
   return (
     <ThemeProvider scheme={campScheme}>
       <Screen testID="camp.game.waiting" scroll>
-        {view.game === 'imposter' ? (
+        {mafia ? (
+          <AppText variant="h1" accessibilityRole="header" style={layout.center}>
+            {t('camp.games.mafia')}
+          </AppText>
+        ) : null}
+        {mafia && !mafia.dealt ? (
+          <AppText
+            testID="camp.game.in-progress"
+            variant="body"
+            tone="muted"
+            style={layout.center}
+          >
+            {t('camp.maf.inProgress')}
+          </AppText>
+        ) : null}
+        {view?.game === 'imposter' ? (
           <ImposterScreen
             round={view.round}
             phase={view.phase}
@@ -158,7 +180,7 @@ export function GameWaiting({
             host={isPlayer ? undefined : hostControls}
           />
         ) : null}
-        {view.game === 'whoami' ? (
+        {view?.game === 'whoami' ? (
           <WhoAmIScreen
             info={view.info}
             secret={view.dealt ? whoamiSecret(view.secret) : null}
@@ -168,7 +190,7 @@ export function GameWaiting({
             host={isPlayer ? undefined : hostControls}
           />
         ) : null}
-        {view.game === 'rather' ? (
+        {view?.game === 'rather' ? (
           <RatherScreen
             key={`${view.round}.${view.info.qIndex ?? 0}`}
             phase={view.phase}
@@ -180,7 +202,7 @@ export function GameWaiting({
             host={isPlayer ? undefined : ratherHostControls}
           />
         ) : null}
-        {view.dealt ? null : (
+        {!view || view.dealt ? null : (
           <AppText
             testID="camp.game.in-progress"
             variant="body"

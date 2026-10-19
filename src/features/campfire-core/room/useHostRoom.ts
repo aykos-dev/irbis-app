@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import DeviceInfo from 'react-native-device-info';
 
 import { qaLog } from '../../../shared/utils/qaLog';
-import type { GameSettings, GameState } from '../games/gameReducer';
+import type { GameSettings, HostGame } from '../games/gameReducer';
+import type { MafiaSettings } from '../games/mafia/roles';
 import type { PartyGame } from '../games/packs';
 import { campNet } from '../native/campNet';
 import { hostsWithGuide } from '../native/hostPlatform';
@@ -38,20 +39,20 @@ export type HostRoom =
       network: HostNetwork;
       room: RoomState;
       joinUrl: string;
-      game: GameState | null;
+      game: HostGame | null;
     };
 
 /**
  * The host's running game for the game screen, which sits on top of the lobby that owns the room
  * (`useSyncExternalStore`). `end` sends everyone back to the lobby.
  */
-let hostGameState: GameState | null = null;
+let hostGameState: HostGame | null = null;
 let hostGameRoster: RosterPlayer[] = [];
 let hostGameServer: HostServer | null = null;
 const hostGameListeners = new Set<() => void>();
 
 function publishHostGame(
-  game: GameState | null,
+  game: HostGame | null,
   room: RoomState | null,
   server: HostServer | null,
 ) {
@@ -62,7 +63,7 @@ function publishHostGame(
 }
 
 export const hostGame = {
-  getSnapshot: (): GameState | null => hostGameState,
+  getSnapshot: (): HostGame | null => hostGameState,
   /** Names for the game screen (same `subscribe`). */
   getRoster: (): RosterPlayer[] => hostGameRoster,
   subscribe: (listener: () => void) => {
@@ -284,6 +285,10 @@ export function useHostRoom(resume: boolean) {
     live.current?.server.startGame(game, settings);
   }, []);
 
+  const startMafia = useCallback((settings: MafiaSettings) => {
+    live.current?.server.startMafia(settings);
+  }, []);
+
   /** Broadcasts `closed`, stops server, hotspot and zeroconf, forgets the saved room. */
   const close = useCallback(() => {
     const current = live.current;
@@ -297,5 +302,5 @@ export function useHostRoom(resume: boolean) {
     qaLog('camp_room_closed', { seats: current.room.seats.length });
   }, []);
 
-  return { state, retry, remove, close, startGame };
+  return { state, retry, remove, close, startGame, startMafia };
 }

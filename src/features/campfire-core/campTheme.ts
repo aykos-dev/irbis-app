@@ -65,3 +65,25 @@ export const partySizes = {
   /** Vote bars grow from 0 to their share on reveal. */
   revealMs: 600,
 } as const;
+
+/** Mafia role colours (design/media/campfire-mafia/MEDIA.md), behind each role glyph. */
+export const mafiaRoleColors = {
+  boss: '#8F1F1F',
+  mafia: palette.red700,
+  detective: '#1F74C7',
+  doctor: '#2E8B57',
+  maniac: '#6A4FE8',
+  lover: '#C93A6B',
+  bodyguard: palette.teal700,
+  sniper: '#B5651D',
+  journalist: '#8A6D1F',
+  immortal: '#4E7D8C',
+  civilian: '#5E6E74',
+} as const;
+
+/** Mafia setup rows (canvas MafSetup). */
+export const mafiaSizes = {
+  roleTile: 40,
+  roleGlyph: 22,
+  stepper: 36,
+} as const;

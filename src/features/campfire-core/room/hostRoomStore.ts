@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { storage } from '../../../shared/storage';
-import { gameStateSchema, type GameState } from '../games/gameReducer';
+import { hostGameSchema, type HostGame } from '../games/gameReducer';
 import { animals } from '../playerProfile';
 import { seatStatusSchema } from '../protocol/codec';
 import type { RoomState } from './roomReducer';
@@ -28,14 +28,14 @@ const savedSchema = z.object({
       .min(1),
   }),
   /** The running party game (round, deals) so a resumed room picks it up; absent in the lobby. */
-  game: gameStateSchema.nullable().optional(),
+  game: hostGameSchema.nullable().optional(),
 });
 
 /** Saved after every room or game change; live connections are not saved. */
 export function saveHostRoom(
   room: RoomState,
   now: number = Date.now(),
-  game: GameState | null = null,
+  game: HostGame | null = null,
 ): void {
   const seats = room.seats.map(({ connId: _connId, ...seat }) => seat);
   storage.setString(
@@ -54,13 +54,13 @@ export function loadHostRoom(now: number = Date.now()): RoomState | null {
 }
 
 /** The game running in the saved room, if any (same 12 h window as the room). */
-export function loadHostGame(now: number = Date.now()): GameState | null {
+export function loadHostGame(now: number = Date.now()): HostGame | null {
   return loadSaved(now)?.game ?? null;
 }
 
 function loadSaved(
   now: number,
-): { room: RoomState; game: GameState | null } | null {
+): { room: RoomState; game: HostGame | null } | null {
   const raw = storage.getString('camp.hostRoom');
   if (!raw) {
     return null;

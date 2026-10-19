@@ -47,7 +47,7 @@ async function hostRoom(ip = HOST_IP, withSeat = false): Promise<{ server: HostS
     room = roomReducer(room, {
       type: 'hello',
       connId: 'old',
-      hello: { v: 2, type: 'hello', code: '4821', nickname: 'guest_1', avatar: 'bear' },
+      hello: { v: 3, type: 'hello', code: '4821', nickname: 'guest_1', avatar: 'bear' },
       seatToken: 'seat_token_1',
     }).state;
     room = roomReducer(room, { type: 'disconnect', connId: 'old' }).state;

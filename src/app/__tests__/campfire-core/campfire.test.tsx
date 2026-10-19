@@ -62,10 +62,11 @@ describe('campfire-core — CampHub (AC2)', () => {
     const hub = screen.getByTestId('camp.hub.screen');
     expect(within(hub).getByText('Works offline')).toBeOnTheScreen();
     expect(within(hub).getByText('No internet. No problem.')).toBeOnTheScreen();
-    expect(screen.getByTestId('camp.hub.game.mafia')).toHaveTextContent(/Mafia.*6–15 · 20–40 min.*Coming soon/);
+    expect(screen.getByTestId('camp.hub.game.mafia')).toHaveTextContent(/Mafia.*6–15 · 20–40 min/);
+    expect(screen.getByTestId('camp.hub.game.mafia')).not.toHaveTextContent(/Coming soon/);
     expect(screen.getByTestId('camp.hub.badges')).toHaveTextContent(/Campfire badges.*Coming soon/);
 
-    await fireEvent.press(screen.getByTestId('camp.hub.game.mafia'));
+    await fireEvent.press(screen.getByTestId('camp.hub.badges'));
     expect(await screen.findByTestId('app.toast')).toHaveTextContent('Coming in the next update');
     await fireEvent.press(screen.getByTestId('app.toast'));
 

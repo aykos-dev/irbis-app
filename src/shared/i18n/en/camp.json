@@ -182,5 +182,96 @@
     "next": "Next question",
     "done": "Pack round done",
     "newRound": "New round"
+  },
+  "maf": {
+    "setupTitle": "Mafia · host setup",
+    "chooseRoles": "Choose roles",
+    "players": "%{n} players",
+    "summary": "%{total} / %{n} roles · %{balance}",
+    "balanced": "balanced",
+    "townHeavy": "town heavy",
+    "mafiaHeavy": "mafia heavy",
+    "teamCounts": "Town %{town} · Mafia %{mafia} · Solo %{solo}",
+    "revealOut": "Reveal role when out",
+    "revealOutSub": "Off makes the game harder",
+    "deal": "Deal roles",
+    "needPlayers": "Needs 5+ players besides the host",
+    "tooMany": "Too many roles",
+    "needMafia": "Add at least 1 mafia",
+    "inProgress": "Game in progress — you're in the next one",
+    "role": {
+      "boss": {
+        "name": "Mafia Boss",
+        "desc": "Leads the mafia vote. Checks if a player is the Detective.",
+        "night": "At night wake with the mafia, choose the victim, then ask the narrator if one player is the Detective."
+      },
+      "mafia": {
+        "name": "Mafia",
+        "desc": "Wakes with the boss and chooses a victim.",
+        "night": "At night wake with the mafia and pick one player to kill together."
+      },
+      "detective": {
+        "name": "Detective",
+        "desc": "Checks one player each night: mafia or not.",
+        "night": "At night point at one player — the narrator shows you if they're mafia."
+      },
+      "doctor": {
+        "name": "Doctor",
+        "desc": "Saves one player each night. Self once.",
+        "night": "At night pick one player to save. If the mafia picked them, nobody dies. You can save yourself once."
+      },
+      "maniac": {
+        "name": "Maniac",
+        "desc": "Plays alone. Wins if last one standing.",
+        "night": "At night wake alone and pick one player to kill."
+      },
+      "lover": {
+        "name": "Lover",
+        "desc": "Blocks one player's night action.",
+        "night": "At night pick one player — their night action doesn't work tonight."
+      },
+      "bodyguard": {
+        "name": "Bodyguard",
+        "desc": "Protects one player; dies in their place.",
+        "night": "At night pick one player to guard. If they're attacked, you die instead."
+      },
+      "sniper": {
+        "name": "Sniper",
+        "desc": "One shot per game, at night.",
+        "night": "Once per game, at night, you can shoot one player. Choose wisely."
+      },
+      "journalist": {
+        "name": "Journalist",
+        "desc": "Compares two players: same team or not.",
+        "night": "At night point at two players — the narrator shows if they're on the same team."
+      },
+      "immortal": {
+        "name": "Immortal",
+        "desc": "Can't be killed at night. Only the vote takes them out.",
+        "night": "Night kills don't work on you. Only the town's vote can take you out."
+      },
+      "civilian": {
+        "name": "Civilian",
+        "desc": "No night action. Finds the mafia by talking.",
+        "night": "You sleep at night. No night action."
+      }
+    },
+    "team": {
+      "town": {
+        "name": "TOWN",
+        "day": "By day talk, find the mafia and vote them out. Keep your role quiet.",
+        "win": "You win when every mafia member and the maniac are out."
+      },
+      "mafia": {
+        "name": "MAFIA",
+        "day": "By day blend in and steer the vote away from your team.",
+        "win": "You win when the mafia equals or outnumbers everyone else."
+      },
+      "solo": {
+        "name": "SOLO",
+        "day": "By day trust nobody and steer the vote to suit you.",
+        "win": "You win if you're the last one standing, or one of the last two."
+      }
+    }
   }
 }

@@ -1,12 +1,14 @@
 import { z } from 'zod';
 
+import { roleIds } from '../games/mafia/roles';
 import { animals } from '../playerProfile';
 
 /**
- * Local Campfire protocol (spec § Local protocol): newline-delimited JSON over TCP, `v: 2`
- * (v2 adds the party games: `deal`, `game`, `lobby`, `wyrVote`, `showMine`).
+ * Local Campfire protocol (spec § Local protocol): newline-delimited JSON over TCP, `v: 3`
+ * (v2 added the party games: `deal`, `game`, `lobby`, `wyrVote`, `showMine`; v3 adds Mafia:
+ * its `deal` / `game` shapes and `mafReady`).
  */
-export const PROTOCOL_VERSION = 2;
+export const PROTOCOL_VERSION = 3;
 export const CAMP_PORT = 47821;
 export const MAX_SEATS = 15;
 /** Clients ping this often; the host answers `pong`. */
@@ -64,6 +66,11 @@ export type WhoamiSecret = z.infer<typeof whoamiSecretSchema>;
 export const secretSchema = z.union([imposterSecretSchema, whoamiSecretSchema]);
 export type Secret = z.infer<typeof secretSchema>;
 
+/** Mafia: one seat's role (host gets none; it narrates). */
+export const mafiaRoleIdSchema = z.enum(roleIds);
+export const mafiaSecretSchema = z.object({ roleId: mafiaRoleIdSchema });
+export type MafiaSecret = z.infer<typeof mafiaSecretSchema>;
+
 export const gamePhaseSchema = z.enum(['dealt', 'voting', 'revealed']);
 export type GamePhase = z.infer<typeof gamePhaseSchema>;
 
@@ -92,6 +99,70 @@ export const publicGameSchema = z.object({
 });
 export type PublicGame = z.infer<typeof publicGameSchema>;
 
+/** Mafia: night or day number `n` (night 1 first). */
+export const mafiaPhaseSchema = z.object({
+  kind: z.enum(['night', 'day']),
+  n: z.number().int().min(1),
+});
+export type MafiaPhase = z.infer<typeof mafiaPhaseSchema>;
+
+/** A seat out of the Mafia game; `roleId` only when "Reveal role when out" is on. */
+export const mafiaOutSchema = z.object({
+  seatId,
+  reason: z.enum(['killed', 'exiled']),
+  phase: mafiaPhaseSchema,
+  roleId: mafiaRoleIdSchema.optional(),
+});
+export type MafiaOut = z.infer<typeof mafiaOutSchema>;
+
+/** What every phone may see about the Mafia game. Never a role of a seat still in. */
+export const mafiaPublicSchema = z.object({
+  phase: mafiaPhaseSchema,
+  readyCount: z.number().int().min(0),
+  playerCount: z.number().int().min(0),
+  out: z.array(mafiaOutSchema),
+  revealOut: z.boolean(),
+});
+export type MafiaPublic = z.infer<typeof mafiaPublicSchema>;
+
+/** Host → one seat: that seat's secret for the round (no deal in Would you rather; none for the Mafia host). */
+const dealMessageSchema = z.discriminatedUnion('game', [
+  z.object({
+    v: version,
+    type: z.literal('deal'),
+    game: partyGameSchema,
+    round,
+    secret: secretSchema,
+  }),
+  z.object({
+    v: version,
+    type: z.literal('deal'),
+    game: z.literal('mafia'),
+    round,
+    secret: mafiaSecretSchema,
+  }),
+]);
+
+/** Host → all: the public round state. */
+const gameMessageSchema = z.discriminatedUnion('game', [
+  z.object({
+    v: version,
+    type: z.literal('game'),
+    game: partyGameSchema,
+    round,
+    phase: gamePhaseSchema,
+    public: publicGameSchema,
+  }),
+  z.object({
+    v: version,
+    type: z.literal('game'),
+    game: z.literal('mafia'),
+    round,
+    phase: mafiaPhaseSchema,
+    public: mafiaPublicSchema,
+  }),
+]);
+
 export const clientMessageSchema = z.discriminatedUnion('type', [
   helloSchema,
   /** Discovery: "is room <code> here?" without taking a seat. */
@@ -106,6 +177,8 @@ export const clientMessageSchema = z.discriminatedUnion('type', [
     pick: wyrPickSchema,
   }),
   z.object({ v: version, type: z.literal('showMine'), round }),
+  /** Mafia: this seat has seen its role. */
+  z.object({ v: version, type: z.literal('mafReady'), round }),
 ]);
 export type ClientMessage = z.infer<typeof clientMessageSchema>;
 
@@ -140,23 +213,8 @@ export const hostMessageSchema = z.discriminatedUnion('type', [
     players: z.number().int().min(0),
     network: z.string(),
   }),
-  /** Host → one seat: that seat's secret for the round (no deal in Would you rather). */
-  z.object({
-    v: version,
-    type: z.literal('deal'),
-    game: partyGameSchema,
-    round,
-    secret: secretSchema,
-  }),
-  /** Host → all: the public round state. */
-  z.object({
-    v: version,
-    type: z.literal('game'),
-    game: partyGameSchema,
-    round,
-    phase: gamePhaseSchema,
-    public: publicGameSchema,
-  }),
+  dealMessageSchema,
+  gameMessageSchema,
   /** Host → all: the game ended, back to the lobby. */
   z.object({ v: version, type: z.literal('lobby') }),
 ]);

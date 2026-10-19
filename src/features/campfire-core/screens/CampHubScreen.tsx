@@ -18,7 +18,6 @@ import { haptics } from '../../../shared/utils/haptics';
 import { campSizes, type GameId } from '../campTheme';
 import { ComingSoonTag } from '../components/ComingSoonTag';
 import { GameTile } from '../components/GameTile';
-import { partyGames, type PartyGame } from '../games/packs';
 import { IosHotspotGuide } from '../components/IosHotspotGuide';
 import { PlayerSheet, type CampRole } from '../components/PlayerSheet';
 import { hostsWithGuide } from '../native/hostPlatform';
@@ -28,7 +27,7 @@ const games: GameId[] = ['imposter', 'mafia', 'whoami', 'rather'];
 
 /**
  * CampHub (AC2), the Campfire segment of Community: works offline and as a guest, no network.
- * Host / Join open the player sheet (AC3); everything tagged "Coming soon" shows a toast.
+ * Host / Join open the player sheet (AC3); a game tile hosts that game; "Coming soon" cards toast.
  */
 export function CampHubScreen() {
   const navigation = useNavigation();
@@ -37,8 +36,8 @@ export function CampHubScreen() {
   const [sheet, setSheet] = useState<CampRole | null>(null);
   const [guide, setGuide] = useState(false);
   const [savedCode, setSavedCode] = useState<string | null>(null);
-  /** A party-game tile starts the Host flow with that game preselected (campfire-party AC1). */
-  const [hostGame, setHostGame] = useState<PartyGame | undefined>(undefined);
+  /** A game tile starts the Host flow with that game preselected (campfire-party / campfire-mafia AC1). */
+  const [hostGame, setHostGame] = useState<GameId | undefined>(undefined);
 
   // A room hosted in the last 12 h can be resumed (AC7); re-read whenever the hub is back in view.
   useFocusEffect(
@@ -71,19 +70,14 @@ export function CampHubScreen() {
     navigation.navigate('CampLobby', hostGame ? { game: hostGame } : undefined);
   };
 
-  const openSheet = (role: CampRole, game?: PartyGame) => {
+  const openSheet = (role: CampRole, game?: GameId) => {
     setHostGame(game);
     setSheet(role);
   };
 
   const onGame = (game: GameId) => {
-    const party = partyGames.find(candidate => candidate === game);
-    if (!party) {
-      comingSoon();
-      return;
-    }
     haptics.tap();
-    openSheet('host', party);
+    openSheet('host', game);
   };
 
   return (
@@ -133,12 +127,7 @@ export function CampHubScreen() {
       </AppText>
       <View style={layout.grid}>
         {games.map(game => (
-          <GameTile
-            key={game}
-            game={game}
-            comingSoon={!partyGames.some(party => party === game)}
-            onPress={() => onGame(game)}
-          />
+          <GameTile key={game} game={game} onPress={() => onGame(game)} />
         ))}
       </View>
 

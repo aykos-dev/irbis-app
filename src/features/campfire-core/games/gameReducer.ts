@@ -2,13 +2,23 @@ import { z } from 'zod';
 
 import {
   gamePhaseSchema,
+  mafiaPhaseSchema,
+  mafiaSecretSchema,
   partyGameSchema,
   secretSchema,
   wyrPickSchema,
+  type MafiaPublic,
+  type MafiaSecret,
   type PublicGame,
   type Secret,
   type WyrPick,
 } from '../protocol/codec';
+import {
+  dealBlocked,
+  dealRoles,
+  mafiaCountsSchema,
+  type MafiaSettings,
+} from './mafia/roles';
 import type { PartyGame } from './packs';
 import { shuffle, type Rng } from './usedStore';
 
@@ -31,7 +41,7 @@ export const gameSettingsSchema = z.object({
 });
 export type GameSettings = z.infer<typeof gameSettingsSchema>;
 
-/** The host's full game state (saved with the room for resume). Secrets live in `deals` only. */
+/** A party game's host state (saved with the room for resume). Secrets live in `deals` only. */
 export const gameStateSchema = z.object({
   game: partyGameSchema,
   settings: gameSettingsSchema,
@@ -51,6 +61,36 @@ export const gameStateSchema = z.object({
   votes: z.record(z.string(), wyrPickSchema),
 });
 export type GameState = z.infer<typeof gameStateSchema>;
+
+/** Mafia host state: the host narrates and is never dealt; `players` are the dealt seats. */
+export const mafiaStateSchema = z.object({
+  game: z.literal('mafia'),
+  round: z.number().int().min(1),
+  phase: mafiaPhaseSchema,
+  players: z.array(z.string()),
+  /** Joined mid-game: they play the next game. */
+  waiting: z.array(z.string()),
+  deals: z.record(z.string(), mafiaSecretSchema),
+  counts: mafiaCountsSchema,
+  revealOut: z.boolean(),
+  /** Seats that sent `mafReady` this phase. */
+  ready: z.array(z.string()),
+  out: z.array(
+    z.object({
+      seatId: z.string(),
+      reason: z.enum(['killed', 'exiled']),
+      phase: mafiaPhaseSchema,
+    }),
+  ),
+});
+export type MafiaState = z.infer<typeof mafiaStateSchema>;
+
+/** The host's running game, party or Mafia (saved with the room for resume). */
+export const hostGameSchema = z.discriminatedUnion('game', [
+  gameStateSchema,
+  mafiaStateSchema,
+]);
+export type HostGame = z.infer<typeof hostGameSchema>;
 
 export type GameSeat = { seatId: string; connected: boolean };
 
@@ -80,6 +120,13 @@ export type GameAction =
     }
   | { type: 'wyrReveal' }
   | { type: 'wyrNext' };
+
+export type MafiaAction =
+  /** `seats` are the players only (host excluded). */
+  | { type: 'startMafia'; settings: MafiaSettings; seats: GameSeat[]; rng: Rng }
+  | { type: 'mafReady'; seatId: string; round: number };
+
+export type HostAction = GameAction | MafiaAction;
 
 /** Players in a round: the seats connected when it starts, host included. */
 export function roundSeats(seats: GameSeat[]): string[] {
@@ -181,7 +228,15 @@ function deal(
 export function gameReducer(
   state: GameState | null,
   action: GameAction,
-): GameState | null {
+): GameState | null;
+export function gameReducer(
+  state: HostGame | null,
+  action: HostAction,
+): HostGame | null;
+export function gameReducer(
+  state: HostGame | null,
+  action: HostAction,
+): HostGame | null {
   if (action.type === 'start') {
     const players = roundSeats(action.seats);
     const dealt = deal(
@@ -203,10 +258,18 @@ export function gameReducer(
       ...dealt,
     };
   }
+  if (action.type === 'startMafia') {
+    return startMafia(action.settings, action.seats, action.rng) ?? state;
+  }
   if (!state) {
     return state;
   }
+  if (state.game === 'mafia') {
+    return mafiaReducer(state, action);
+  }
   switch (action.type) {
+    case 'mafReady':
+      return state;
     case 'newRound': {
       const players = roundSeats(action.seats);
       const dealt = deal(
@@ -310,6 +373,100 @@ export function gameReducer(
       }
       return { ...state, qIndex: state.qIndex + 1, votes: {}, phase: 'voting' };
   }
+}
+
+function startMafia(
+  settings: MafiaSettings,
+  seats: GameSeat[],
+  rng: Rng,
+): MafiaState | null {
+  const players = roundSeats(seats);
+  if (dealBlocked(settings.counts, players.length)) {
+    return null;
+  }
+  const roles = dealRoles(settings.counts, players, rng);
+  const deals: Record<string, MafiaSecret> = {};
+  players.forEach(seatId => {
+    const roleId = roles[seatId];
+    if (roleId) {
+      deals[seatId] = { roleId };
+    }
+  });
+  return {
+    game: 'mafia',
+    round: 1,
+    phase: { kind: 'night', n: 1 },
+    players,
+    waiting: [],
+    deals,
+    counts: settings.counts,
+    revealOut: settings.revealOut,
+    ready: [],
+    out: [],
+  };
+}
+
+/** Mafia: a mid-game joiner waits for the next game; a removed player is out (exiled) this phase. */
+function mafiaReducer(state: MafiaState, action: HostAction): MafiaState | null {
+  switch (action.type) {
+    case 'end':
+      return null;
+    case 'seatJoined':
+      if (
+        state.players.includes(action.seatId) ||
+        state.waiting.includes(action.seatId)
+      ) {
+        return state;
+      }
+      return { ...state, waiting: [...state.waiting, action.seatId] };
+    case 'seatRemoved':
+      if (state.waiting.includes(action.seatId)) {
+        return {
+          ...state,
+          waiting: state.waiting.filter(seat => seat !== action.seatId),
+        };
+      }
+      if (
+        !state.players.includes(action.seatId) ||
+        state.out.some(entry => entry.seatId === action.seatId)
+      ) {
+        return state;
+      }
+      return {
+        ...state,
+        ready: state.ready.filter(seat => seat !== action.seatId),
+        out: [
+          ...state.out,
+          { seatId: action.seatId, reason: 'exiled', phase: state.phase },
+        ],
+      };
+    case 'mafReady':
+      if (
+        action.round !== state.round ||
+        !state.players.includes(action.seatId) ||
+        state.ready.includes(action.seatId) ||
+        state.out.some(entry => entry.seatId === action.seatId)
+      ) {
+        return state;
+      }
+      return { ...state, ready: [...state.ready, action.seatId] };
+    default:
+      return state;
+  }
+}
+
+/** Mafia broadcast: phase, ready and out (with roles only when the host reveals them). */
+export function toMafiaPublic(state: MafiaState): MafiaPublic {
+  return {
+    phase: state.phase,
+    readyCount: state.ready.length,
+    playerCount: state.players.length,
+    out: state.out.map(entry => {
+      const roleId = state.deals[entry.seatId]?.roleId;
+      return state.revealOut && roleId ? { ...entry, roleId } : entry;
+    }),
+    revealOut: state.revealOut,
+  };
 }
 
 /** The broadcast part of the state: everything except the deals. */

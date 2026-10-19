@@ -8,6 +8,9 @@ import {
   PING_INTERVAL_MS,
   SILENCE_TIMEOUT_MS,
   type GamePhase,
+  type MafiaPhase,
+  type MafiaPublic,
+  type MafiaSecret,
   type OutgoingClientMessage,
   type PublicGame,
   type RejectReason,
@@ -26,15 +29,14 @@ export const RETRY_INTERVAL_MS = 2000;
 export type PlayerEnd = 'removed' | 'closed' | 'left' | 'unreachable' | RejectReason;
 
 /** The round as every phone sees it (`game` message). */
-export type PlayerGame = {
-  game: PartyGame;
-  round: number;
-  phase: GamePhase;
-  public: PublicGame;
-};
+export type PlayerGame =
+  | { game: PartyGame; round: number; phase: GamePhase; public: PublicGame }
+  | { game: 'mafia'; round: number; phase: MafiaPhase; public: MafiaPublic };
 
-/** This seat's secret for one round (`deal` message). */
-export type PlayerDeal = { game: PartyGame; round: number; secret: Secret };
+/** This seat's secret for one round (`deal` message); Mafia: our role. */
+export type PlayerDeal =
+  | { game: PartyGame; round: number; secret: Secret }
+  | { game: 'mafia'; round: number; secret: MafiaSecret };
 
 export type PlayerSnapshot = {
   status: 'connecting' | 'connected' | 'reconnecting' | 'ended';
@@ -204,18 +206,29 @@ export function createPlayerClient({
         return;
       case 'deal':
         update({
-          deal: { game: message.game, round: message.round, secret: message.secret },
+          deal:
+            message.game === 'mafia'
+              ? { game: 'mafia', round: message.round, secret: message.secret }
+              : { game: message.game, round: message.round, secret: message.secret },
         });
         return;
       case 'game': {
         const { deal } = snapshot;
         update({
-          game: {
-            game: message.game,
-            round: message.round,
-            phase: message.phase,
-            public: message.public,
-          },
+          game:
+            message.game === 'mafia'
+              ? {
+                  game: 'mafia',
+                  round: message.round,
+                  phase: message.phase,
+                  public: message.public,
+                }
+              : {
+                  game: message.game,
+                  round: message.round,
+                  phase: message.phase,
+                  public: message.public,
+                },
           deal:
             deal && deal.game === message.game && deal.round === message.round
               ? deal

@@ -182,5 +182,96 @@
     "next": "Keyingi savol",
     "done": "To'plam raundi tugadi",
     "newRound": "Yangi raund"
+  },
+  "maf": {
+    "setupTitle": "Mafiya · boshlovchi sozlamasi",
+    "chooseRoles": "Rollarni tanlang",
+    "players": "%{n} o'yinchi",
+    "summary": "%{total} / %{n} rol · %{balance}",
+    "balanced": "muvozanatli",
+    "townHeavy": "shahar ustun",
+    "mafiaHeavy": "mafiya ustun",
+    "teamCounts": "Shahar %{town} · Mafiya %{mafia} · Yakka %{solo}",
+    "revealOut": "Chiqqanning rolini ko'rsatish",
+    "revealOutSub": "O'chirilsa, o'yin qiyinroq",
+    "deal": "Rollarni tarqatish",
+    "needPlayers": "Boshlovchidan tashqari 5+ o'yinchi kerak",
+    "tooMany": "Rollar juda ko'p",
+    "needMafia": "Kamida 1 ta mafiya qo'shing",
+    "inProgress": "O'yin ketmoqda — keyingisida qatnashasiz",
+    "role": {
+      "boss": {
+        "name": "Mafiya boshlig'i",
+        "desc": "Mafiya ovozini boshqaradi. O'yinchi detektivmi — tekshiradi.",
+        "night": "Tunda mafiya bilan uyg'oning, qurbonni tanlang, so'ng boshlovchidan bir o'yinchi detektivmi deb so'rang."
+      },
+      "mafia": {
+        "name": "Mafiya",
+        "desc": "Boshliq bilan uyg'onib, qurbon tanlaydi.",
+        "night": "Tunda mafiya bilan uyg'oning va birgalikda kimni o'ldirishni tanlang."
+      },
+      "detective": {
+        "name": "Detektiv",
+        "desc": "Har tun bir o'yinchini tekshiradi: mafiyami yoki yo'q.",
+        "night": "Tunda bir o'yinchini ko'rsating — boshlovchi u mafiyami, bildiradi."
+      },
+      "doctor": {
+        "name": "Shifokor",
+        "desc": "Har tun bir o'yinchini qutqaradi. O'zini — bir marta.",
+        "night": "Tunda kimni qutqarishni tanlang. Mafiya uni tanlagan bo'lsa, hech kim o'lmaydi. O'zingizni bir marta qutqara olasiz."
+      },
+      "maniac": {
+        "name": "Manyak",
+        "desc": "Yakka o'ynaydi. Oxirgi qolsa, yutadi.",
+        "night": "Tunda yolg'iz uyg'oning va kimni o'ldirishni tanlang."
+      },
+      "lover": {
+        "name": "Oshiq",
+        "desc": "Bir o'yinchining tungi harakatini to'sadi.",
+        "night": "Tunda bir o'yinchini tanlang — uning tungi harakati bu kecha ishlamaydi."
+      },
+      "bodyguard": {
+        "name": "Tansoqchi",
+        "desc": "Bir o'yinchini qo'riqlaydi; uning o'rniga o'ladi.",
+        "night": "Tunda kimni qo'riqlashni tanlang. Unga hujum qilinsa, o'rniga siz o'lasiz."
+      },
+      "sniper": {
+        "name": "Snayper",
+        "desc": "O'yinda bitta o'q, tunda.",
+        "night": "O'yinda bir marta, tunda bir o'yinchini otishingiz mumkin. Oqilona tanlang."
+      },
+      "journalist": {
+        "name": "Jurnalist",
+        "desc": "Ikki o'yinchini solishtiradi: bir jamoadami yoki yo'q.",
+        "night": "Tunda ikki o'yinchini ko'rsating — boshlovchi ular bir jamoadami, bildiradi."
+      },
+      "immortal": {
+        "name": "O'lmas",
+        "desc": "Tunda o'ldirib bo'lmaydi. Faqat ovoz bilan chiqadi.",
+        "night": "Tungi o'ldirishlar sizga ta'sir qilmaydi. Faqat shahar ovozi sizni chiqara oladi."
+      },
+      "civilian": {
+        "name": "Tinch aholi",
+        "desc": "Tungi harakati yo'q. Mafiyani suhbatda topadi.",
+        "night": "Tunda uxlaysiz. Tungi harakat yo'q."
+      }
+    },
+    "team": {
+      "town": {
+        "name": "SHAHAR",
+        "day": "Kunduzi suhbatlashing, mafiyani toping va unga qarshi ovoz bering. Rolingizni oshkor qilmang.",
+        "win": "Barcha mafiya va manyak chiqqanda yutasiz."
+      },
+      "mafia": {
+        "name": "MAFIYA",
+        "day": "Kunduzi ko'zga tashlanmang va ovozni jamoangizdan chalg'iting.",
+        "win": "Mafiya qolganlarga teng yoki ko'p bo'lganda yutasiz."
+      },
+      "solo": {
+        "name": "YAKKA",
+        "day": "Kunduzi hech kimga ishonmang va ovozni o'zingizga foydali tomonga buring.",
+        "win": "Oxirgi yoki oxirgi ikkitadan biri bo'lib qolsangiz, yutasiz."
+      }
+    }
   }
 }

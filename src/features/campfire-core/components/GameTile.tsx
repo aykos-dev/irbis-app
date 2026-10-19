@@ -8,7 +8,6 @@ import { borders, radii, sizes, spacing } from '../../../shared/constants/spacin
 import { createThemedStyles } from '../../../shared/contexts/theme';
 import { t } from '../../../shared/i18n';
 import { campSizes, gameColors, type GameId } from '../campTheme';
-import { ComingSoonTag } from './ComingSoonTag';
 
 const VIEWBOX = '0 0 24 24';
 
@@ -58,22 +57,18 @@ function GameGlyph({ game }: { game: GameId }) {
 
 type Props = {
   game: GameId;
-  /** Games that are not playable yet show the "Coming soon" tag. */
-  comingSoon: boolean;
   onPress: () => void;
 };
 
-/** One CampHub game tile (AC2): icon, name, players · length, coming-soon tag when not live. */
-export function GameTile({ game, comingSoon, onPress }: Props) {
+/** One CampHub game tile (AC2): icon, name, players · length (every game is live since campfire-mafia). */
+export function GameTile({ game, onPress }: Props) {
   const styles = useStyles();
   const name = t(`camp.games.${game}`);
   const meta = t(`camp.games.${game}Meta`);
   return (
     <Pressable
       testID={`camp.hub.game.${game}`}
-      accessibilityLabel={
-        comingSoon ? `${name}, ${meta}, ${t('camp.comingSoon')}` : `${name}, ${meta}`
-      }
+      accessibilityLabel={`${name}, ${meta}`}
       onPress={onPress}
       style={[layout.tile, styles.tile]}
     >
@@ -82,7 +77,6 @@ export function GameTile({ game, comingSoon, onPress }: Props) {
       </View>
       <AppText variant="h3">{name}</AppText>
       <AppText variant="small">{meta}</AppText>
-      {comingSoon ? <ComingSoonTag /> : null}
     </Pressable>
   );
 }
