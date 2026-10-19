@@ -24,6 +24,8 @@ type StorageSchema = {
   'levels.lastMyLevel': string;
   /** The last loaded level table (`/v1/levels`) for offline opens: JSON LevelListResponseDto. */
   'levels.defs': string;
+  /** Campfire player profile, saved on the player sheet's Continue: JSON `{ nickname, animal }`. */
+  'camp.profile': string;
 };
 
 export type StorageKey = keyof StorageSchema;

@@ -11,6 +11,7 @@ import { PlaceScreen } from '../../features/places/screens/PlaceScreen';
 import { OnboardingNavigator } from '../../features/onboarding/OnboardingNavigator';
 import { isOnboardingDone, markOnboardingDone } from '../../features/onboarding/onboardingStore';
 import { SafetyScreen } from '../../features/auth/screens/SafetyScreen';
+import { ComingSoon } from '../../shared/components/ComingSoon';
 import { appConfig } from '../../shared/constants/config';
 import { useAuth } from '../../shared/contexts/auth';
 import { AuthNavigator } from './AuthNavigator';
@@ -72,6 +73,8 @@ export function RootNavigator() {
         component={LevelUpScreen}
         options={{ presentation: 'fullScreenModal', animation: 'fade', gestureEnabled: false }}
       />
+      <Stack.Screen name="CampLobby" component={ComingSoon} options={{ headerShown: true, title: '' }} />
+      <Stack.Screen name="CampJoin" component={ComingSoon} options={{ headerShown: true, title: '' }} />
       {appConfig.isQaEnabled ? (
         <>
           <Stack.Screen name="Debug" component={DebugScreen} />

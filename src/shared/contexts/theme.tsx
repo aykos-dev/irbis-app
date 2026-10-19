@@ -20,9 +20,15 @@ type Theme = {
 
 const ThemeContext = createContext<Theme | null>(null);
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+type ThemeProviderProps = {
+  children: ReactNode;
+  /** Pins a subtree to one scheme regardless of the system (Campfire is always dark). */
+  scheme?: ColorScheme;
+};
+
+export function ThemeProvider({ children, scheme: forced }: ThemeProviderProps) {
   const system = useColorScheme();
-  const scheme: ColorScheme = system === 'dark' ? 'dark' : 'light';
+  const scheme: ColorScheme = forced ?? (system === 'dark' ? 'dark' : 'light');
   const value = useMemo(() => ({ scheme, colors: themeColors[scheme] }), [scheme]);
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }

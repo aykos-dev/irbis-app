@@ -79,6 +79,10 @@ export type RootStackParamList = {
     maxDifficulty: number;
     newPlacesCount: number;
   };
+  /** Campfire host lobby (campfire-core slice 2; coming-soon stub until then). */
+  CampLobby: undefined;
+  /** Campfire join screen (campfire-core slice 3; coming-soon stub until then). */
+  CampJoin: undefined;
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<

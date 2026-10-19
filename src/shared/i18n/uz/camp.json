@@ -1,0 +1,45 @@
+{
+  "segments": {
+    "feed": "Lenta",
+    "groups": "Guruhlar",
+    "campfire": "Gulxan o'yinlari"
+  },
+  "hub": {
+    "title": "Gulxan o'yinlari",
+    "offline": "Internetsiz ishlaydi",
+    "heroTitle": "Internet yo'qmi? Muammo emas.",
+    "heroBody": "Bitta hotspotga ulaning va birga o'ynang.",
+    "host": "Ochish",
+    "join": "Qo'shilish",
+    "games": "O'yinlar",
+    "tripGroup": "Sayohat guruhingiz bilan o'ynang",
+    "badges": "Gulxan nishonlari"
+  },
+  "games": {
+    "imposter": "Sotqin",
+    "mafia": "Mafiya",
+    "whoami": "Men kimman?",
+    "rather": "Nimani tanlaysan",
+    "imposterMeta": "3–15 · 5–10 daq",
+    "mafiaMeta": "6–15 · 20–40 daq",
+    "whoamiMeta": "3–12 · 10–20 daq",
+    "ratherMeta": "2–15 · cheksiz"
+  },
+  "comingSoon": "Tez orada",
+  "comingSoonToast": "Keyingi yangilanishda chiqadi",
+  "player": {
+    "title": "Kim o'ynayapti?",
+    "nickname": "O'yindagi ism",
+    "nicknameError": "2–16 ta belgi",
+    "avatar": "Hayvoningizni tanlang",
+    "continue": "Davom etish"
+  },
+  "animals": {
+    "fox": "Tulki",
+    "ibex": "Tog' echkisi",
+    "bear": "Ayiq",
+    "marmot": "Sug'ur",
+    "eagle": "Burgut",
+    "panda": "Panda"
+  }
+}

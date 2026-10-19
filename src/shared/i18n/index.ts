@@ -4,6 +4,7 @@ import { findBestLanguageTag } from 'react-native-localize';
 import { storage } from '../storage';
 
 import enAuth from './en/auth.json';
+import enCamp from './en/camp.json';
 import enCommon from './en/common.json';
 import enConditions from './en/conditions.json';
 import enDebug from './en/debug.json';
@@ -14,6 +15,7 @@ import enNav from './en/nav.json';
 import enOnboarding from './en/onboarding.json';
 import enPlaces from './en/places.json';
 import ruAuth from './ru/auth.json';
+import ruCamp from './ru/camp.json';
 import ruCommon from './ru/common.json';
 import ruConditions from './ru/conditions.json';
 import ruDebug from './ru/debug.json';
@@ -24,6 +26,7 @@ import ruNav from './ru/nav.json';
 import ruOnboarding from './ru/onboarding.json';
 import ruPlaces from './ru/places.json';
 import uzAuth from './uz/auth.json';
+import uzCamp from './uz/camp.json';
 import uzCommon from './uz/common.json';
 import uzConditions from './uz/conditions.json';
 import uzDebug from './uz/debug.json';
@@ -53,6 +56,7 @@ const fallbackLocale: Locale = 'en';
 export const i18n = new I18n({
   en: {
     auth: enAuth,
+    camp: enCamp,
     common: enCommon,
     conditions: enConditions,
     debug: enDebug,
@@ -65,6 +69,7 @@ export const i18n = new I18n({
   },
   ru: {
     auth: ruAuth,
+    camp: ruCamp,
     common: ruCommon,
     conditions: ruConditions,
     debug: ruDebug,
@@ -77,6 +82,7 @@ export const i18n = new I18n({
   },
   uz: {
     auth: uzAuth,
+    camp: uzCamp,
     common: uzCommon,
     conditions: uzConditions,
     debug: uzDebug,

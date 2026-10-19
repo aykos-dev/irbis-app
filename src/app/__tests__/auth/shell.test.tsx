@@ -41,10 +41,13 @@ describe('auth — bottom tabs and guest profile (AC1, AC2, AC10)', () => {
   it('AC1: Lessons and Community show the same empty state; each press logs tab_opened', async () => {
     await renderApp();
 
-    for (const tab of ['lessons', 'community'] as const) {
+    for (const tab of ['lessons'] as const) {
       await openTab(tab);
       expect(await screen.findByTestId('empty.coming-soon')).toBeOnTheScreen();
     }
+    // Community shipped its Campfire hub (campfire-core AC1); the tab still logs tab_opened.
+    await openTab('community');
+    expect(await screen.findByTestId('camp.hub.screen')).toBeOnTheScreen();
 
     const tabs = qaEvents()
       .filter(entry => entry.event === 'tab_opened')
