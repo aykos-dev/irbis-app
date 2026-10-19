@@ -16,6 +16,8 @@ import { playerSession } from '../join/playerClient';
 import type {
   GamePhase,
   ImposterSecret,
+  MafiaPublic,
+  MafiaSecret,
   PublicGame,
   RosterPlayer,
   Secret,
@@ -24,8 +26,9 @@ import type {
 } from '../protocol/codec';
 import { HOST_SEAT_ID } from '../room/roomReducer';
 import { hostGame } from '../room/useHostRoom';
-import { toPublic } from './gameReducer';
+import { toPublic, type MafiaState } from './gameReducer';
 import { ImposterScreen } from './imposter/ImposterScreen';
+import { MafiaScreen } from './mafia/MafiaScreen';
 import type { PartyGame } from './packs';
 import { RatherScreen } from './rather/RatherScreen';
 import { WhoAmIScreen } from './whoami/WhoAmIScreen';
@@ -59,6 +62,24 @@ const hostControls = {
   onNewRound: () => hostGame.newRound(),
 };
 
+const mafiaHostControls = {
+  onPhaseNext: () => hostGame.mafPhaseNext(),
+  onMarkOut: (seatId: string) => hostGame.mafMarkOut(seatId),
+  onMarkBack: (seatId: string) => hostGame.mafMarkBack(seatId),
+};
+
+/** Mafia: the narrator's game, a player's dealt view, or a mid-game joiner who waits. */
+type MafiaView =
+  | { kind: 'host'; game: MafiaState }
+  | {
+      kind: 'player';
+      round: number;
+      info: MafiaPublic;
+      secret: MafiaSecret;
+      selfSeatId: string | null;
+    }
+  | { kind: 'waiting' };
+
 const ratherHostControls = {
   onReveal: () => hostGame.revealVotes(),
   onNext: () => hostGame.nextQuestion(),
@@ -66,7 +87,7 @@ const ratherHostControls = {
 };
 
 /**
- * The game route every phone opens on Start (AC2): the Imposter, Who am I or Would you rather board;
+ * The game route every phone opens on Start (AC2): the Imposter, Who am I, Would you rather or Mafia board;
  * a mid-round joiner sees "Round in progress". The host ends the game for everyone; the end (or
  * `lobby` from the host) returns to the lobby.
  */
@@ -91,13 +112,22 @@ export function GameWaiting({
   );
   const [confirmEnd, setConfirmEnd] = useState(false);
 
-  /** Mafia until its board ships (slice 2): `dealt` = this phone plays (or narrates) this game. */
-  let mafia: { dealt: boolean } | null = null;
+  let mafia: MafiaView | null = null;
   let view: GameView | null = null;
   if (hosted?.game === 'mafia') {
-    mafia = { dealt: true };
+    mafia = { kind: 'host', game: hosted };
   } else if (player?.game?.game === 'mafia') {
-    mafia = { dealt: player.deal?.game === 'mafia' };
+    const { deal } = player;
+    mafia =
+      deal?.game === 'mafia'
+        ? {
+            kind: 'player',
+            round: player.game.round,
+            info: player.game.public,
+            secret: deal.secret,
+            selfSeatId: player.seatId,
+          }
+        : { kind: 'waiting' };
   } else if (hosted) {
     view = {
       game: hosted.game,
@@ -154,12 +184,31 @@ export function GameWaiting({
   return (
     <ThemeProvider scheme={campScheme}>
       <Screen testID="camp.game.waiting" scroll>
-        {mafia ? (
+        {mafia?.kind === 'host' ? (
+          <MafiaScreen
+            kind="host"
+            game={mafia.game}
+            roster={hostRoster}
+            controls={mafiaHostControls}
+          />
+        ) : null}
+        {mafia?.kind === 'player' ? (
+          <MafiaScreen
+            kind="player"
+            round={mafia.round}
+            info={mafia.info}
+            secret={mafia.secret}
+            selfSeatId={mafia.selfSeatId}
+            roster={player?.players ?? noRoster}
+            onReady={() => client?.mafReady()}
+          />
+        ) : null}
+        {mafia?.kind === 'waiting' ? (
           <AppText variant="h1" accessibilityRole="header" style={layout.center}>
             {t('camp.games.mafia')}
           </AppText>
         ) : null}
-        {mafia && !mafia.dealt ? (
+        {mafia?.kind === 'waiting' ? (
           <AppText
             testID="camp.game.in-progress"
             variant="body"

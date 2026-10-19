@@ -272,6 +272,30 @@
         "day": "Kunduzi hech kimga ishonmang va ovozni o'zingizga foydali tomonga buring.",
         "win": "Oxirgi yoki oxirgi ikkitadan biri bo'lib qolsangiz, yutasiz."
       }
-    }
+    },
+    "cardHeader": "MAFIYA · %{n} O'YINCHI",
+    "seat": "%{k}-o'rin · %{name}",
+    "roleReady": "Rolingiz tayyor",
+    "readyHint": "Ko'rish uchun kartani bosib turing. Ekraningizni hech kim ko'rmayotganiga ishonch hosil qiling.",
+    "youAre": "SIZNING ROLINGIZ",
+    "teamLine": "JAMOA: %{team}",
+    "imReady": "Tayyorman · %{r} / %{n}",
+    "readyDone": "Tayyor · %{r} / %{n}",
+    "narrator": "Mafiya · boshlovchi",
+    "night": "%{n}-tun",
+    "day": "%{n}-kun",
+    "hostLine": "Tirik %{a} / %{n} · Mafiya %{mafia} · Shahar %{town} · Yakka %{solo}",
+    "aliveLine": "%{a} / %{n} tirik",
+    "alive": "tirik",
+    "killed": "o'ldirildi · %{n}-tun",
+    "exiled": "quvildi · %{n}-kun",
+    "outTitle": "Chiqqanlar",
+    "youreOut": "Siz chiqdingiz — %{fate}. Jim turing, ishora bermang!",
+    "readyTick": "Tayyor",
+    "markKilled": "Tunda o'ldirildi",
+    "markExiled": "Kunduzi quvildi",
+    "markBack": "O'yinga qaytarish",
+    "startDay": "%{n}-kunni boshlash",
+    "startNight": "%{n}-tunni boshlash"
   }
 }

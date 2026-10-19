@@ -80,6 +80,12 @@ export type HostServer = {
   nextQuestion: () => void;
   /** Who am I: deals the seat its own character (`mine`), to that seat only. */
   showMine: (seatId: string) => void;
+  /** Mafia: Night n → Day n → Night n+1. */
+  mafPhaseNext: () => void;
+  /** Mafia: the narrator marks a player out (killed at night, exiled by day). */
+  mafMarkOut: (seatId: string) => void;
+  /** Mafia: the narrator takes a mark back. */
+  mafMarkBack: (seatId: string) => void;
 };
 
 type Options = {
@@ -330,6 +336,13 @@ export function createHostServer({
           applyGame({ type: 'mafReady', seatId, round: message.round })
         ) {
           broadcastGame(false);
+          const next = current();
+          if (next?.game === 'mafia') {
+            qaLog('maf_ready', {
+              ready: next.ready.length,
+              players: next.players.length,
+            });
+          }
         }
         return;
       }
@@ -537,6 +550,38 @@ export function createHostServer({
       if (game) {
         showMine(seatId, game.round);
       }
+    },
+    mafPhaseNext: () => {
+      if (game?.game !== 'mafia' || !applyGame({ type: 'mafPhaseNext' })) {
+        return;
+      }
+      broadcastGame(false);
+      const next = current();
+      if (next?.game === 'mafia') {
+        qaLog('maf_phase', { kind: next.phase.kind, n: next.phase.n });
+      }
+    },
+    mafMarkOut: seatId => {
+      if (game?.game !== 'mafia') {
+        return;
+      }
+      const { phase } = game;
+      const reason = phase.kind === 'night' ? 'killed' : 'exiled';
+      if (!applyGame({ type: 'mafMarkOut', seatId, reason })) {
+        return;
+      }
+      broadcastGame(false);
+      qaLog('maf_out', { reason, phase: phase.kind });
+    },
+    mafMarkBack: seatId => {
+      if (
+        game?.game !== 'mafia' ||
+        !applyGame({ type: 'mafMarkBack', seatId })
+      ) {
+        return;
+      }
+      broadcastGame(false);
+      qaLog('maf_back');
     },
     reveal: () => {
       if (!game || !applyGame({ type: 'reveal' }) || game.game === 'mafia') {

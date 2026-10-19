@@ -81,9 +81,13 @@ export const mafiaRoleColors = {
   civilian: '#5E6E74',
 } as const;
 
-/** Mafia setup rows (canvas MafSetup). */
+/** Mafia setup rows (canvas MafSetup), role card and narrator list (MafRole / MafHost). */
 export const mafiaSizes = {
   roleTile: 40,
   roleGlyph: 22,
   stepper: 36,
+  cardTile: 72,
+  cardGlyph: 40,
+  chipGlyph: 14,
+  rowAvatar: 40,
 } as const;

@@ -272,6 +272,30 @@
         "day": "By day trust nobody and steer the vote to suit you.",
         "win": "You win if you're the last one standing, or one of the last two."
       }
-    }
+    },
+    "cardHeader": "MAFIA · %{n} PLAYERS",
+    "seat": "Seat %{k} · %{name}",
+    "roleReady": "Your role is ready",
+    "readyHint": "Hold the card to look. Make sure nobody can see your screen.",
+    "youAre": "YOU ARE THE",
+    "teamLine": "TEAM %{team}",
+    "imReady": "I'm ready · %{r} / %{n}",
+    "readyDone": "Ready · %{r} / %{n}",
+    "narrator": "Mafia · narrator",
+    "night": "Night %{n}",
+    "day": "Day %{n}",
+    "hostLine": "Alive %{a} / %{n} · Mafia %{mafia} · Town %{town} · Solo %{solo}",
+    "aliveLine": "%{a} / %{n} alive",
+    "alive": "alive",
+    "killed": "killed · Night %{n}",
+    "exiled": "exiled · Day %{n}",
+    "outTitle": "Out",
+    "youreOut": "You're out — %{fate}. Stay quiet, no hints!",
+    "readyTick": "Ready",
+    "markKilled": "Killed at night",
+    "markExiled": "Exiled by day",
+    "markBack": "Back in game",
+    "startDay": "Start Day %{n}",
+    "startNight": "Start Night %{n}"
   }
 }

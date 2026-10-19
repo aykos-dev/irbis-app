@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import {
   gamePhaseSchema,
+  mafiaOutSchema,
   mafiaPhaseSchema,
   mafiaSecretSchema,
   partyGameSchema,
@@ -73,15 +74,10 @@ export const mafiaStateSchema = z.object({
   deals: z.record(z.string(), mafiaSecretSchema),
   counts: mafiaCountsSchema,
   revealOut: z.boolean(),
-  /** Seats that sent `mafReady` this phase. */
+  /** Seats that sent `mafReady` (the host shows the ticks during Night 1). */
   ready: z.array(z.string()),
-  out: z.array(
-    z.object({
-      seatId: z.string(),
-      reason: z.enum(['killed', 'exiled']),
-      phase: mafiaPhaseSchema,
-    }),
-  ),
+  /** `roleId` is stored only when the host reveals roles of players who are out. */
+  out: z.array(mafiaOutSchema),
 });
 export type MafiaState = z.infer<typeof mafiaStateSchema>;
 
@@ -124,7 +120,12 @@ export type GameAction =
 export type MafiaAction =
   /** `seats` are the players only (host excluded). */
   | { type: 'startMafia'; settings: MafiaSettings; seats: GameSeat[]; rng: Rng }
-  | { type: 'mafReady'; seatId: string; round: number };
+  | { type: 'mafReady'; seatId: string; round: number }
+  /** Night n → Day n → Night n+1. */
+  | { type: 'mafPhaseNext' }
+  /** The narrator marks a player out: killed at night, exiled by day. */
+  | { type: 'mafMarkOut'; seatId: string; reason: 'killed' | 'exiled' }
+  | { type: 'mafMarkBack'; seatId: string };
 
 export type HostAction = GameAction | MafiaAction;
 
@@ -269,6 +270,9 @@ export function gameReducer(
   }
   switch (action.type) {
     case 'mafReady':
+    case 'mafPhaseNext':
+    case 'mafMarkOut':
+    case 'mafMarkBack':
       return state;
     case 'newRound': {
       const players = roundSeats(action.seats);
@@ -450,6 +454,43 @@ function mafiaReducer(state: MafiaState, action: HostAction): MafiaState | null 
         return state;
       }
       return { ...state, ready: [...state.ready, action.seatId] };
+    case 'mafPhaseNext':
+      return {
+        ...state,
+        phase:
+          state.phase.kind === 'night'
+            ? { kind: 'day', n: state.phase.n }
+            : { kind: 'night', n: state.phase.n + 1 },
+      };
+    case 'mafMarkOut': {
+      if (
+        !state.players.includes(action.seatId) ||
+        state.out.some(entry => entry.seatId === action.seatId)
+      ) {
+        return state;
+      }
+      const roleId = state.deals[action.seatId]?.roleId;
+      return {
+        ...state,
+        out: [
+          ...state.out,
+          {
+            seatId: action.seatId,
+            reason: action.reason,
+            phase: state.phase,
+            ...(state.revealOut && roleId ? { roleId } : {}),
+          },
+        ],
+      };
+    }
+    case 'mafMarkBack':
+      if (!state.out.some(entry => entry.seatId === action.seatId)) {
+        return state;
+      }
+      return {
+        ...state,
+        out: state.out.filter(entry => entry.seatId !== action.seatId),
+      };
     default:
       return state;
   }

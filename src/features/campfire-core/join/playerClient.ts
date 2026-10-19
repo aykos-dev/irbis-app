@@ -63,6 +63,8 @@ export type PlayerClient = {
   vote: (pick: WyrPick) => void;
   /** Who am I: asks the host for our own character. */
   showMine: () => void;
+  /** Mafia: we have seen our role. */
+  mafReady: () => void;
   getSnapshot: () => PlayerSnapshot;
   subscribe: (listener: () => void) => () => void;
 };
@@ -340,6 +342,12 @@ export function createPlayerClient({
       const { game } = snapshot;
       if (game?.game === 'whoami') {
         send({ type: 'showMine', round: game.round });
+      }
+    },
+    mafReady: () => {
+      const { game } = snapshot;
+      if (game?.game === 'mafia') {
+        send({ type: 'mafReady', round: game.round });
       }
     },
     stop: () => {

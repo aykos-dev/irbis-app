@@ -79,6 +79,9 @@ export const hostGame = {
   revealVotes: (): void => hostGameServer?.revealVotes(),
   nextQuestion: (): void => hostGameServer?.nextQuestion(),
   showMine: (): void => hostGameServer?.showMine(HOST_SEAT_ID),
+  mafPhaseNext: (): void => hostGameServer?.mafPhaseNext(),
+  mafMarkOut: (seatId: string): void => hostGameServer?.mafMarkOut(seatId),
+  mafMarkBack: (seatId: string): void => hostGameServer?.mafMarkBack(seatId),
 };
 
 /** Random 4-digit room code, 1000–9999. */
