@@ -72,6 +72,10 @@ jest.mock('react-native-tcp-socket', () => require('./jest/campNetFakes').tcpSoc
 jest.mock('react-native-zeroconf', () => require('./jest/campNetFakes').zeroconfModule);
 jest.mock('react-native-vision-camera', () => require('./jest/campNetFakes').visionCameraModule);
 jest.mock('react-native-wifi-reborn', () => require('./jest/campNetFakes').wifiModule);
+jest.mock('react-native-device-info', () => require('./jest/campNetFakes').deviceInfoModule);
+beforeEach(() => {
+  require('./jest/campNetFakes').fakeDevice.reset();
+});
 
 /*
  * Every app-level test runs on a returning device (onboarding already ended) unless it opts into

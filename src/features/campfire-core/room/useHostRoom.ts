@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import DeviceInfo from 'react-native-device-info';
 
 import { qaLog } from '../../../shared/utils/qaLog';
 import { campNet } from '../native/campNet';
+import { hostsWithGuide } from '../native/hostPlatform';
 import { initialProfile, readProfile } from '../playerProfile';
 import { CAMP_PORT } from '../protocol/codec';
 import { buildJoinUrl } from '../protocol/qr';
@@ -11,7 +13,9 @@ import { createRoom, resumeRoom, type RoomState } from './roomReducer';
 
 export type HostNetwork =
   | { mode: 'hotspot'; ip: string; ssid: string; password: string }
-  | { mode: 'wifi'; ip: string; name: string };
+  | { mode: 'wifi'; ip: string; name: string }
+  /** iPhone host: Personal Hotspot (`hotspot`) or Wi-Fi the user turned on; QR has no Wi-Fi. */
+  | { mode: 'ios'; ip: string; hotspot: boolean; name: string };
 
 export type HostRoom =
   | { phase: 'starting' }
@@ -26,8 +30,25 @@ function randomCode(): string {
 type Opened =
   { network: HostNetwork } | { network: null; permissionDenied: boolean };
 
+/** iPhone (AC4): Personal Hotspot, else Wi-Fi; the guide already asked the user to turn it on. */
+async function openIosNetwork(): Promise<Opened> {
+  const address = await campNet.getIosHostAddress();
+  if (!address) {
+    return { network: null, permissionDenied: false };
+  }
+  const name = address.hotspot
+    ? await DeviceInfo.getDeviceName()
+    : (await campNet.getWifiName()) ?? address.ip;
+  return {
+    network: { mode: 'ios', ip: address.ip, hotspot: address.hotspot, name },
+  };
+}
+
 /** Hotspot first (AC4); denied or failed → the Wi-Fi the phone is on; neither → null. */
 async function openNetwork(): Promise<Opened> {
+  if (hostsWithGuide()) {
+    return openIosNetwork();
+  }
   let granted = false;
   try {
     granted = await campNet.requestHotspotPermission();
@@ -58,6 +79,13 @@ function stopNetwork(network: HostNetwork): void {
       reason: error instanceof Error ? error.name : 'unknown',
     });
   });
+}
+
+function hostedMode(network: HostNetwork): 'hotspot' | 'wifi' {
+  if (network.mode === 'ios') {
+    return network.hotspot ? 'hotspot' : 'wifi';
+  }
+  return network.mode;
 }
 
 function joinUrl(network: HostNetwork, code: string): string {
@@ -147,7 +175,7 @@ export function useHostRoom(resume: boolean) {
       if (saved) {
         qaLog('camp_room_resumed', { seats: room.seats.length });
       } else {
-        qaLog('camp_room_hosted', { mode: network.mode });
+        qaLog('camp_room_hosted', { mode: hostedMode(network) });
       }
     };
 

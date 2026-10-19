@@ -18,7 +18,9 @@ import { haptics } from '../../../shared/utils/haptics';
 import { campSizes, type GameId } from '../campTheme';
 import { ComingSoonTag } from '../components/ComingSoonTag';
 import { GameTile } from '../components/GameTile';
+import { IosHotspotGuide } from '../components/IosHotspotGuide';
 import { PlayerSheet, type CampRole } from '../components/PlayerSheet';
+import { hostsWithGuide } from '../native/hostPlatform';
 import { loadHostRoom } from '../room/hostRoomStore';
 
 const games: GameId[] = ['imposter', 'mafia', 'whoami', 'rather'];
@@ -32,6 +34,7 @@ export function CampHubScreen() {
   const { show } = useToast();
   const styles = useStyles();
   const [sheet, setSheet] = useState<CampRole | null>(null);
+  const [guide, setGuide] = useState(false);
   const [savedCode, setSavedCode] = useState<string | null>(null);
 
   // A room hosted in the last 12 h can be resumed (AC7); re-read whenever the hub is back in view.
@@ -46,9 +49,19 @@ export function CampHubScreen() {
     show({ variant: 'info', message: t('camp.comingSoonToast') });
   };
 
+  // An iPhone can't start a hotspot itself: the host turns it on first (AC4).
   const onContinue = (role: CampRole) => {
     setSheet(null);
+    if (role === 'host' && hostsWithGuide()) {
+      setGuide(true);
+      return;
+    }
     navigation.navigate(role === 'host' ? 'CampLobby' : 'CampJoin');
+  };
+
+  const onHotspotReady = () => {
+    setGuide(false);
+    navigation.navigate('CampLobby');
   };
 
   return (
@@ -106,6 +119,7 @@ export function CampHubScreen() {
       <TaggedCard testID="camp.hub.badges" label={t('camp.hub.badges')} onPress={comingSoon} />
 
       {sheet ? <PlayerSheet role={sheet} onContinue={onContinue} onDismiss={() => setSheet(null)} /> : null}
+      {guide ? <IosHotspotGuide onReady={onHotspotReady} onDismiss={() => setGuide(false)} /> : null}
     </View>
   );
 }

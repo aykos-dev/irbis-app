@@ -8,8 +8,9 @@ import {
 import { z } from 'zod';
 
 /**
- * Typed wrapper of the Android `CampNet` native module (android/app/.../campnet): local-only
- * hotspot and the phone's Wi-Fi address. The only caller of `NativeModules.CampNet`.
+ * Typed wrapper of the `CampNet` native module: on Android (android/app/.../campnet) the
+ * local-only hotspot and the Wi-Fi address; on iOS (ios/Irbis/CampNet) only the addresses of
+ * Personal Hotspot and Wi-Fi, since iOS can't start a hotspot. The only caller of its methods.
  */
 const hotspotSchema = z.object({
   ssid: z.string().min(1),
@@ -18,10 +19,21 @@ const hotspotSchema = z.object({
 });
 export type HotspotInfo = z.infer<typeof hotspotSchema>;
 
+/** iOS resolves `{ ip, iface }` (`bridge100` = Personal Hotspot, `en0` = Wi-Fi); Android a string. */
+const addressSchema = z.object({ ip: z.string().min(1), iface: z.string() });
+const ipSchema = z
+  .union([z.string().min(1), addressSchema.transform(address => address.ip)])
+  .nullable();
+
+/** Where an iPhone host serves the room: Personal Hotspot when it is on, else Wi-Fi. */
+export type IosHostAddress = { ip: string; hotspot: boolean };
+
 type NativeCampNet = {
   startHotspot: () => Promise<unknown>;
   stopHotspot: () => Promise<unknown>;
   getWifiIp: () => Promise<unknown>;
+  /** iOS only. */
+  getHotspotIp?: () => Promise<unknown>;
 };
 
 function isNativeCampNet(value: unknown): value is NativeCampNet {
@@ -79,12 +91,31 @@ async function getWifiIp(): Promise<string | null> {
   if (!isNativeCampNet(NativeModules.CampNet)) {
     return null;
   }
-  const ip = z
-    .string()
-    .min(1)
-    .nullable()
-    .safeParse(await native().getWifiIp());
+  const ip = ipSchema.safeParse(await native().getWifiIp());
   return ip.success ? ip.data : null;
+}
+
+/** iOS: IPv4 of Personal Hotspot (`bridge100`) when it is on, else null. Android: always null. */
+async function getHotspotIp(): Promise<string | null> {
+  if (Platform.OS !== 'ios' || !isNativeCampNet(NativeModules.CampNet)) {
+    return null;
+  }
+  const module = native();
+  if (!module.getHotspotIp) {
+    return null;
+  }
+  const ip = ipSchema.safeParse(await module.getHotspotIp());
+  return ip.success ? ip.data : null;
+}
+
+/** iOS host (AC4): Personal Hotspot first, then Wi-Fi; null when neither is on. */
+async function getIosHostAddress(): Promise<IosHostAddress | null> {
+  const hotspotIp = await getHotspotIp();
+  if (hotspotIp) {
+    return { ip: hotspotIp, hotspot: true };
+  }
+  const wifiIp = await getWifiIp();
+  return wifiIp ? { ip: wifiIp, hotspot: false } : null;
 }
 
 /** The Wi-Fi network name when the OS shares it, else null. */
@@ -102,5 +133,7 @@ export const campNet = {
   startHotspot,
   stopHotspot,
   getWifiIp,
+  getHotspotIp,
+  getIosHostAddress,
   getWifiName,
 };

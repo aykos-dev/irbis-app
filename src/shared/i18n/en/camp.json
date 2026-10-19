@@ -69,7 +69,9 @@
     "permission": "Allow nearby Wi-Fi devices to start the hotspot",
     "waitHost": "Waiting for the host to start",
     "reconnectingSelf": "Reconnecting to the host…",
-    "leave": "Leave"
+    "leave": "Leave",
+    "iosJoinFirst": "Players join your Wi-Fi in Settings first",
+    "battery": "Battery %{pct}% — plug in so the room doesn't stop"
   },
   "join": {
     "title": "Join a game",
@@ -89,5 +91,13 @@
     "allowCamera": "Allow camera",
     "removed": "The host removed you from the room",
     "closed": "The host closed the room"
+  },
+  "guide": {
+    "title": "Turn on Personal Hotspot",
+    "step1": "Open Settings → Personal Hotspot",
+    "step2": "Switch on \"Allow Others to Join\"",
+    "step3": "Come back to Irbis and tap \"It's on\"",
+    "done": "It's on",
+    "notOn": "We can't see the hotspot or Wi-Fi yet. Check it's on and try again."
   }
 }

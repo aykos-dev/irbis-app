@@ -1,4 +1,4 @@
-import { createElement, useState } from 'react';
+import { createElement, useState, useSyncExternalStore } from 'react';
 import { View } from 'react-native';
 
 /**
@@ -334,5 +334,75 @@ export const wifiModule = {
         throw new Error('unableToConnect');
       }
     },
+  },
+};
+
+/**
+ * `react-native-device-info`: the battery the host lobby watches (AC8) and the device name.
+ * `fakeDevice.set` changes the power state and notifies mounted hooks, like the OS events do.
+ */
+type FakePowerState = {
+  batteryLevel: number;
+  batteryState: 'unknown' | 'unplugged' | 'charging' | 'full';
+  lowPowerMode: boolean;
+};
+
+const deviceListeners = new Set<() => void>();
+const healthyBattery: FakePowerState = {
+  batteryLevel: 0.8,
+  batteryState: 'unplugged',
+  lowPowerMode: false,
+};
+
+export const fakeDevice = {
+  power: healthyBattery,
+  name: 'iPhone',
+  set(power: Partial<FakePowerState>): void {
+    fakeDevice.power = { ...fakeDevice.power, ...power };
+    deviceListeners.forEach(listener => listener());
+  },
+  reset(): void {
+    fakeDevice.power = healthyBattery;
+    fakeDevice.name = 'iPhone';
+  },
+};
+
+function subscribeDevice(listener: () => void): () => void {
+  deviceListeners.add(listener);
+  return () => {
+    deviceListeners.delete(listener);
+  };
+}
+
+const deviceInfo = {
+  getPowerState: async () => fakeDevice.power,
+  getBatteryLevel: async () => fakeDevice.power.batteryLevel,
+  getDeviceName: async () => fakeDevice.name,
+};
+
+export const deviceInfoModule = {
+  __esModule: true,
+  default: deviceInfo,
+  ...deviceInfo,
+  usePowerState: () => useSyncExternalStore(subscribeDevice, () => fakeDevice.power),
+  useBatteryLevel: () =>
+    useSyncExternalStore(subscribeDevice, () => fakeDevice.power.batteryLevel),
+};
+
+/** The iOS `CampNet` native module (`NativeModules.CampNet` on an iPhone): addresses only. */
+export const fakeIosCampNet = {
+  hotspot: null as { ip: string; iface: string } | null,
+  wifi: null as { ip: string; iface: string } | null,
+  module: {
+    startHotspot: async () => {
+      throw Object.assign(new Error('unsupported'), { code: 'unsupported' });
+    },
+    stopHotspot: async () => null,
+    getWifiIp: async () => fakeIosCampNet.wifi,
+    getHotspotIp: async () => fakeIosCampNet.hotspot,
+  },
+  reset(): void {
+    fakeIosCampNet.hotspot = null;
+    fakeIosCampNet.wifi = null;
   },
 };

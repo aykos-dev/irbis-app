@@ -15,7 +15,7 @@ import { Sheet } from '../../../shared/components/Sheet';
 import { Skeleton } from '../../../shared/components/Skeleton';
 import { StatusChip } from '../../../shared/components/StatusChip';
 import { useToast } from '../../../shared/components/Toast';
-import { palette } from '../../../shared/constants/colors';
+import { conditionColors, palette } from '../../../shared/constants/colors';
 import {
   borders,
   radii,
@@ -34,6 +34,7 @@ import { campScheme, lobbySizes, type GameId } from '../campTheme';
 import { ComingSoonTag } from '../components/ComingSoonTag';
 import { PlayerAvatar } from '../components/PlayerAvatar';
 import { RoomQr } from '../components/RoomQr';
+import { useHostBattery } from '../hooks/useHostBattery';
 import { playerSession, type PlayerClient } from '../join/playerClient';
 import type { RosterPlayer } from '../protocol/codec';
 import { reconnectingCount, toRoster } from '../room/roomReducer';
@@ -51,9 +52,18 @@ function gameLabel(game: GameId): string {
 }
 
 function chipLabel(network: HostNetwork): string {
-  return network.mode === 'hotspot'
+  return network.mode === 'hotspot' ||
+    (network.mode === 'ios' && network.hotspot)
     ? t('camp.lobby.hotspotOn')
     : t('camp.lobby.wifiChip', { name: network.name });
+}
+
+/** Line under the code: hotspot password is in the QR (Android), or join in Settings (iPhone). */
+function qrNote(network: HostNetwork): string | null {
+  if (network.mode === 'hotspot') {
+    return t('camp.lobby.pwInQr');
+  }
+  return network.mode === 'ios' ? t('camp.lobby.iosJoinFirst') : null;
 }
 
 /** The host's lobby, or the seated player's when opened with `player` (AC6). */
@@ -78,6 +88,9 @@ function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
   const [confirmClose, setConfirmClose] = useState(false);
   const [left, setLeft] = useState(false);
   const pendingAction = useRef<NavigationAction | null>(null);
+  const batteryPct = useHostBattery(
+    state.phase === 'ready' ? state.room.code : null,
+  );
 
   usePreventRemove(state.phase === 'ready' && !left, ({ data }) => {
     pendingAction.current = data.action;
@@ -127,6 +140,20 @@ function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
           ) : null}
         </View>
 
+        {batteryPct !== null ? (
+          <View
+            testID="camp.lobby.battery"
+            style={layout.battery}
+            accessible
+            accessibilityRole="alert"
+            accessibilityLiveRegion="polite"
+          >
+            <AppText variant="small" style={layout.batteryText}>
+              {t('camp.lobby.battery', { pct: batteryPct })}
+            </AppText>
+          </View>
+        ) : null}
+
         {state.phase === 'starting' ? (
           <View
             testID="camp.lobby.loading"
@@ -169,6 +196,7 @@ function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
               ssid={
                 state.network.mode === 'hotspot' ? state.network.ssid : null
               }
+              note={qrNote(state.network)}
             />
             <Players
               players={toRoster(state.room)}
@@ -462,6 +490,13 @@ const layout = StyleSheet.create({
     borderWidth: borders.card,
   },
   pillSelected: { borderColor: palette.purple },
+  battery: {
+    backgroundColor: conditionColors.caution.chipBg,
+    borderRadius: radii.tile,
+    paddingVertical: spacing[10],
+    paddingHorizontal: spacing[14],
+  },
+  batteryText: { color: conditionColors.caution.chipFg },
 });
 
 const useStyles = createThemedStyles(c => ({

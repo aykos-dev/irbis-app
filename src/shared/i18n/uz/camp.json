@@ -69,7 +69,9 @@
     "permission": "Yaqin Wi-Fi qurilmalariga ruxsat bering",
     "waitHost": "Boshlovchi boshlashini kutyapmiz",
     "reconnectingSelf": "Boshlovchiga qayta ulanmoqda…",
-    "leave": "Chiqish"
+    "leave": "Chiqish",
+    "iosJoinFirst": "O'yinchilar avval sozlamalarda Wi-Fi tarmog'ingizga ulanadi",
+    "battery": "Batareya %{pct}% — xona to'xtamasligi uchun quvvatlang"
   },
   "join": {
     "title": "O'yinga qo'shilish",
@@ -89,5 +91,13 @@
     "allowCamera": "Kameraga ruxsat berish",
     "removed": "Boshlovchi sizni xonadan chiqardi",
     "closed": "Boshlovchi xonani yopdi"
+  },
+  "guide": {
+    "title": "Shaxsiy hotspotni yoqing",
+    "step1": "Sozlamalar → Shaxsiy hotspotni oching",
+    "step2": "\"Boshqalarga ruxsat berish\"ni yoqing",
+    "step3": "Irbisga qayting va \"Yoqildi\"ni bosing",
+    "done": "Yoqildi",
+    "notOn": "Hotspot yoki Wi-Fi hali ko'rinmayapti. Tekshirib, qayta urining."
   }
 }

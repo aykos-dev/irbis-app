@@ -17,9 +17,11 @@ type Props = {
   code: string;
   /** Hotspot name, when the app created the hotspot (the password is only in the QR). */
   ssid: string | null;
+  /** Under the code: "password in the QR" (Android hotspot) or "join in Settings first" (iPhone). */
+  note: string | null;
 };
 
-/** White QR card: scan to join Wi-Fi and room, the room code, and the hotspot name. */
+/** White QR card: scan to join Wi-Fi and room, the room code, the hotspot name and a note. */
 export function RoomQr(props: Props) {
   return (
     <ThemeProvider scheme="light">
@@ -28,7 +30,7 @@ export function RoomQr(props: Props) {
   );
 }
 
-function Card({ joinUrl, code, ssid }: Props) {
+function Card({ joinUrl, code, ssid, note }: Props) {
   const styles = useStyles();
   const { colors } = useTheme();
   return (
@@ -57,14 +59,22 @@ function Card({ joinUrl, code, ssid }: Props) {
       >
         {code}
       </AppText>
-      {ssid ? (
+      {ssid || note ? (
         <View style={layout.wifi}>
-          <AppText variant="body" tone="ink" style={layout.center}>
-            {ssid}
-          </AppText>
-          <AppText variant="small" style={layout.center}>
-            {t('camp.lobby.pwInQr')}
-          </AppText>
+          {ssid ? (
+            <AppText variant="body" tone="ink" style={layout.center}>
+              {ssid}
+            </AppText>
+          ) : null}
+          {note ? (
+            <AppText
+              testID="camp.lobby.qr-note"
+              variant="small"
+              style={layout.center}
+            >
+              {note}
+            </AppText>
+          ) : null}
         </View>
       ) : null}
     </View>
