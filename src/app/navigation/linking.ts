@@ -2,6 +2,7 @@ import { getStateFromPath, type LinkingOptions } from '@react-navigation/native'
 
 import { DEBUG_GRANT, parseGrantQuery } from '../../features/debug/grantLink';
 import { DEBUG_HEARTS } from '../../features/debug/heartsLink';
+import { parsePathVisitLink } from '../../features/debug/pathVisitLink';
 import { heartsStore } from '../../features/lessons/heartsStore';
 import { markOnboardingDone, resetOnboarding } from '../../features/onboarding/onboardingStore';
 import { appConfig } from '../../shared/constants/config';
@@ -13,7 +14,7 @@ import type { RootStackParamList } from './types';
  * Deep-link config. `irbis://profile` opens the Profile tab; `irbis://place/<id>` opens a place. The debug links
  * (`irbis://debug`, `irbis://debug/status`, `irbis://debug/lang/<uz|ru|en>`,
  * `irbis://debug/onboarding/<reset|done>`, `irbis://debug/levels/grant?xp=&lessons=&tier=&checkins=&difficulty=&spots=`,
- * `irbis://debug/lessons/hearts/<0-5>` sets today's hearts)
+ * `irbis://debug/lessons/hearts/<0-5>` sets today's hearts, `irbis://debug/path/visit/<placeId>` marks a path visit)
  * exist only outside production (AC10). Other planned routes (docs/architecture.md: trips, lessons) are added
  * with the screen they open.
  */
@@ -52,6 +53,10 @@ const debugLangParser: Pick<LinkingOptions<RootStackParamList>, 'getStateFromPat
           const grant = DEBUG_GRANT.exec(path);
           if (grant) {
             return { routes: [{ name: 'Debug', params: parseGrantQuery(grant[1] ?? '') }] };
+          }
+          const visit = parsePathVisitLink(path);
+          if (visit) {
+            return { routes: [{ name: 'Debug', params: visit }] };
           }
           const hearts = DEBUG_HEARTS.exec(path);
           if (hearts?.[1]) {

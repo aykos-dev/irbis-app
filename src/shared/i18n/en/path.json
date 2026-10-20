@@ -13,8 +13,19 @@
     "sun": "Sun"
   },
   "openPlace": "Open place",
+  "done": "Done",
   "chest": {
-    "progress": "%{done} / %{required} · Check in at all %{required} places"
+    "progress": "%{done} / %{required} · Check in at all %{required} places",
+    "locked": "Check in at all %{required} places to open it",
+    "reward": "Chest opened! +%{xp} XP",
+    "opened": "Opened this month"
+  },
+  "swap": {
+    "title": "Try %{name} instead",
+    "body": "%{elev} m, %{km} km from %{original}, clear skies on %{day}.",
+    "see": "See place",
+    "keep": "Keep plan",
+    "badge": "Smart swap"
   },
   "weather": {
     "credit": "Weather data by Open-Meteo.com"

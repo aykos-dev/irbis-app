@@ -87,6 +87,7 @@ export function PathScreen({ navigation, readInterests, placeType }: Props) {
         />
       ) : (
         <PathTrail
+          month={data.month}
           nodes={data.nodes}
           chest={data.chest}
           locale={locale}

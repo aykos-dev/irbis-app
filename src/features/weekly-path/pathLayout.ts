@@ -46,6 +46,27 @@ export const popoverSize = { width: 220, gap: 8 } as const;
 
 export const bounce = { peak: 1.1, upMs: 120 } as const;
 
+/** Done node: no ring border, gold core with a star (LAYOUT.md Done). */
+export const doneSize = { ring: 76, core: 70, star: 34, edge: 6, chipIcon: 14 } as const;
+
+/** Coin shower when a node turns done (≤ 1.2 s). */
+export const coinShower = { count: 6, size: 14, spreadX: 34, rise: 46, fall: 70, ms: 1100 } as const;
+
+/** Smart swap card under a not-now node; `estimate` until the card has been measured. */
+export const swapCard = { gap: 20, estimate: 210, tile: 72, glyph: 34, icon: 22, iconStroke: 2.6 } as const;
+
+/** Chest lid open (tilt + lift) and the locked shake. */
+export const chestMotion = {
+  lidDeg: -24,
+  lidLift: -10,
+  lidMs: 450,
+  sparkles: 4,
+  sparkle: 8,
+  sparkleSpread: 40,
+  shakeX: 6,
+  shakeMs: 60,
+} as const;
+
 /** Centre of slot `index` in canvas px. */
 export function slot(index: number): readonly [number, number] {
   const drawn = SLOTS[index];
@@ -57,16 +78,18 @@ export function slot(index: number): readonly [number, number] {
   return [EXTRA_X[extra % EXTRA_X.length] ?? last[0], last[1] + SLOT_STEP_Y * (extra + 1)];
 }
 
-/** The dotted trail through slots 0…count-1 (cubic curves, as on the canvas). */
-export function trailPath(count: number, scaleX: number): string {
+/** The dotted trail through slots 0…count-1 (cubic curves, as on the canvas); `shifts` pushes slots down. */
+export function trailPath(count: number, scaleX: number, shifts: readonly number[] = []): string {
   let d = '';
   for (let i = 0; i < count; i += 1) {
-    const [x, y] = slot(i);
+    const [x, drawnY] = slot(i);
+    const y = drawnY + (shifts[i] ?? 0);
     if (i === 0) {
       d = `M${x * scaleX} ${y}`;
       continue;
     }
-    const [px, py] = slot(i - 1);
+    const [px, drawnPy] = slot(i - 1);
+    const py = drawnPy + (shifts[i - 1] ?? 0);
     d += ` C${px * scaleX} ${py + CURVE_PULL_Y} ${x * scaleX} ${y - CURVE_PULL_Y} ${x * scaleX} ${y}`;
   }
   return d;

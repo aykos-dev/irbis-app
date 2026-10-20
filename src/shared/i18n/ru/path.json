@@ -13,8 +13,19 @@
     "sun": "Вс"
   },
   "openPlace": "Открыть место",
+  "done": "Готово",
   "chest": {
-    "progress": "%{done} / %{required} · Отметьтесь во всех %{required} местах"
+    "progress": "%{done} / %{required} · Отметьтесь во всех %{required} местах",
+    "locked": "Отметьтесь во всех %{required} местах, чтобы открыть",
+    "reward": "Сундук открыт! +%{xp} XP",
+    "opened": "Открыт в этом месяце"
+  },
+  "swap": {
+    "title": "Попробуйте %{name}",
+    "body": "%{elev} м, %{km} км от %{original}, ясно в %{day}.",
+    "see": "Посмотреть место",
+    "keep": "Оставить план",
+    "badge": "Умная замена"
   },
   "weather": {
     "credit": "Погода: Open-Meteo.com"

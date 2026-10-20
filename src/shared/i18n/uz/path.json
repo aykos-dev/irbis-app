@@ -13,8 +13,19 @@
     "sun": "Ya"
   },
   "openPlace": "Joyni ochish",
+  "done": "Bajarildi",
   "chest": {
-    "progress": "%{done} / %{required} · Barcha %{required} joyda belgilaning"
+    "progress": "%{done} / %{required} · Barcha %{required} joyda belgilaning",
+    "locked": "Ochish uchun barcha %{required} joyda belgilaning",
+    "reward": "Sandiq ochildi! +%{xp} XP",
+    "opened": "Bu oy ochilgan"
+  },
+  "swap": {
+    "title": "Buning o'rniga %{name}",
+    "body": "%{elev} m, %{original}dan %{km} km, %{day} kuni ochiq havo.",
+    "see": "Joyni ko'rish",
+    "keep": "Rejani qoldirish",
+    "badge": "Aqlli almashtirish"
   },
   "weather": {
     "credit": "Ob-havo: Open-Meteo.com"

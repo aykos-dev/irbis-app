@@ -40,6 +40,8 @@ type StorageSchema = {
   'lessons.completions': string;
   /** '1' when quiz sounds are off; absent or '0' = on. */
   'lessons.muted': string;
+  /** Smart swaps the user kept the plan for: JSON `{ month: 'YYYY-MM', keys: ['<month>:<position>'] }`. */
+  'path.swapDismissed': string;
 } & {
   /** Campfire seat token per room code, so a player gets the same seat back (rejoin, restart). */
   [key: `camp.seats.${string}`]: string;

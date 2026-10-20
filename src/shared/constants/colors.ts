@@ -157,6 +157,17 @@ export const pathColors = {
   chestBand: palette.gold,
   bolt: palette.gold,
   rain: palette.sky,
+  /** Done node (gold core, star, edge) and its chip per scheme. */
+  done: palette.gold,
+  doneEdge: palette.goldEdge,
+  doneStar: '#7A5800',
+  doneChip: { light: { bg: '#FFF6D6', fg: '#7A5800' }, dark: { bg: '#3D3310', fg: '#FFD95A' } },
+  /** Smart swap card border and its caption / icon. */
+  swapBorder: palette.sky,
+  swapAccent: '#1F74C7',
+  coin: palette.gold,
+  coinEdge: palette.goldEdge,
+  sparkle: palette.gold,
 } as const;
 
 /** Path node drop shadow (design.md Shape: `rgba(0,0,0,.18)`). */
