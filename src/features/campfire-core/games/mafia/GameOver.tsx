@@ -119,8 +119,8 @@ export function GameOver({ phase, winner, roles, out, roster, host }: Props) {
   );
 }
 
-/** A few coloured rects falling and fading once (≤ 1.5 s); decorative. */
-function Confetti() {
+/** A few coloured rects falling and fading once (≤ 1.5 s); decorative (also X and O final score). */
+export function Confetti() {
   const progress = useSharedValue(0);
   useEffect(() => {
     progress.value = withTiming(1, { duration: mafiaSizes.confettiMs });

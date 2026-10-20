@@ -90,6 +90,9 @@ export const hostGame = {
   mafEnd: (winner: MafiaWinner): void => hostGameServer?.mafEnd(winner),
   mafPlayAgain: (): void => hostGameServer?.mafPlayAgain(),
   xoMove: (cell: number): void => hostGameServer?.xoMove(HOST_SEAT_ID, cell),
+  xoNext: (): void => hostGameServer?.xoNext(),
+  xoEnd: (): void => hostGameServer?.xoEnd(),
+  xoPlayAgain: (): void => hostGameServer?.xoPlayAgain(),
 };
 
 /** Random 4-digit room code, 1000–9999. */

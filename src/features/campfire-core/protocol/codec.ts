@@ -6,7 +6,7 @@ import { animals } from '../playerProfile';
 /**
  * Local Campfire protocol (spec § Local protocol): newline-delimited JSON over TCP, `v: 3`
  * (v2 added the party games: `deal`, `game`, `lobby`, `wyrVote`, `showMine`; v3 added Mafia:
- * its `deal` / `game` shapes and `mafReady`; v4 adds X and O: its `game` shape and `xoMove`).
+ * its `deal` / `game` shapes and `mafReady`; v4 adds X and O: its `game` shape, `xoMove` and `xoNext`).
  */
 export const PROTOCOL_VERSION = 4;
 export const CAMP_PORT = 47821;
@@ -163,6 +163,14 @@ export const xoPublicSchema = z.object({
   draws: z.number().int().min(0),
   gameNo: z.number().int().min(1),
   paused: z.boolean(),
+  /** The host ended the series (AC7): finished games, draws and wins per seat, shown on both phones. */
+  ended: z
+    .object({
+      games: z.number().int().min(0),
+      draws: z.number().int().min(0),
+      score: z.record(seatId, z.number().int().min(0)),
+    })
+    .optional(),
 });
 export type XoPublic = z.infer<typeof xoPublicSchema>;
 
@@ -234,6 +242,13 @@ export const clientMessageSchema = z.discriminatedUnion('type', [
     round,
     gameNo: z.number().int().min(1),
     cell: xoCell,
+  }),
+  /** X and O: the joiner asks for the next game once this one has a result (AC4). */
+  z.object({
+    v: version,
+    type: z.literal('xoNext'),
+    round,
+    gameNo: z.number().int().min(1),
   }),
 ]);
 export type ClientMessage = z.infer<typeof clientMessageSchema>;

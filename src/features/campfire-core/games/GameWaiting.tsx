@@ -89,6 +89,11 @@ type MafiaView =
   /** Not dealt in; `info` once the game is over (every phone shows the result). */
   | { kind: 'waiting'; info: MafiaPublic };
 
+const xoHostControls = {
+  onPlayAgain: () => hostGame.xoPlayAgain(),
+  onLobby: () => hostGame.end(),
+};
+
 const ratherHostControls = {
   onReveal: () => hostGame.revealVotes(),
   onNext: () => hostGame.nextQuestion(),
@@ -184,11 +189,18 @@ export function GameWaiting({
   }
   const active = view !== null || mafia !== null || xo !== null;
   const mafiaHost = mafia?.kind === 'host' ? mafia.game : null;
-  const mafiaOver = mafiaHost?.ended !== undefined;
+  const xoHost = hosted?.game === 'xo' ? hosted : null;
+  // Host: after a Mafia game over or the X and O final score, Back goes straight to the lobby.
+  const hostGameOver = mafiaHost?.ended !== undefined || xoHost?.ended !== undefined;
+  // X and O: a third phone (neither X nor O) waits for the next game.
+  const xoWatcher =
+    xo !== null &&
+    xo.selfSeatId !== xo.info.xSeatId &&
+    xo.selfSeatId !== xo.info.oSeatId;
 
   // Host: leaving the game screen ends the game, so Back asks first (after a Mafia game over: lobby).
   usePreventRemove(!isPlayer && active, () => {
-    if (mafiaOver) {
+    if (hostGameOver) {
       hostGame.end();
       return;
     }
@@ -207,12 +219,17 @@ export function GameWaiting({
     isPlayer ? client?.showMine() : hostGame.showMine();
   const xoMove = (cell: number) =>
     isPlayer ? client?.xoMove(cell) : hostGame.xoMove(cell);
+  const xoNext = () => (isPlayer ? client?.xoNext() : hostGame.xoNext());
 
   const endGame = (winner?: MafiaWinner) => {
     haptics.warning();
     setConfirmEnd(false);
     if (mafiaHost) {
       hostGame.mafEnd(winner ?? 'none');
+      return;
+    }
+    if (xoHost) {
+      hostGame.xoEnd();
       return;
     }
     hostGame.end();
@@ -269,13 +286,34 @@ export function GameWaiting({
             {t('camp.maf.inProgress')}
           </AppText>
         ) : null}
-        {xo ? (
+        {xo && !xoWatcher ? (
           <XoScreen
             info={xo.info}
             selfSeatId={xo.selfSeatId}
             roster={xo.roster}
             onMove={xoMove}
+            onNext={xoNext}
+            host={
+              isPlayer
+                ? undefined
+                : { ...xoHostControls, onEnd: () => setConfirmEnd(true) }
+            }
           />
+        ) : null}
+        {xoWatcher ? (
+          <AppText variant="h1" accessibilityRole="header" style={layout.center}>
+            {t('camp.games.xo')}
+          </AppText>
+        ) : null}
+        {xoWatcher ? (
+          <AppText
+            testID="camp.game.in-progress"
+            variant="body"
+            tone="muted"
+            style={layout.center}
+          >
+            {t('camp.maf.inProgress')}
+          </AppText>
         ) : null}
         {view?.game === 'imposter' ? (
           <ImposterScreen
@@ -320,7 +358,7 @@ export function GameWaiting({
             {t('camp.game.inProgress')}
           </AppText>
         )}
-        {isPlayer || mafiaOver ? null : (
+        {isPlayer || hostGameOver || xoHost ? null : (
           <AppButton
             testID="camp.game.end"
             label={t('camp.game.end')}
@@ -344,11 +382,18 @@ export function GameWaiting({
             title={
               mafiaHost
                 ? t('camp.maf.endNoWinner')
-                : t('camp.game.endConfirm')
+                : xoHost
+                  ? t('camp.xo.endConfirm')
+                  : t('camp.game.endConfirm')
             }
             confirmLabel={
-              mafiaHost ? t('camp.maf.endGame') : t('camp.game.end')
+              mafiaHost
+                ? t('camp.maf.endGame')
+                : xoHost
+                  ? t('camp.xo.end')
+                  : t('camp.game.end')
             }
+            cancelLabel={xoHost ? t('camp.xo.keepPlaying') : undefined}
             confirmTestID="camp.game.end-confirm"
             cancelTestID="camp.game.end-cancel"
             onConfirm={() => endGame()}

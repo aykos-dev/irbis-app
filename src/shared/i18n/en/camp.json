@@ -329,6 +329,20 @@
     "theyWin": "%{name} wins!",
     "draw": "Draw",
     "cell": "Cell %{n}, %{state}",
-    "empty": "empty"
+    "empty": "empty",
+    "next": "Next game",
+    "game": "Game %{n}",
+    "draws": "Draws %{d}",
+    "waiting": "Waiting for %{name}…",
+    "end": "End",
+    "endConfirm": "End the series?",
+    "keepPlaying": "Keep playing",
+    "final": "Final score",
+    "youWinSeries": "You win the series %{a}–%{b}",
+    "theyWinSeries": "%{name} wins the series %{a}–%{b}",
+    "tie": "It's a tie %{a}–%{b}",
+    "finalStats": "Draws %{d} · Games %{n}",
+    "mute": "Mute sounds",
+    "unmute": "Turn sounds on"
   }
 }

@@ -27,7 +27,7 @@ import {
 import { dealtRoles } from './mafia/winCheck';
 import type { PartyGame } from './packs';
 import { shuffle, type Rng } from './usedStore';
-import { findWin, isFull } from './xo/xoRules';
+import { emptyBoard, findWin, isFull } from './xo/xoRules';
 
 /** Players per game, host included (spec AC1). */
 export const playerRange: Record<PartyGame, { min: number; max: number }> = {
@@ -160,7 +160,15 @@ export type XoAction =
       round: number;
       gameNo: number;
       cell: number;
-    };
+    }
+  /** Either phone's "Next game" once the current game has a result (AC4); `gameNo` is the finished game. */
+  | { type: 'xoNext'; round: number; gameNo: number }
+  /** Seat statuses changed: the series pauses while a player's seat is reconnecting (AC6). */
+  | { type: 'xoPresence'; seats: GameSeat[] }
+  /** The host's End (AC7): both phones show the final score. */
+  | { type: 'xoEnd' }
+  /** After the final score: a fresh series over the 2 connected seats, host X, next round (AC7). */
+  | { type: 'xoPlayAgain'; seats: GameSeat[]; hostSeatId: string };
 
 export type HostAction = GameAction | MafiaAction | XoAction;
 
@@ -311,6 +319,10 @@ export function gameReducer(
   }
   switch (action.type) {
     case 'xoMove':
+    case 'xoNext':
+    case 'xoPresence':
+    case 'xoEnd':
+    case 'xoPlayAgain':
     case 'mafReady':
     case 'mafPhaseNext':
     case 'mafMarkOut':
@@ -584,7 +596,11 @@ function withWaiting(
     : { ...state, waiting: [...state.waiting, action.seatId] };
 }
 
-function startXo(seats: GameSeat[], hostSeatId: string): XoState | null {
+function startXo(
+  seats: GameSeat[],
+  hostSeatId: string,
+  round = 1,
+): XoState | null {
   const players = roundSeats(seats);
   const joiner = players.find(seat => seat !== hostSeatId);
   if (
@@ -597,10 +613,10 @@ function startXo(seats: GameSeat[], hostSeatId: string): XoState | null {
   }
   return {
     game: 'xo',
-    round: 1,
+    round,
     players: [hostSeatId, joiner],
     waiting: [],
-    board: Array<XoState['turn'] | null>(9).fill(null),
+    board: emptyBoard(),
     xSeatId: hostSeatId,
     oSeatId: joiner,
     turn: 'x',
@@ -612,7 +628,10 @@ function startXo(seats: GameSeat[], hostSeatId: string): XoState | null {
   };
 }
 
-/** X and O: only moves change the board; a joiner waits (watches), the host's End goes to the lobby. */
+/**
+ * X and O: moves and "Next game" change the board; a third phone waits (watches); the host's End
+ * or removing the other player shows the final score; the lobby ends the game.
+ */
 function xoReducer(state: XoState, action: HostAction): XoState | null {
   switch (action.type) {
     case 'end':
@@ -623,17 +642,64 @@ function xoReducer(state: XoState, action: HostAction): XoState | null {
         ? state
         : { ...state, waiting: [...state.waiting, action.seatId] };
     case 'seatRemoved':
-      return state.waiting.includes(action.seatId)
-        ? {
-            ...state,
-            waiting: state.waiting.filter(seat => seat !== action.seatId),
-          }
+      if (state.waiting.includes(action.seatId)) {
+        return {
+          ...state,
+          waiting: state.waiting.filter(seat => seat !== action.seatId),
+        };
+      }
+      return state.players.includes(action.seatId) ? xoEnded(state) : state;
+    case 'xoEnd':
+      return xoEnded(state);
+    case 'xoPlayAgain':
+      return state.ended
+        ? (startXo(action.seats, action.hostSeatId, state.round + 1) ?? state)
         : state;
+    case 'xoPresence': {
+      const paused = state.players.some(seatId =>
+        action.seats.some(seat => seat.seatId === seatId && !seat.connected),
+      );
+      return state.ended || paused === state.paused
+        ? state
+        : { ...state, paused };
+    }
+    case 'xoNext':
+      if (
+        state.ended ||
+        state.paused ||
+        state.result === null ||
+        action.round !== state.round ||
+        action.gameNo !== state.gameNo
+      ) {
+        return state;
+      }
+      return {
+        ...state,
+        board: emptyBoard(),
+        gameNo: state.gameNo + 1,
+        xSeatId: state.oSeatId,
+        oSeatId: state.xSeatId,
+        turn: 'x',
+        result: null,
+      };
     case 'xoMove':
-      return xoMove(state, action);
+      return state.ended ? state : xoMove(state, action);
     default:
       return state;
   }
+}
+
+/** Final score (AC7): finished games = wins + draws; a second End changes nothing. */
+function xoEnded(state: XoState): XoState {
+  if (state.ended) {
+    return state;
+  }
+  const wins = Object.values(state.score).reduce((sum, n) => sum + n, 0);
+  return {
+    ...state,
+    paused: false,
+    ended: { games: wins + state.draws, draws: state.draws, score: state.score },
+  };
 }
 
 /** A move counts only from the seat whose turn it is, on an empty cell of the current, running game (AC2, AC3). */
@@ -695,6 +761,7 @@ export function toXoPublic(state: XoState): XoPublic {
     draws: state.draws,
     gameNo: state.gameNo,
     paused: state.paused,
+    ...(state.ended ? { ended: state.ended } : {}),
   };
 }
 

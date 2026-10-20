@@ -127,5 +127,6 @@ export const xoSizes = {
   markStroke: 10,
   lineStroke: 12,
   headerMark: 18,
+  scoreAvatar: 40,
   markMs: 200,
 } as const;

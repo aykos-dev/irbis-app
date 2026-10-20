@@ -32,7 +32,7 @@ import { useLesson } from '../hooks/useLesson';
 import { useLessonsCatalog } from '../hooks/useLessonsCatalog';
 import { glyphColors, heartColor, quizColors, tierTint } from '../lessonColors';
 import { answer, currentIndex, firstTryCount, isPerfect, next, startQuiz, type QuizState } from '../quizMachine';
-import { sounds } from '../sounds';
+import { sounds } from '../../../shared/sounds/sounds';
 
 const ICON = 24;
 const HEART = 26;

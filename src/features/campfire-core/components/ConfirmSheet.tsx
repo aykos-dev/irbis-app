@@ -12,6 +12,8 @@ type Props = {
   confirmLabel: string;
   confirmTestID: string;
   cancelTestID: string;
+  /** Defaults to "Cancel". */
+  cancelLabel?: string;
   onConfirm: () => void;
   onDismiss: () => void;
 };
@@ -23,6 +25,7 @@ export function ConfirmSheet({
   confirmLabel,
   confirmTestID,
   cancelTestID,
+  cancelLabel,
   onConfirm,
   onDismiss,
 }: Props) {
@@ -40,7 +43,7 @@ export function ConfirmSheet({
         />
         <AppButton
           testID={cancelTestID}
-          label={t('common.cancel')}
+          label={cancelLabel ?? t('common.cancel')}
           variant="white"
           onPress={onDismiss}
         />

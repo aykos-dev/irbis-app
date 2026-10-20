@@ -329,6 +329,20 @@
     "theyWin": "%{name} yutdi!",
     "draw": "Durang",
     "cell": "Katak %{n}, %{state}",
-    "empty": "bo'sh"
+    "empty": "bo'sh",
+    "next": "Keyingi o'yin",
+    "game": "%{n}-o'yin",
+    "draws": "Durang: %{d}",
+    "waiting": "%{name} kutilmoqda…",
+    "end": "Tugatish",
+    "endConfirm": "Seriyani tugatasizmi?",
+    "keepPlaying": "Davom etish",
+    "final": "Yakuniy hisob",
+    "youWinSeries": "Seriyani siz yutdingiz %{a}–%{b}",
+    "theyWinSeries": "%{name} seriyani yutdi %{a}–%{b}",
+    "tie": "Durang %{a}–%{b}",
+    "finalStats": "Durang %{d} · O'yinlar %{n}",
+    "mute": "Ovozni o'chirish",
+    "unmute": "Ovozni yoqish"
   }
 }

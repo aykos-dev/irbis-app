@@ -69,6 +69,8 @@ export type PlayerClient = {
   mafReady: () => void;
   /** X and O: our move on `cell` (0–8) in the current game; the host decides if it counts. */
   xoMove: (cell: number) => void;
+  /** X and O: asks for the next game after a result (AC4); the host ignores an old `gameNo`. */
+  xoNext: () => void;
   getSnapshot: () => PlayerSnapshot;
   subscribe: (listener: () => void) => () => void;
 };
@@ -370,6 +372,12 @@ export function createPlayerClient({
           gameNo: game.public.gameNo,
           cell,
         });
+      }
+    },
+    xoNext: () => {
+      const { game } = snapshot;
+      if (game?.game === 'xo' && game.public.result) {
+        send({ type: 'xoNext', round: game.round, gameNo: game.public.gameNo });
       }
     },
     stop: () => {
