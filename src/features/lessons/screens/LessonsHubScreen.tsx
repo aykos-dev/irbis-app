@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -63,6 +64,8 @@ export function LessonsHubScreen({ navigation }: MainTabScreenProps<'Lessons'>) 
   const { isOnline } = useNetworkStatus();
   const { hearts, day } = useHearts();
   const query = useLessonsCatalog();
+  // Re-render on return from a lesson so its local completion shows (done set, goal ring).
+  useIsFocused();
   const [sheet, setSheet] = useState<'open' | 'closing' | null>(null);
 
   const open = (lesson: CatalogLesson, done: boolean) => {

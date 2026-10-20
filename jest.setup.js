@@ -100,3 +100,28 @@ jest.mock('@maplibre/maplibre-react-native', () => {
     },
   };
 });
+
+/*
+ * react-native-audio-api: decoding resolves the clip's asset, every started source is recorded in
+ * `__started` (the asset it came from), so tests can assert which sound played.
+ */
+jest.mock('react-native-audio-api', () => {
+  const started = jest.fn();
+  class AudioContext {
+    destination = {};
+    decodeAudioData = jest.fn(async source => ({ source }));
+    createBufferSource() {
+      const node = {
+        buffer: null,
+        connect: jest.fn(),
+        start: () => started(node.buffer && node.buffer.source),
+      };
+      return node;
+    }
+  }
+  return {
+    AudioContext,
+    AudioManager: { setAudioSessionOptions: jest.fn() },
+    __started: started,
+  };
+});

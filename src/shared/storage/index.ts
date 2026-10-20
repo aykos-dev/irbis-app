@@ -28,6 +28,12 @@ type StorageSchema = {
   'lessons.hearts': string;
   /** The last loaded lesson catalog for offline opens: JSON `{ userId, day, data }` (LessonCatalog). */
   'lessons.catalog': string;
+  /** Lessons opened online, for offline replays: JSON `{ [lessonId]: PublicLesson }`. */
+  'lessons.cache': string;
+  /** First lesson completions on this device: JSON array of LocalCompletion (synced by slice 4). */
+  'lessons.completions': string;
+  /** '1' when quiz sounds are off; absent or '0' = on. */
+  'lessons.muted': string;
 };
 
 export type StorageKey = keyof StorageSchema;

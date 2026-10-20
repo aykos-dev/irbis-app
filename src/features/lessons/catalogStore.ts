@@ -1,10 +1,10 @@
 import type { LessonCatalog } from '../../shared/api/generated/model';
 import { storage } from '../../shared/storage';
 import { qaLog } from '../../shared/utils/qaLog';
+import { completionsStore, type LocalCompletion } from './completionsStore';
 import { tashkentDay } from './tashkentDay';
 
-/** A lesson finished on this device and not yet known to the server (written by the quiz). */
-export type LocalCompletion = { lessonId: string; completedAt: string };
+export type { LocalCompletion } from './completionsStore';
 
 type Saved = { userId: string | null; day: string; data: LessonCatalog };
 
@@ -71,9 +71,9 @@ export const catalogStore = {
     return read()?.data.config.heartsPerDay;
   },
 
-  /** First completions made on this device; the quiz (lessons slice 3) adds them. */
+  /** First completions made on this device (the quiz adds them, AC7). */
   localCompletions(): LocalCompletion[] {
-    return [];
+    return completionsStore.all();
   },
 };
 
