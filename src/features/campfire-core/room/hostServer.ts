@@ -4,6 +4,7 @@ import Zeroconf from 'react-native-zeroconf';
 import { qaLog } from '../../../shared/utils/qaLog';
 import { uuidV4 } from '../../../shared/utils/uuid';
 import {
+  CROC_RESULT_MS,
   crocSecretFor,
   fromDescriber,
   gameReducer,
@@ -34,6 +35,7 @@ import {
   encode,
   PING_INTERVAL_MS,
   SILENCE_TIMEOUT_MS,
+  type CrocResult,
   type MafiaWinner,
   type OutgoingHostMessage,
   type WyrPick,
@@ -103,6 +105,14 @@ export type HostServer = {
   /** Crocodile, the host's own seat as describer: another word / start the turn. */
   crocSkip: (seatId: string, rng?: Rng) => void;
   crocStart: (seatId: string) => void;
+  /** Crocodile, the host's own seat as describer: the word was guessed. */
+  crocGuessed: (seatId: string) => void;
+  /** Crocodile, host: leave the result before its ~3 s are up. */
+  crocNext: () => void;
+  /** Crocodile, host: game over, every phone shows the totals. */
+  crocEnd: () => void;
+  /** Crocodile, after game over: totals back to 0, same settings, "who shows next?". */
+  crocPlayAgain: () => void;
 };
 
 type Options = {
@@ -127,6 +137,9 @@ export function createHostServer({
   let game = restoredGame;
   let server: TcpServer | null = null;
   let ticker: ReturnType<typeof setInterval> | null = null;
+  /** Crocodile: the turn timer (running) or the result timer; only the host ends a turn. */
+  let crocTimer: ReturnType<typeof setTimeout> | null = null;
+  let crocTimerKey = '';
   const conns = new Map<string, Conn>();
   const zeroconf = new Zeroconf();
   const serviceName = `irbis-${room.code}`;
@@ -160,6 +173,7 @@ export function createHostServer({
     const seatId = seatOf(conn);
     if (game.game === 'croc') {
       const secret = crocSecretFor(game, seatId);
+      // `remainingMs` is stamped per send: each phone counts down from it (no clock sync).
       if (withDeal && secret) {
         send(conn, { type: 'deal', game: 'croc', round: game.round, secret });
       }
@@ -168,7 +182,7 @@ export function createHostServer({
         game: 'croc',
         round: game.round,
         phase: game.phase,
-        public: toCrocPublic(game),
+        public: toCrocPublic(game, now()),
       });
       return;
     }
@@ -213,9 +227,62 @@ export function createHostServer({
       return false;
     }
     game = next;
+    armCroc();
     onChange(state, game);
     return true;
   };
+
+  const clearCrocTimer = () => {
+    if (crocTimer) {
+      clearTimeout(crocTimer);
+      crocTimer = null;
+    }
+  };
+
+  /** A Crocodile turn ended (guessed / time up / describer left): every phone sees the result. */
+  const turnEnded = (action: HostAction, kind: CrocResult['kind']) => {
+    if (game?.game !== 'croc') {
+      return;
+    }
+    const { turnNo } = game;
+    if (!applyGame(action)) {
+      return;
+    }
+    broadcastGame(false);
+    qaLog('croc_turn_end', { turnNo, kind });
+  };
+
+  const crocNext = () => {
+    if (applyGame({ type: 'crocNext' })) {
+      broadcastGame(false);
+    }
+  };
+
+  /** (Re)arms the host's Crocodile timer when the phase or turn changes: running → time up, result → next. */
+  function armCroc() {
+    const croc = game?.game === 'croc' ? game : null;
+    const key = croc ? `${croc.round}.${croc.turnNo}.${croc.phase}` : '';
+    if (key === crocTimerKey) {
+      return;
+    }
+    crocTimerKey = key;
+    clearCrocTimer();
+    if (croc?.phase === 'running') {
+      const { turnNo } = croc;
+      crocTimer = setTimeout(
+        () => {
+          crocTimer = null;
+          turnEnded({ type: 'crocTimeUp', turnNo }, 'timeUp');
+        },
+        Math.max(0, (croc.endsAt ?? now()) - now()),
+      );
+    } else if (croc?.phase === 'result') {
+      crocTimer = setTimeout(() => {
+        crocTimer = null;
+        crocNext();
+      }, CROC_RESULT_MS);
+    }
+  }
 
   /** The game now (read after `applyGame`, which replaces it). */
   const current = (): HostGame | null => game;
@@ -263,10 +330,25 @@ export function createHostServer({
   };
 
   const crocStart = (seatId: string, round: number, turnNo: number) => {
-    if (applyGame({ type: 'crocStart', seatId, round, turnNo })) {
-      broadcastGame(false);
+    if (
+      game?.game !== 'croc' ||
+      !applyGame({ type: 'crocStart', seatId, round, turnNo, now: now() })
+    ) {
+      return;
     }
+    broadcastGame(false);
+    qaLog('croc_start', { turnNo, durationSec: game.durationSec });
   };
+
+  const crocGuessed = (seatId: string, round: number, turnNo: number) =>
+    turnEnded({ type: 'crocGuessed', seatId, round, turnNo }, 'guessed');
+
+  const nameOf = (seatId: string) =>
+    state.seats.find(seat => seat.seatId === seatId)?.nickname ?? '';
+
+  /** Crocodile: the describer dropped or was removed during ready / running — the word does not count. */
+  const describerLeft = (seatId: string, name: string) =>
+    turnEnded({ type: 'crocLeft', seatId, name }, 'cancelled');
 
   const connOf = (seatId: string) => {
     const connId = state.seats.find(seat => seat.seatId === seatId)?.connId;
@@ -352,8 +434,13 @@ export function createHostServer({
       return;
     }
     conns.delete(conn.id);
+    const seatId = seatOf(conn);
+    const name = seatId ? nameOf(seatId) : '';
     apply({ type: 'disconnect', connId: conn.id });
     revealIfAllVoted();
+    if (seatId) {
+      describerLeft(seatId, name);
+    }
   };
 
   const onLine = (conn: Conn, line: string) => {
@@ -372,10 +459,14 @@ export function createHostServer({
         return;
       case 'leave': {
         const seatId = seatOf(conn);
+        const name = seatId ? nameOf(seatId) : '';
         freed(apply({ type: 'leave', connId: conn.id }), null);
         if (seatId && applyGame({ type: 'seatRemoved', seatId })) {
           broadcastGame(false);
           revealIfAllVoted();
+        }
+        if (seatId) {
+          describerLeft(seatId, name);
         }
         return;
       }
@@ -424,9 +515,13 @@ export function createHostServer({
         }
         return;
       }
-      // Guessed! comes with the turn timer (campfire-crocodile slice 2); until then it changes nothing.
-      case 'crocGuessed':
+      case 'crocGuessed': {
+        const seatId = seatOf(conn);
+        if (seatId) {
+          crocGuessed(seatId, message.round, message.turnNo);
+        }
         return;
+      }
       // The prober reads the answer and hangs up; an idle prober is dropped by the silence check.
       case 'probe':
         send(
@@ -507,6 +602,7 @@ export function createHostServer({
   };
 
   const stop = () => {
+    clearCrocTimer();
     if (ticker) {
       clearInterval(ticker);
       ticker = null;
@@ -528,7 +624,11 @@ export function createHostServer({
         send(conn, { type: 'lobby' });
       }
     });
-    if (ended.game !== 'mafia' || !ended.ended) {
+    const over =
+      ended.game === 'mafia'
+        ? ended.ended !== undefined
+        : ended.game === 'croc' && ended.phase === 'ended';
+    if (!over) {
       qaLog('camp_game_ended', { game: ended.game, rounds: ended.round });
     }
   };
@@ -553,6 +653,7 @@ export function createHostServer({
         });
       }),
     remove: seatId => {
+      const name = nameOf(seatId);
       const outcome = apply({ type: 'remove', seatId });
       if (outcome.kind === 'freed') {
         freed(outcome, { type: 'removed' });
@@ -561,6 +662,7 @@ export function createHostServer({
           broadcastGame(false);
           revealIfAllVoted();
         }
+        describerLeft(seatId, name);
       }
     },
     startGame: (kind, settings, rng = Math.random) => {
@@ -677,6 +779,29 @@ export function createHostServer({
       if (game?.game === 'croc') {
         crocStart(seatId, game.round, game.turnNo);
       }
+    },
+    crocGuessed: seatId => {
+      if (game?.game === 'croc') {
+        crocGuessed(seatId, game.round, game.turnNo);
+      }
+    },
+    crocNext,
+    crocEnd: () => {
+      if (game?.game !== 'croc' || !applyGame({ type: 'crocEnd' })) {
+        return;
+      }
+      broadcastGame(false);
+      const { guessed, skipped, turns } = game.totals;
+      qaLog('camp_game_ended', { game: 'croc', guessed, skipped, turns });
+    },
+    crocPlayAgain: () => {
+      if (
+        game?.game !== 'croc' ||
+        !applyGame({ type: 'playAgain', seats: gameSeats(), rng: Math.random })
+      ) {
+        return;
+      }
+      broadcastGame(false);
     },
     mafPlayAgain: (rng = Math.random) => {
       if (game?.game !== 'mafia' || !game.ended) {

@@ -71,9 +71,10 @@ export type PlayerClient = {
   showMine: () => void;
   /** Mafia: we have seen our role. */
   mafReady: () => void;
-  /** Crocodile, as describer: another word / start the turn (for the current turn only). */
+  /** Crocodile, as describer: another word / start the turn / guessed (for the current turn only). */
   crocSkip: () => void;
   crocStart: () => void;
+  crocGuessed: () => void;
   getSnapshot: () => PlayerSnapshot;
   subscribe: (listener: () => void) => () => void;
 };
@@ -383,6 +384,12 @@ export function createPlayerClient({
       const { game } = snapshot;
       if (game?.game === 'croc') {
         send({ type: 'crocStart', round: game.round, turnNo: game.public.turnNo });
+      }
+    },
+    crocGuessed: () => {
+      const { game } = snapshot;
+      if (game?.game === 'croc') {
+        send({ type: 'crocGuessed', round: game.round, turnNo: game.public.turnNo });
       }
     },
     stop: () => {

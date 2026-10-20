@@ -15,10 +15,14 @@ type Props = {
   secret: Secret;
   onSkip: () => void;
   onStart: () => void;
+  onGuessed: () => void;
 };
 
 /** The word in this phone's language; empty when the pack or word is unknown here. */
-function wordText(secret: Secret): { word: string; pack: string } {
+export function wordText(secret: Pick<Secret, 'word' | 'pack'>): {
+  word: string;
+  pack: string;
+} {
   const pack = findCrocPack(secret.pack);
   const item = pack?.items.find(candidate => candidate.id === secret.word);
   return {
@@ -28,10 +32,16 @@ function wordText(secret: Secret): { word: string; pack: string } {
 }
 
 /**
- * The describer's card (AC3): hold to see the word and its pack (screen kept secure), the rule,
- * Skip for another word and Start before the turn begins.
+ * The describer's card (AC3, AC4): hold to see the word and its pack (screen kept secure), the rule,
+ * Skip for another word (also while the turn runs), Start before the turn and Guessed! during it.
  */
-export function CrocSecret({ phase, secret, onSkip, onStart }: Props) {
+export function CrocSecret({
+  phase,
+  secret,
+  onSkip,
+  onStart,
+  onGuessed,
+}: Props) {
   const { captured } = useSecureScreen();
   const { word, pack } = wordText(secret);
   return (
@@ -51,7 +61,7 @@ export function CrocSecret({ phase, secret, onSkip, onStart }: Props) {
       <AppText testID="croc.rule" variant="body" style={layout.center}>
         {t('camp.croc.rule')}
       </AppText>
-      {phase === 'ready' ? (
+      {phase === 'ready' || phase === 'running' ? (
         <View style={layout.buttons}>
           <View style={layout.flex}>
             <AppButton
@@ -65,15 +75,27 @@ export function CrocSecret({ phase, secret, onSkip, onStart }: Props) {
             />
           </View>
           <View style={layout.flex}>
-            <AppButton
-              testID="croc.start"
-              label={t('camp.croc.start')}
-              variant="secondary"
-              onPress={() => {
-                haptics.success();
-                onStart();
-              }}
-            />
+            {phase === 'ready' ? (
+              <AppButton
+                testID="croc.start"
+                label={t('camp.croc.start')}
+                variant="secondary"
+                onPress={() => {
+                  haptics.success();
+                  onStart();
+                }}
+              />
+            ) : (
+              <AppButton
+                testID="croc.guessed"
+                label={t('camp.croc.guessed')}
+                variant="secondary"
+                onPress={() => {
+                  haptics.tap();
+                  onGuessed();
+                }}
+              />
+            )}
           </View>
         </View>
       ) : null}

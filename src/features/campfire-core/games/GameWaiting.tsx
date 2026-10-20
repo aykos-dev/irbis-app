@@ -1,5 +1,5 @@
 import { usePreventRemove } from '@react-navigation/native';
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { StyleSheet } from 'react-native';
 
 import type { RootStackScreenProps } from '../../../app/navigation/types';
@@ -30,7 +30,7 @@ import type {
 } from '../protocol/codec';
 import { HOST_SEAT_ID } from '../room/roomReducer';
 import { hostGame } from '../room/useHostRoom';
-import { CrocScreen } from './croc/CrocScreen';
+import { CrocScreen, type CrocHostControls } from './croc/CrocScreen';
 import {
   crocSecretFor,
   toCrocPublic,
@@ -104,6 +104,12 @@ type CrocView = {
   roster: RosterPlayer[];
 };
 
+const crocHostControls: CrocHostControls = {
+  onNext: () => hostGame.crocNext(),
+  onPlayAgain: () => hostGame.crocPlayAgain(),
+  onLobby: () => hostGame.end(),
+};
+
 const ratherHostControls = {
   onReveal: () => hostGame.revealVotes(),
   onNext: () => hostGame.nextQuestion(),
@@ -135,6 +141,12 @@ export function GameWaiting({
     client?.getSnapshot ?? noSnapshot,
   );
   const [confirmEnd, setConfirmEnd] = useState(false);
+  // Turn time left is stamped once per host state change (like each broadcast), not on every render.
+  const hostCroc = useMemo(
+    () =>
+      hosted?.game === 'croc' ? toCrocPublic(hosted, Date.now()) : null,
+    [hosted],
+  );
 
   let mafia: MafiaView | null = null;
   let view: GameView | null = null;
@@ -144,7 +156,7 @@ export function GameWaiting({
   } else if (hosted?.game === 'croc') {
     croc = {
       phase: hosted.phase,
-      info: toCrocPublic(hosted),
+      info: hostCroc ?? toCrocPublic(hosted),
       secret: crocSecretFor(hosted, HOST_SEAT_ID),
       roster: hostRoster,
     };
@@ -202,10 +214,11 @@ export function GameWaiting({
   const active = view !== null || mafia !== null || croc !== null;
   const mafiaHost = mafia?.kind === 'host' ? mafia.game : null;
   const mafiaOver = mafiaHost?.ended !== undefined;
+  const crocOver = croc?.phase === 'ended';
 
-  // Host: leaving the game screen ends the game, so Back asks first (after a Mafia game over: lobby).
+  // Host: leaving the game screen ends the game, so Back asks first (after a game over: lobby).
   usePreventRemove(!isPlayer && active, () => {
-    if (mafiaOver) {
+    if (mafiaOver || crocOver) {
       hostGame.end();
       return;
     }
@@ -225,12 +238,18 @@ export function GameWaiting({
   const crocSkip = () => (isPlayer ? client?.crocSkip() : hostGame.crocSkip());
   const crocStart = () =>
     isPlayer ? client?.crocStart() : hostGame.crocStart();
+  const crocGuessed = () =>
+    isPlayer ? client?.crocGuessed() : hostGame.crocGuessed();
 
   const endGame = (winner?: MafiaWinner) => {
     haptics.warning();
     setConfirmEnd(false);
     if (mafiaHost) {
       hostGame.mafEnd(winner ?? 'none');
+      return;
+    }
+    if (croc) {
+      hostGame.crocEnd();
       return;
     }
     hostGame.end();
@@ -296,6 +315,8 @@ export function GameWaiting({
             onPick={isPlayer ? undefined : hostGame.crocPick}
             onSkip={crocSkip}
             onStart={crocStart}
+            onGuessed={crocGuessed}
+            host={isPlayer ? undefined : crocHostControls}
           />
         ) : null}
         {view?.game === 'imposter' ? (
@@ -341,10 +362,10 @@ export function GameWaiting({
             {t('camp.game.inProgress')}
           </AppText>
         )}
-        {isPlayer || mafiaOver ? null : (
+        {isPlayer || mafiaOver || crocOver ? null : (
           <AppButton
-            testID="camp.game.end"
-            label={t('camp.game.end')}
+            testID={croc ? 'croc.end' : 'camp.game.end'}
+            label={croc ? t('camp.croc.end') : t('camp.game.end')}
             variant="white"
             onPress={() => {
               haptics.tap();
@@ -365,10 +386,16 @@ export function GameWaiting({
             title={
               mafiaHost
                 ? t('camp.maf.endNoWinner')
-                : t('camp.game.endConfirm')
+                : croc
+                  ? t('camp.croc.endConfirm')
+                  : t('camp.game.endConfirm')
             }
             confirmLabel={
-              mafiaHost ? t('camp.maf.endGame') : t('camp.game.end')
+              mafiaHost
+                ? t('camp.maf.endGame')
+                : croc
+                  ? t('camp.croc.end')
+                  : t('camp.game.end')
             }
             confirmTestID="camp.game.end-confirm"
             cancelTestID="camp.game.end-cancel"

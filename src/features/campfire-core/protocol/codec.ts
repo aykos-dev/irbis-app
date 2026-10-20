@@ -137,8 +137,17 @@ export const mafiaPublicSchema = z.object({
 });
 export type MafiaPublic = z.infer<typeof mafiaPublicSchema>;
 
-/** Crocodile: pick the describer → ready (describer holds the word) → running (the turn). */
-export const crocPhaseSchema = z.enum(['pick', 'ready', 'running']);
+/**
+ * Crocodile: pick the describer → ready (describer holds the word) → running (the turn) → result
+ * (~3 s) → pick; `ended` once the host ends the game.
+ */
+export const crocPhaseSchema = z.enum([
+  'pick',
+  'ready',
+  'running',
+  'result',
+  'ended',
+]);
 export type CrocPhase = z.infer<typeof crocPhaseSchema>;
 
 const turnNo = z.number().int().min(0);
@@ -158,14 +167,33 @@ export const crocTotalsSchema = z.object({
 });
 export type CrocTotals = z.infer<typeof crocTotalsSchema>;
 
-/** What every phone may see about the Crocodile game. Never the word. */
+/** A Crocodile word: item id in pack `pack` (each phone shows it in its own language). */
+export const crocWordSchema = z.object({
+  id: z.string().min(1),
+  pack: z.string().min(1),
+});
+export type CrocWord = z.infer<typeof crocWordSchema>;
+
+/** How a turn ended; `name` = the describer who left (cancelled only). The word is public by now. */
+export const crocResultSchema = z.object({
+  kind: z.enum(['guessed', 'timeUp', 'cancelled']),
+  word: crocWordSchema,
+  name: z.string().optional(),
+});
+export type CrocResult = z.infer<typeof crocResultSchema>;
+
+/** What every phone may see about the Crocodile game. Never the word while the turn runs. */
 export const crocPublicSchema = z.object({
   phase: crocPhaseSchema,
   turnNo,
   durationSec: z.number().int().min(1),
   totals: crocTotalsSchema,
-  /** Who shows this turn (ready / running only). */
+  /** Who shows this turn (ready / running / result only). */
   describerSeatId: seatId.optional(),
+  /** Running only: turn time left when the host sent this (each phone counts down from it). */
+  remainingMs: z.number().int().min(0).optional(),
+  /** Result only. */
+  result: crocResultSchema.optional(),
 });
 export type CrocPublic = z.infer<typeof crocPublicSchema>;
 

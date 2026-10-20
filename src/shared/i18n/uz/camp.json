@@ -333,6 +333,14 @@
     "rule": "Ko'rsating, aytmang — so'zsiz va ovozsiz",
     "skip": "Boshqa so'z",
     "start": "Boshlash",
-    "guessed": "Topildi!"
+    "guessed": "Topildi!",
+    "timeUp": "Vaqt tugadi!",
+    "wordWas": "So'z: %{word}",
+    "left": "%{name} chiqib ketdi — so'z hisoblanmaydi",
+    "next": "Keyingisi",
+    "end": "Tugatish",
+    "endConfirm": "O'yinni tugatasizmi?",
+    "over": "O'yin tugadi",
+    "totals": "Topildi %{g} · O'tkazildi %{s} · Navbatlar %{t}"
   }
 }

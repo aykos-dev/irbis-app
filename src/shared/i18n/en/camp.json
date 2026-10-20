@@ -333,6 +333,14 @@
     "rule": "Show it, don't say it — no words, no sounds",
     "skip": "Skip",
     "start": "Start",
-    "guessed": "Guessed!"
+    "guessed": "Guessed!",
+    "timeUp": "Time's up!",
+    "wordWas": "The word: %{word}",
+    "left": "%{name} left — the word is not counted",
+    "next": "Next",
+    "end": "End",
+    "endConfirm": "End the game?",
+    "over": "Game over",
+    "totals": "Words guessed %{g} · Skipped %{s} · Turns %{t}"
   }
 }

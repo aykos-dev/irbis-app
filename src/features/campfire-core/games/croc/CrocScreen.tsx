@@ -12,7 +12,17 @@ import type {
 } from '../../protocol/codec';
 import { SeatAvatar } from '../components/SeatAvatar';
 import { CrocPick } from './CrocPick';
+import { CrocResult } from './CrocResult';
 import { CrocSecret } from './CrocSecret';
+import { CrocSummary } from './CrocSummary';
+import { CrocTimer } from './CrocTimer';
+
+/** The host's controls after a turn and after the game. */
+export type CrocHostControls = {
+  onNext: () => void;
+  onPlayAgain: () => void;
+  onLobby: () => void;
+};
 
 type Props = {
   phase: CrocPhase;
@@ -24,9 +34,15 @@ type Props = {
   onPick?: (seatId: string) => void;
   onSkip: () => void;
   onStart: () => void;
+  onGuessed: () => void;
+  /** Host only. */
+  host?: CrocHostControls;
 };
 
-/** Crocodile on every phone: pick (host list / wait), then the describer's card or who is showing. */
+/**
+ * Crocodile on every phone: pick (host list / wait), the describer's card or who is showing, the
+ * turn timer, the turn's result and the game-over totals.
+ */
 export function CrocScreen({
   phase,
   info,
@@ -35,26 +51,50 @@ export function CrocScreen({
   onPick,
   onSkip,
   onStart,
+  onGuessed,
+  host,
 }: Props) {
   const describer = roster.find(
     player => player.seatId === info.describerSeatId,
   );
+  const turn = phase === 'ready' || phase === 'running';
+  if (phase === 'ended') {
+    return (
+      <View testID="croc.screen" style={layout.section}>
+        <CrocSummary
+          totals={info.totals}
+          host={
+            host
+              ? { onPlayAgain: host.onPlayAgain, onLobby: host.onLobby }
+              : undefined
+          }
+        />
+      </View>
+    );
+  }
   return (
     <View testID="croc.screen" style={layout.section}>
       <AppText variant="h1" accessibilityRole="header">
         {t('camp.games.croc')}
       </AppText>
       {phase === 'pick' ? <CrocPick roster={roster} onPick={onPick} /> : null}
-      {phase !== 'pick' && secret ? (
+      {phase === 'running' && info.remainingMs !== undefined ? (
+        <CrocTimer
+          remainingMs={info.remainingMs}
+          durationSec={info.durationSec}
+        />
+      ) : null}
+      {turn && secret ? (
         <CrocSecret
           key={secret.turnNo}
           phase={phase}
           secret={secret}
           onSkip={onSkip}
           onStart={onStart}
+          onGuessed={onGuessed}
         />
       ) : null}
-      {phase !== 'pick' && !secret ? (
+      {turn && !secret ? (
         <View testID="croc.showing" style={layout.showing}>
           {describer ? (
             <SeatAvatar avatar={describer.avatar} size={partySizes.rowAvatar} />
@@ -63,6 +103,13 @@ export function CrocScreen({
             {t('camp.croc.showing', { name: describer?.nickname ?? '' })}
           </AppText>
         </View>
+      ) : null}
+      {phase === 'result' && info.result ? (
+        <CrocResult
+          key={info.turnNo}
+          result={info.result}
+          onNext={host?.onNext}
+        />
       ) : null}
     </View>
   );

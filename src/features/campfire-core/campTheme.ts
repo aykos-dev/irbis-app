@@ -109,3 +109,21 @@ export const mafiaConfetti = [
   { color: palette.red, left: '70%', rotate: '-30deg' },
   { color: palette.teal, left: '88%', rotate: '12deg' },
 ] as const;
+
+/** Crocodile turn timer (canvas CrocRun): ring, seconds and the last-seconds warning. */
+export const crocSizes = {
+  ring: 168,
+  ringStroke: 12,
+  /** The ring and seconds turn `crocColors.warning` from here down. */
+  warnFromSec: 10,
+  /** A light haptic on each of the last seconds. */
+  hapticFromSec: 5,
+  /** Seconds are re-read this often from the local deadline. */
+  tickMs: 250,
+} as const;
+
+export const crocColors = {
+  ring: palette.pine,
+  warning: palette.orange,
+  track: campColors.line,
+} as const;

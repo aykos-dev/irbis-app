@@ -2,7 +2,9 @@ import { z } from 'zod';
 
 import {
   crocPhaseSchema,
+  crocResultSchema,
   crocTotalsSchema,
+  crocWordSchema,
   gamePhaseSchema,
   mafiaOutSchema,
   mafiaPhaseSchema,
@@ -11,8 +13,11 @@ import {
   partyGameSchema,
   secretSchema,
   wyrPickSchema,
+  type CrocPhase,
   type CrocPublic,
+  type CrocResult,
   type CrocSecret,
+  type CrocWord,
   type MafiaPublic,
   type MafiaSecret,
   type MafiaWinner,
@@ -94,6 +99,8 @@ export type MafiaState = z.infer<typeof mafiaStateSchema>;
 /** Crocodile turn lengths offered in the lobby (seconds); 60 is the default. */
 export const crocDurations = [30, 60, 90] as const;
 export const CROC_DEFAULT_SEC = 60;
+/** How long every phone shows a turn's result before "who shows next?". */
+export const CROC_RESULT_MS = 3000;
 
 export const crocSettingsSchema = z.object({
   durationSec: z.number().int().min(1),
@@ -101,12 +108,7 @@ export const crocSettingsSchema = z.object({
 });
 export type CrocSettings = z.infer<typeof crocSettingsSchema>;
 
-/** The describer's word: item id in pack `pack`. */
-const crocWordSchema = z.object({
-  id: z.string().min(1),
-  pack: z.string().min(1),
-});
-export type CrocWord = z.infer<typeof crocWordSchema>;
+export type { CrocWord };
 
 /** Crocodile host state: `packs` and `word` never leave the host except as the describer's secret. */
 export const crocStateSchema = crocSettingsSchema.extend({
@@ -117,6 +119,9 @@ export const crocStateSchema = crocSettingsSchema.extend({
   totals: crocTotalsSchema,
   describerSeatId: z.string().min(1).optional(),
   word: crocWordSchema.optional(),
+  /** Running: when the turn ends, on the host's clock (ms). */
+  endsAt: z.number().optional(),
+  result: crocResultSchema.optional(),
 });
 export type CrocState = z.infer<typeof crocStateSchema>;
 
@@ -183,7 +188,25 @@ export type CrocAction =
       turnNo: number;
       word: CrocWord;
     }
-  | { type: 'crocStart'; seatId: string; round: number; turnNo: number };
+  /** `now`: the host's clock, the turn ends `durationSec` later. */
+  | {
+      type: 'crocStart';
+      seatId: string;
+      round: number;
+      turnNo: number;
+      now: number;
+    }
+  | { type: 'crocGuessed'; seatId: string; round: number; turnNo: number }
+  /** The host's turn timer ran out for turn `turnNo`. */
+  | { type: 'crocTimeUp'; turnNo: number }
+  /** A seat disconnected or was removed; `name` shows on every phone when it was the describer. */
+  | { type: 'crocLeft'; seatId: string; name: string }
+  /** Result shown: back to "who shows next?". */
+  | { type: 'crocNext' }
+  /** Host: game over, every phone shows the totals. */
+  | { type: 'crocEnd' }
+  /** The host app restarted with this game saved. */
+  | { type: 'resumed' };
 
 export type HostAction = GameAction | MafiaAction | CrocAction;
 
@@ -336,6 +359,12 @@ export function gameReducer(
     case 'crocPick':
     case 'crocSkip':
     case 'crocStart':
+    case 'crocGuessed':
+    case 'crocTimeUp':
+    case 'crocLeft':
+    case 'crocNext':
+    case 'crocEnd':
+    case 'resumed':
     case 'mafReady':
     case 'mafPhaseNext':
     case 'mafMarkOut':
@@ -624,26 +653,79 @@ function startCroc(settings: CrocSettings, seats: GameSeat[]): CrocState | null 
   };
 }
 
-/** A describer message counts only from the describer, for this round and turn (stale ones are dropped). */
+/**
+ * A describer message counts only from the describer, for this round and turn (stale ones are dropped),
+ * in `phases` (Skip: ready or running; Start: ready; Guessed!: running).
+ */
 export function fromDescriber(
   state: CrocState,
   seatId: string,
   round: number,
   turnNo: number,
+  phases: CrocPhase[] = ['ready', 'running'],
 ): boolean {
   return (
-    state.phase === 'ready' &&
+    phases.includes(state.phase) &&
     seatId === state.describerSeatId &&
     round === state.round &&
     turnNo === state.turnNo
   );
 }
 
-/** Crocodile: pick → ready (describer holds the word, may skip) → running. */
+/** The turn is over: everyone sees the word; a guess counts, a cancelled turn does not count at all. */
+function turnOver(
+  state: CrocState,
+  kind: CrocResult['kind'],
+  name?: string,
+): CrocState {
+  if (!state.word) {
+    return state;
+  }
+  const { endsAt: _endsAt, ...rest } = state;
+  const { totals } = state;
+  return {
+    ...rest,
+    phase: 'result',
+    result: { kind, word: state.word, ...(name ? { name } : {}) },
+    totals:
+      kind === 'cancelled'
+        ? totals
+        : {
+            ...totals,
+            guessed: totals.guessed + (kind === 'guessed' ? 1 : 0),
+            turns: totals.turns + 1,
+          },
+  };
+}
+
+/** Back to "who shows next?": no describer, word or result. */
+function toPick(state: CrocState): CrocState {
+  const {
+    describerSeatId: _describer,
+    word: _word,
+    endsAt: _endsAt,
+    result: _result,
+    ...rest
+  } = state;
+  return { ...rest, phase: 'pick' };
+}
+
+/** Crocodile: pick → ready (describer holds the word, may skip) → running → result → pick; ended. */
 function crocReducer(state: CrocState, action: HostAction): CrocState | null {
+  if (action.type === 'end') {
+    return null;
+  }
+  if (state.phase === 'ended') {
+    return action.type === 'playAgain'
+      ? {
+          ...toPick(state),
+          round: state.round + 1,
+          turnNo: 0,
+          totals: { guessed: 0, skipped: 0, turns: 0 },
+        }
+      : state;
+  }
   switch (action.type) {
-    case 'end':
-      return null;
     case 'crocPick':
       if (state.phase !== 'pick') {
         return state;
@@ -665,24 +747,73 @@ function crocReducer(state: CrocState, action: HostAction): CrocState | null {
         totals: { ...state.totals, skipped: state.totals.skipped + 1 },
       };
     case 'crocStart':
-      if (!fromDescriber(state, action.seatId, action.round, action.turnNo)) {
+      if (
+        !fromDescriber(state, action.seatId, action.round, action.turnNo, [
+          'ready',
+        ])
+      ) {
         return state;
       }
-      return { ...state, phase: 'running' };
+      return {
+        ...state,
+        phase: 'running',
+        endsAt: action.now + state.durationSec * 1000,
+      };
+    case 'crocGuessed':
+      return fromDescriber(state, action.seatId, action.round, action.turnNo, [
+        'running',
+      ])
+        ? turnOver(state, 'guessed')
+        : state;
+    case 'crocTimeUp':
+      return state.phase === 'running' && action.turnNo === state.turnNo
+        ? turnOver(state, 'timeUp')
+        : state;
+    case 'crocLeft':
+      return (state.phase === 'ready' || state.phase === 'running') &&
+        action.seatId === state.describerSeatId
+        ? turnOver(state, 'cancelled', action.name)
+        : state;
+    case 'crocNext':
+      return state.phase === 'result' ? toPick(state) : state;
+    case 'crocEnd': {
+      const { endsAt: _endsAt, result: _result, ...rest } = state;
+      return { ...rest, phase: 'ended' };
+    }
+    case 'resumed':
+      // The turn timer did not survive the restart: the same describer starts the same word again.
+      if (state.phase === 'running') {
+        const { endsAt: _endsAt, ...rest } = state;
+        return { ...rest, phase: 'ready' };
+      }
+      return state.phase === 'result' ? toPick(state) : state;
     default:
       return state;
   }
 }
 
-/** Crocodile broadcast: never the word or the packs. */
-export function toCrocPublic(state: CrocState): CrocPublic {
+/** Crocodile broadcast: never the packs; the word only once the turn is over (result). */
+export function toCrocPublic(
+  state: CrocState,
+  now: number = Date.now(),
+): CrocPublic {
+  const shows =
+    state.phase === 'ready' ||
+    state.phase === 'running' ||
+    state.phase === 'result';
   return {
     phase: state.phase,
     turnNo: state.turnNo,
     durationSec: state.durationSec,
     totals: state.totals,
-    ...(state.phase !== 'pick' && state.describerSeatId
+    ...(shows && state.describerSeatId
       ? { describerSeatId: state.describerSeatId }
+      : {}),
+    ...(state.phase === 'running' && state.endsAt !== undefined
+      ? { remainingMs: Math.max(0, Math.round(state.endsAt - now)) }
+      : {}),
+    ...(state.phase === 'result' && state.result
+      ? { result: state.result }
       : {}),
   };
 }
@@ -693,7 +824,7 @@ export function crocSecretFor(
   seatId: string | null,
 ): CrocSecret | null {
   if (
-    state.phase === 'pick' ||
+    (state.phase !== 'ready' && state.phase !== 'running') ||
     !seatId ||
     seatId !== state.describerSeatId ||
     !state.word
