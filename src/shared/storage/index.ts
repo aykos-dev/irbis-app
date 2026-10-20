@@ -24,6 +24,10 @@ type StorageSchema = {
   'levels.lastMyLevel': string;
   /** The last loaded level table (`/v1/levels`) for offline opens: JSON LevelListResponseDto. */
   'levels.defs': string;
+  /** Today's lesson hearts: JSON `{ day: 'YYYY-MM-DD' (Tashkent), hearts }`; kept on sign-out. */
+  'lessons.hearts': string;
+  /** The last loaded lesson catalog for offline opens: JSON `{ userId, day, data }` (LessonCatalog). */
+  'lessons.catalog': string;
 };
 
 export type StorageKey = keyof StorageSchema;

@@ -70,6 +70,13 @@ export const MeVerifyRecoveryPhoneResponse = zod.object({
  */
 export const meGuestMergeBodyOnboardingInterestsMax = 5;
 
+export const meGuestMergeBodyLessonsCompletionsItemAttemptsItemOptionIndexMin = 0;
+export const meGuestMergeBodyLessonsCompletionsItemAttemptsItemOptionIndexMax = 3;
+
+export const meGuestMergeBodyLessonsCompletionsItemAttemptsMax = 75;
+
+export const meGuestMergeBodyLessonsCompletionsMax = 200;
+
 
 
 export const MeGuestMergeBody = zod.object({
@@ -77,6 +84,16 @@ export const MeGuestMergeBody = zod.object({
   "onboarding": zod.object({
   "experience": zod.enum(['beginner', 'weekend', 'experienced']).optional(),
   "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])).max(meGuestMergeBodyOnboardingInterestsMax).optional()
+}).optional(),
+  "lessons": zod.object({
+  "completions": zod.array(zod.object({
+  "lessonId": zod.uuid(),
+  "completedAt": zod.iso.datetime({"offset":true}).describe('When the run finished on the device; the server time is used when it is in the future or older than 7 days.'),
+  "attempts": zod.array(zod.object({
+  "questionId": zod.uuid(),
+  "optionIndex": zod.int().min(meGuestMergeBodyLessonsCompletionsItemAttemptsItemOptionIndexMin).max(meGuestMergeBodyLessonsCompletionsItemAttemptsItemOptionIndexMax)
+})).min(1).max(meGuestMergeBodyLessonsCompletionsItemAttemptsMax).describe('Every answer given in the run, wrong ones included.')
+})).max(meGuestMergeBodyLessonsCompletionsMax)
 }).optional()
 })
 

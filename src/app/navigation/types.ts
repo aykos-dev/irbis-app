@@ -72,6 +72,8 @@ export type RootStackParamList = {
   /** All seven companions (levels AC6). */
   Companions: undefined;
   /** Full-screen level-up celebration for one pending level-up (levels AC7). */
+  /** One lesson's quiz (lessons AC5; opened from the hub, AC4). */
+  Quiz: { lessonId: string };
   LevelUp: {
     id: string;
     fromLevel: number;

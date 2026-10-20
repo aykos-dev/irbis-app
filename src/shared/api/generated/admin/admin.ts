@@ -27,8 +27,13 @@ import type {
 import type {
   AdminAuditListResponseDto,
   AdminConditionListResponseDto,
+  AdminLessonDto,
+  AdminLessonSummaryListDto,
   AdminListConditionsParams,
   AdminListUsersParams,
+  AdminTierDto,
+  AdminTierListDto,
+  AdminUploadLessonImageBody,
   AdminUserAuditParams,
   AdminUserDetailDto,
   AdminUserListResponseDto,
@@ -36,14 +41,20 @@ import type {
   ClosureDto,
   ConditionControlsDto,
   CreateClosureDto,
+  CreateLessonDto,
   CreateOverrideDto,
+  CreateTierDto,
   ErrorResponseDto,
+  LessonImageUploadDto,
   OverrideDto,
   RecomputeStartedDto,
+  ReorderDto,
+  ReplaceLessonDto,
   SetUserPasswordDto,
   SetUserRecoveryPhoneDto,
   SetUserRoleDto,
   UnblockUserDto,
+  UpdateTierDto,
   UserStatsResponseDto
 } from '../model';
 
@@ -1302,4 +1313,1014 @@ export const useAdminEndOverride = <TError = ErrorType<ErrorResponseDto>,
         TContext
       > => {
       return useMutation(getAdminEndOverrideMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Every lesson tier, by order, with lesson counts
+ */
+export const adminListLessonTiers = (
+
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<AdminTierListDto>(
+      {url: `/v1/admin/lesson-tiers`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminListLessonTiersQueryKey = () => {
+    return [
+    `/v1/admin/lesson-tiers`
+    ] as const;
+    }
+
+
+export const getAdminListLessonTiersQueryOptions = <TData = Awaited<ReturnType<typeof adminListLessonTiers>>, TError = ErrorType<ErrorResponseDto>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListLessonTiers>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAdminListLessonTiersQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminListLessonTiers>>> = ({ signal }) => adminListLessonTiers(requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminListLessonTiers>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AdminListLessonTiersQueryResult = NonNullable<Awaited<ReturnType<typeof adminListLessonTiers>>>
+export type AdminListLessonTiersQueryError = ErrorType<ErrorResponseDto>
+
+
+export function useAdminListLessonTiers<TData = Awaited<ReturnType<typeof adminListLessonTiers>>, TError = ErrorType<ErrorResponseDto>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListLessonTiers>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminListLessonTiers>>,
+          TError,
+          Awaited<ReturnType<typeof adminListLessonTiers>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAdminListLessonTiers<TData = Awaited<ReturnType<typeof adminListLessonTiers>>, TError = ErrorType<ErrorResponseDto>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListLessonTiers>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminListLessonTiers>>,
+          TError,
+          Awaited<ReturnType<typeof adminListLessonTiers>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAdminListLessonTiers<TData = Awaited<ReturnType<typeof adminListLessonTiers>>, TError = ErrorType<ErrorResponseDto>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListLessonTiers>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Every lesson tier, by order, with lesson counts
+ */
+
+export function useAdminListLessonTiers<TData = Awaited<ReturnType<typeof adminListLessonTiers>>, TError = ErrorType<ErrorResponseDto>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListLessonTiers>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getAdminListLessonTiersQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary Create a tier, appended last
+ */
+export const adminCreateLessonTier = (
+    createTierDto: BodyType<CreateTierDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<AdminTierDto>(
+      {url: `/v1/admin/lesson-tiers`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createTierDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminCreateLessonTierMutationKey = () => ['adminCreateLessonTier'] as const;
+
+export const getAdminCreateLessonTierMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminCreateLessonTier>>, TError,AdminCreateLessonTierMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminCreateLessonTier>>, TError,AdminCreateLessonTierMutationVariables, TContext> => {
+
+const mutationKey = getAdminCreateLessonTierMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminCreateLessonTier>>, AdminCreateLessonTierMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  adminCreateLessonTier(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminCreateLessonTierMutationResult = NonNullable<Awaited<ReturnType<typeof adminCreateLessonTier>>>
+    export type AdminCreateLessonTierMutationBody = BodyType<CreateTierDto>
+    export type AdminCreateLessonTierMutationError = ErrorType<ErrorResponseDto>
+    export type AdminCreateLessonTierMutationVariables = {data: BodyType<CreateTierDto>}
+
+    /**
+ * @summary Create a tier, appended last
+ */
+export const useAdminCreateLessonTier = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminCreateLessonTier>>, TError,AdminCreateLessonTierMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminCreateLessonTier>>,
+        TError,
+        AdminCreateLessonTierMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminCreateLessonTierMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Reorder tiers; ids must be every tier id
+ */
+export const adminReorderLessonTiers = (
+    reorderDto: BodyType<ReorderDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<AdminTierListDto>(
+      {url: `/v1/admin/lesson-tiers/reorder`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: reorderDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminReorderLessonTiersMutationKey = () => ['adminReorderLessonTiers'] as const;
+
+export const getAdminReorderLessonTiersMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminReorderLessonTiers>>, TError,AdminReorderLessonTiersMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminReorderLessonTiers>>, TError,AdminReorderLessonTiersMutationVariables, TContext> => {
+
+const mutationKey = getAdminReorderLessonTiersMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminReorderLessonTiers>>, AdminReorderLessonTiersMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  adminReorderLessonTiers(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminReorderLessonTiersMutationResult = NonNullable<Awaited<ReturnType<typeof adminReorderLessonTiers>>>
+    export type AdminReorderLessonTiersMutationBody = BodyType<ReorderDto>
+    export type AdminReorderLessonTiersMutationError = ErrorType<ErrorResponseDto>
+    export type AdminReorderLessonTiersMutationVariables = {data: BodyType<ReorderDto>}
+
+    /**
+ * @summary Reorder tiers; ids must be every tier id
+ */
+export const useAdminReorderLessonTiers = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminReorderLessonTiers>>, TError,AdminReorderLessonTiersMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminReorderLessonTiers>>,
+        TError,
+        AdminReorderLessonTiersMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminReorderLessonTiersMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Change a tier's title or colour (the key never changes)
+ */
+export const adminUpdateLessonTier = (
+    id: string,
+    updateTierDto: BodyType<UpdateTierDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<AdminTierDto>(
+      {url: `/v1/admin/lesson-tiers/${id}`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: updateTierDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminUpdateLessonTierMutationKey = () => ['adminUpdateLessonTier'] as const;
+
+export const getAdminUpdateLessonTierMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateLessonTier>>, TError,AdminUpdateLessonTierMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminUpdateLessonTier>>, TError,AdminUpdateLessonTierMutationVariables, TContext> => {
+
+const mutationKey = getAdminUpdateLessonTierMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminUpdateLessonTier>>, AdminUpdateLessonTierMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  adminUpdateLessonTier(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminUpdateLessonTierMutationResult = NonNullable<Awaited<ReturnType<typeof adminUpdateLessonTier>>>
+    export type AdminUpdateLessonTierMutationBody = BodyType<UpdateTierDto>
+    export type AdminUpdateLessonTierMutationError = ErrorType<ErrorResponseDto>
+    export type AdminUpdateLessonTierMutationVariables = {id: string;data: BodyType<UpdateTierDto>}
+
+    /**
+ * @summary Change a tier's title or colour (the key never changes)
+ */
+export const useAdminUpdateLessonTier = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateLessonTier>>, TError,AdminUpdateLessonTierMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminUpdateLessonTier>>,
+        TError,
+        AdminUpdateLessonTierMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminUpdateLessonTierMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Delete a tier without lessons
+ */
+export const adminDeleteLessonTier = (
+    id: string,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<void>(
+      {url: `/v1/admin/lesson-tiers/${id}`, method: 'DELETE', signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminDeleteLessonTierMutationKey = () => ['adminDeleteLessonTier'] as const;
+
+export const getAdminDeleteLessonTierMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminDeleteLessonTier>>, TError,AdminDeleteLessonTierMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminDeleteLessonTier>>, TError,AdminDeleteLessonTierMutationVariables, TContext> => {
+
+const mutationKey = getAdminDeleteLessonTierMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminDeleteLessonTier>>, AdminDeleteLessonTierMutationVariables> = (props) => {
+          const {id} = props ?? {};
+
+          return  adminDeleteLessonTier(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminDeleteLessonTierMutationResult = NonNullable<Awaited<ReturnType<typeof adminDeleteLessonTier>>>
+
+    export type AdminDeleteLessonTierMutationError = ErrorType<ErrorResponseDto>
+    export type AdminDeleteLessonTierMutationVariables = {id: string}
+
+    /**
+ * @summary Delete a tier without lessons
+ */
+export const useAdminDeleteLessonTier = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminDeleteLessonTier>>, TError,AdminDeleteLessonTierMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminDeleteLessonTier>>,
+        TError,
+        AdminDeleteLessonTierMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminDeleteLessonTierMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary A tier's lessons, by order
+ */
+export const adminListTierLessons = (
+    id: string,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<AdminLessonSummaryListDto>(
+      {url: `/v1/admin/lesson-tiers/${id}/lessons`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminListTierLessonsQueryKey = (id: string,) => {
+    return [
+    `/v1/admin/lesson-tiers/${id}/lessons`
+    ] as const;
+    }
+
+
+export const getAdminListTierLessonsQueryOptions = <TData = Awaited<ReturnType<typeof adminListTierLessons>>, TError = ErrorType<ErrorResponseDto>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListTierLessons>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAdminListTierLessonsQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminListTierLessons>>> = ({ signal }) => adminListTierLessons(id, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminListTierLessons>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AdminListTierLessonsQueryResult = NonNullable<Awaited<ReturnType<typeof adminListTierLessons>>>
+export type AdminListTierLessonsQueryError = ErrorType<ErrorResponseDto>
+
+
+export function useAdminListTierLessons<TData = Awaited<ReturnType<typeof adminListTierLessons>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListTierLessons>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminListTierLessons>>,
+          TError,
+          Awaited<ReturnType<typeof adminListTierLessons>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAdminListTierLessons<TData = Awaited<ReturnType<typeof adminListTierLessons>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListTierLessons>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminListTierLessons>>,
+          TError,
+          Awaited<ReturnType<typeof adminListTierLessons>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAdminListTierLessons<TData = Awaited<ReturnType<typeof adminListTierLessons>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListTierLessons>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary A tier's lessons, by order
+ */
+
+export function useAdminListTierLessons<TData = Awaited<ReturnType<typeof adminListTierLessons>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListTierLessons>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getAdminListTierLessonsQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary Reorder a tier's lessons; ids must be exactly its lessons
+ */
+export const adminReorderTierLessons = (
+    id: string,
+    reorderDto: BodyType<ReorderDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<AdminLessonSummaryListDto>(
+      {url: `/v1/admin/lesson-tiers/${id}/lessons/reorder`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: reorderDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminReorderTierLessonsMutationKey = () => ['adminReorderTierLessons'] as const;
+
+export const getAdminReorderTierLessonsMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminReorderTierLessons>>, TError,AdminReorderTierLessonsMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminReorderTierLessons>>, TError,AdminReorderTierLessonsMutationVariables, TContext> => {
+
+const mutationKey = getAdminReorderTierLessonsMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminReorderTierLessons>>, AdminReorderTierLessonsMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  adminReorderTierLessons(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminReorderTierLessonsMutationResult = NonNullable<Awaited<ReturnType<typeof adminReorderTierLessons>>>
+    export type AdminReorderTierLessonsMutationBody = BodyType<ReorderDto>
+    export type AdminReorderTierLessonsMutationError = ErrorType<ErrorResponseDto>
+    export type AdminReorderTierLessonsMutationVariables = {id: string;data: BodyType<ReorderDto>}
+
+    /**
+ * @summary Reorder a tier's lessons; ids must be exactly its lessons
+ */
+export const useAdminReorderTierLessons = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminReorderTierLessons>>, TError,AdminReorderTierLessonsMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminReorderTierLessons>>,
+        TError,
+        AdminReorderTierLessonsMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminReorderTierLessonsMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Create a draft lesson, appended last in its tier
+ */
+export const adminCreateLesson = (
+    createLessonDto: BodyType<CreateLessonDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<AdminLessonDto>(
+      {url: `/v1/admin/lessons`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createLessonDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminCreateLessonMutationKey = () => ['adminCreateLesson'] as const;
+
+export const getAdminCreateLessonMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminCreateLesson>>, TError,AdminCreateLessonMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminCreateLesson>>, TError,AdminCreateLessonMutationVariables, TContext> => {
+
+const mutationKey = getAdminCreateLessonMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminCreateLesson>>, AdminCreateLessonMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  adminCreateLesson(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminCreateLessonMutationResult = NonNullable<Awaited<ReturnType<typeof adminCreateLesson>>>
+    export type AdminCreateLessonMutationBody = BodyType<CreateLessonDto>
+    export type AdminCreateLessonMutationError = ErrorType<ErrorResponseDto>
+    export type AdminCreateLessonMutationVariables = {data: BodyType<CreateLessonDto>}
+
+    /**
+ * @summary Create a draft lesson, appended last in its tier
+ */
+export const useAdminCreateLesson = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminCreateLesson>>, TError,AdminCreateLessonMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminCreateLesson>>,
+        TError,
+        AdminCreateLessonMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminCreateLessonMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary A lesson with its questions
+ */
+export const adminGetLesson = (
+    id: string,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<AdminLessonDto>(
+      {url: `/v1/admin/lessons/${id}`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminGetLessonQueryKey = (id: string,) => {
+    return [
+    `/v1/admin/lessons/${id}`
+    ] as const;
+    }
+
+
+export const getAdminGetLessonQueryOptions = <TData = Awaited<ReturnType<typeof adminGetLesson>>, TError = ErrorType<ErrorResponseDto>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetLesson>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAdminGetLessonQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminGetLesson>>> = ({ signal }) => adminGetLesson(id, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminGetLesson>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AdminGetLessonQueryResult = NonNullable<Awaited<ReturnType<typeof adminGetLesson>>>
+export type AdminGetLessonQueryError = ErrorType<ErrorResponseDto>
+
+
+export function useAdminGetLesson<TData = Awaited<ReturnType<typeof adminGetLesson>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetLesson>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminGetLesson>>,
+          TError,
+          Awaited<ReturnType<typeof adminGetLesson>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAdminGetLesson<TData = Awaited<ReturnType<typeof adminGetLesson>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetLesson>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminGetLesson>>,
+          TError,
+          Awaited<ReturnType<typeof adminGetLesson>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAdminGetLesson<TData = Awaited<ReturnType<typeof adminGetLesson>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetLesson>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary A lesson with its questions
+ */
+
+export function useAdminGetLesson<TData = Awaited<ReturnType<typeof adminGetLesson>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminGetLesson>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getAdminGetLessonQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary Replace title, icon and all questions; a published lesson must stay publishable
+ */
+export const adminReplaceLesson = (
+    id: string,
+    replaceLessonDto: BodyType<ReplaceLessonDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<AdminLessonDto>(
+      {url: `/v1/admin/lessons/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: replaceLessonDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminReplaceLessonMutationKey = () => ['adminReplaceLesson'] as const;
+
+export const getAdminReplaceLessonMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminReplaceLesson>>, TError,AdminReplaceLessonMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminReplaceLesson>>, TError,AdminReplaceLessonMutationVariables, TContext> => {
+
+const mutationKey = getAdminReplaceLessonMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminReplaceLesson>>, AdminReplaceLessonMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  adminReplaceLesson(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminReplaceLessonMutationResult = NonNullable<Awaited<ReturnType<typeof adminReplaceLesson>>>
+    export type AdminReplaceLessonMutationBody = BodyType<ReplaceLessonDto>
+    export type AdminReplaceLessonMutationError = ErrorType<ErrorResponseDto>
+    export type AdminReplaceLessonMutationVariables = {id: string;data: BodyType<ReplaceLessonDto>}
+
+    /**
+ * @summary Replace title, icon and all questions; a published lesson must stay publishable
+ */
+export const useAdminReplaceLesson = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminReplaceLesson>>, TError,AdminReplaceLessonMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminReplaceLesson>>,
+        TError,
+        AdminReplaceLessonMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminReplaceLessonMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Delete a draft lesson
+ */
+export const adminDeleteLesson = (
+    id: string,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<void>(
+      {url: `/v1/admin/lessons/${id}`, method: 'DELETE', signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminDeleteLessonMutationKey = () => ['adminDeleteLesson'] as const;
+
+export const getAdminDeleteLessonMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminDeleteLesson>>, TError,AdminDeleteLessonMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminDeleteLesson>>, TError,AdminDeleteLessonMutationVariables, TContext> => {
+
+const mutationKey = getAdminDeleteLessonMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminDeleteLesson>>, AdminDeleteLessonMutationVariables> = (props) => {
+          const {id} = props ?? {};
+
+          return  adminDeleteLesson(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminDeleteLessonMutationResult = NonNullable<Awaited<ReturnType<typeof adminDeleteLesson>>>
+
+    export type AdminDeleteLessonMutationError = ErrorType<ErrorResponseDto>
+    export type AdminDeleteLessonMutationVariables = {id: string}
+
+    /**
+ * @summary Delete a draft lesson
+ */
+export const useAdminDeleteLesson = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminDeleteLesson>>, TError,AdminDeleteLessonMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminDeleteLesson>>,
+        TError,
+        AdminDeleteLessonMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminDeleteLessonMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Publish a lesson that passes every publish rule
+ */
+export const adminPublishLesson = (
+    id: string,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<AdminLessonDto>(
+      {url: `/v1/admin/lessons/${id}/publish`, method: 'POST', signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminPublishLessonMutationKey = () => ['adminPublishLesson'] as const;
+
+export const getAdminPublishLessonMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminPublishLesson>>, TError,AdminPublishLessonMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminPublishLesson>>, TError,AdminPublishLessonMutationVariables, TContext> => {
+
+const mutationKey = getAdminPublishLessonMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminPublishLesson>>, AdminPublishLessonMutationVariables> = (props) => {
+          const {id} = props ?? {};
+
+          return  adminPublishLesson(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminPublishLessonMutationResult = NonNullable<Awaited<ReturnType<typeof adminPublishLesson>>>
+
+    export type AdminPublishLessonMutationError = ErrorType<ErrorResponseDto>
+    export type AdminPublishLessonMutationVariables = {id: string}
+
+    /**
+ * @summary Publish a lesson that passes every publish rule
+ */
+export const useAdminPublishLesson = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminPublishLesson>>, TError,AdminPublishLessonMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminPublishLesson>>,
+        TError,
+        AdminPublishLessonMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminPublishLessonMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Back to draft (publishedAt keeps the first publish time)
+ */
+export const adminUnpublishLesson = (
+    id: string,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<AdminLessonDto>(
+      {url: `/v1/admin/lessons/${id}/unpublish`, method: 'POST', signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminUnpublishLessonMutationKey = () => ['adminUnpublishLesson'] as const;
+
+export const getAdminUnpublishLessonMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUnpublishLesson>>, TError,AdminUnpublishLessonMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminUnpublishLesson>>, TError,AdminUnpublishLessonMutationVariables, TContext> => {
+
+const mutationKey = getAdminUnpublishLessonMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminUnpublishLesson>>, AdminUnpublishLessonMutationVariables> = (props) => {
+          const {id} = props ?? {};
+
+          return  adminUnpublishLesson(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminUnpublishLessonMutationResult = NonNullable<Awaited<ReturnType<typeof adminUnpublishLesson>>>
+
+    export type AdminUnpublishLessonMutationError = ErrorType<ErrorResponseDto>
+    export type AdminUnpublishLessonMutationVariables = {id: string}
+
+    /**
+ * @summary Back to draft (publishedAt keeps the first publish time)
+ */
+export const useAdminUnpublishLesson = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUnpublishLesson>>, TError,AdminUnpublishLessonMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminUnpublishLesson>>,
+        TError,
+        AdminUnpublishLessonMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminUnpublishLessonMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Upload a question image (JPEG/PNG/WebP, ≤ 2 MB); stored re-encoded, longest side ≤ 1600 px, no metadata
+ */
+export const adminUploadLessonImage = (
+    adminUploadLessonImageBody: BodyType<AdminUploadLessonImageBody>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+      const formData = new FormData();
+formData.append(`file`, adminUploadLessonImageBody.file);
+
+      return apiClient<LessonImageUploadDto>(
+      {url: `/v1/admin/lesson-images`, method: 'POST',
+      headers: {'Content-Type': 'multipart/form-data', },
+       data: formData, signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminUploadLessonImageMutationKey = () => ['adminUploadLessonImage'] as const;
+
+export const getAdminUploadLessonImageMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUploadLessonImage>>, TError,AdminUploadLessonImageMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminUploadLessonImage>>, TError,AdminUploadLessonImageMutationVariables, TContext> => {
+
+const mutationKey = getAdminUploadLessonImageMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminUploadLessonImage>>, AdminUploadLessonImageMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  adminUploadLessonImage(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminUploadLessonImageMutationResult = NonNullable<Awaited<ReturnType<typeof adminUploadLessonImage>>>
+    export type AdminUploadLessonImageMutationBody = BodyType<AdminUploadLessonImageBody>
+    export type AdminUploadLessonImageMutationError = ErrorType<ErrorResponseDto>
+    export type AdminUploadLessonImageMutationVariables = {data: BodyType<AdminUploadLessonImageBody>}
+
+    /**
+ * @summary Upload a question image (JPEG/PNG/WebP, ≤ 2 MB); stored re-encoded, longest side ≤ 1600 px, no metadata
+ */
+export const useAdminUploadLessonImage = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUploadLessonImage>>, TError,AdminUploadLessonImageMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminUploadLessonImage>>,
+        TError,
+        AdminUploadLessonImageMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminUploadLessonImageMutationOptions(options), queryClient);
     }
