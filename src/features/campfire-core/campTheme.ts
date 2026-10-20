@@ -25,6 +25,8 @@ export const campSizes = {
   animalChip: 52,
   heroHeight: 180,
   heroArt: 84,
+  /** iPhone hotspot guide picture (342×180). */
+  guideArtRatio: 342 / 180,
 } as const;
 
 /** Lobby sizes from the canvas (CampLobby). */
@@ -86,8 +88,9 @@ export const mafiaSizes = {
   roleTile: 40,
   roleGlyph: 22,
   stepper: 36,
-  cardTile: 72,
-  cardGlyph: 40,
+  /** Role card art under "You are" (MafRole). */
+  cardArtWidth: 144,
+  cardArtHeight: 192,
   chipGlyph: 14,
   rowAvatar: 40,
   /** Game over: players who are out are drawn dimmed. */

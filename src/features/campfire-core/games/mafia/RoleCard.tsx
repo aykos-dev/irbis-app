@@ -1,5 +1,6 @@
-import { StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
+import { roleCards } from '../../../../assets/images/campfire';
 import { AppButton } from '../../../../shared/components/AppButton';
 import { AppText } from '../../../../shared/components/AppText';
 import { radii, spacing } from '../../../../shared/constants/spacing';
@@ -7,7 +8,6 @@ import { t } from '../../../../shared/i18n';
 import { mafiaSizes } from '../../campTheme';
 import { SecretCard } from '../components/SecretCard';
 import { useSecureScreen } from '../useSecureScreen';
-import { RoleGlyph } from './RoleGlyph';
 import { roles, teamOf, type RoleId } from './roles';
 
 type Props = {
@@ -57,12 +57,14 @@ export function RoleCard({
         <SecretCard captured={captured}>
           <View style={layout.center}>
             <AppText variant="caption">{t('camp.maf.youAre')}</AppText>
-            <View
-              style={[layout.tile, { backgroundColor: role?.color }]}
+            <Image
+              testID="maf.card.art"
+              source={roleCards[roleId]}
+              style={layout.art}
+              accessibilityElementsHidden
               importantForAccessibility="no-hide-descendants"
-            >
-              <RoleGlyph roleId={roleId} size={mafiaSizes.cardGlyph} />
-            </View>
+              accessibilityIgnoresInvertColors
+            />
             <AppText
               variant="h1"
               style={[layout.centerText, { color: role?.color }]}
@@ -95,11 +97,9 @@ const layout = StyleSheet.create({
   header: { gap: spacing[6] },
   center: { alignItems: 'center', gap: spacing[8] },
   centerText: { textAlign: 'center' },
-  tile: {
-    width: mafiaSizes.cardTile,
-    height: mafiaSizes.cardTile,
+  art: {
+    width: mafiaSizes.cardArtWidth,
+    height: mafiaSizes.cardArtHeight,
     borderRadius: radii.tile,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
