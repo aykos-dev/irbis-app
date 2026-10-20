@@ -291,19 +291,31 @@ function Viewfinder({ active, onScanned }: { active: boolean; onScanned: (codes:
   const device = useCameraDevice('back');
   const { hasPermission, requestPermission } = useCameraPermission();
   const [denied, setDenied] = useState(false);
+  const asked = useRef(false);
   const codeScanner = useCodeScanner({ codeTypes: ['qr'], onCodeScanned: onScanned });
 
+  // Android reports 'denied' before the first request too, so any non-granted status asks the OS once;
+  // the hook re-reads the status on app foreground, so a grant made in Settings starts the camera.
   useEffect(() => {
     if (hasPermission) {
       setDenied(false);
       return;
     }
-    if (Camera.getCameraPermissionStatus() === 'not-determined') {
-      requestPermission().then(granted => setDenied(!granted));
-    } else {
+    if (asked.current) {
       setDenied(true);
+      return;
     }
+    asked.current = true;
+    requestPermission().then(granted => setDenied(!granted));
   }, [hasPermission, requestPermission]);
+
+  // Ask the OS dialog again; only a denied answer (the OS will not ask any more) leads to Settings.
+  const allowCamera = async () => {
+    haptics.tap();
+    if (!(await requestPermission())) {
+      Linking.openSettings();
+    }
+  };
 
   useEffect(() => {
     if (denied) {
@@ -331,10 +343,7 @@ function Viewfinder({ active, onScanned }: { active: boolean; onScanned: (codes:
             testID="camp.join.allow-camera"
             label={t('camp.join.allowCamera')}
             variant="white"
-            onPress={() => {
-              haptics.tap();
-              Linking.openSettings();
-            }}
+            onPress={allowCamera}
           />
         </View>
       ) : null}

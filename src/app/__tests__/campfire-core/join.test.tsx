@@ -178,6 +178,7 @@ describe('campfire-core — join by QR or code (AC5)', () => {
   });
 
   it('AC5: camera denied → note and Allow camera (opens Settings); typing the code still works', async () => {
+    fakeCamera.grantOnRequest = false;
     fakeCamera.status = 'denied';
     const openSettings = jest.spyOn(Linking, 'openSettings').mockResolvedValue(undefined);
     await hostRoom();
@@ -192,6 +193,46 @@ describe('campfire-core — join by QR or code (AC5)', () => {
     await type('camp.join.code', '4821');
     await advance(3100);
     expect(await screen.findByTestId('camp.join.found')).toBeOnTheScreen();
+    openSettings.mockRestore();
+  });
+
+  it('camera: Android "denied" before any request asks the OS dialog on open, not settings', async () => {
+    fakeCamera.status = 'denied';
+    const openSettings = jest.spyOn(Linking, 'openSettings').mockResolvedValue(undefined);
+    await openJoin();
+
+    expect(fakeCamera.requests).toBe(1);
+    expect(await screen.findByTestId('camp.join.camera')).toBeOnTheScreen();
+    expect(screen.queryByTestId('camp.join.camera-denied')).not.toBeOnTheScreen();
+    expect(openSettings).not.toHaveBeenCalled();
+    openSettings.mockRestore();
+  });
+
+  it('camera: first tap asks the OS dialog, not settings', async () => {
+    fakeCamera.status = 'denied';
+    fakeCamera.grantOnRequest = false;
+    const openSettings = jest.spyOn(Linking, 'openSettings').mockResolvedValue(undefined);
+    await openJoin();
+    expect(screen.getByTestId('camp.join.camera-denied')).toBeOnTheScreen();
+
+    fakeCamera.grantOnRequest = true;
+    await fireEvent.press(screen.getByTestId('camp.join.allow-camera'));
+    expect(fakeCamera.requests).toBe(2);
+    expect(openSettings).not.toHaveBeenCalled();
+    expect(await screen.findByTestId('camp.join.camera')).toBeOnTheScreen();
+    openSettings.mockRestore();
+  });
+
+  it('camera: settings only after a denied request', async () => {
+    fakeCamera.status = 'denied';
+    fakeCamera.grantOnRequest = false;
+    const openSettings = jest.spyOn(Linking, 'openSettings').mockResolvedValue(undefined);
+    await openJoin();
+    expect(openSettings).not.toHaveBeenCalled();
+
+    await fireEvent.press(screen.getByTestId('camp.join.allow-camera'));
+    expect(fakeCamera.requests).toBe(2);
+    expect(openSettings).toHaveBeenCalledTimes(1);
     openSettings.mockRestore();
   });
 });

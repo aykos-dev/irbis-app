@@ -11,3 +11,14 @@
 
 # react-native-config reads BuildConfig fields by reflection.
 -keep class uz.irbis.app.BuildConfig { *; }
+
+# VisionCamera + its ML Kit QR scanner and CameraX use JNI/reflection; R8 renaming them leaves the
+# CampJoin preview black in release.
+-keep class com.mrousavy.camera.** { *; }
+-keep class androidx.camera.** { *; }
+-keep class com.google.mlkit.** { *; }
+-keep class com.google.android.gms.internal.mlkit_vision_barcode.** { *; }
+-keep class com.google.android.gms.internal.mlkit_vision_barcode_bundled.** { *; }
+-keep class com.google.android.gms.internal.mlkit_vision_common.** { *; }
+-dontwarn com.google.mlkit.**
+-dontwarn com.google.android.gms.internal.mlkit_vision_barcode**
