@@ -108,7 +108,10 @@
     "share": "Ulashish",
     "continue": "Davom etish",
     "shareText": "Men endi Irbis’da — %{name}!",
-    "skipHint": "O‘tkazib yuborish uchun bosing"
+    "skipHint": "O‘tkazib yuborish uchun bosing",
+    "nextTier": "Keyingi: «%{tier}» darslari %{n}-darajaga hisoblanadi",
+    "tierName": "%{tier}-bosqich",
+    "tierFirstAid": "Birinchi yordam"
   },
   "lockChip": "%{n}-daraja",
   "lockA11y": "Yopiq — %{n}-daraja kerak",

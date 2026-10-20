@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 
 import { useTheme } from '../shared/contexts/theme';
 import { AuthGateHost } from './AuthGateHost';
+import { LessonSyncHost } from './LessonSyncHost';
 import { LevelUpHost } from './LevelUpHost';
 import { linking } from './navigation/linking';
 import { navigationRef } from './navigation/navigationRef';
@@ -33,6 +34,7 @@ export function AppNavigation() {
       <RootNavigator />
       <AuthGateHost />
       <LevelUpHost />
+      <LessonSyncHost />
     </NavigationContainer>
   );
 }

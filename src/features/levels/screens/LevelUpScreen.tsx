@@ -7,18 +7,25 @@ import Svg, { Polygon, SvgXml } from 'react-native-svg';
 
 import type { RootStackScreenProps } from '../../../app/navigation/types';
 import { bootSvg } from '../../../assets/svg/boot';
-import { getMeLevelGetQueryKey, useMeLevelMarkLevelUpSeen } from '../../../shared/api/generated';
-import type { MyLevelDto, PendingLevelUpDto } from '../../../shared/api/generated/model';
+import {
+  getLessonsListQueryKey,
+  getMeLevelGetQueryKey,
+  useMeLevelMarkLevelUpSeen,
+} from '../../../shared/api/generated';
+import type { LessonCatalog, MyLevelDto, PendingLevelUpDto } from '../../../shared/api/generated/model';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
-import { levelMeta } from '../../../shared/components/levels/levelMeta';
+import { levelMeta, MAX_LEVEL } from '../../../shared/components/levels/levelMeta';
 import { Pressable } from '../../../shared/components/Pressable';
 import { levelUpColors } from '../../../shared/constants/colors';
 import { borders, motion, radii, screenPadding, sizes, spacing } from '../../../shared/constants/spacing';
-import { t } from '../../../shared/i18n';
+import { useLocale } from '../../../shared/hooks/useLocale';
+import { t, type Locale } from '../../../shared/i18n';
 import { haptics } from '../../../shared/utils/haptics';
 import { qaLog } from '../../../shared/utils/qaLog';
 import { EvolutionSequence } from '../components/EvolutionSequence';
+import { FIRST_AID_TIER } from '../formatRequirement';
+import { useLevelDefs } from '../hooks/useLevelDefs';
 import { levelUpSession } from '../levelUpSession';
 
 const RAYS = 12;
@@ -51,6 +58,28 @@ function capitalize(text: string): string {
 export function placesLine(unlock: string, count: number): string {
   const head = capitalize(unlock);
   return count > 0 ? t('levels.up.places', { unlock: head, count }) : head;
+}
+
+/**
+ * "Next: {tier} lessons count toward Level {n}" (AC8) when the next level has a tier lesson gate:
+ * the tier title from the cached lesson catalog, else the tier wording. Null for count / all gates
+ * and at the top level.
+ */
+export function nextTierLine(
+  toLevel: number,
+  gate: { kind: string; tier: string | null } | undefined,
+  catalog: LessonCatalog | undefined,
+  locale: Locale,
+): string | null {
+  const next = toLevel + 1;
+  if (next > MAX_LEVEL || !gate || gate.kind !== 'tier' || gate.tier === null) {
+    return null;
+  }
+  const tierKey = gate.tier;
+  const title = catalog?.tiers.find(tier => tier.key === tierKey)?.title[locale];
+  const fallback =
+    tierKey === FIRST_AID_TIER ? t('levels.up.tierFirstAid') : t('levels.up.tierName', { tier: tierKey });
+  return t('levels.up.nextTier', { tier: title ?? fallback, n: next });
 }
 
 function rayPoints(index: number): string {
@@ -113,6 +142,15 @@ export function LevelUpScreen({ navigation, route }: RootStackScreenProps<'Level
   const { mutateAsync: markSeen } = useMeLevelMarkLevelUpSeen({ mutation: { meta: { silentError: true } } });
   const to = levelMeta(toLevel);
   const name = t(to.nameKey);
+  const locale = useLocale();
+  const { data: defs } = useLevelDefs({ enabled: toLevel < MAX_LEVEL });
+  const nextGate = defs?.items.find(def => def.level === toLevel + 1)?.lessons;
+  const nextTier = nextTierLine(
+    toLevel,
+    nextGate,
+    queryClient.getQueryData<LessonCatalog>(getLessonsListQueryKey()),
+    locale,
+  );
 
   useEffect(() => {
     qaLog('levelup_shown', { from: fromLevel, to: toLevel });
@@ -209,6 +247,11 @@ export function LevelUpScreen({ navigation, route }: RootStackScreenProps<'Level
             <AppText testID="levelup.places" variant="body" tone="white">
               {placesLine(t(to.unlockKey), newPlacesCount)}
             </AppText>
+            {nextTier ? (
+              <AppText testID="levelup.nextTier" variant="caption" tone="white">
+                {nextTier}
+              </AppText>
+            ) : null}
           </View>
           <View style={layout.actions}>
             <AppButton testID="levelup.share" variant="white" label={t('levels.up.share')} onPress={share} />
