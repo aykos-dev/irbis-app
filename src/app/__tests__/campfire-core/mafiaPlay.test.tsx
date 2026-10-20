@@ -81,7 +81,7 @@ async function hostMafia(): Promise<FakeSocket[]> {
   for (let i = 1; i <= 6; i += 1) {
     const client = fakeNet.server().connect();
     await act(() => {
-      client.send({ v: 3, type: 'hello', code, nickname: `guest_${i}`, avatar: 'bear' });
+      client.send({ v: 4, type: 'hello', code, nickname: `guest_${i}`, avatar: 'bear' });
     });
     clients.push(client);
   }
@@ -105,8 +105,8 @@ describe('campfire-mafia — narrator control (AC4)', () => {
     expect(row('p1').getByText('alive')).toBeOnTheScreen();
     expect(row('p1').queryByText('Ready')).not.toBeOnTheScreen();
 
-    await act(() => clients[0]?.send({ v: 3, type: 'mafReady', round: 1 }));
-    await act(() => clients[0]?.send({ v: 3, type: 'mafReady', round: 1 }));
+    await act(() => clients[0]?.send({ v: 4, type: 'mafReady', round: 1 }));
+    await act(() => clients[0]?.send({ v: 4, type: 'mafReady', round: 1 }));
     expect(row('p1').getByText('Ready')).toBeOnTheScreen();
     expect(qaEvents().filter(entry => entry.event === 'maf_ready')).toEqual([
       { event: 'maf_ready', ready: 1, players: 6 },
@@ -203,7 +203,7 @@ describe('campfire-mafia — player phone (AC3, AC5)', () => {
     await screen.findByTestId('camp.lobby.wait');
     for (let i = 2; i <= 5; i += 1) {
       const other = fakeNet.server().connect();
-      await act(() => other.send({ v: 3, type: 'hello', code: '4821', nickname: `guest_${i}`, avatar: 'eagle' }));
+      await act(() => other.send({ v: 4, type: 'hello', code: '4821', nickname: `guest_${i}`, avatar: 'eagle' }));
     }
     await act(() => server.startMafia({ counts: defaultCounts(5), revealOut: true }, () => 0.99));
     await screen.findByTestId('maf.player');

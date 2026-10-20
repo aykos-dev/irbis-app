@@ -78,7 +78,7 @@ async function hostMafia(): Promise<FakeSocket[]> {
   for (let i = 1; i <= 6; i += 1) {
     const client = fakeNet.server().connect();
     await act(() => {
-      client.send({ v: 3, type: 'hello', code, nickname: `guest_${i}`, avatar: 'bear' });
+      client.send({ v: 4, type: 'hello', code, nickname: `guest_${i}`, avatar: 'bear' });
     });
     clients.push(client);
   }
@@ -171,7 +171,7 @@ describe('campfire-mafia — win check and game over, host (AC6)', () => {
     });
     await press('maf.play-again');
     expect(await screen.findByTestId('maf.setup')).toBeOnTheScreen();
-    expect(clients[0]?.received().at(-1)).toEqual({ v: 3, type: 'lobby' });
+    expect(clients[0]?.received().at(-1)).toEqual({ v: 4, type: 'lobby' });
   });
 });
 
@@ -213,7 +213,7 @@ describe('campfire-mafia — game over, player phone (AC6)', () => {
     await screen.findByTestId('camp.lobby.wait');
     for (let i = 2; i <= 5; i += 1) {
       const other = fakeNet.server().connect();
-      await act(() => other.send({ v: 3, type: 'hello', code: '4821', nickname: `guest_${i}`, avatar: 'eagle' }));
+      await act(() => other.send({ v: 4, type: 'hello', code: '4821', nickname: `guest_${i}`, avatar: 'eagle' }));
     }
     await act(() => server.startMafia({ counts: defaultCounts(5), revealOut: false }, () => 0.99));
     await screen.findByTestId('maf.player');

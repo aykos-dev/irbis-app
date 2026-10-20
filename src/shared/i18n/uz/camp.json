@@ -24,7 +24,9 @@
     "imposterMeta": "3–15 · 5–10 daq",
     "mafiaMeta": "6–15 · 20–40 daq",
     "whoamiMeta": "3–12 · 10–20 daq",
-    "ratherMeta": "2–15 · cheksiz"
+    "ratherMeta": "2–15 · cheksiz",
+    "xo": "X va O",
+    "xoMeta": "2 · 1–5 daq"
   },
   "comingSoon": "Tez orada",
   "comingSoonToast": "Keyingi yangilanishda chiqadi",
@@ -128,7 +130,8 @@
     "name": {
       "imposter": "Sotqin",
       "whoami": "Men kimman?",
-      "rather": "Qaysi birini tanlarding"
+      "rather": "Qaysi birini tanlarding",
+      "xo": "X va O"
     }
   },
   "secret": {
@@ -317,5 +320,15 @@
     "lobby": "Lobbi",
     "playAgain": "Yana o'ynash",
     "waitHost": "Boshlovchi kutilmoqda"
+  },
+  "xo": {
+    "needTwo": "X va O ikki kishilik o'yin",
+    "yourTurn": "Sizning navbatingiz",
+    "theirTurn": "%{name} navbati",
+    "youWin": "Siz yutdingiz!",
+    "theyWin": "%{name} yutdi!",
+    "draw": "Durang",
+    "cell": "Katak %{n}, %{state}",
+    "empty": "bo'sh"
   }
 }

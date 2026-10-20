@@ -37,6 +37,7 @@ import {
   inRange,
   playerRange,
   TWO_IMPOSTERS_FROM,
+  xoRange,
   type GameSettings,
 } from '../games/gameReducer';
 import { MafiaSetup } from '../games/mafia/MafiaSetup';
@@ -55,7 +56,7 @@ import type { RosterPlayer } from '../protocol/codec';
 import { reconnectingCount, toRoster } from '../room/roomReducer';
 import { useHostRoom, type HostNetwork } from '../room/useHostRoom';
 
-const lobbyGames: GameId[] = ['imposter', 'mafia', 'whoami', 'rather'];
+const lobbyGames: GameId[] = ['imposter', 'mafia', 'whoami', 'rather', 'xo'];
 
 function isPartyGame(game: GameId): game is PartyGame {
   return partyGames.some(party => party === game);
@@ -123,7 +124,7 @@ export function CampLobbyScreen(props: RootStackScreenProps<'CampLobby'>) {
  */
 function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
   useLocale();
-  const { state, retry, remove, close, startGame, startMafia } = useHostRoom(
+  const { state, retry, remove, close, startGame, startMafia, startXo } = useHostRoom(
     route.params?.resume === true,
   );
   const [game, setGame] = useState<GameId>(
@@ -334,6 +335,14 @@ function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
                   </AppText>
                 </View>
               </>
+            ) : game === 'xo' ? (
+              <XoStart
+                players={connected}
+                onStart={() => {
+                  haptics.success();
+                  startXo();
+                }}
+              />
             ) : (
               <MafiaSetup
                 players={Math.max(0, connected - 1)}
@@ -569,6 +578,27 @@ function Games({
           );
         })}
       </View>
+    </View>
+  );
+}
+
+/** X and O Start (campfire-xo AC1): enabled with exactly 2 connected seats, host included. */
+function XoStart({ players, onStart }: { players: number; onStart: () => void }) {
+  const ready = players >= xoRange.min && players <= xoRange.max;
+  return (
+    <View style={layout.section}>
+      <AppButton
+        testID="camp.lobby.start"
+        label={t('camp.game.start', { game: t('camp.game.name.xo') })}
+        variant="secondary"
+        disabled={!ready}
+        onPress={onStart}
+      />
+      {ready ? null : (
+        <AppText testID="camp.lobby.start-reason" variant="small" style={layout.center}>
+          {t('camp.xo.needTwo')}
+        </AppText>
+      )}
     </View>
   );
 }

@@ -54,7 +54,7 @@ async function join(nickname: string): Promise<FakeSocket> {
   const code = String(screen.getByTestId('camp.lobby.code').props.children);
   const client = fakeNet.server().connect();
   await act(() => {
-    client.send({ v: 3, type: 'hello', code, nickname, avatar: 'bear' });
+    client.send({ v: 4, type: 'hello', code, nickname, avatar: 'bear' });
   });
   return client;
 }
@@ -79,7 +79,7 @@ const lastGame = (socket: FakeSocket) =>
     .at(-1);
 
 async function vote(socket: FakeSocket, pick: 'a' | 'b', qIndex = 0) {
-  await act(() => socket.send({ v: 3, type: 'wyrVote', round: 1, qIndex, pick }));
+  await act(() => socket.send({ v: 4, type: 'wyrVote', round: 1, qIndex, pick }));
 }
 
 describe('campfire-party — Would you rather (AC7)', () => {

@@ -10,10 +10,13 @@ import {
   roundSeats,
   toMafiaPublic,
   toPublic,
+  toXoPublic,
+  xoRange,
   type GameSeat,
   type GameSettings,
   type HostAction,
   type HostGame,
+  type XoState,
 } from '../games/gameReducer';
 import {
   mafiaRange,
@@ -34,6 +37,7 @@ import {
   type WyrPick,
 } from '../protocol/codec';
 import {
+  HOST_SEAT_ID,
   roomReducer,
   toRoster,
   type RoomAction,
@@ -81,6 +85,10 @@ export type HostServer = {
   nextQuestion: () => void;
   /** Who am I: deals the seat its own character (`mine`), to that seat only. */
   showMine: (seatId: string) => void;
+  /** X and O: the host is X, the one other connected seat O; only with exactly 2 seats. */
+  startXo: () => void;
+  /** X and O: a seat's move (the host's own taps included); ignored unless valid (AC2). */
+  xoMove: (seatId: string, cell: number) => void;
   /** Mafia: Night n → Day n → Night n+1. */
   mafPhaseNext: () => void;
   /** Mafia: the narrator marks a player out (killed at night, exiled by day). */
@@ -157,6 +165,15 @@ export function createHostServer({
         round: game.round,
         phase: game.phase,
         public: toMafiaPublic(game),
+      });
+      return;
+    }
+    if (game.game === 'xo') {
+      send(conn, {
+        type: 'game',
+        game: 'xo',
+        round: game.round,
+        public: toXoPublic(game),
       });
       return;
     }
@@ -263,6 +280,36 @@ export function createHostServer({
     qaLog('camp_whoami_show_mine', { round });
   };
 
+  /** X and O: applies a move; an accepted one goes to every phone and is logged, with the result if it ended the game. */
+  const xoMove = (seatId: string, round: number, gameNo: number, cell: number) => {
+    const before = game;
+    if (
+      before?.game !== 'xo' ||
+      !applyGame({ type: 'xoMove', seatId, round, gameNo, cell })
+    ) {
+      return;
+    }
+    broadcastGame(false);
+    const next = current();
+    if (next?.game !== 'xo') {
+      return;
+    }
+    qaLog('xo_move', {
+      gameNo: next.gameNo,
+      cell,
+      mark: seatId === next.xSeatId ? 'x' : 'o',
+    });
+    logXoResult(next);
+  };
+
+  const logXoResult = ({ result, gameNo }: XoState) => {
+    if (result?.kind === 'win') {
+      qaLog('xo_result', { gameNo, kind: 'win', mark: result.mark });
+    } else if (result?.kind === 'draw') {
+      qaLog('xo_result', { gameNo, kind: 'draw' });
+    }
+  };
+
   const apply = (action: RoomAction): RoomOutcome => {
     const result = roomReducer(state, action);
     if (result.state !== state) {
@@ -331,6 +378,13 @@ export function createHostServer({
         const seatId = seatOf(conn);
         if (seatId) {
           showMine(seatId, message.round);
+        }
+        return;
+      }
+      case 'xoMove': {
+        const seatId = seatOf(conn);
+        if (seatId) {
+          xoMove(seatId, message.round, message.gameNo, message.cell);
         }
         return;
       }
@@ -541,8 +595,26 @@ export function createHostServer({
         solo: teams.solo,
       });
     },
+    startXo: () => {
+      const players = roundSeats(gameSeats()).length;
+      if (game || players < xoRange.min || players > xoRange.max) {
+        return;
+      }
+      if (
+        !applyGame({ type: 'startXo', seats: gameSeats(), hostSeatId: HOST_SEAT_ID })
+      ) {
+        return;
+      }
+      broadcastGame(false);
+      qaLog('camp_game_started', { game: 'xo', players });
+    },
+    xoMove: (seatId, cell) => {
+      if (game?.game === 'xo') {
+        xoMove(seatId, game.round, game.gameNo, cell);
+      }
+    },
     newRound: (rng = Math.random) => {
-      if (!game || game.game === 'mafia') {
+      if (!game || game.game === 'mafia' || game.game === 'xo') {
         return;
       }
       const ids = draw(game.game, game.settings.packId, rng);
@@ -623,7 +695,12 @@ export function createHostServer({
       qaLog('maf_back');
     },
     reveal: () => {
-      if (!game || !applyGame({ type: 'reveal' }) || game.game === 'mafia') {
+      if (
+        !game ||
+        !applyGame({ type: 'reveal' }) ||
+        game.game === 'mafia' ||
+        game.game === 'xo'
+      ) {
         return;
       }
       broadcastGame(false);

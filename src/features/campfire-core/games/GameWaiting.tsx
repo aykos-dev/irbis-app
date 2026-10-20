@@ -24,10 +24,11 @@ import type {
   Secret,
   WhoamiSecret,
   WyrPick,
+  XoPublic,
 } from '../protocol/codec';
 import { HOST_SEAT_ID } from '../room/roomReducer';
 import { hostGame } from '../room/useHostRoom';
-import { toPublic, type MafiaState } from './gameReducer';
+import { toPublic, toXoPublic, type MafiaState } from './gameReducer';
 import { ImposterScreen } from './imposter/ImposterScreen';
 import { GameOver } from './mafia/GameOver';
 import { MafiaScreen, mafiaWinner } from './mafia/MafiaScreen';
@@ -35,6 +36,7 @@ import { WinSheet } from './mafia/WinSheet';
 import type { PartyGame } from './packs';
 import { RatherScreen } from './rather/RatherScreen';
 import { WhoAmIScreen } from './whoami/WhoAmIScreen';
+import { XoScreen } from './xo/XoScreen';
 
 type GameView = {
   game: PartyGame;
@@ -121,7 +123,24 @@ export function GameWaiting({
 
   let mafia: MafiaView | null = null;
   let view: GameView | null = null;
-  if (hosted?.game === 'mafia') {
+  let xo: {
+    info: XoPublic;
+    selfSeatId: string | null;
+    roster: RosterPlayer[];
+  } | null = null;
+  if (hosted?.game === 'xo') {
+    xo = {
+      info: toXoPublic(hosted),
+      selfSeatId: HOST_SEAT_ID,
+      roster: hostRoster,
+    };
+  } else if (player?.game?.game === 'xo') {
+    xo = {
+      info: player.game.public,
+      selfSeatId: player.seatId,
+      roster: player.players,
+    };
+  } else if (hosted?.game === 'mafia') {
     mafia = { kind: 'host', game: hosted };
   } else if (player?.game?.game === 'mafia') {
     const { deal } = player;
@@ -163,7 +182,7 @@ export function GameWaiting({
       roster: player.players,
     };
   }
-  const active = view !== null || mafia !== null;
+  const active = view !== null || mafia !== null || xo !== null;
   const mafiaHost = mafia?.kind === 'host' ? mafia.game : null;
   const mafiaOver = mafiaHost?.ended !== undefined;
 
@@ -186,6 +205,8 @@ export function GameWaiting({
     isPlayer ? client?.vote(pick) : hostGame.vote(pick);
   const showMine = () =>
     isPlayer ? client?.showMine() : hostGame.showMine();
+  const xoMove = (cell: number) =>
+    isPlayer ? client?.xoMove(cell) : hostGame.xoMove(cell);
 
   const endGame = (winner?: MafiaWinner) => {
     haptics.warning();
@@ -199,7 +220,7 @@ export function GameWaiting({
   // Mafia End game: a matching winner asks "<team> wins?", else "End without a winner?" (AC6).
   const endWinner = mafiaHost && confirmEnd ? mafiaWinner(mafiaHost) : null;
 
-  if (!view && !mafia) {
+  if (!view && !mafia && !xo) {
     return null;
   }
   return (
@@ -247,6 +268,14 @@ export function GameWaiting({
           >
             {t('camp.maf.inProgress')}
           </AppText>
+        ) : null}
+        {xo ? (
+          <XoScreen
+            info={xo.info}
+            selfSeatId={xo.selfSeatId}
+            roster={xo.roster}
+            onMove={xoMove}
+          />
         ) : null}
         {view?.game === 'imposter' ? (
           <ImposterScreen
