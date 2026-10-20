@@ -17,7 +17,7 @@ import { apiErrorCodes, isApiError } from '../api/errors';
 import { staleTimes } from '../api/query';
 import { tokenManager } from '../api/tokenManager';
 import { toast } from '../components/toastBus';
-import { collectGuestData, guestMergeDone, markGuestMergeDone } from '../guest/guestStore';
+import { collectGuestData, guestMergeDone, markGuestMergeDone, notifySignInSettled } from '../guest/guestStore';
 import { getLocale, setLocale, t } from '../i18n';
 import { qaLog } from '../utils/qaLog';
 
@@ -143,6 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setBlockedNotice(null);
       setStatus('signedIn');
       await mergeGuestData();
+      notifySignInSettled();
       if (options?.applyAccountLocale && session.me.locale !== getLocale()) {
         setLocale(session.me.locale);
         qaLog('locale_applied', { locale: session.me.locale });

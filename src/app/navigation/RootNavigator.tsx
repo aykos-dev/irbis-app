@@ -7,6 +7,8 @@ import { CampLobbyScreen } from '../../features/campfire-core/screens/CampLobbyS
 import { RecoveryPhoneScreen } from '../../features/auth/screens/RecoveryPhoneScreen';
 import { DebugScreen } from '../../features/debug/screens/DebugScreen';
 import { StatusScreen } from '../../features/health/screens/StatusScreen';
+import { LessonCompleteScreen } from '../../features/lessons/screens/LessonCompleteScreen';
+import { QuizScreen } from '../../features/lessons/screens/QuizScreen';
 import { CompanionsScreen } from '../../features/levels/screens/CompanionsScreen';
 import { LevelUpScreen } from '../../features/levels/screens/LevelUpScreen';
 import { LevelScreen } from '../../features/levels/screens/LevelScreen';
@@ -70,6 +72,12 @@ export function RootNavigator() {
       <Stack.Screen name="Place" component={PlaceScreen} />
       <Stack.Screen name="Level" component={LevelScreen} />
       <Stack.Screen name="Companions" component={CompanionsScreen} />
+      <Stack.Screen name="Quiz" component={QuizScreen} options={{ gestureEnabled: false }} />
+      <Stack.Screen
+        name="LessonComplete"
+        component={LessonCompleteScreen}
+        options={{ animation: 'fade', gestureEnabled: false }}
+      />
       <Stack.Screen
         name="LevelUp"
         component={LevelUpScreen}

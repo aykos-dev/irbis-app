@@ -1,0 +1,59 @@
+{
+  "hub": {
+    "title": "Lessons",
+    "heartsA11y": "%{count} hearts left"
+  },
+  "goal": {
+    "title": "Daily goal · 3-minute lessons",
+    "more": {
+      "one": "%{count} more lesson to reach today's goal",
+      "other": "%{count} more lessons to reach today's goal"
+    },
+    "done": "Goal reached — nice work!"
+  },
+  "tier": {
+    "caption": "Tier %{n}",
+    "firstAid": "First aid",
+    "done": "Done"
+  },
+  "node": {
+    "start": "START"
+  },
+  "empty": "Lessons are on their way",
+  "error": "Couldn't load lessons",
+  "retry": "Try again",
+  "offline": "You're offline. Lessons will load when you're back online.",
+  "hearts": {
+    "outTitle": "Out of hearts — back at midnight",
+    "outBody": "New hearts in %{time}. You can still replay lessons you've finished.",
+    "ok": "OK"
+  },
+  "quiz": {
+    "check": "Check",
+    "correct": "Nicely done!",
+    "wrong": "Not quite — you lost a heart",
+    "wrongPractice": "Not quite",
+    "correctAnswer": "Correct answer:",
+    "continue": "Continue",
+    "gotIt": "Got it",
+    "practice": "Practice",
+    "mute": "Sound off",
+    "unmute": "Sound on",
+    "close": "Close lesson",
+    "progressA11y": "Question %{n} of %{total}",
+    "quitTitle": "Quit lesson?",
+    "quitBody": "Your progress in this lesson is lost.",
+    "quit": "Quit",
+    "keep": "Keep learning",
+    "notCached": "Connect to the internet to open this lesson"
+  },
+  "complete": {
+    "title": "Lesson complete!",
+    "xp": "+%{count} XP",
+    "perfect": "No hearts lost!",
+    "practice": "Practice — no XP",
+    "firstTry": "Correct first try: %{n} / %{total}",
+    "hearts": "Hearts left: %{count}",
+    "signup": "Sign up to keep your XP"
+  }
+}

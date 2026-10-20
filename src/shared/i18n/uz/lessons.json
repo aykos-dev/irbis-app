@@ -1,0 +1,59 @@
+{
+  "hub": {
+    "title": "Darslar",
+    "heartsA11y": "%{count} ta yurak qoldi"
+  },
+  "goal": {
+    "title": "Kunlik maqsad · 3 daqiqalik darslar",
+    "more": {
+      "one": "Bugungi maqsadga yana %{count} ta dars",
+      "other": "Bugungi maqsadga yana %{count} ta dars"
+    },
+    "done": "Maqsad bajarildi — barakalla!"
+  },
+  "tier": {
+    "caption": "%{n}-bosqich",
+    "firstAid": "Birinchi yordam",
+    "done": "Tayyor"
+  },
+  "node": {
+    "start": "BOSHLASH"
+  },
+  "empty": "Darslar tez orada",
+  "error": "Darslarni yuklab bo'lmadi",
+  "retry": "Qayta urinish",
+  "offline": "Internet yo'q. Darslar internet qaytganda yuklanadi.",
+  "hearts": {
+    "outTitle": "Yuraklar tugadi — yarim tunda qaytadi",
+    "outBody": "Yangi yuraklar %{time} dan keyin. Tugatgan darslaringizni takrorlashingiz mumkin.",
+    "ok": "Tushunarli"
+  },
+  "quiz": {
+    "check": "Tekshirish",
+    "correct": "Zo'r!",
+    "wrong": "Unchalik emas — bitta yurak ketdi",
+    "wrongPractice": "Unchalik emas",
+    "correctAnswer": "To'g'ri javob:",
+    "continue": "Davom etish",
+    "gotIt": "Tushunarli",
+    "practice": "Mashq",
+    "mute": "Ovozni o'chirish",
+    "unmute": "Ovozni yoqish",
+    "close": "Darsni yopish",
+    "progressA11y": "%{total} tadan %{n}-savol",
+    "quitTitle": "Darsdan chiqasizmi?",
+    "quitBody": "Bu darsdagi natijangiz saqlanmaydi.",
+    "quit": "Chiqish",
+    "keep": "Darsni davom ettirish",
+    "notCached": "Darsni ochish uchun internetga ulaning"
+  },
+  "complete": {
+    "title": "Dars tugadi!",
+    "xp": "+%{count} XP",
+    "perfect": "Birorta ham yurak yo'qolmadi!",
+    "practice": "Mashq — XP berilmaydi",
+    "firstTry": "Birinchi urinishda: %{total} tadan %{n}",
+    "hearts": "Qolgan yuraklar: %{count}",
+    "signup": "XP saqlanishi uchun ro'yxatdan o'ting"
+  }
+}

@@ -30,6 +30,16 @@ type StorageSchema = {
   'camp.hostRoom': string;
   /** The host's last Mafia setup: JSON `{ counts, revealOut }` (no personal data). */
   'camp.maf.setup': string;
+  /** Today's lesson hearts: JSON `{ day: 'YYYY-MM-DD' (Tashkent), hearts }`; kept on sign-out. */
+  'lessons.hearts': string;
+  /** The last loaded lesson catalog for offline opens: JSON `{ userId, day, data }` (LessonCatalog). */
+  'lessons.catalog': string;
+  /** Lessons opened online, for offline replays: JSON `{ [lessonId]: PublicLesson }`. */
+  'lessons.cache': string;
+  /** First lesson completions on this device: JSON array of LocalCompletion (synced by slice 4). */
+  'lessons.completions': string;
+  /** '1' when quiz sounds are off; absent or '0' = on. */
+  'lessons.muted': string;
 } & {
   /** Campfire seat token per room code, so a player gets the same seat back (rejoin, restart). */
   [key: `camp.seats.${string}`]: string;

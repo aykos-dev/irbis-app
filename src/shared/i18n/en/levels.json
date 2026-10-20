@@ -108,7 +108,10 @@
     "share": "Share",
     "continue": "Continue",
     "shareText": "I'm now a %{name} on Irbis!",
-    "skipHint": "Tap to skip"
+    "skipHint": "Tap to skip",
+    "nextTier": "Next: %{tier} lessons count toward Level %{n}",
+    "tierName": "Tier %{tier}",
+    "tierFirstAid": "First aid"
   },
   "lockChip": "Level %{n}",
   "lockA11y": "Locked — needs Level %{n}",
