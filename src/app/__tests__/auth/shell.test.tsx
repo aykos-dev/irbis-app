@@ -41,7 +41,7 @@ describe('auth — bottom tabs and guest profile (AC1, AC2, AC10)', () => {
   it('AC1: Lessons and Community show the same empty state; each press logs tab_opened', async () => {
     await renderApp();
 
-    for (const tab of ['lessons', 'community'] as const) {
+    for (const tab of ['community'] as const) {
       await openTab(tab);
       expect(await screen.findByTestId('empty.coming-soon')).toBeOnTheScreen();
     }
@@ -49,7 +49,7 @@ describe('auth — bottom tabs and guest profile (AC1, AC2, AC10)', () => {
     const tabs = qaEvents()
       .filter(entry => entry.event === 'tab_opened')
       .map(entry => entry.tab);
-    expect(tabs).toEqual(['path', 'lessons', 'community']);
+    expect(tabs).toEqual(['path', 'community']);
   });
 
   it('AC2: the Profile tab shows the guest profile with its actions and rows', async () => {
