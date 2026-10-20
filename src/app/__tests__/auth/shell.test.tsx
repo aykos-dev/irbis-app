@@ -31,11 +31,10 @@ describe('auth — bottom tabs and guest profile (AC1, AC2, AC10)', () => {
     for (const tab of ['path', 'explore', 'lessons', 'community', 'profile']) {
       expect(screen.getByTestId(`nav.tab-${tab}`)).toBeOnTheScreen();
     }
-    expect(screen.getByTestId('empty.coming-soon')).toBeOnTheScreen();
-    expect(screen.getByText('Coming with the next update')).toBeOnTheScreen();
+    expect(await screen.findByTestId('path.screen')).toBeOnTheScreen();
     expect(screen.queryByTestId('auth.login')).not.toBeOnTheScreen();
     expect(screen.queryByTestId('health.screen')).not.toBeOnTheScreen();
-    expect(http.calls).toHaveLength(0);
+    expect(http.calls.map(call => call.url)).toEqual(['/v1/path']);
   });
 
   it('AC1: Lessons and Community open their screens; each press logs tab_opened', async () => {

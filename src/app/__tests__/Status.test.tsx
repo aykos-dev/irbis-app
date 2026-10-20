@@ -104,7 +104,7 @@ describe('Status screen (features/health.md)', () => {
     await fireEvent.press(retry);
 
     expect(await screen.findByTestId('health.api-chip')).toHaveTextContent('API is up');
-    expect(http.calls).toHaveLength(2);
+    expect(http.callsTo('/health')).toHaveLength(2);
   });
 
   it('rejects a body that does not match the generated schema', async () => {
@@ -138,6 +138,6 @@ describe('Status screen (features/health.md)', () => {
     await act(() => scroll.props.refreshControl.props.onRefresh());
 
     expect(await screen.findByText('Database is down')).toBeOnTheScreen();
-    expect(http.calls).toHaveLength(2);
+    expect(http.callsTo('/health')).toHaveLength(2);
   });
 });
