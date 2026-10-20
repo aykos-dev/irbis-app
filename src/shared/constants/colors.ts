@@ -141,6 +141,24 @@ export const mascotColors = {
   moodSadButCute: '#F0F1F2',
 } as const;
 
+/**
+ * Monthly path (irbis-docs/design/media/weekly-path/LAYOUT.md). Dark ring tints are brighter
+ * variants of `conditionColors.*.ring` for the dark bg (derived — confirm in design.md); the
+ * caution badge glyph and chest wood are canvas values not in design.md yet.
+ */
+export const pathColors = {
+  ringDark: { go: '#5CC97B', caution: '#FFD43B', notNow: '#FF7070', seasonalLock: '#C3CCD0' },
+  badge: { go: palette.pine, caution: palette.gold, notNow: palette.red700 },
+  badgeGlyph: { go: palette.white, caution: '#5C4000', notNow: palette.white },
+  chestTile: palette.orange,
+  chestEdge: palette.orangeEdge,
+  chestBody: '#8C5A33',
+  chestLid: '#A86B3C',
+  chestBand: palette.gold,
+  bolt: palette.gold,
+  rain: palette.sky,
+} as const;
+
 /** Path node drop shadow (design.md Shape: `rgba(0,0,0,.18)`). */
 export const shadowColor = '#000000';
 

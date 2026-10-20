@@ -45,6 +45,8 @@ type StorageSchema = {
   [key: `camp.seats.${string}`]: string;
   /** Campfire pack items already dealt, per `<game>.<packId>`: JSON array of item ids (no-repeat). */
   [key: `camp.used.${string}`]: string;
+  /** The last loaded monthly path per Tashkent month `YYYY-MM`, for offline opens: JSON PathDto (no personal data). */
+  [key: `path.cache.${string}`]: string;
 };
 
 export type StorageKey = keyof StorageSchema;

@@ -73,3 +73,90 @@ export const QaLevelsGrantResponse = zod.object({
 })).describe('Level-ups not yet seen, oldest first.')
 })
 
+/**
+ * Builds this month's path if missing, then records the visit (no XP). Answers 404 NOT_FOUND unless QA_TOOLS_ENABLED=true.
+ * @summary QA only: mark a place visited on your path this month
+ */
+export const QaPathVisitBody = zod.object({
+  "placeId": zod.uuid()
+})
+
+export const qaPathVisitResponseLevelMax = 7;
+
+
+export const qaPathVisitResponseNodesItemPlaceDifficultyMax = 5;
+
+export const qaPathVisitResponseNodesItemPlaceRequiredLevelMax = 7;
+
+export const qaPathVisitResponseNodesItemOpensMonthMax = 12;
+
+export const qaPathVisitResponseNodesItemSwapOnePlaceDifficultyMax = 5;
+
+export const qaPathVisitResponseNodesItemSwapOnePlaceRequiredLevelMax = 7;
+
+
+
+export const QaPathVisitResponse = zod.object({
+  "month": zod.string().describe('Asia/Tashkent month.'),
+  "level": zod.int().min(1).max(qaPathVisitResponseLevelMax),
+  "nodes": zod.array(zod.object({
+  "position": zod.int().min(1),
+  "place": zod.object({
+  "id": zod.uuid(),
+  "slug": zod.string(),
+  "name": zod.object({
+  "uz": zod.string(),
+  "ru": zod.string().nullable(),
+  "en": zod.string().nullable()
+}),
+  "type": zod.enum(['peak', 'lake', 'cave', 'camping', 'trail', 'waterfall', 'canyon']),
+  "difficulty": zod.int().min(1).max(qaPathVisitResponseNodesItemPlaceDifficultyMax),
+  "requiredLevel": zod.int().min(1).max(qaPathVisitResponseNodesItemPlaceRequiredLevelMax),
+  "elevationM": zod.int()
+}),
+  "status": zod.union([zod.enum(['go', 'caution', 'not_now', 'seasonal_lock']).describe('Weekend condition. Absent until one was computed for the place; null when there is no status.'),zod.null()]).describe('Current condition; null when none was computed.'),
+  "reasons": zod.array(zod.object({
+  "code": zod.enum(['THUNDERSTORM', 'GUSTS', 'HEAVY_PRECIP', 'WIND', 'PRECIP_LIKELY', 'HEAT', 'COLD', 'MUDSLIDE_RISK', 'FLOOD_RISK', 'AVALANCHE_RISK', 'GOOD_WEATHER', 'OVERRIDE', 'CLOSURE']),
+  "day": zod.enum(['sat', 'sun']).optional(),
+  "value": zod.int().optional()
+})),
+  "weekendDay": zod.enum(['sat', 'sun']),
+  "opensMonth": zod.int().min(1).max(qaPathVisitResponseNodesItemOpensMonthMax).nullable().describe('Next open month when the status is seasonal_lock.'),
+  "done": zod.boolean().describe('Visited this month.'),
+  "swap": zod.object({
+  "place": zod.object({
+  "id": zod.uuid(),
+  "slug": zod.string(),
+  "name": zod.object({
+  "uz": zod.string(),
+  "ru": zod.string().nullable(),
+  "en": zod.string().nullable()
+}),
+  "type": zod.enum(['peak', 'lake', 'cave', 'camping', 'trail', 'waterfall', 'canyon']),
+  "difficulty": zod.int().min(1).max(qaPathVisitResponseNodesItemSwapOnePlaceDifficultyMax),
+  "requiredLevel": zod.int().min(1).max(qaPathVisitResponseNodesItemSwapOnePlaceRequiredLevelMax),
+  "elevationM": zod.int()
+}),
+  "status": zod.enum(['go']),
+  "day": zod.enum(['sat', 'sun']),
+  "distanceFromOriginalKm": zod.int().describe('From the original node, km.'),
+  "elevationDiffM": zod.int().describe('Swap elevation minus the original, metres.')
+}).nullable().describe('Only for a not_now node; null when no go place fits.')
+})),
+  "chest": zod.object({
+  "required": zod.int(),
+  "done": zod.int(),
+  "opened": zod.boolean(),
+  "xp": zod.int()
+}).nullable().describe('Null when the path has no nodes.'),
+  "weather": zod.object({
+  "days": zod.array(zod.object({
+  "date": zod.iso.date(),
+  "day": zod.enum(['fri', 'sat', 'sun']),
+  "weatherCode": zod.int().describe('WMO weather code.'),
+  "tMaxC": zod.int(),
+  "windKmh": zod.int()
+}))
+})
+})
+

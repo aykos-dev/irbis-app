@@ -1,0 +1,65 @@
+{
+  "title": "This Month's Path",
+  "subtitle": "%{month} · built for %{levelName}, %{season}",
+  "status": {
+    "go": "Go · %{day}",
+    "caution": "Caution · %{reason}",
+    "notNow": "Not now",
+    "opens": "Opens in %{month}"
+  },
+  "days": {
+    "fri": "Fri",
+    "sat": "Sat",
+    "sun": "Sun"
+  },
+  "openPlace": "Open place",
+  "chest": {
+    "progress": "%{done} / %{required} · Check in at all %{required} places"
+  },
+  "weather": {
+    "credit": "Weather data by Open-Meteo.com"
+  },
+  "empty": {
+    "title": "No places match your level and interests this month",
+    "cta": "Explore the map"
+  },
+  "offline": "You're offline. Your path loads when you're back online.",
+  "info": {
+    "title": "How the path is built",
+    "body": "Every month we pick 3 places for your level and interests, best for the season and closest to Tashkent. Rings show this weekend's conditions. Check in at all 3 to open the chest."
+  },
+  "seasons": {
+    "winter": "winter",
+    "spring": "spring",
+    "summer": "summer",
+    "autumn": "autumn"
+  },
+  "months": {
+    "1": "January",
+    "2": "February",
+    "3": "March",
+    "4": "April",
+    "5": "May",
+    "6": "June",
+    "7": "July",
+    "8": "August",
+    "9": "September",
+    "10": "October",
+    "11": "November",
+    "12": "December"
+  },
+  "monthsIn": {
+    "1": "January",
+    "2": "February",
+    "3": "March",
+    "4": "April",
+    "5": "May",
+    "6": "June",
+    "7": "July",
+    "8": "August",
+    "9": "September",
+    "10": "October",
+    "11": "November",
+    "12": "December"
+  }
+}
