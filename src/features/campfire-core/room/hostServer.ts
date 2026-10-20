@@ -4,12 +4,17 @@ import Zeroconf from 'react-native-zeroconf';
 import { qaLog } from '../../../shared/utils/qaLog';
 import { uuidV4 } from '../../../shared/utils/uuid';
 import {
+  crocSecretFor,
+  fromDescriber,
   gameReducer,
   idsNeeded,
   inRange,
   roundSeats,
+  toCrocPublic,
   toMafiaPublic,
   toPublic,
+  type CrocSettings,
+  type CrocWord,
   type GameSeat,
   type GameSettings,
   type HostAction,
@@ -20,7 +25,7 @@ import {
   teamCounts,
   type MafiaSettings,
 } from '../games/mafia/roles';
-import { findPack, type PartyGame } from '../games/packs';
+import { findCrocPack, findPack, type PartyGame } from '../games/packs';
 import { drawIds, type Rng } from '../games/usedStore';
 import {
   CAMP_PORT,
@@ -91,6 +96,13 @@ export type HostServer = {
   mafEnd: (winner: MafiaWinner) => void;
   /** Mafia, after game over: a new deal over the connected players, else back to the lobby (setup). */
   mafPlayAgain: (rng?: Rng) => void;
+  /** Crocodile: starts at "who shows next?" when 3–15 seats are connected (host included). */
+  startCroc: (settings: CrocSettings) => void;
+  /** Crocodile, host: `seatId` shows next; draws the word and sends it to that seat only. */
+  crocPick: (seatId: string, rng?: Rng) => void;
+  /** Crocodile, the host's own seat as describer: another word / start the turn. */
+  crocSkip: (seatId: string, rng?: Rng) => void;
+  crocStart: (seatId: string) => void;
 };
 
 type Options = {
@@ -146,6 +158,20 @@ export function createHostServer({
       return;
     }
     const seatId = seatOf(conn);
+    if (game.game === 'croc') {
+      const secret = crocSecretFor(game, seatId);
+      if (withDeal && secret) {
+        send(conn, { type: 'deal', game: 'croc', round: game.round, secret });
+      }
+      send(conn, {
+        type: 'game',
+        game: 'croc',
+        round: game.round,
+        phase: game.phase,
+        public: toCrocPublic(game),
+      });
+      return;
+    }
     if (game.game === 'mafia') {
       const secret = seatId ? game.deals[seatId] : undefined;
       if (withDeal && secret) {
@@ -209,6 +235,39 @@ export function createHostServer({
     return drawIds(kind, pack, idsNeeded(kind, roundSeats(gameSeats()).length), rng);
   };
 
+  /** Crocodile: a random ticked pack, then a word not used from it yet (the pack starts over when empty). */
+  const drawWord = (packIds: string[], rng: Rng): CrocWord | null => {
+    const ticked = packIds.flatMap(packId => {
+      const pack = findCrocPack(packId);
+      return pack ? [pack] : [];
+    });
+    const pack = ticked[Math.floor(rng() * ticked.length)];
+    const id = pack ? drawIds('croc', pack, 1, rng)[0] : undefined;
+    return pack && id ? { id, pack: pack.id } : null;
+  };
+
+  const crocSkip = (seatId: string, round: number, turnNo: number, rng: Rng) => {
+    if (game?.game !== 'croc' || !fromDescriber(game, seatId, round, turnNo)) {
+      return;
+    }
+    const skipped = game.word?.pack;
+    const word = drawWord(game.packs, rng);
+    if (
+      !word ||
+      !applyGame({ type: 'crocSkip', seatId, round, turnNo, word })
+    ) {
+      return;
+    }
+    broadcastGame(true);
+    qaLog('croc_skip', { turnNo, pack: skipped ?? word.pack });
+  };
+
+  const crocStart = (seatId: string, round: number, turnNo: number) => {
+    if (applyGame({ type: 'crocStart', seatId, round, turnNo })) {
+      broadcastGame(false);
+    }
+  };
+
   const connOf = (seatId: string) => {
     const connId = state.seats.find(seat => seat.seatId === seatId)?.connId;
     return connId ? conns.get(connId) : undefined;
@@ -231,9 +290,9 @@ export function createHostServer({
     if (!game || game.game !== 'rather' || game.phase !== 'voting') {
       return;
     }
-    const votes = game.votes;
+    const { votes, players } = game;
     const connected = roundSeats(gameSeats()).filter(seatId =>
-      game?.players.includes(seatId),
+      players.includes(seatId),
     );
     if (
       connected.length > 0 &&
@@ -351,6 +410,23 @@ export function createHostServer({
         }
         return;
       }
+      case 'crocSkip': {
+        const seatId = seatOf(conn);
+        if (seatId) {
+          crocSkip(seatId, message.round, message.turnNo, Math.random);
+        }
+        return;
+      }
+      case 'crocStart': {
+        const seatId = seatOf(conn);
+        if (seatId) {
+          crocStart(seatId, message.round, message.turnNo);
+        }
+        return;
+      }
+      // Guessed! comes with the turn timer (campfire-crocodile slice 2); until then it changes nothing.
+      case 'crocGuessed':
+        return;
       // The prober reads the answer and hangs up; an idle prober is dropped by the silence check.
       case 'probe':
         send(
@@ -542,7 +618,7 @@ export function createHostServer({
       });
     },
     newRound: (rng = Math.random) => {
-      if (!game || game.game === 'mafia') {
+      if (!game || game.game === 'mafia' || game.game === 'croc') {
         return;
       }
       const ids = draw(game.game, game.settings.packId, rng);
@@ -555,6 +631,52 @@ export function createHostServer({
       }
       broadcastGame(true);
       qaLog('camp_round_started', { game: game.game, round: game.round });
+    },
+    startCroc: settings => {
+      const players = roundSeats(gameSeats()).length;
+      if (
+        game ||
+        !inRange('croc', players) ||
+        !settings.packs.some(packId => findCrocPack(packId))
+      ) {
+        return;
+      }
+      if (
+        !applyGame({ type: 'startCroc', settings, seats: gameSeats() })
+      ) {
+        return;
+      }
+      broadcastGame(false);
+      qaLog('camp_game_started', { game: 'croc', players });
+    },
+    crocPick: (seatId, rng = Math.random) => {
+      const seat = state.seats.find(candidate => candidate.seatId === seatId);
+      if (
+        game?.game !== 'croc' ||
+        game.phase !== 'pick' ||
+        seat?.status !== 'connected'
+      ) {
+        return;
+      }
+      const word = drawWord(game.packs, rng);
+      if (!word || !applyGame({ type: 'crocPick', seatId, word })) {
+        return;
+      }
+      broadcastGame(true);
+      const next = current();
+      if (next?.game === 'croc') {
+        qaLog('croc_pick', { turnNo: next.turnNo });
+      }
+    },
+    crocSkip: (seatId, rng = Math.random) => {
+      if (game?.game === 'croc') {
+        crocSkip(seatId, game.round, game.turnNo, rng);
+      }
+    },
+    crocStart: seatId => {
+      if (game?.game === 'croc') {
+        crocStart(seatId, game.round, game.turnNo);
+      }
     },
     mafPlayAgain: (rng = Math.random) => {
       if (game?.game !== 'mafia' || !game.ended) {
@@ -623,7 +745,12 @@ export function createHostServer({
       qaLog('maf_back');
     },
     reveal: () => {
-      if (!game || !applyGame({ type: 'reveal' }) || game.game === 'mafia') {
+      if (
+        !game ||
+        !applyGame({ type: 'reveal' }) ||
+        game.game === 'mafia' ||
+        game.game === 'croc'
+      ) {
         return;
       }
       broadcastGame(false);

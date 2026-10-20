@@ -71,7 +71,7 @@ async function join(nickname: string): Promise<FakeSocket> {
   const code = String(screen.getByTestId('camp.lobby.code').props.children);
   const client = fakeNet.server().connect();
   await act(() => {
-    client.send({ v: 3, type: 'hello', code, nickname, avatar: 'bear' });
+    client.send({ v: 5, type: 'hello', code, nickname, avatar: 'bear' });
   });
   return client;
 }
@@ -113,7 +113,7 @@ describe('campfire-party — Who am I (AC6)', () => {
     const [first, second] = await startWhoami();
     const secondDeals = second?.received().filter(message => message.type === 'deal').length;
 
-    await act(() => first?.send({ v: 3, type: 'showMine', round: 1 }));
+    await act(() => first?.send({ v: 5, type: 'showMine', round: 1 }));
     expect(lastDeal(first)).toMatchObject({ type: 'deal', round: 1, secret: { mine: expect.any(String) } });
     expect(second?.received().filter(message => message.type === 'deal')).toHaveLength(secondDeals ?? 0);
     expect(lastDeal(second)).not.toHaveProperty('secret.mine');

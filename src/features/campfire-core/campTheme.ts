@@ -8,7 +8,7 @@ export const campScheme: ColorScheme = 'dark';
 
 export const campColors = themeColors[campScheme];
 
-export type GameId = 'imposter' | 'mafia' | 'whoami' | 'rather';
+export type GameId = 'imposter' | 'mafia' | 'whoami' | 'rather' | 'croc';
 
 /** Game icon tile colours (canvas CampHub). */
 export const gameColors: Record<GameId, string> = {
@@ -16,6 +16,7 @@ export const gameColors: Record<GameId, string> = {
   mafia: palette.red700,
   whoami: palette.teal,
   rather: palette.orange,
+  croc: palette.pine,
 };
 
 /** CampHub sizes from the canvas. */

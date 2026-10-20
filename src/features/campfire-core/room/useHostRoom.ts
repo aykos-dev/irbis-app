@@ -2,7 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import DeviceInfo from 'react-native-device-info';
 
 import { qaLog } from '../../../shared/utils/qaLog';
-import type { GameSettings, HostGame } from '../games/gameReducer';
+import type {
+  CrocSettings,
+  GameSettings,
+  HostGame,
+} from '../games/gameReducer';
 import type { MafiaSettings } from '../games/mafia/roles';
 import type { PartyGame } from '../games/packs';
 import { campNet } from '../native/campNet';
@@ -89,6 +93,9 @@ export const hostGame = {
   mafMarkBack: (seatId: string): void => hostGameServer?.mafMarkBack(seatId),
   mafEnd: (winner: MafiaWinner): void => hostGameServer?.mafEnd(winner),
   mafPlayAgain: (): void => hostGameServer?.mafPlayAgain(),
+  crocPick: (seatId: string): void => hostGameServer?.crocPick(seatId),
+  crocSkip: (): void => hostGameServer?.crocSkip(HOST_SEAT_ID),
+  crocStart: (): void => hostGameServer?.crocStart(HOST_SEAT_ID),
 };
 
 /** Random 4-digit room code, 1000–9999. */
@@ -299,6 +306,10 @@ export function useHostRoom(resume: boolean) {
     live.current?.server.startMafia(settings);
   }, []);
 
+  const startCroc = useCallback((settings: CrocSettings) => {
+    live.current?.server.startCroc(settings);
+  }, []);
+
   /** Broadcasts `closed`, stops server, hotspot and zeroconf, forgets the saved room. */
   const close = useCallback(() => {
     const current = live.current;
@@ -312,5 +323,5 @@ export function useHostRoom(resume: boolean) {
     qaLog('camp_room_closed', { seats: current.room.seats.length });
   }, []);
 
-  return { state, retry, remove, close, startGame, startMafia };
+  return { state, retry, remove, close, startGame, startMafia, startCroc };
 }

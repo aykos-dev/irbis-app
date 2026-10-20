@@ -23,7 +23,7 @@ import { PlayerSheet, type CampRole } from '../components/PlayerSheet';
 import { hostsWithGuide } from '../native/hostPlatform';
 import { loadHostRoom } from '../room/hostRoomStore';
 
-const games: GameId[] = ['imposter', 'mafia', 'whoami', 'rather'];
+const games: GameId[] = ['imposter', 'mafia', 'whoami', 'rather', 'croc'];
 
 /**
  * CampHub (AC2), the Campfire segment of Community: works offline and as a guest, no network.

@@ -14,6 +14,9 @@ import { campScheme } from '../campTheme';
 import { ConfirmSheet } from '../components/ConfirmSheet';
 import { playerSession } from '../join/playerClient';
 import type {
+  CrocPhase,
+  CrocPublic,
+  CrocSecret,
   GamePhase,
   ImposterSecret,
   MafiaPublic,
@@ -27,7 +30,13 @@ import type {
 } from '../protocol/codec';
 import { HOST_SEAT_ID } from '../room/roomReducer';
 import { hostGame } from '../room/useHostRoom';
-import { toPublic, type MafiaState } from './gameReducer';
+import { CrocScreen } from './croc/CrocScreen';
+import {
+  crocSecretFor,
+  toCrocPublic,
+  toPublic,
+  type MafiaState,
+} from './gameReducer';
 import { ImposterScreen } from './imposter/ImposterScreen';
 import { GameOver } from './mafia/GameOver';
 import { MafiaScreen, mafiaWinner } from './mafia/MafiaScreen';
@@ -87,6 +96,14 @@ type MafiaView =
   /** Not dealt in; `info` once the game is over (every phone shows the result). */
   | { kind: 'waiting'; info: MafiaPublic };
 
+/** Crocodile on this phone: the word card only when this seat is the describer. */
+type CrocView = {
+  phase: CrocPhase;
+  info: CrocPublic;
+  secret: CrocSecret | null;
+  roster: RosterPlayer[];
+};
+
 const ratherHostControls = {
   onReveal: () => hostGame.revealVotes(),
   onNext: () => hostGame.nextQuestion(),
@@ -121,8 +138,24 @@ export function GameWaiting({
 
   let mafia: MafiaView | null = null;
   let view: GameView | null = null;
+  let croc: CrocView | null = null;
   if (hosted?.game === 'mafia') {
     mafia = { kind: 'host', game: hosted };
+  } else if (hosted?.game === 'croc') {
+    croc = {
+      phase: hosted.phase,
+      info: toCrocPublic(hosted),
+      secret: crocSecretFor(hosted, HOST_SEAT_ID),
+      roster: hostRoster,
+    };
+  } else if (player?.game?.game === 'croc') {
+    const { deal } = player;
+    croc = {
+      phase: player.game.phase,
+      info: player.game.public,
+      secret: deal?.game === 'croc' ? deal.secret : null,
+      roster: player.players,
+    };
   } else if (player?.game?.game === 'mafia') {
     const { deal } = player;
     mafia =
@@ -158,12 +191,15 @@ export function GameWaiting({
       round: player.game.round,
       phase: player.game.phase,
       info: player.game.public,
-      secret: deal && deal.game !== 'mafia' ? deal.secret : null,
+      secret:
+        deal && deal.game !== 'mafia' && deal.game !== 'croc'
+          ? deal.secret
+          : null,
       selfSeatId: player.seatId,
       roster: player.players,
     };
   }
-  const active = view !== null || mafia !== null;
+  const active = view !== null || mafia !== null || croc !== null;
   const mafiaHost = mafia?.kind === 'host' ? mafia.game : null;
   const mafiaOver = mafiaHost?.ended !== undefined;
 
@@ -186,6 +222,9 @@ export function GameWaiting({
     isPlayer ? client?.vote(pick) : hostGame.vote(pick);
   const showMine = () =>
     isPlayer ? client?.showMine() : hostGame.showMine();
+  const crocSkip = () => (isPlayer ? client?.crocSkip() : hostGame.crocSkip());
+  const crocStart = () =>
+    isPlayer ? client?.crocStart() : hostGame.crocStart();
 
   const endGame = (winner?: MafiaWinner) => {
     haptics.warning();
@@ -199,7 +238,7 @@ export function GameWaiting({
   // Mafia End game: a matching winner asks "<team> wins?", else "End without a winner?" (AC6).
   const endWinner = mafiaHost && confirmEnd ? mafiaWinner(mafiaHost) : null;
 
-  if (!view && !mafia) {
+  if (!view && !mafia && !croc) {
     return null;
   }
   return (
@@ -247,6 +286,17 @@ export function GameWaiting({
           >
             {t('camp.maf.inProgress')}
           </AppText>
+        ) : null}
+        {croc ? (
+          <CrocScreen
+            phase={croc.phase}
+            info={croc.info}
+            secret={croc.secret}
+            roster={croc.roster}
+            onPick={isPlayer ? undefined : hostGame.crocPick}
+            onSkip={crocSkip}
+            onStart={crocStart}
+          />
         ) : null}
         {view?.game === 'imposter' ? (
           <ImposterScreen

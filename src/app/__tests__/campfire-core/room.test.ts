@@ -22,7 +22,7 @@ import {
 } from '../../../features/campfire-core/room/roomReducer';
 
 const hello = (nickname: string, seatToken?: string, code = '4821'): Hello => ({
-  v: 3,
+  v: 5,
   type: 'hello',
   code,
   nickname,
@@ -143,8 +143,8 @@ describe('campfire-core — room reducer (AC6, AC7)', () => {
 });
 
 describe('campfire-core — protocol', () => {
-  it('AC6: codec rejects bad JSON and wrong versions; encodes NDJSON with v 3; a v2 phone is rejected', () => {
-    expect(encode({ type: 'pong' })).toBe('{"v":3,"type":"pong"}\n');
+  it('AC6: codec rejects bad JSON and wrong versions; encodes NDJSON with v 5; a v2 phone is rejected', () => {
+    expect(encode({ type: 'pong' })).toBe('{"v":5,"type":"pong"}\n');
     expect(decodeClient('{not json')).toEqual({ ok: false, reason: 'invalid' });
     expect(decodeClient('{"v":2,"type":"ping"}')).toEqual({
       ok: false,
@@ -152,7 +152,7 @@ describe('campfire-core — protocol', () => {
     });
     expect(
       decodeClient(
-        '{"v":3,"type":"hello","code":"48","nickname":"a","avatar":"fox"}',
+        '{"v":5,"type":"hello","code":"48","nickname":"a","avatar":"fox"}',
       ),
     ).toEqual({
       ok: false,
@@ -162,9 +162,9 @@ describe('campfire-core — protocol', () => {
       ok: true,
       message: hello('guest_1'),
     });
-    expect(decodeHost('{"v":3,"type":"rejected","reason":"full"}')).toEqual({
+    expect(decodeHost('{"v":5,"type":"rejected","reason":"full"}')).toEqual({
       ok: true,
-      message: { v: 3, type: 'rejected', reason: 'full' },
+      message: { v: 5, type: 'rejected', reason: 'full' },
     });
   });
 
@@ -177,13 +177,13 @@ describe('campfire-core — protocol', () => {
     };
     const url = buildJoinUrl(hotspot);
     expect(url).toMatch(
-      /^irbis-camp:\/\/join\?v=3&code=4821&ip=192\.168\.49\.1&port=47821&ssid=/,
+      /^irbis-camp:\/\/join\?v=5&code=4821&ip=192\.168\.49\.1&port=47821&ssid=/,
     );
     expect(parseJoinUrl(url)).toEqual(hotspot);
 
     const wifi = { code: '1000', ip: '10.0.0.5', port: 47821 };
     expect(buildJoinUrl(wifi)).toBe(
-      'irbis-camp://join?v=3&code=1000&ip=10.0.0.5&port=47821',
+      'irbis-camp://join?v=5&code=1000&ip=10.0.0.5&port=47821',
     );
     expect(parseJoinUrl(buildJoinUrl(wifi))).toEqual(wifi);
     expect(

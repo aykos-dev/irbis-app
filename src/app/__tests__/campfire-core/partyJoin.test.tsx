@@ -97,7 +97,7 @@ describe('campfire-party — player phones (AC2)', () => {
   it('AC2: joining mid-round shows "Round in progress — you\'re in the next one"', async () => {
     const server = await hostRoom();
     const other = fakeNet.server().connect();
-    await act(() => other.send({ v: 3, type: 'hello', code: '4821', nickname: 'guest_2', avatar: 'eagle' }));
+    await act(() => other.send({ v: 5, type: 'hello', code: '4821', nickname: 'guest_2', avatar: 'eagle' }));
     await act(() => server.startGame('rather', { packId: 'rather-camping', imposters: 1, showCategory: true }, rng));
 
     await joinByQr('camp.game.waiting');

@@ -24,7 +24,9 @@
     "imposterMeta": "3–15 · 5–10 daq",
     "mafiaMeta": "6–15 · 20–40 daq",
     "whoamiMeta": "3–12 · 10–20 daq",
-    "ratherMeta": "2–15 · cheksiz"
+    "ratherMeta": "2–15 · cheksiz",
+    "croc": "Timsoh",
+    "crocMeta": "3–15 · pantomima"
   },
   "comingSoon": "Tez orada",
   "comingSoonToast": "Keyingi yangilanishda chiqadi",
@@ -128,7 +130,8 @@
     "name": {
       "imposter": "Sotqin",
       "whoami": "Men kimman?",
-      "rather": "Qaysi birini tanlarding"
+      "rather": "Qaysi birini tanlarding",
+      "croc": "Timsoh"
     }
   },
   "secret": {
@@ -317,5 +320,19 @@
     "lobby": "Lobbi",
     "playAgain": "Yana o'ynash",
     "waitHost": "Boshlovchi kutilmoqda"
+  },
+  "croc": {
+    "needThree": "«Timsoh» uchun 3+ o'yinchi kerak",
+    "needPack": "Kamida bitta to'plamni tanlang",
+    "timer": "Navbat vaqti",
+    "seconds": "%{n} s",
+    "packs": "So'z to'plamlari",
+    "pickTitle": "Kim ko'rsatadi?",
+    "choosing": "Boshlovchi kim ko'rsatishini tanlayapti",
+    "showing": "%{name} ko'rsatyapti",
+    "rule": "Ko'rsating, aytmang — so'zsiz va ovozsiz",
+    "skip": "Boshqa so'z",
+    "start": "Boshlash",
+    "guessed": "Topildi!"
   }
 }

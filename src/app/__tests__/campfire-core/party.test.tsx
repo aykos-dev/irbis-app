@@ -70,7 +70,7 @@ async function join(nickname: string, seatToken?: string): Promise<FakeSocket> {
   const client = fakeNet.server().connect();
   await act(() => {
     client.send({
-      v: 3,
+      v: 5,
       type: 'hello',
       code: code(),
       nickname,
@@ -170,7 +170,7 @@ describe('campfire-party — start, late join, end, resume (AC2)', () => {
     expect(await screen.findByTestId('camp.lobby.start')).toBeOnTheScreen();
     expect(navigationRef.getCurrentRoute()?.name).toBe('CampLobby');
     [first, second, late].forEach(client => {
-      expect(client.received().at(-1)).toEqual({ v: 3, type: 'lobby' });
+      expect(client.received().at(-1)).toEqual({ v: 5, type: 'lobby' });
     });
     expect(qaEvents()).toContainEqual({ event: 'camp_game_ended', game: 'imposter', rounds: 1 });
     expect(JSON.parse(storage.getString('camp.hostRoom') ?? '{}').game).toBeNull();
@@ -182,7 +182,7 @@ describe('campfire-party — start, late join, end, resume (AC2)', () => {
       room = roomReducer(room, {
         type: 'hello',
         connId: `c${index}`,
-        hello: { v: 3, type: 'hello', code: '4821', nickname, avatar: 'bear' },
+        hello: { v: 5, type: 'hello', code: '4821', nickname, avatar: 'bear' },
         seatToken: `seat_token_${index + 1}`,
       }).state;
     });
@@ -205,7 +205,7 @@ describe('campfire-party — start, late join, end, resume (AC2)', () => {
     const back = fakeNet.server().connect();
     await act(() => {
       back.send({
-        v: 3,
+        v: 5,
         type: 'hello',
         code: '4821',
         nickname: 'guest_1',
@@ -214,7 +214,7 @@ describe('campfire-party — start, late join, end, resume (AC2)', () => {
       });
     });
     expect(back.received().find(message => message.type === 'deal')).toEqual({
-      v: 3,
+      v: 5,
       type: 'deal',
       game: 'whoami',
       round: 1,

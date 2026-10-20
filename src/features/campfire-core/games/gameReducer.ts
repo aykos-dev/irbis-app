@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
 import {
+  crocPhaseSchema,
+  crocTotalsSchema,
   gamePhaseSchema,
   mafiaOutSchema,
   mafiaPhaseSchema,
@@ -9,6 +11,8 @@ import {
   partyGameSchema,
   secretSchema,
   wyrPickSchema,
+  type CrocPublic,
+  type CrocSecret,
   type MafiaPublic,
   type MafiaSecret,
   type MafiaWinner,
@@ -23,14 +27,15 @@ import {
   type MafiaSettings,
 } from './mafia/roles';
 import { dealtRoles } from './mafia/winCheck';
-import type { PartyGame } from './packs';
+import type { PackGame, PartyGame } from './packs';
 import { shuffle, type Rng } from './usedStore';
 
-/** Players per game, host included (spec AC1). */
-export const playerRange: Record<PartyGame, { min: number; max: number }> = {
+/** Players per game, host included (spec AC1; Crocodile: the host plays too). */
+export const playerRange: Record<PackGame, { min: number; max: number }> = {
   imposter: { min: 3, max: 15 },
   whoami: { min: 3, max: 12 },
   rather: { min: 2, max: 15 },
+  croc: { min: 3, max: 15 },
 };
 
 /** Would you rather questions per round. */
@@ -86,10 +91,40 @@ export const mafiaStateSchema = z.object({
 });
 export type MafiaState = z.infer<typeof mafiaStateSchema>;
 
-/** The host's running game, party or Mafia (saved with the room for resume). */
+/** Crocodile turn lengths offered in the lobby (seconds); 60 is the default. */
+export const crocDurations = [30, 60, 90] as const;
+export const CROC_DEFAULT_SEC = 60;
+
+export const crocSettingsSchema = z.object({
+  durationSec: z.number().int().min(1),
+  packs: z.array(z.string().min(1)).min(1),
+});
+export type CrocSettings = z.infer<typeof crocSettingsSchema>;
+
+/** The describer's word: item id in pack `pack`. */
+const crocWordSchema = z.object({
+  id: z.string().min(1),
+  pack: z.string().min(1),
+});
+export type CrocWord = z.infer<typeof crocWordSchema>;
+
+/** Crocodile host state: `packs` and `word` never leave the host except as the describer's secret. */
+export const crocStateSchema = crocSettingsSchema.extend({
+  game: z.literal('croc'),
+  round: z.number().int().min(1),
+  phase: crocPhaseSchema,
+  turnNo: z.number().int().min(0),
+  totals: crocTotalsSchema,
+  describerSeatId: z.string().min(1).optional(),
+  word: crocWordSchema.optional(),
+});
+export type CrocState = z.infer<typeof crocStateSchema>;
+
+/** The host's running game, party, Mafia or Crocodile (saved with the room for resume). */
 export const hostGameSchema = z.discriminatedUnion('game', [
   gameStateSchema,
   mafiaStateSchema,
+  crocStateSchema,
 ]);
 export type HostGame = z.infer<typeof hostGameSchema>;
 
@@ -135,14 +170,29 @@ export type MafiaAction =
   /** After game over: same counts and reveal setting, a new deal over `seats` (players only). */
   | { type: 'playAgain'; seats: GameSeat[]; rng: Rng };
 
-export type HostAction = GameAction | MafiaAction;
+/** Crocodile. `word` is drawn by the host server (no-repeat store) before the action. */
+export type CrocAction =
+  | { type: 'startCroc'; settings: CrocSettings; seats: GameSeat[] }
+  /** Host only: who shows next. */
+  | { type: 'crocPick'; seatId: string; word: CrocWord }
+  /** Describer only, current round and turn. */
+  | {
+      type: 'crocSkip';
+      seatId: string;
+      round: number;
+      turnNo: number;
+      word: CrocWord;
+    }
+  | { type: 'crocStart'; seatId: string; round: number; turnNo: number };
+
+export type HostAction = GameAction | MafiaAction | CrocAction;
 
 /** Players in a round: the seats connected when it starts, host included. */
 export function roundSeats(seats: GameSeat[]): string[] {
   return seats.filter(seat => seat.connected).map(seat => seat.seatId);
 }
 
-export function inRange(game: PartyGame, players: number): boolean {
+export function inRange(game: PackGame, players: number): boolean {
   const { min, max } = playerRange[game];
   return players >= min && players <= max;
 }
@@ -270,13 +320,22 @@ export function gameReducer(
   if (action.type === 'startMafia') {
     return startMafia(action.settings, action.seats, action.rng) ?? state;
   }
+  if (action.type === 'startCroc') {
+    return startCroc(action.settings, action.seats) ?? state;
+  }
   if (!state) {
     return state;
   }
   if (state.game === 'mafia') {
     return mafiaReducer(state, action);
   }
+  if (state.game === 'croc') {
+    return crocReducer(state, action);
+  }
   switch (action.type) {
+    case 'crocPick':
+    case 'crocSkip':
+    case 'crocStart':
     case 'mafReady':
     case 'mafPhaseNext':
     case 'mafMarkOut':
@@ -548,6 +607,100 @@ function withWaiting(
     state.players.includes(action.seatId)
     ? state
     : { ...state, waiting: [...state.waiting, action.seatId] };
+}
+
+function startCroc(settings: CrocSettings, seats: GameSeat[]): CrocState | null {
+  if (!inRange('croc', roundSeats(seats).length) || settings.packs.length === 0) {
+    return null;
+  }
+  return {
+    game: 'croc',
+    round: 1,
+    phase: 'pick',
+    turnNo: 0,
+    durationSec: settings.durationSec,
+    packs: settings.packs,
+    totals: { guessed: 0, skipped: 0, turns: 0 },
+  };
+}
+
+/** A describer message counts only from the describer, for this round and turn (stale ones are dropped). */
+export function fromDescriber(
+  state: CrocState,
+  seatId: string,
+  round: number,
+  turnNo: number,
+): boolean {
+  return (
+    state.phase === 'ready' &&
+    seatId === state.describerSeatId &&
+    round === state.round &&
+    turnNo === state.turnNo
+  );
+}
+
+/** Crocodile: pick → ready (describer holds the word, may skip) → running. */
+function crocReducer(state: CrocState, action: HostAction): CrocState | null {
+  switch (action.type) {
+    case 'end':
+      return null;
+    case 'crocPick':
+      if (state.phase !== 'pick') {
+        return state;
+      }
+      return {
+        ...state,
+        phase: 'ready',
+        turnNo: state.turnNo + 1,
+        describerSeatId: action.seatId,
+        word: action.word,
+      };
+    case 'crocSkip':
+      if (!fromDescriber(state, action.seatId, action.round, action.turnNo)) {
+        return state;
+      }
+      return {
+        ...state,
+        word: action.word,
+        totals: { ...state.totals, skipped: state.totals.skipped + 1 },
+      };
+    case 'crocStart':
+      if (!fromDescriber(state, action.seatId, action.round, action.turnNo)) {
+        return state;
+      }
+      return { ...state, phase: 'running' };
+    default:
+      return state;
+  }
+}
+
+/** Crocodile broadcast: never the word or the packs. */
+export function toCrocPublic(state: CrocState): CrocPublic {
+  return {
+    phase: state.phase,
+    turnNo: state.turnNo,
+    durationSec: state.durationSec,
+    totals: state.totals,
+    ...(state.phase !== 'pick' && state.describerSeatId
+      ? { describerSeatId: state.describerSeatId }
+      : {}),
+  };
+}
+
+/** The word card, for the describer's seat only. */
+export function crocSecretFor(
+  state: CrocState,
+  seatId: string | null,
+): CrocSecret | null {
+  if (
+    state.phase === 'pick' ||
+    !seatId ||
+    seatId !== state.describerSeatId ||
+    !state.word
+  ) {
+    return null;
+  }
+  return { word: state.word.id, pack: state.word.pack, turnNo: state.turnNo };
 }
 
 /** Mafia broadcast: phase, ready and out (with roles only when the host reveals them). */
