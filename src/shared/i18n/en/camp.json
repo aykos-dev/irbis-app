@@ -292,6 +292,7 @@
     "alive": "alive",
     "killed": "killed · Night %{n}",
     "exiled": "exiled · Day %{n}",
+    "leftNight": "left · Night %{n}",
     "outTitle": "Out",
     "youreOut": "You're out — %{fate}. Stay quiet, no hints!",
     "readyTick": "Ready",

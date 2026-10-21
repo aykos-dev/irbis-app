@@ -61,6 +61,9 @@ type Conn = {
   seated: boolean;
 };
 
+/** A closing message gets this long to leave the write queue before the socket is destroyed. */
+const HANGUP_FLUSH_MS = 1000;
+
 export type HostServer = {
   /** Listens on :47821 and publishes the room over zeroconf. */
   start: () => Promise<void>;
@@ -141,6 +144,8 @@ export function createHostServer({
   let crocTimer: ReturnType<typeof setTimeout> | null = null;
   let crocTimerKey = '';
   const conns = new Map<string, Conn>();
+  /** Seat tokens the host has freed: a retry with one gets `removed`, never a new seat (CORE-3). */
+  const removedTokens = new Set<string>();
   const zeroconf = new Zeroconf();
   const serviceName = `irbis-${room.code}`;
 
@@ -151,6 +156,25 @@ export function createHostServer({
   const hangUp = (conn: Conn) => {
     conns.delete(conn.id);
     conn.socket.destroy();
+  };
+
+  /** Writes a last message and closes only after it has flushed (a destroy straight after write can drop it). */
+  const sendAndHangUp = (conn: Conn, message: OutgoingHostMessage) => {
+    let closed = false;
+    const done = () => {
+      if (closed) {
+        return;
+      }
+      closed = true;
+      clearTimeout(timer);
+      hangUp(conn);
+    };
+    const timer = setTimeout(done, HANGUP_FLUSH_MS);
+    try {
+      conn.socket.write(encode(message), 'utf8', done);
+    } catch {
+      done();
+    }
   };
 
   const broadcastRoster = () => {
@@ -416,16 +440,24 @@ export function createHostServer({
     return result.outcome;
   };
 
-  const freed = (outcome: RoomOutcome, message: OutgoingHostMessage | null) => {
+  const freed = (
+    outcome: RoomOutcome,
+    message: OutgoingHostMessage | null,
+    seatToken?: string,
+  ) => {
+    if (seatToken) {
+      removedTokens.add(seatToken);
+    }
     if (outcome.kind !== 'freed' || !outcome.connId) {
       return;
     }
     const conn = conns.get(outcome.connId);
     if (conn) {
       if (message) {
-        send(conn, message);
+        sendAndHangUp(conn, message);
+      } else {
+        hangUp(conn);
       }
-      hangUp(conn);
     }
   };
 
@@ -447,8 +479,7 @@ export function createHostServer({
     const decoded = decodeClient(line);
     if (!decoded.ok) {
       if (decoded.reason === 'version') {
-        send(conn, { type: 'rejected', reason: 'version' });
-        hangUp(conn);
+        sendAndHangUp(conn, { type: 'rejected', reason: 'version' });
       }
       return;
     }
@@ -458,10 +489,17 @@ export function createHostServer({
         send(conn, { type: 'pong' });
         return;
       case 'leave': {
+        const leaving = state.seats.find(seat => seat.connId === conn.id);
         const seatId = seatOf(conn);
-        const name = seatId ? nameOf(seatId) : '';
-        freed(apply({ type: 'leave', connId: conn.id }), null);
-        if (seatId && applyGame({ type: 'seatRemoved', seatId })) {
+        const name = leaving?.nickname ?? '';
+        freed(apply({ type: 'leave', connId: conn.id }), null, leaving?.seatToken);
+        if (seatId && applyGame({
+          type: 'seatRemoved',
+          seatId,
+          ...(leaving
+            ? { player: { nickname: leaving.nickname, avatar: leaving.avatar } }
+            : {}),
+        })) {
           broadcastGame(false);
           revealIfAllVoted();
         }
@@ -532,6 +570,11 @@ export function createHostServer({
         );
         return;
       case 'hello': {
+        if (message.seatToken && removedTokens.has(message.seatToken)) {
+          // The host already freed this seat (a lost `removed`): never hand the retry a new one.
+          sendAndHangUp(conn, { type: 'removed' });
+          return;
+        }
         const outcome = apply({
           type: 'hello',
           connId: conn.id,
@@ -539,8 +582,7 @@ export function createHostServer({
           seatToken: uuidV4(),
         });
         if (outcome.kind === 'rejected') {
-          send(conn, { type: 'rejected', reason: outcome.reason });
-          hangUp(conn);
+          sendAndHangUp(conn, { type: 'rejected', reason: outcome.reason });
         } else if (outcome.kind === 'welcome') {
           const replaced = outcome.replacedConnId
             ? conns.get(outcome.replacedConnId)
@@ -653,12 +695,19 @@ export function createHostServer({
         });
       }),
     remove: seatId => {
-      const name = nameOf(seatId);
+      const seat = state.seats.find(candidate => candidate.seatId === seatId);
+      const name = seat?.nickname ?? '';
       const outcome = apply({ type: 'remove', seatId });
       if (outcome.kind === 'freed') {
-        freed(outcome, { type: 'removed' });
+        freed(outcome, { type: 'removed' }, seat?.seatToken);
         qaLog('camp_player_removed', { seats: state.seats.length });
-        if (applyGame({ type: 'seatRemoved', seatId })) {
+        if (applyGame({
+          type: 'seatRemoved',
+          seatId,
+          ...(seat
+            ? { player: { nickname: seat.nickname, avatar: seat.avatar } }
+            : {}),
+        })) {
           broadcastGame(false);
           revealIfAllVoted();
         }
@@ -895,8 +944,34 @@ export function createHostServer({
     endGame,
     close: () => {
       apply({ type: 'close' });
-      conns.forEach(conn => send(conn, { type: 'closed' }));
-      stop();
+      let remaining = conns.size;
+      let stopped = false;
+      const finish = () => {
+        if (stopped) {
+          return;
+        }
+        stopped = true;
+        clearTimeout(timer);
+        stop();
+      };
+      const oneDone = () => {
+        remaining -= 1;
+        if (remaining <= 0) {
+          finish();
+        }
+      };
+      const timer = setTimeout(finish, HANGUP_FLUSH_MS);
+      if (remaining === 0) {
+        finish();
+        return;
+      }
+      conns.forEach(conn => {
+        try {
+          conn.socket.write(encode({ type: 'closed' }), 'utf8', oneDone);
+        } catch {
+          oneDone();
+        }
+      });
     },
     stop,
   };

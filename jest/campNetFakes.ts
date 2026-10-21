@@ -40,6 +40,8 @@ class Emitter {
 export class FakeSocket extends Emitter {
   written: string[] = [];
   destroyed = false;
+  /** The dial (or accept) completed: a destroy before this would hit a queued native connect. */
+  connectSettled = false;
   /** The other end when an app client dialled a fake host (see `createConnection`). */
   peer: FakeSocket | null = null;
 
@@ -47,17 +49,21 @@ export class FakeSocket extends Emitter {
     return this;
   }
 
-  write(data: string): boolean {
+  write(data: string, _encoding?: string, cb?: (err?: Error) => void): boolean {
     this.written.push(data);
     if (this.peer && !this.peer.destroyed) {
       this.peer.emit('data', data);
     }
+    cb?.();
     return true;
   }
 
   destroy(): this {
     if (!this.destroyed) {
       this.destroyed = true;
+      if (!this.connectSettled) {
+        fakeNet.earlyDestroys += 1;
+      }
       this.emit('close', false);
       if (this.peer && !this.peer.destroyed) {
         this.peer.destroy();
@@ -118,6 +124,7 @@ export class FakeServer extends Emitter {
   /** A new client connects. */
   connect(): FakeSocket {
     const socket = new FakeSocket();
+    socket.connectSettled = true;
     this.onConnection(socket);
     return socket;
   }
@@ -141,6 +148,10 @@ export const fakeNet = {
   hosts: {} as Record<string, FakeServer>,
   /** Unknown IPs never answer (the dial hangs until the app gives up) instead of refusing. */
   silent: false,
+  /** Delay every app dial's connect callback (a busy native socket queue). */
+  connectDelayMs: 0,
+  /** Dials destroyed before their connect settled: on Android that throws "No socket with id". */
+  earlyDestroys: 0,
   /** Every dial an app client made. */
   dials: [] as { host: string; port: number }[],
   /** Services a zeroconf scan finds. */
@@ -179,6 +190,8 @@ export const fakeNet = {
     fakeNet.unpublished = [];
     fakeNet.hosts = {};
     fakeNet.silent = false;
+    fakeNet.connectDelayMs = 0;
+    fakeNet.earlyDestroys = 0;
     fakeNet.dials = [];
     fakeNet.services = [];
     fakeNet.scans = [];
@@ -193,10 +206,11 @@ function createConnection(
   const client = new FakeSocket();
   const host = options.host ?? '';
   fakeNet.dials.push({ host, port: options.port });
-  Promise.resolve().then(() => {
+  const settle = () => {
     if (client.destroyed) {
       return;
     }
+    client.connectSettled = true;
     const server = fakeNet.hosts[host];
     if (!server || !server.listening || server.port !== options.port) {
       if (!server && fakeNet.silent) {
@@ -211,7 +225,12 @@ function createConnection(
     client.peer = remote;
     server.links.push(remote);
     onConnect();
-  });
+  };
+  if (fakeNet.connectDelayMs > 0) {
+    setTimeout(settle, fakeNet.connectDelayMs);
+  } else {
+    Promise.resolve().then(settle);
+  }
   return client;
 }
 

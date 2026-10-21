@@ -217,6 +217,8 @@ export function GameWaiting({
   const crocOver = croc?.phase === 'ended';
 
   // Host: leaving the game screen ends the game, so Back asks first (after a game over: lobby).
+  // Player: Back must not drop the running board (XO-1) — the host ends the series for both phones.
+  usePreventRemove(isPlayer && active, () => undefined);
   usePreventRemove(!isPlayer && active, () => {
     if (mafiaOver || crocOver) {
       hostGame.end();

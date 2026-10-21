@@ -18,6 +18,7 @@ import {
   type CrocResult,
   type CrocSecret,
   type CrocWord,
+  type MafiaOutPlayer,
   type MafiaPublic,
   type MafiaSecret,
   type MafiaWinner,
@@ -149,7 +150,8 @@ export type GameAction =
   /** Back to the lobby; Mafia with a `winner` stays on its game-over screen instead. */
   | { type: 'end'; winner?: MafiaWinner }
   | { type: 'seatJoined'; seatId: string }
-  | { type: 'seatRemoved'; seatId: string }
+  /** `player` is the leaving seat's name snapshot, kept on a Mafia out entry (AC5, AC6). */
+  | { type: 'seatRemoved'; seatId: string; player?: MafiaOutPlayer }
   | { type: 'reveal' }
   /** Who am I: the seat asks for its own character. */
   | { type: 'showMine'; seatId: string; round: number }
@@ -542,7 +544,12 @@ function mafiaReducer(state: MafiaState, action: HostAction): MafiaState | null 
         ready: state.ready.filter(seat => seat !== action.seatId),
         out: [
           ...state.out,
-          { seatId: action.seatId, reason: 'exiled', phase: state.phase },
+          {
+            seatId: action.seatId,
+            reason: 'exiled',
+            phase: state.phase,
+            ...(action.player ? { player: action.player } : {}),
+          },
         ],
       };
     case 'mafReady':
