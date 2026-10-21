@@ -2,9 +2,10 @@ import { fakeNet } from '../../../../jest/campNetFakes';
 import {
   discoverRoom,
   findRoomAt,
+  probeHost,
   type DiscoveryResult,
 } from '../../../features/campfire-core/join/discovery';
-import { createPlayerClient } from '../../../features/campfire-core/join/playerClient';
+import { CONNECT_TIMEOUT_MS, createPlayerClient } from '../../../features/campfire-core/join/playerClient';
 import { readSeatToken, saveSeatToken } from '../../../features/campfire-core/join/seatStore';
 import { campNet } from '../../../features/campfire-core/native/campNet';
 import { createHostServer, type HostServer } from '../../../features/campfire-core/room/hostServer';
@@ -169,6 +170,64 @@ describe('campfire-core — player client (AC7, player)', () => {
     expect(second.getSnapshot().seatId).toBe('p2');
     host.server.close();
     expect(second.getSnapshot()).toMatchObject({ status: 'ended', ended: 'closed' });
+    expect(readSeatToken('4821')).toBeUndefined();
+  });
+});
+
+describe('campfire-core — join sockets (CORE-1, CORE-2, CORE-3)', () => {
+  it('CORE-1: a join behind the scan queue waits for it instead of ending "unreachable" after 2 s', async () => {
+    await hostRoom();
+    fakeNet.connectDelayMs = 3000;
+    const client = createPlayerClient({ code: '4821', host: HOST_IP, port: 47821, nickname: 'guest_1', avatar: 'bear' });
+    client.start();
+
+    await jest.advanceTimersByTimeAsync(2500);
+    expect(client.getSnapshot()).toMatchObject({ status: 'connecting', ended: null });
+
+    await jest.advanceTimersByTimeAsync(600);
+    expect(client.getSnapshot()).toMatchObject({ status: 'connected', seatId: 'p1' });
+    client.stop();
+  });
+
+  it('CORE-2: a timed-out dial is not destroyed before its native connect settles', async () => {
+    fakeNet.silent = true;
+    fakeNet.connectDelayMs = 20000;
+    const client = createPlayerClient({ code: '4821', host: HOST_IP, port: 47821, nickname: 'guest_1', avatar: 'bear' });
+    client.start();
+
+    await jest.advanceTimersByTimeAsync(CONNECT_TIMEOUT_MS + 1000);
+    expect(client.getSnapshot()).toMatchObject({ status: 'ended', ended: 'unreachable' });
+    expect(fakeNet.earlyDestroys).toBe(0);
+    client.stop();
+  });
+
+  it('CORE-2: a probe that times out before connecting never destroys a queued id', async () => {
+    fakeNet.connectDelayMs = 100;
+    let result: Awaited<ReturnType<typeof probeHost>> | null = null;
+    void probeHost('10.0.0.99', 47821, '4821', 10).then(value => (result = value));
+
+    await jest.advanceTimersByTimeAsync(10);
+    expect(result).toEqual({ kind: 'miss' });
+    await jest.advanceTimersByTimeAsync(100);
+    expect(fakeNet.earlyDestroys).toBe(0);
+  });
+
+  it('CORE-3: a retry with the token of a freed seat gets "removed", never a new seat', async () => {
+    const host = await hostRoom(HOST_IP, true);
+    saveSeatToken('4821', 'seat_token_1');
+    const first = createPlayerClient({ code: '4821', host: HOST_IP, port: 47821, nickname: 'guest_1', avatar: 'bear' });
+    first.start();
+    await jest.advanceTimersByTimeAsync(0);
+    expect(first.getSnapshot().seatId).toBe('p1');
+    first.stop();
+
+    // The first `removed` was lost (the seat is already reconnecting): the retry must still be refused.
+    host.server.remove('p1');
+    const retry = createPlayerClient({ code: '4821', host: HOST_IP, port: 47821, nickname: 'guest_1', avatar: 'bear' });
+    retry.start();
+    await jest.advanceTimersByTimeAsync(0);
+    expect(retry.getSnapshot()).toMatchObject({ status: 'ended', ended: 'removed' });
+    expect(host.room().seats.map(seat => seat.seatId)).toEqual(['host']);
     expect(readSeatToken('4821')).toBeUndefined();
   });
 });

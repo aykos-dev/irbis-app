@@ -198,7 +198,9 @@ export function GameWaiting({
     xo.selfSeatId !== xo.info.xSeatId &&
     xo.selfSeatId !== xo.info.oSeatId;
 
-  // Host: leaving the game screen ends the game, so Back asks first (after a Mafia game over: lobby).
+  // Host: leaving the game screen ends the game, so Back asks first (after a game over: lobby).
+  // Player: Back must not drop the running board (XO-1) — the host ends the series for both phones.
+  usePreventRemove(isPlayer && active, () => undefined);
   usePreventRemove(!isPlayer && active, () => {
     if (hostGameOver) {
       hostGame.end();

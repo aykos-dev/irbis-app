@@ -1,4 +1,5 @@
 import {
+  useIsFocused,
   usePreventRemove,
   type NavigationAction,
 } from '@react-navigation/native';
@@ -412,6 +413,7 @@ function PlayerLobby({
   useLocale();
   const { show } = useToast();
   const appState = useAppState();
+  const focused = useIsFocused();
   const snapshot = useSyncExternalStore(
     client?.subscribe ?? noSubscribe,
     client?.getSnapshot ?? noSnapshot,
@@ -432,13 +434,14 @@ function PlayerLobby({
     [client],
   );
 
-  // The host started a round (or we joined mid-game) → the game route (AC2).
+  // The host started a round (or we joined mid-game) → the game route (AC2). Also when Back brings
+  // this lobby back into focus while a game is still running: never strand the joiner here.
   const inGame = Boolean(snapshot?.game) && !snapshot?.ended;
   useEffect(() => {
-    if (inGame) {
+    if (inGame && focused) {
       navigation.navigate('CampGame', { player: true });
     }
-  }, [inGame, navigation]);
+  }, [focused, inGame, navigation]);
 
   const ended = snapshot?.ended ?? (client ? null : 'left');
   useEffect(() => {
