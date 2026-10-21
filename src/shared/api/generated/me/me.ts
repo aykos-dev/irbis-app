@@ -26,11 +26,14 @@ import type {
 
 import type {
   CodeSentResponseDto,
+  DeleteAccountDto,
   ErrorResponseDto,
   GuestMergeDto,
   GuestMergeResponseDto,
   MeResponseDto,
+  MeUploadAvatarBody,
   RecoveryPhoneDto,
+  UpdateMeDto,
   VerifyRecoveryPhoneDto
 } from '../model';
 
@@ -150,6 +153,140 @@ export function useMeGet<TData = Awaited<ReturnType<typeof meGet>>, TError = Err
 
 
 /**
+ * @summary Update the signed-in user profile fields and settings
+ */
+export const meUpdate = (
+    updateMeDto: BodyType<UpdateMeDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<MeResponseDto>(
+      {url: `/v1/me`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: updateMeDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getMeUpdateMutationKey = () => ['meUpdate'] as const;
+
+export const getMeUpdateMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meUpdate>>, TError,MeUpdateMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof meUpdate>>, TError,MeUpdateMutationVariables, TContext> => {
+
+const mutationKey = getMeUpdateMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof meUpdate>>, MeUpdateMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  meUpdate(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MeUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof meUpdate>>>
+    export type MeUpdateMutationBody = BodyType<UpdateMeDto>
+    export type MeUpdateMutationError = ErrorType<ErrorResponseDto>
+    export type MeUpdateMutationVariables = {data: BodyType<UpdateMeDto>}
+
+    /**
+ * @summary Update the signed-in user profile fields and settings
+ */
+export const useMeUpdate = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meUpdate>>, TError,MeUpdateMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof meUpdate>>,
+        TError,
+        MeUpdateMutationVariables,
+        TContext
+      > => {
+      return useMutation(getMeUpdateMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Delete the signed-in account after confirming the current password
+ */
+export const meDelete = (
+    deleteAccountDto: BodyType<DeleteAccountDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<void>(
+      {url: `/v1/me`, method: 'DELETE',
+      headers: {'Content-Type': 'application/json', },
+      data: deleteAccountDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getMeDeleteMutationKey = () => ['meDelete'] as const;
+
+export const getMeDeleteMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meDelete>>, TError,MeDeleteMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof meDelete>>, TError,MeDeleteMutationVariables, TContext> => {
+
+const mutationKey = getMeDeleteMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof meDelete>>, MeDeleteMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  meDelete(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MeDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof meDelete>>>
+    export type MeDeleteMutationBody = BodyType<DeleteAccountDto>
+    export type MeDeleteMutationError = ErrorType<ErrorResponseDto>
+    export type MeDeleteMutationVariables = {data: BodyType<DeleteAccountDto>}
+
+    /**
+ * @summary Delete the signed-in account after confirming the current password
+ */
+export const useMeDelete = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meDelete>>, TError,MeDeleteMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof meDelete>>,
+        TError,
+        MeDeleteMutationVariables,
+        TContext
+      > => {
+      return useMutation(getMeDeleteMutationOptions(options), queryClient);
+    }
+    /**
  * @summary Add or change the recovery phone; sends a code
  */
 export const meSetRecoveryPhone = (
@@ -349,4 +486,138 @@ export const useMeGuestMerge = <TError = ErrorType<ErrorResponseDto>,
         TContext
       > => {
       return useMutation(getMeGuestMergeMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Upload an avatar (JPEG/PNG/WebP, ≤ 2 MB); stored as a 512×512 JPEG without metadata
+ */
+export const meUploadAvatar = (
+    meUploadAvatarBody: BodyType<MeUploadAvatarBody>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+      const formData = new FormData();
+formData.append(`file`, meUploadAvatarBody.file);
+
+      return apiClient<MeResponseDto>(
+      {url: `/v1/me/avatar`, method: 'POST',
+      headers: {'Content-Type': 'multipart/form-data', },
+       data: formData, signal
+    },
+      options);
+    }
+
+
+
+
+export const getMeUploadAvatarMutationKey = () => ['meUploadAvatar'] as const;
+
+export const getMeUploadAvatarMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meUploadAvatar>>, TError,MeUploadAvatarMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof meUploadAvatar>>, TError,MeUploadAvatarMutationVariables, TContext> => {
+
+const mutationKey = getMeUploadAvatarMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof meUploadAvatar>>, MeUploadAvatarMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  meUploadAvatar(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MeUploadAvatarMutationResult = NonNullable<Awaited<ReturnType<typeof meUploadAvatar>>>
+    export type MeUploadAvatarMutationBody = BodyType<MeUploadAvatarBody>
+    export type MeUploadAvatarMutationError = ErrorType<ErrorResponseDto>
+    export type MeUploadAvatarMutationVariables = {data: BodyType<MeUploadAvatarBody>}
+
+    /**
+ * @summary Upload an avatar (JPEG/PNG/WebP, ≤ 2 MB); stored as a 512×512 JPEG without metadata
+ */
+export const useMeUploadAvatar = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meUploadAvatar>>, TError,MeUploadAvatarMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof meUploadAvatar>>,
+        TError,
+        MeUploadAvatarMutationVariables,
+        TContext
+      > => {
+      return useMutation(getMeUploadAvatarMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Remove the avatar; the stored object stays orphaned (ADR-005)
+ */
+export const meDeleteAvatar = (
+
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<MeResponseDto>(
+      {url: `/v1/me/avatar`, method: 'DELETE', signal
+    },
+      options);
+    }
+
+
+
+
+export const getMeDeleteAvatarMutationKey = () => ['meDeleteAvatar'] as const;
+
+export const getMeDeleteAvatarMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meDeleteAvatar>>, TError,void, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof meDeleteAvatar>>, TError,void, TContext> => {
+
+const mutationKey = getMeDeleteAvatarMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof meDeleteAvatar>>, void> = () => {
+
+
+          return  meDeleteAvatar(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MeDeleteAvatarMutationResult = NonNullable<Awaited<ReturnType<typeof meDeleteAvatar>>>
+
+    export type MeDeleteAvatarMutationError = ErrorType<ErrorResponseDto>
+
+
+    /**
+ * @summary Remove the avatar; the stored object stays orphaned (ADR-005)
+ */
+export const useMeDeleteAvatar = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meDeleteAvatar>>, TError,void, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof meDeleteAvatar>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getMeDeleteAvatarMutationOptions(options), queryClient);
     }

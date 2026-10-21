@@ -11,6 +11,10 @@ import * as zod from 'zod';
 /**
  * @summary The signed-in user
  */
+export const meGetResponseDisplayNameMax = 40;
+
+export const meGetResponseBioMax = 150;
+
 export const meGetResponseLevelMax = 7;
 
 
@@ -18,6 +22,10 @@ export const meGetResponseLevelMax = 7;
 export const MeGetResponse = zod.object({
   "id": zod.uuid(),
   "username": zod.string(),
+  "displayName": zod.string().max(meGetResponseDisplayNameMax).nullable(),
+  "bio": zod.string().max(meGetResponseBioMax).nullable(),
+  "avatarUrl": zod.string().nullable().describe('Derived from the stored avatar key; null when unset or storage is unavailable.'),
+  "homeRegion": zod.union([zod.enum(['tashkent_city', 'tashkent_region', 'andijan', 'bukhara', 'fergana', 'jizzakh', 'karakalpakstan', 'khorezm', 'namangan', 'navoiy', 'kashkadarya', 'samarkand', 'syrdarya', 'surkhandarya', 'other']),zod.null()]),
   "locale": zod.enum(['uz', 'ru', 'en']),
   "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
   "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
@@ -26,8 +34,125 @@ export const MeGetResponse = zod.object({
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
   "createdAt": zod.iso.datetime({"offset":true}),
   "level": zod.int().min(1).max(meGetResponseLevelMax),
-  "xpTotal": zod.int().describe('Lifetime XP.')
+  "xpTotal": zod.int().describe('Lifetime XP.'),
+  "preferences": zod.object({
+  "showStats": zod.boolean(),
+  "showHomeRegion": zod.boolean(),
+  "units": zod.enum(['metric', 'imperial']),
+  "appearance": zod.enum(['light', 'dark', 'auto']),
+  "notifications": zod.object({
+  "tripSafety": zod.boolean().describe('Trip & safety alerts; always on and not writable.'),
+  "streakReminders": zod.boolean(),
+  "dailyGame": zod.boolean(),
+  "dailyGameTime": zod.string().describe('Asia/Tashkent, HH:MM.'),
+  "groupsMessages": zod.boolean(),
+  "social": zod.boolean(),
+  "offers": zod.boolean()
+}),
+  "privacy": zod.object({
+  "publicProfile": zod.boolean(),
+  "findBuddies": zod.boolean(),
+  "shareLocation": zod.enum(['trips']).describe('Always trips for now; not writable.').describe('Always trips for now; not writable.')
 })
+})
+})
+
+/**
+ * @summary Update the signed-in user profile fields and settings
+ */
+export const meUpdateBodyUsernameMax = 20;
+
+export const meUpdateBodyDisplayNameMin = 2;
+export const meUpdateBodyDisplayNameMax = 40;
+
+export const meUpdateBodyBioMax = 150;
+
+export const meUpdateBodyInterestsMax = 5;
+
+
+
+export const MeUpdateBody = zod.object({
+  "username": zod.string().max(meUpdateBodyUsernameMax).optional().describe('Case-insensitive; changing it requires currentPassword and ends other sessions.'),
+  "currentPassword": zod.string().optional().describe('Required only when the username changes.'),
+  "preferences": zod.object({
+  "showStats": zod.boolean().optional(),
+  "showHomeRegion": zod.boolean().optional(),
+  "units": zod.enum(['metric', 'imperial']).optional(),
+  "appearance": zod.enum(['light', 'dark', 'auto']).optional(),
+  "notifications": zod.object({
+  "streakReminders": zod.boolean().optional(),
+  "dailyGame": zod.boolean().optional(),
+  "dailyGameTime": zod.string().optional().describe('24-hour HH:MM in Asia/Tashkent.'),
+  "groupsMessages": zod.boolean().optional(),
+  "social": zod.boolean().optional(),
+  "offers": zod.boolean().optional()
+}).optional(),
+  "privacy": zod.object({
+  "publicProfile": zod.boolean().optional(),
+  "findBuddies": zod.boolean().optional()
+}).optional()
+}).optional(),
+  "displayName": zod.string().min(meUpdateBodyDisplayNameMin).max(meUpdateBodyDisplayNameMax).nullish().describe('2–40 characters; empty or null clears it.'),
+  "bio": zod.string().max(meUpdateBodyBioMax).nullish().describe('At most 150 characters; empty or null clears it.'),
+  "homeRegion": zod.union([zod.enum(['tashkent_city', 'tashkent_region', 'andijan', 'bukhara', 'fergana', 'jizzakh', 'karakalpakstan', 'khorezm', 'namangan', 'navoiy', 'kashkadarya', 'samarkand', 'syrdarya', 'surkhandarya', 'other']),zod.null()]).optional().describe('A region or null to clear it.'),
+  "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])).max(meUpdateBodyInterestsMax).optional(),
+  "locale": zod.enum(['uz', 'ru', 'en']).optional()
+})
+
+export const meUpdateResponseDisplayNameMax = 40;
+
+export const meUpdateResponseBioMax = 150;
+
+export const meUpdateResponseLevelMax = 7;
+
+
+
+export const MeUpdateResponse = zod.object({
+  "id": zod.uuid(),
+  "username": zod.string(),
+  "displayName": zod.string().max(meUpdateResponseDisplayNameMax).nullable(),
+  "bio": zod.string().max(meUpdateResponseBioMax).nullable(),
+  "avatarUrl": zod.string().nullable().describe('Derived from the stored avatar key; null when unset or storage is unavailable.'),
+  "homeRegion": zod.union([zod.enum(['tashkent_city', 'tashkent_region', 'andijan', 'bukhara', 'fergana', 'jizzakh', 'karakalpakstan', 'khorezm', 'namangan', 'navoiy', 'kashkadarya', 'samarkand', 'syrdarya', 'surkhandarya', 'other']),zod.null()]),
+  "locale": zod.enum(['uz', 'ru', 'en']),
+  "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
+  "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
+  "role": zod.enum(['user', 'admin']),
+  "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
+  "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "level": zod.int().min(1).max(meUpdateResponseLevelMax),
+  "xpTotal": zod.int().describe('Lifetime XP.'),
+  "preferences": zod.object({
+  "showStats": zod.boolean(),
+  "showHomeRegion": zod.boolean(),
+  "units": zod.enum(['metric', 'imperial']),
+  "appearance": zod.enum(['light', 'dark', 'auto']),
+  "notifications": zod.object({
+  "tripSafety": zod.boolean().describe('Trip & safety alerts; always on and not writable.'),
+  "streakReminders": zod.boolean(),
+  "dailyGame": zod.boolean(),
+  "dailyGameTime": zod.string().describe('Asia/Tashkent, HH:MM.'),
+  "groupsMessages": zod.boolean(),
+  "social": zod.boolean(),
+  "offers": zod.boolean()
+}),
+  "privacy": zod.object({
+  "publicProfile": zod.boolean(),
+  "findBuddies": zod.boolean(),
+  "shareLocation": zod.enum(['trips']).describe('Always trips for now; not writable.').describe('Always trips for now; not writable.')
+})
+})
+})
+
+/**
+ * @summary Delete the signed-in account after confirming the current password
+ */
+export const MeDeleteBody = zod.object({
+  "currentPassword": zod.string().describe('The signed-in account password; wrong answers INVALID_PASSWORD.')
+})
+
+export const MeDeleteResponse = zod.void()
 
 /**
  * @summary Add or change the recovery phone; sends a code
@@ -47,6 +172,10 @@ export const MeVerifyRecoveryPhoneBody = zod.object({
   "code": zod.string()
 })
 
+export const meVerifyRecoveryPhoneResponseDisplayNameMax = 40;
+
+export const meVerifyRecoveryPhoneResponseBioMax = 150;
+
 export const meVerifyRecoveryPhoneResponseLevelMax = 7;
 
 
@@ -54,6 +183,10 @@ export const meVerifyRecoveryPhoneResponseLevelMax = 7;
 export const MeVerifyRecoveryPhoneResponse = zod.object({
   "id": zod.uuid(),
   "username": zod.string(),
+  "displayName": zod.string().max(meVerifyRecoveryPhoneResponseDisplayNameMax).nullable(),
+  "bio": zod.string().max(meVerifyRecoveryPhoneResponseBioMax).nullable(),
+  "avatarUrl": zod.string().nullable().describe('Derived from the stored avatar key; null when unset or storage is unavailable.'),
+  "homeRegion": zod.union([zod.enum(['tashkent_city', 'tashkent_region', 'andijan', 'bukhara', 'fergana', 'jizzakh', 'karakalpakstan', 'khorezm', 'namangan', 'navoiy', 'kashkadarya', 'samarkand', 'syrdarya', 'surkhandarya', 'other']),zod.null()]),
   "locale": zod.enum(['uz', 'ru', 'en']),
   "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
   "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
@@ -62,7 +195,27 @@ export const MeVerifyRecoveryPhoneResponse = zod.object({
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
   "createdAt": zod.iso.datetime({"offset":true}),
   "level": zod.int().min(1).max(meVerifyRecoveryPhoneResponseLevelMax),
-  "xpTotal": zod.int().describe('Lifetime XP.')
+  "xpTotal": zod.int().describe('Lifetime XP.'),
+  "preferences": zod.object({
+  "showStats": zod.boolean(),
+  "showHomeRegion": zod.boolean(),
+  "units": zod.enum(['metric', 'imperial']),
+  "appearance": zod.enum(['light', 'dark', 'auto']),
+  "notifications": zod.object({
+  "tripSafety": zod.boolean().describe('Trip & safety alerts; always on and not writable.'),
+  "streakReminders": zod.boolean(),
+  "dailyGame": zod.boolean(),
+  "dailyGameTime": zod.string().describe('Asia/Tashkent, HH:MM.'),
+  "groupsMessages": zod.boolean(),
+  "social": zod.boolean(),
+  "offers": zod.boolean()
+}),
+  "privacy": zod.object({
+  "publicProfile": zod.boolean(),
+  "findBuddies": zod.boolean(),
+  "shareLocation": zod.enum(['trips']).describe('Always trips for now; not writable.').describe('Always trips for now; not writable.')
+})
+})
 })
 
 /**
@@ -100,5 +253,107 @@ export const MeGuestMergeBody = zod.object({
 export const MeGuestMergeResponse = zod.object({
   "merged": zod.array(zod.string()).describe('Parts that were merged.'),
   "skipped": zod.array(zod.string()).describe('Parts that were accepted but not written to the account.')
+})
+
+/**
+ * @summary Upload an avatar (JPEG/PNG/WebP, ≤ 2 MB); stored as a 512×512 JPEG without metadata
+ */
+export const MeUploadAvatarBody = zod.object({
+  "file": zod.instanceof(Blob)
+})
+
+export const meUploadAvatarResponseDisplayNameMax = 40;
+
+export const meUploadAvatarResponseBioMax = 150;
+
+export const meUploadAvatarResponseLevelMax = 7;
+
+
+
+export const MeUploadAvatarResponse = zod.object({
+  "id": zod.uuid(),
+  "username": zod.string(),
+  "displayName": zod.string().max(meUploadAvatarResponseDisplayNameMax).nullable(),
+  "bio": zod.string().max(meUploadAvatarResponseBioMax).nullable(),
+  "avatarUrl": zod.string().nullable().describe('Derived from the stored avatar key; null when unset or storage is unavailable.'),
+  "homeRegion": zod.union([zod.enum(['tashkent_city', 'tashkent_region', 'andijan', 'bukhara', 'fergana', 'jizzakh', 'karakalpakstan', 'khorezm', 'namangan', 'navoiy', 'kashkadarya', 'samarkand', 'syrdarya', 'surkhandarya', 'other']),zod.null()]),
+  "locale": zod.enum(['uz', 'ru', 'en']),
+  "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
+  "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
+  "role": zod.enum(['user', 'admin']),
+  "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
+  "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "level": zod.int().min(1).max(meUploadAvatarResponseLevelMax),
+  "xpTotal": zod.int().describe('Lifetime XP.'),
+  "preferences": zod.object({
+  "showStats": zod.boolean(),
+  "showHomeRegion": zod.boolean(),
+  "units": zod.enum(['metric', 'imperial']),
+  "appearance": zod.enum(['light', 'dark', 'auto']),
+  "notifications": zod.object({
+  "tripSafety": zod.boolean().describe('Trip & safety alerts; always on and not writable.'),
+  "streakReminders": zod.boolean(),
+  "dailyGame": zod.boolean(),
+  "dailyGameTime": zod.string().describe('Asia/Tashkent, HH:MM.'),
+  "groupsMessages": zod.boolean(),
+  "social": zod.boolean(),
+  "offers": zod.boolean()
+}),
+  "privacy": zod.object({
+  "publicProfile": zod.boolean(),
+  "findBuddies": zod.boolean(),
+  "shareLocation": zod.enum(['trips']).describe('Always trips for now; not writable.').describe('Always trips for now; not writable.')
+})
+})
+})
+
+/**
+ * @summary Remove the avatar; the stored object stays orphaned (ADR-005)
+ */
+export const meDeleteAvatarResponseDisplayNameMax = 40;
+
+export const meDeleteAvatarResponseBioMax = 150;
+
+export const meDeleteAvatarResponseLevelMax = 7;
+
+
+
+export const MeDeleteAvatarResponse = zod.object({
+  "id": zod.uuid(),
+  "username": zod.string(),
+  "displayName": zod.string().max(meDeleteAvatarResponseDisplayNameMax).nullable(),
+  "bio": zod.string().max(meDeleteAvatarResponseBioMax).nullable(),
+  "avatarUrl": zod.string().nullable().describe('Derived from the stored avatar key; null when unset or storage is unavailable.'),
+  "homeRegion": zod.union([zod.enum(['tashkent_city', 'tashkent_region', 'andijan', 'bukhara', 'fergana', 'jizzakh', 'karakalpakstan', 'khorezm', 'namangan', 'navoiy', 'kashkadarya', 'samarkand', 'syrdarya', 'surkhandarya', 'other']),zod.null()]),
+  "locale": zod.enum(['uz', 'ru', 'en']),
+  "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
+  "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
+  "role": zod.enum(['user', 'admin']),
+  "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
+  "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "level": zod.int().min(1).max(meDeleteAvatarResponseLevelMax),
+  "xpTotal": zod.int().describe('Lifetime XP.'),
+  "preferences": zod.object({
+  "showStats": zod.boolean(),
+  "showHomeRegion": zod.boolean(),
+  "units": zod.enum(['metric', 'imperial']),
+  "appearance": zod.enum(['light', 'dark', 'auto']),
+  "notifications": zod.object({
+  "tripSafety": zod.boolean().describe('Trip & safety alerts; always on and not writable.'),
+  "streakReminders": zod.boolean(),
+  "dailyGame": zod.boolean(),
+  "dailyGameTime": zod.string().describe('Asia/Tashkent, HH:MM.'),
+  "groupsMessages": zod.boolean(),
+  "social": zod.boolean(),
+  "offers": zod.boolean()
+}),
+  "privacy": zod.object({
+  "publicProfile": zod.boolean(),
+  "findBuddies": zod.boolean(),
+  "shareLocation": zod.enum(['trips']).describe('Always trips for now; not writable.').describe('Always trips for now; not writable.')
+})
+})
 })
 

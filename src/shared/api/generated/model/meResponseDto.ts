@@ -6,13 +6,31 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { Experience } from './experience.ts';
+import type { HomeRegion } from './homeRegion.ts';
 import type { Interest } from './interest.ts';
 import type { Locale } from './locale.ts';
+import type { MePreferencesDto } from './mePreferencesDto.ts';
 import type { Role } from './role.ts';
 
 export interface MeResponseDto {
   id: string;
   username: string;
+  /**
+     * @maxLength 40
+     * @nullable
+     */
+  displayName: string | null;
+  /**
+     * @maxLength 150
+     * @nullable
+     */
+  bio: string | null;
+  /**
+     * Derived from the stored avatar key; null when unset or storage is unavailable.
+     * @nullable
+     */
+  avatarUrl: string | null;
+  homeRegion: HomeRegion | null;
   locale: Locale;
   experience: Experience | null;
   interests: Interest[];
@@ -29,4 +47,5 @@ export interface MeResponseDto {
   level: number;
   /** Lifetime XP. */
   xpTotal: number;
+  preferences: MePreferencesDto;
 }

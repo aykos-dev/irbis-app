@@ -16,6 +16,10 @@ export const AdminAuthLogInBody = zod.object({
   "password": zod.string()
 })
 
+export const adminAuthLogInResponseMeDisplayNameMax = 40;
+
+export const adminAuthLogInResponseMeBioMax = 150;
+
 export const adminAuthLogInResponseMeLevelMax = 7;
 
 
@@ -26,6 +30,10 @@ export const AdminAuthLogInResponse = zod.object({
   "me": zod.object({
   "id": zod.uuid(),
   "username": zod.string(),
+  "displayName": zod.string().max(adminAuthLogInResponseMeDisplayNameMax).nullable(),
+  "bio": zod.string().max(adminAuthLogInResponseMeBioMax).nullable(),
+  "avatarUrl": zod.string().nullable().describe('Derived from the stored avatar key; null when unset or storage is unavailable.'),
+  "homeRegion": zod.union([zod.enum(['tashkent_city', 'tashkent_region', 'andijan', 'bukhara', 'fergana', 'jizzakh', 'karakalpakstan', 'khorezm', 'namangan', 'navoiy', 'kashkadarya', 'samarkand', 'syrdarya', 'surkhandarya', 'other']),zod.null()]),
   "locale": zod.enum(['uz', 'ru', 'en']),
   "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
   "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
@@ -34,7 +42,27 @@ export const AdminAuthLogInResponse = zod.object({
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
   "createdAt": zod.iso.datetime({"offset":true}),
   "level": zod.int().min(1).max(adminAuthLogInResponseMeLevelMax),
-  "xpTotal": zod.int().describe('Lifetime XP.')
+  "xpTotal": zod.int().describe('Lifetime XP.'),
+  "preferences": zod.object({
+  "showStats": zod.boolean(),
+  "showHomeRegion": zod.boolean(),
+  "units": zod.enum(['metric', 'imperial']),
+  "appearance": zod.enum(['light', 'dark', 'auto']),
+  "notifications": zod.object({
+  "tripSafety": zod.boolean().describe('Trip & safety alerts; always on and not writable.'),
+  "streakReminders": zod.boolean(),
+  "dailyGame": zod.boolean(),
+  "dailyGameTime": zod.string().describe('Asia/Tashkent, HH:MM.'),
+  "groupsMessages": zod.boolean(),
+  "social": zod.boolean(),
+  "offers": zod.boolean()
+}),
+  "privacy": zod.object({
+  "publicProfile": zod.boolean(),
+  "findBuddies": zod.boolean(),
+  "shareLocation": zod.enum(['trips']).describe('Always trips for now; not writable.').describe('Always trips for now; not writable.')
+})
+})
 })
 })
 
