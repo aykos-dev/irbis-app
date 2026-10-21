@@ -42,6 +42,8 @@ type StorageSchema = {
   'lessons.muted': string;
   /** Smart swaps the user kept the plan for: JSON `{ month: 'YYYY-MM', keys: ['<month>:<position>'] }`. */
   'path.swapDismissed': string;
+  /** The active trip's recorded track (device only): JSON Track (active-trip trackStore), one trip at a time. */
+  'active.track': string;
 } & {
   /** Campfire seat token per room code, so a player gets the same seat back (rejoin, restart). */
   [key: `camp.seats.${string}`]: string;

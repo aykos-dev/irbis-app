@@ -32,7 +32,8 @@ type Input = {
   trip: TripDto | null;
   /** MMKV id the gear ticks were saved under until the trip had an id. */
   ticksId: string;
-  onDone: () => void;
+  /** `startedTripId` is set when the plan was started, so the screen can open the active trip. */
+  onDone: (startedTripId?: string) => void;
 };
 
 /**
@@ -82,7 +83,7 @@ export function useSubmitTrip() {
         qaLog('trip_saved', { tripId: saved.id });
         toast.show({ variant: 'success', message: t('trip.saved') });
       }
-      input.onDone();
+      input.onDone(start && saved.status === 'active' ? saved.id : undefined);
     } catch (error) {
       haptics.error();
       const code = isApiError(error) ? error.code : null;

@@ -212,7 +212,7 @@ describe('trip-plan — Home trip card (AC7)', () => {
     await fireEvent.press(screen.getByTestId('home.trip.checkout'));
 
     expect(await screen.findByTestId('app.toast')).toHaveTextContent('Welcome back!');
-    expect(qaEvents()).toContainEqual({ event: 'trip_checked_out', tripId: TRIP_ID, late: false });
+    expect(qaEvents()).toContainEqual({ event: 'trip_checked_out', tripId: TRIP_ID, late: false, from: 'card' });
     await waitFor(() => expect(screen.queryByTestId('home.trip-card')).not.toBeOnTheScreen());
   });
 

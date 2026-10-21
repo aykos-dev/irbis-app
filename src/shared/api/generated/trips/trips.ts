@@ -25,14 +25,21 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  CheckInWaypointDto,
+  CheckOutTripDto,
   CreateTripDto,
   CurrentTripsDto,
   ErrorResponseDto,
   GetTripPreviewParams,
+  PostTripLocationDto,
+  SendSosDto,
+  SosContactDto,
+  SosResultDto,
   StartTripDto,
   TripDto,
   TripPreviewDto,
-  UpdateTripDto
+  UpdateTripDto,
+  WaypointResultDto
 } from '../model';
 
 import { apiClient } from '../../client.ts';
@@ -387,6 +394,305 @@ export const useStartTrip = <TError = ErrorType<ErrorResponseDto>,
       return useMutation(getStartTripMutationOptions(options), queryClient);
     }
     /**
+ * Active or alerted trips only. A fix older than the stored one is ignored (still 204).
+ * @summary Send the current location and running totals of an active trip
+ */
+export const tripsPostLocation = (
+    id: string,
+    postTripLocationDto: BodyType<PostTripLocationDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<void>(
+      {url: `/v1/trips/${id}/locations`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: postTripLocationDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getTripsPostLocationMutationKey = () => ['tripsPostLocation'] as const;
+
+export const getTripsPostLocationMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof tripsPostLocation>>, TError,TripsPostLocationMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof tripsPostLocation>>, TError,TripsPostLocationMutationVariables, TContext> => {
+
+const mutationKey = getTripsPostLocationMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof tripsPostLocation>>, TripsPostLocationMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  tripsPostLocation(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type TripsPostLocationMutationResult = NonNullable<Awaited<ReturnType<typeof tripsPostLocation>>>
+    export type TripsPostLocationMutationBody = BodyType<PostTripLocationDto>
+    export type TripsPostLocationMutationError = ErrorType<ErrorResponseDto>
+    export type TripsPostLocationMutationVariables = {id: string;data: BodyType<PostTripLocationDto>}
+
+    /**
+ * @summary Send the current location and running totals of an active trip
+ */
+export const useTripsPostLocation = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof tripsPostLocation>>, TError,TripsPostLocationMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof tripsPostLocation>>,
+        TError,
+        TripsPostLocationMutationVariables,
+        TContext
+      > => {
+      return useMutation(getTripsPostLocationMutationOptions(options), queryClient);
+    }
+    /**
+ * Rules in order: accuracy, per-trip limit, distance from every earlier waypoint, gap after the previous one.
+ * @summary Check in a waypoint on an active trip (earns XP)
+ */
+export const tripsCheckInWaypoint = (
+    id: string,
+    checkInWaypointDto: BodyType<CheckInWaypointDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<WaypointResultDto>(
+      {url: `/v1/trips/${id}/waypoints`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: checkInWaypointDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getTripsCheckInWaypointMutationKey = () => ['tripsCheckInWaypoint'] as const;
+
+export const getTripsCheckInWaypointMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof tripsCheckInWaypoint>>, TError,TripsCheckInWaypointMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof tripsCheckInWaypoint>>, TError,TripsCheckInWaypointMutationVariables, TContext> => {
+
+const mutationKey = getTripsCheckInWaypointMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof tripsCheckInWaypoint>>, TripsCheckInWaypointMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  tripsCheckInWaypoint(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type TripsCheckInWaypointMutationResult = NonNullable<Awaited<ReturnType<typeof tripsCheckInWaypoint>>>
+    export type TripsCheckInWaypointMutationBody = BodyType<CheckInWaypointDto>
+    export type TripsCheckInWaypointMutationError = ErrorType<ErrorResponseDto>
+    export type TripsCheckInWaypointMutationVariables = {id: string;data: BodyType<CheckInWaypointDto>}
+
+    /**
+ * @summary Check in a waypoint on an active trip (earns XP)
+ */
+export const useTripsCheckInWaypoint = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof tripsCheckInWaypoint>>, TError,TripsCheckInWaypointMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof tripsCheckInWaypoint>>,
+        TError,
+        TripsCheckInWaypointMutationVariables,
+        TContext
+      > => {
+      return useMutation(getTripsCheckInWaypointMutationOptions(options), queryClient);
+    }
+    /**
+ * Trip status is unchanged. On 502 SOS_SEND_FAILED the app opens the phone SMS app instead.
+ * @summary Text the emergency contact an SOS with the best known location
+ */
+export const tripsSendSos = (
+    id: string,
+    sendSosDto: BodyType<SendSosDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<SosResultDto>(
+      {url: `/v1/trips/${id}/sos`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: sendSosDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getTripsSendSosMutationKey = () => ['tripsSendSos'] as const;
+
+export const getTripsSendSosMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof tripsSendSos>>, TError,TripsSendSosMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof tripsSendSos>>, TError,TripsSendSosMutationVariables, TContext> => {
+
+const mutationKey = getTripsSendSosMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof tripsSendSos>>, TripsSendSosMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  tripsSendSos(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type TripsSendSosMutationResult = NonNullable<Awaited<ReturnType<typeof tripsSendSos>>>
+    export type TripsSendSosMutationBody = BodyType<SendSosDto>
+    export type TripsSendSosMutationError = ErrorType<ErrorResponseDto>
+    export type TripsSendSosMutationVariables = {id: string;data: BodyType<SendSosDto>}
+
+    /**
+ * @summary Text the emergency contact an SOS with the best known location
+ */
+export const useTripsSendSos = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof tripsSendSos>>, TError,TripsSendSosMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof tripsSendSos>>,
+        TError,
+        TripsSendSosMutationVariables,
+        TContext
+      > => {
+      return useMutation(getTripsSendSosMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary The emergency contact's full phone and the rescue number
+ */
+export const tripsGetSosContact = (
+    id: string,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<SosContactDto>(
+      {url: `/v1/trips/${id}/sos-contact`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getTripsGetSosContactQueryKey = (id: string,) => {
+    return [
+    `/v1/trips/${id}/sos-contact`
+    ] as const;
+    }
+
+
+export const getTripsGetSosContactQueryOptions = <TData = Awaited<ReturnType<typeof tripsGetSosContact>>, TError = ErrorType<ErrorResponseDto>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof tripsGetSosContact>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getTripsGetSosContactQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof tripsGetSosContact>>> = ({ signal }) => tripsGetSosContact(id, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof tripsGetSosContact>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type TripsGetSosContactQueryResult = NonNullable<Awaited<ReturnType<typeof tripsGetSosContact>>>
+export type TripsGetSosContactQueryError = ErrorType<ErrorResponseDto>
+
+
+export function useTripsGetSosContact<TData = Awaited<ReturnType<typeof tripsGetSosContact>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof tripsGetSosContact>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof tripsGetSosContact>>,
+          TError,
+          Awaited<ReturnType<typeof tripsGetSosContact>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useTripsGetSosContact<TData = Awaited<ReturnType<typeof tripsGetSosContact>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof tripsGetSosContact>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof tripsGetSosContact>>,
+          TError,
+          Awaited<ReturnType<typeof tripsGetSosContact>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useTripsGetSosContact<TData = Awaited<ReturnType<typeof tripsGetSosContact>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof tripsGetSosContact>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary The emergency contact's full phone and the rescue number
+ */
+
+export function useTripsGetSosContact<TData = Awaited<ReturnType<typeof tripsGetSosContact>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof tripsGetSosContact>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getTripsGetSosContactQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
  * Planned: startAt, backBy, alertEnabled. Active (until the alert is sent): backBy and alertEnabled only.
  * @summary Edit a planned trip, or extend/toggle the alert of an active one
  */
@@ -521,16 +827,20 @@ export const useDeleteTrip = <TError = ErrorType<ErrorResponseDto>,
       return useMutation(getDeleteTripMutationOptions(options), queryClient);
     }
     /**
+ * Optional final distanceM / climbM totals are stored.
  * @summary Mark an active or alerted trip as safely back
  */
 export const checkOutTrip = (
     id: string,
+    checkOutTripDto: BodyType<CheckOutTripDto>,
  options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
 ) => {
 
 
       return apiClient<TripDto>(
-      {url: `/v1/trips/${id}/check-out`, method: 'POST', signal
+      {url: `/v1/trips/${id}/check-out`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: checkOutTripDto, signal
     },
       options);
     }
@@ -555,9 +865,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof checkOutTrip>>, CheckOutTripMutationVariables> = (props) => {
-          const {id} = props ?? {};
+          const {id,data} = props ?? {};
 
-          return  checkOutTrip(id,requestOptions)
+          return  checkOutTrip(id,data,requestOptions)
         }
 
 
@@ -568,9 +878,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type CheckOutTripMutationResult = NonNullable<Awaited<ReturnType<typeof checkOutTrip>>>
-
+    export type CheckOutTripMutationBody = BodyType<CheckOutTripDto>
     export type CheckOutTripMutationError = ErrorType<ErrorResponseDto>
-    export type CheckOutTripMutationVariables = {id: string}
+    export type CheckOutTripMutationVariables = {id: string;data: BodyType<CheckOutTripDto>}
 
     /**
  * @summary Mark an active or alerted trip as safely back

@@ -30,7 +30,9 @@ export type IconName =
   | 'cross'
   /** Place-type glyphs — placeholders (owner Q8) until the owner supplies final icons. */
   | 'waterfall'
-  | 'canyon';
+  | 'canyon'
+  /** Active trip: share the live link. */
+  | 'share';
 
 type Props = {
   name: IconName;
@@ -199,6 +201,15 @@ function draw(name: IconName, color: string, accent: string) {
       );
     case 'canyon':
       return <Path d="M1.5 4H8l2 6 2 10H1.5zM22.5 4H16l-2 6-2 10h10.5z" fill={color} />;
+    case 'share':
+      return (
+        <>
+          <Path d="M8.6 10.7l6.8-3.9M8.6 13.3l6.8 3.9" fill="none" stroke={color} strokeWidth={2.2} {...STROKE} />
+          <Circle cx={6} cy={12} r={2.6} fill={color} />
+          <Circle cx={18} cy={5.5} r={2.6} fill={color} />
+          <Circle cx={18} cy={18.5} r={2.6} fill={color} />
+        </>
+      );
     case 'phone':
       return (
         <Path

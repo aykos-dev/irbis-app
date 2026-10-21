@@ -1,6 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 
+import { ActiveTripScreen } from '../../features/active-trip/screens/ActiveTripScreen';
+import { TripSummaryScreen } from '../../features/active-trip/screens/TripSummaryScreen';
 import { GameWaiting } from '../../features/campfire-core/games/GameWaiting';
 import { CampJoinScreen } from '../../features/campfire-core/screens/CampJoinScreen';
 import { CampLobbyScreen } from '../../features/campfire-core/screens/CampLobbyScreen';
@@ -72,6 +74,12 @@ export function RootNavigator() {
       <Stack.Screen name="Safety" component={SafetyScreen} />
       <Stack.Screen name="Place" component={PlaceScreen} />
       <Stack.Screen name="TripPlan" component={TripPlanScreen} />
+      <Stack.Screen name="ActiveTrip" component={ActiveTripScreen} />
+      <Stack.Screen
+        name="TripSummary"
+        component={TripSummaryScreen}
+        options={{ animation: 'fade', gestureEnabled: false }}
+      />
       <Stack.Screen name="Level" component={LevelScreen} />
       <Stack.Screen name="Companions" component={CompanionsScreen} />
       <Stack.Screen name="Quiz" component={QuizScreen} options={{ gestureEnabled: false }} />

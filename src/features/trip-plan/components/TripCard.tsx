@@ -7,6 +7,7 @@ import { useGetCurrentTrips } from '../../../shared/api/generated/trips/trips';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
 import { ErrorState } from '../../../shared/components/ErrorState';
+import { Pressable } from '../../../shared/components/Pressable';
 import { Sheet } from '../../../shared/components/Sheet';
 import { borders, radii, spacing } from '../../../shared/constants/spacing';
 import { useAuth } from '../../../shared/contexts/auth';
@@ -63,11 +64,19 @@ export function TripCard() {
     <View testID="home.trip-card" style={[styles.card, layout.card]}>
       {active ? (
         <View style={layout.section}>
-          <AppText variant="caption" tone="teal700">
-            {t('trip.card.active')}
-          </AppText>
-          <AppText variant="h3">{placeName(active.place, locale)}</AppText>
-          <AppText variant="body">{t('trip.card.backBy', { time: formatClock(new Date(active.backBy), locale) })}</AppText>
+          <Pressable
+            testID="home.trip.open"
+            accessibilityRole="button"
+            accessibilityLabel={`${t('trip.card.active')} ${placeName(active.place, locale)}`}
+            style={layout.section}
+            onPress={() => navigation.navigate('ActiveTrip', { tripId: active.id })}
+          >
+            <AppText variant="caption" tone="teal700">
+              {t('trip.card.active')}
+            </AppText>
+            <AppText variant="h3">{placeName(active.place, locale)}</AppText>
+            <AppText variant="body">{t('trip.card.backBy', { time: formatClock(new Date(active.backBy), locale) })}</AppText>
+          </Pressable>
           {active.alertSentAt ? (
             <AppText testID="home.trip.alerted" variant="small" accessibilityRole="alert" style={styles.alerted}>
               {t('trip.card.alerted', { name: active.contact.name })}
@@ -101,7 +110,13 @@ export function TripCard() {
                 testID="home.trip.planned.start"
                 label={t('trip.card.start')}
                 disabled={disabled || active !== null}
-                onPress={() => void actions.startTrip(trip)}
+                onPress={() =>
+                  void actions.startTrip(trip).then(started => {
+                    if (started) {
+                      navigation.navigate('ActiveTrip', { tripId: trip.id });
+                    }
+                  })
+                }
               />
             </View>
             <View style={layout.button}>

@@ -1,0 +1,42 @@
+{
+  "title": "Active trip",
+  "status": {
+    "onTrack": "LIVE · On track",
+    "late": "LIVE · Running late",
+    "alerted": "Contact alerted"
+  },
+  "backBy": "Back by %{time}",
+  "stat": {
+    "km": "km",
+    "climb": "m climbed",
+    "elapsed": "elapsed",
+    "none": "—"
+  },
+  "findingYou": "Finding you…",
+  "locationOff": "Turn on location to track your route",
+  "locationOffCta": "Open Settings",
+  "contact": {
+    "following": "%{name} is following · last location sent %{min} min ago",
+    "justNow": "%{name} is following · last location sent just now",
+    "notYet": "%{name} is following · location not sent yet"
+  },
+  "shareLive": "Share live link",
+  "shareText": "Follow my trip to %{place}, back by %{time}: %{url}",
+  "checkout": {
+    "cta": "Check out safely",
+    "confirmTitle": "Back safe?",
+    "confirmBody": "This ends your trip and tells %{name} you're back.",
+    "confirm": "I'm back safe",
+    "cancel": "Not yet"
+  },
+  "offline": "You're offline",
+  "summary": {
+    "title": "Welcome back!",
+    "distance": "km walked",
+    "climb": "m climbed",
+    "time": "on the trail",
+    "waypoints": "waypoints",
+    "xp": "XP earned",
+    "done": "Done"
+  }
+}

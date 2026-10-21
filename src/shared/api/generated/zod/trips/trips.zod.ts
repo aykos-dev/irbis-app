@@ -83,7 +83,18 @@ export const CreateTripResponse = zod.object({
   "name": zod.string(),
   "relation": zod.string(),
   "phoneMasked": zod.string()
-})
+}),
+  "liveUrl": zod.string().nullable().describe('Public live page link for active, alerted and checked-out trips.'),
+  "lastLocationAt": zod.iso.datetime({"offset":true}).nullable(),
+  "distanceM": zod.int(),
+  "climbM": zod.int(),
+  "waypoints": zod.array(zod.object({
+  "n": zod.int(),
+  "lat": zod.number(),
+  "lng": zod.number(),
+  "recordedAt": zod.iso.datetime({"offset":true})
+})),
+  "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 })
 
 /**
@@ -114,7 +125,18 @@ export const GetCurrentTripsResponse = zod.object({
   "name": zod.string(),
   "relation": zod.string(),
   "phoneMasked": zod.string()
-})
+}),
+  "liveUrl": zod.string().nullable().describe('Public live page link for active, alerted and checked-out trips.'),
+  "lastLocationAt": zod.iso.datetime({"offset":true}).nullable(),
+  "distanceM": zod.int(),
+  "climbM": zod.int(),
+  "waypoints": zod.array(zod.object({
+  "n": zod.int(),
+  "lat": zod.number(),
+  "lng": zod.number(),
+  "recordedAt": zod.iso.datetime({"offset":true})
+})),
+  "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 }).nullable(),
   "planned": zod.array(zod.object({
   "id": zod.uuid(),
@@ -140,7 +162,18 @@ export const GetCurrentTripsResponse = zod.object({
   "name": zod.string(),
   "relation": zod.string(),
   "phoneMasked": zod.string()
-})
+}),
+  "liveUrl": zod.string().nullable().describe('Public live page link for active, alerted and checked-out trips.'),
+  "lastLocationAt": zod.iso.datetime({"offset":true}).nullable(),
+  "distanceM": zod.int(),
+  "climbM": zod.int(),
+  "waypoints": zod.array(zod.object({
+  "n": zod.int(),
+  "lat": zod.number(),
+  "lng": zod.number(),
+  "recordedAt": zod.iso.datetime({"offset":true})
+})),
+  "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 }))
 })
 
@@ -194,7 +227,133 @@ export const StartTripResponse = zod.object({
   "name": zod.string(),
   "relation": zod.string(),
   "phoneMasked": zod.string()
+}),
+  "liveUrl": zod.string().nullable().describe('Public live page link for active, alerted and checked-out trips.'),
+  "lastLocationAt": zod.iso.datetime({"offset":true}).nullable(),
+  "distanceM": zod.int(),
+  "climbM": zod.int(),
+  "waypoints": zod.array(zod.object({
+  "n": zod.int(),
+  "lat": zod.number(),
+  "lng": zod.number(),
+  "recordedAt": zod.iso.datetime({"offset":true})
+})),
+  "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 })
+
+/**
+ * Active or alerted trips only. A fix older than the stored one is ignored (still 204).
+ * @summary Send the current location and running totals of an active trip
+ */
+export const TripsPostLocationParams = zod.object({
+  "id": zod.string()
+})
+
+export const tripsPostLocationBodyLatMin = -90;
+export const tripsPostLocationBodyLatMax = 90;
+
+export const tripsPostLocationBodyLngMin = -180;
+export const tripsPostLocationBodyLngMax = 180;
+
+export const tripsPostLocationBodyAccuracyMMin = 0;
+export const tripsPostLocationBodyAccuracyMMax = 5000;
+
+export const tripsPostLocationBodyDistanceMMin = 0;
+export const tripsPostLocationBodyDistanceMMax = 1000000;
+
+export const tripsPostLocationBodyClimbMMin = 0;
+export const tripsPostLocationBodyClimbMMax = 20000;
+
+
+
+export const TripsPostLocationBody = zod.object({
+  "lat": zod.number().min(tripsPostLocationBodyLatMin).max(tripsPostLocationBodyLatMax),
+  "lng": zod.number().min(tripsPostLocationBodyLngMin).max(tripsPostLocationBodyLngMax),
+  "accuracyM": zod.number().min(tripsPostLocationBodyAccuracyMMin).max(tripsPostLocationBodyAccuracyMMax),
+  "recordedAt": zod.iso.datetime({"offset":true}).describe('When the fix was taken: not before startedAt, at most 2 min ahead of the server.'),
+  "distanceM": zod.int().min(tripsPostLocationBodyDistanceMMin).max(tripsPostLocationBodyDistanceMMax),
+  "climbM": zod.int().min(tripsPostLocationBodyClimbMMin).max(tripsPostLocationBodyClimbMMax)
+})
+
+export const TripsPostLocationResponse = zod.void()
+
+/**
+ * Rules in order: accuracy, per-trip limit, distance from every earlier waypoint, gap after the previous one.
+ * @summary Check in a waypoint on an active trip (earns XP)
+ */
+export const TripsCheckInWaypointParams = zod.object({
+  "id": zod.string()
+})
+
+export const tripsCheckInWaypointBodyLatMin = -90;
+export const tripsCheckInWaypointBodyLatMax = 90;
+
+export const tripsCheckInWaypointBodyLngMin = -180;
+export const tripsCheckInWaypointBodyLngMax = 180;
+
+export const tripsCheckInWaypointBodyAccuracyMMin = 0;
+export const tripsCheckInWaypointBodyAccuracyMMax = 5000;
+
+
+
+export const TripsCheckInWaypointBody = zod.object({
+  "lat": zod.number().min(tripsCheckInWaypointBodyLatMin).max(tripsCheckInWaypointBodyLatMax),
+  "lng": zod.number().min(tripsCheckInWaypointBodyLngMin).max(tripsCheckInWaypointBodyLngMax),
+  "accuracyM": zod.number().min(tripsCheckInWaypointBodyAccuracyMMin).max(tripsCheckInWaypointBodyAccuracyMMax).describe('Above the configured maximum (50 m) → LOCATION_INACCURATE.'),
+  "recordedAt": zod.iso.datetime({"offset":true}).describe('When the fix was taken: not before startedAt, at most 2 min ahead of the server (queued check-ins may arrive late).')
+})
+
+export const TripsCheckInWaypointResponse = zod.object({
+  "waypoint": zod.object({
+  "n": zod.int(),
+  "lat": zod.number(),
+  "lng": zod.number(),
+  "recordedAt": zod.iso.datetime({"offset":true})
+}),
+  "xpAwarded": zod.int().describe('XP the ledger granted; 0 when the daily cap is used up.')
+})
+
+/**
+ * Trip status is unchanged. On 502 SOS_SEND_FAILED the app opens the phone SMS app instead.
+ * @summary Text the emergency contact an SOS with the best known location
+ */
+export const TripsSendSosParams = zod.object({
+  "id": zod.string()
+})
+
+export const tripsSendSosBodyLatMin = -90;
+export const tripsSendSosBodyLatMax = 90;
+
+export const tripsSendSosBodyLngMin = -180;
+export const tripsSendSosBodyLngMax = 180;
+
+export const tripsSendSosBodyAccuracyMMin = 0;
+export const tripsSendSosBodyAccuracyMMax = 5000;
+
+
+
+export const TripsSendSosBody = zod.object({
+  "lat": zod.number().min(tripsSendSosBodyLatMin).max(tripsSendSosBodyLatMax).optional(),
+  "lng": zod.number().min(tripsSendSosBodyLngMin).max(tripsSendSosBodyLngMax).optional(),
+  "accuracyM": zod.number().min(tripsSendSosBodyAccuracyMMin).max(tripsSendSosBodyAccuracyMMax).optional()
+})
+
+export const TripsSendSosResponse = zod.object({
+  "sentAt": zod.iso.datetime({"offset":true}),
+  "contactName": zod.string(),
+  "sosCallNumber": zod.string().nullable().describe('Rescue number to dial (E.164); null when not configured.')
+})
+
+/**
+ * @summary The emergency contact's full phone and the rescue number
+ */
+export const TripsGetSosContactParams = zod.object({
+  "id": zod.string()
+})
+
+export const TripsGetSosContactResponse = zod.object({
+  "phone": zod.string().describe('Emergency contact phone, full E.164.'),
+  "sosCallNumber": zod.string().nullable().describe('Rescue number to dial (E.164); null when not configured.')
 })
 
 /**
@@ -235,7 +394,18 @@ export const UpdateTripResponse = zod.object({
   "name": zod.string(),
   "relation": zod.string(),
   "phoneMasked": zod.string()
-})
+}),
+  "liveUrl": zod.string().nullable().describe('Public live page link for active, alerted and checked-out trips.'),
+  "lastLocationAt": zod.iso.datetime({"offset":true}).nullable(),
+  "distanceM": zod.int(),
+  "climbM": zod.int(),
+  "waypoints": zod.array(zod.object({
+  "n": zod.int(),
+  "lat": zod.number(),
+  "lng": zod.number(),
+  "recordedAt": zod.iso.datetime({"offset":true})
+})),
+  "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 })
 
 /**
@@ -248,10 +418,24 @@ export const DeleteTripParams = zod.object({
 export const DeleteTripResponse = zod.void()
 
 /**
+ * Optional final distanceM / climbM totals are stored.
  * @summary Mark an active or alerted trip as safely back
  */
 export const CheckOutTripParams = zod.object({
   "id": zod.string()
+})
+
+export const checkOutTripBodyDistanceMMin = 0;
+export const checkOutTripBodyDistanceMMax = 1000000;
+
+export const checkOutTripBodyClimbMMin = 0;
+export const checkOutTripBodyClimbMMax = 20000;
+
+
+
+export const CheckOutTripBody = zod.object({
+  "distanceM": zod.int().min(checkOutTripBodyDistanceMMin).max(checkOutTripBodyDistanceMMax).optional(),
+  "climbM": zod.int().min(checkOutTripBodyClimbMMin).max(checkOutTripBodyClimbMMax).optional()
 })
 
 export const CheckOutTripResponse = zod.object({
@@ -278,6 +462,17 @@ export const CheckOutTripResponse = zod.object({
   "name": zod.string(),
   "relation": zod.string(),
   "phoneMasked": zod.string()
-})
+}),
+  "liveUrl": zod.string().nullable().describe('Public live page link for active, alerted and checked-out trips.'),
+  "lastLocationAt": zod.iso.datetime({"offset":true}).nullable(),
+  "distanceM": zod.int(),
+  "climbM": zod.int(),
+  "waypoints": zod.array(zod.object({
+  "n": zod.int(),
+  "lat": zod.number(),
+  "lng": zod.number(),
+  "recordedAt": zod.iso.datetime({"offset":true})
+})),
+  "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 })
 

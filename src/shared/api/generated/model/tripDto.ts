@@ -8,6 +8,7 @@
 import type { EmergencyContactDto } from './emergencyContactDto.ts';
 import type { TripPlaceDto } from './tripPlaceDto.ts';
 import type { TripStatus } from './tripStatus.ts';
+import type { TripWaypointDto } from './tripWaypointDto.ts';
 
 export interface TripDto {
   id: string;
@@ -25,4 +26,16 @@ export interface TripDto {
   /** @nullable */
   alertSentAt: string | null;
   contact: EmergencyContactDto;
+  /**
+     * Public live page link for active, alerted and checked-out trips.
+     * @nullable
+     */
+  liveUrl: string | null;
+  /** @nullable */
+  lastLocationAt: string | null;
+  distanceM: number;
+  climbM: number;
+  waypoints: TripWaypointDto[];
+  /** trip.active pingEveryMin: how often the app sends a location. */
+  pingEveryMin: number;
 }

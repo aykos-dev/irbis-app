@@ -1,0 +1,42 @@
+{
+  "title": "Faol sayohat",
+  "status": {
+    "onTrack": "JONLI · Reja bo'yicha",
+    "late": "JONLI · Kechikyapsiz",
+    "alerted": "Kontaktga xabar yuborildi"
+  },
+  "backBy": "%{time} gacha qaytish",
+  "stat": {
+    "km": "km",
+    "climb": "m ko'tarilish",
+    "elapsed": "o'tdi",
+    "none": "—"
+  },
+  "findingYou": "Joylashuvingiz aniqlanmoqda…",
+  "locationOff": "Yo'nalishni yozish uchun joylashuvni yoqing",
+  "locationOffCta": "Sozlamalarni ochish",
+  "contact": {
+    "following": "%{name} kuzatmoqda · joylashuv %{min} daq oldin yuborildi",
+    "justNow": "%{name} kuzatmoqda · joylashuv hozirgina yuborildi",
+    "notYet": "%{name} kuzatmoqda · joylashuv hali yuborilmadi"
+  },
+  "shareLive": "Jonli havolani ulashish",
+  "shareText": "%{place} sayohatimni kuzating, %{time} gacha qaytaman: %{url}",
+  "checkout": {
+    "cta": "Xavfsiz yakunlash",
+    "confirmTitle": "Eson-omon qaytdingizmi?",
+    "confirmBody": "Sayohat tugaydi va %{name} qaytganingizni biladi.",
+    "confirm": "Eson-omon qaytdim",
+    "cancel": "Hali yo'q"
+  },
+  "offline": "Internet yo'q",
+  "summary": {
+    "title": "Xush kelibsiz!",
+    "distance": "km yurildi",
+    "climb": "m ko'tarilish",
+    "time": "yo'lda",
+    "waypoints": "nuqta",
+    "xp": "XP olindi",
+    "done": "Tayyor"
+  }
+}

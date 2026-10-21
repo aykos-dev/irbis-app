@@ -69,7 +69,15 @@ export function TripPlanScreen({ navigation, route }: RootStackScreenProps<'Trip
 
   let body;
   if (place.data && !waitingForTrip) {
-    body = <TripPlanForm place={place.data} trip={trip} onDone={() => navigation.goBack()} />;
+    body = (
+      <TripPlanForm
+        place={place.data}
+        trip={trip}
+        onDone={startedTripId =>
+          startedTripId ? navigation.replace('ActiveTrip', { tripId: startedTripId }) : navigation.goBack()
+        }
+      />
+    );
   } else if (place.error || trips.error) {
     const error = place.error ?? trips.error;
     body = (
@@ -123,7 +131,7 @@ function localizedName(place: PlaceDetailDto, locale: Locale): string {
   return place.name[locale] ?? place.name.uz;
 }
 
-type FormProps = { place: PlaceDetailDto; trip: TripDto | null; onDone: () => void };
+type FormProps = { place: PlaceDetailDto; trip: TripDto | null; onDone: (startedTripId?: string) => void };
 
 function TripPlanForm({ place, trip, onDone }: FormProps) {
   const locale = useLocale();
@@ -195,7 +203,7 @@ function TripPlanForm({ place, trip, onDone }: FormProps) {
   return (
     <View style={styles.root}>
       <Screen testID="trip.screen" scroll bottomInset={false}>
-        <BackButton onPress={onDone} />
+        <BackButton onPress={() => onDone()} />
         <View style={layout.head}>
           <AppText variant="h1" accessibilityRole="header">
             {t('trip.title')}

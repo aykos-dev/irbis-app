@@ -48,9 +48,9 @@ export function useTripCardActions() {
 
   const checkOutTrip = async (trip: TripDto) => {
     try {
-      await checkOut.mutateAsync({ id: trip.id });
+      await checkOut.mutateAsync({ id: trip.id, data: {} });
       haptics.success();
-      qaLog('trip_checked_out', { tripId: trip.id, late: Date.now() > Date.parse(trip.backBy) });
+      qaLog('trip_checked_out', { tripId: trip.id, late: Date.now() > Date.parse(trip.backBy), from: 'card' });
       toast.show({ variant: 'success', message: t('trip.welcomeBack') });
       await refresh();
     } catch (error) {
@@ -71,7 +71,8 @@ export function useTripCardActions() {
     }
   };
 
-  const startTrip = async (trip: TripDto) => {
+  /** True once the trip started, so the card can open the active trip. */
+  const startTrip = async (trip: TripDto): Promise<boolean> => {
     try {
       setLocating(true);
       const location = await locate().finally(() => setLocating(false));
@@ -80,8 +81,10 @@ export function useTripCardActions() {
       qaLog('trip_started', { tripId: trip.id, hasLocation: location !== undefined });
       toast.show({ variant: 'success', message: t('trip.started') });
       await refresh();
+      return true;
     } catch (error) {
       showError(error);
+      return false;
     }
   };
 

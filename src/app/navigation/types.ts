@@ -75,6 +75,10 @@ export type RootStackParamList = {
   Place: { id: string; lat?: number; lng?: number };
   /** Trip plan for one place (trip-plan AC1–AC6); `tripId` edits a saved plan. */
   TripPlan: { placeId: string; tripId?: string };
+  /** The running trip (active-trip AC1–AC4, AC8). */
+  ActiveTrip: { tripId: string };
+  /** After check-out (active-trip AC8): the checked-out trip's counts. */
+  TripSummary: { tripId: string; distanceM: number; climbM: number; durationMin: number; waypoints: number; xp: number };
   /** Level screen (levels AC5): your level, or level 1 for a guest. */
   Level: undefined;
   /** All seven companions (levels AC6). */
