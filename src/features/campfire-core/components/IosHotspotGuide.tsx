@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
+import { iosHotspotGuide } from '../../../assets/images/campfire';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
 import { Sheet } from '../../../shared/components/Sheet';
@@ -9,6 +10,7 @@ import { createThemedStyles } from '../../../shared/contexts/theme';
 import { t } from '../../../shared/i18n';
 import { haptics } from '../../../shared/utils/haptics';
 import { qaLog } from '../../../shared/utils/qaLog';
+import { campSizes } from '../campTheme';
 import { campNet } from '../native/campNet';
 
 type Props = {
@@ -59,6 +61,13 @@ export function IosHotspotGuide({ onReady, onDismiss }: Props) {
       <AppText variant="h3" accessibilityRole="header">
         {t('camp.guide.title')}
       </AppText>
+      <Image
+        source={iosHotspotGuide}
+        style={layout.picture}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+        accessibilityIgnoresInvertColors
+      />
       <View style={layout.steps}>
         {steps.map((key, index) => (
           <View key={key} style={layout.step}>
@@ -96,6 +105,7 @@ export function IosHotspotGuide({ onReady, onDismiss }: Props) {
 }
 
 const layout = StyleSheet.create({
+  picture: { width: '100%', aspectRatio: campSizes.guideArtRatio, borderRadius: radii.card },
   steps: { gap: spacing[12] },
   step: { flexDirection: 'row', alignItems: 'center', gap: spacing[12] },
   number: {

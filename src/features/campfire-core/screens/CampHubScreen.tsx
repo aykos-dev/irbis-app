@@ -3,8 +3,8 @@ import { useCallback, useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
+import { foxCheering } from '../../../assets/images/campfire';
 import { placeHeroes } from '../../../assets/images/places';
-import { companionFoxSvg } from '../../../assets/svg/companionFox';
 import { pandaCheeringSvg } from '../../../assets/svg/pandaCheering';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
@@ -94,7 +94,7 @@ export function CampHubScreen() {
           <Image source={placeHeroes.camping} style={layout.heroImage} accessibilityIgnoresInvertColors />
           <View style={layout.heroArt} importantForAccessibility="no-hide-descendants">
             <SvgXml xml={pandaCheeringSvg} width={campSizes.heroArt} height={campSizes.heroArt} />
-            <SvgXml xml={companionFoxSvg} width={campSizes.heroArt} height={campSizes.heroArt} />
+            <Image source={foxCheering} style={layout.heroFox} accessibilityIgnoresInvertColors />
           </View>
         </View>
         <View style={layout.heroText}>
@@ -181,6 +181,7 @@ const layout = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
   },
+  heroFox: { width: campSizes.heroArt, height: campSizes.heroArt },
   heroText: { padding: spacing[16], gap: spacing[6] },
   buttons: { flexDirection: 'row', gap: spacing[12] },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[12] },
