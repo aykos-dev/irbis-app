@@ -108,12 +108,20 @@ export const mafiaPhaseSchema = z.object({
 });
 export type MafiaPhase = z.infer<typeof mafiaPhaseSchema>;
 
+/** A dealt player's name at deal time: kept on the out entry so a removed seat still shows on every phone. */
+export const mafiaOutPlayerSchema = z.object({
+  nickname,
+  avatar: z.enum(animals),
+});
+export type MafiaOutPlayer = z.infer<typeof mafiaOutPlayerSchema>;
+
 /** A seat out of the Mafia game; `roleId` only when "Reveal role when out" is on. */
 export const mafiaOutSchema = z.object({
   seatId,
   reason: z.enum(['killed', 'exiled']),
   phase: mafiaPhaseSchema,
   roleId: mafiaRoleIdSchema.optional(),
+  player: mafiaOutPlayerSchema.optional(),
 });
 export type MafiaOut = z.infer<typeof mafiaOutSchema>;
 

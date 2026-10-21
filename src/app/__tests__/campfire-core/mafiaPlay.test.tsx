@@ -271,4 +271,20 @@ describe('campfire-mafia — player phone (AC3, AC5)', () => {
     await act(() => server.mafMarkBack('p1'));
     expect(screen.queryByTestId('maf.out-banner')).not.toBeOnTheScreen();
   });
+
+  it('MAF-1/2: a seat removed at night keeps its name/avatar and reads "left · Night 1" on Out and game over', async () => {
+    const { server } = await playMafia();
+    await act(() => server.remove('p2'));
+
+    const outRow = within(screen.getByTestId('maf.out.p2'));
+    expect(outRow.getByText('guest_2')).toBeOnTheScreen();
+    expect(outRow.getByText('left · Night 1')).toBeOnTheScreen();
+    expect(outRow.getByText('Detective')).toBeOnTheScreen();
+
+    await act(() => server.mafEnd('none'));
+    expect(screen.getByTestId('maf.over')).toBeOnTheScreen();
+    const overRow = within(screen.getByTestId('maf.over.p2'));
+    expect(overRow.getByText('guest_2')).toBeOnTheScreen();
+    expect(overRow.getByText('left · Night 1')).toBeOnTheScreen();
+  });
 });

@@ -295,6 +295,7 @@
     "alive": "tirik",
     "killed": "o'ldirildi · %{n}-tun",
     "exiled": "quvildi · %{n}-kun",
+    "leftNight": "chiqdi · %{n}-tun",
     "outTitle": "Chiqqanlar",
     "youreOut": "Siz chiqdingiz — %{fate}. Jim turing, ishora bermang!",
     "readyTick": "Tayyor",

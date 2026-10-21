@@ -25,10 +25,15 @@ import {
 } from '../protocol/codec';
 import type { PartyGame } from '../games/packs';
 import { connectOptions } from './discovery';
+import { connectCamp, type CampConnection } from './connection';
 import { clearSeatToken, readSeatToken, saveSeatToken } from './seatStore';
 
 /** A dropped player tries again this often (and at once when the app comes back). */
 export const RETRY_INTERVAL_MS = 2000;
+/** A first connect may sit behind the subnet scan's probe queue (CORE-1): wait it out, then give up. */
+export const CONNECT_TIMEOUT_MS = 15000;
+/** A reconnect has no scan queue in front of it. */
+export const RECONNECT_TIMEOUT_MS = 4000;
 
 /** Why the session ended: host's word, our own leave, or the first connect never got through. */
 export type PlayerEnd = 'removed' | 'closed' | 'left' | 'unreachable' | RejectReason;
@@ -118,6 +123,7 @@ export function createPlayerClient({
   };
   const listeners = new Set<() => void>();
   let socket: TcpConnection | null = null;
+  let connection: CampConnection | null = null;
   let connected = false;
   let lastSeen = now();
   let active = true;
@@ -148,14 +154,15 @@ export function createPlayerClient({
   };
 
   const hangUp = () => {
-    const current = socket;
+    const current = connection;
     socket = null;
+    connection = null;
     connected = false;
     if (attemptTimer) {
       clearTimeout(attemptTimer);
       attemptTimer = null;
     }
-    current?.destroy();
+    current?.close();
   };
 
   const end = (reason: PlayerEnd) => {
@@ -290,28 +297,36 @@ export function createPlayerClient({
     }
     const split = createLineBuffer();
     lastSeen = now();
-    const opened = TcpSocket.createConnection(connectOptions(host, port), () => {
-      if (opened !== socket) {
-        return;
-      }
-      connected = true;
-      if (attemptTimer) {
-        clearTimeout(attemptTimer);
-        attemptTimer = null;
-      }
-      const seatToken = readSeatToken(code);
-      send({
-        type: 'hello',
-        code,
-        nickname,
-        avatar,
-        ...(seatToken ? { seatToken } : {}),
-      });
-    });
-    socket = opened;
-    attemptTimer = setTimeout(() => dropped(opened), RETRY_INTERVAL_MS);
-    opened.on('data', data => {
-      if (opened !== socket) {
+    const opened = connectCamp(
+      connectOptions(host, port),
+      current => {
+        if (current !== socket) {
+          return;
+        }
+        connected = true;
+        if (attemptTimer) {
+          clearTimeout(attemptTimer);
+          attemptTimer = null;
+        }
+        const seatToken = readSeatToken(code);
+        send({
+          type: 'hello',
+          code,
+          nickname,
+          avatar,
+          ...(seatToken ? { seatToken } : {}),
+        });
+      },
+    );
+    const { socket: next } = opened;
+    socket = next;
+    connection = opened;
+    attemptTimer = setTimeout(
+      () => dropped(next),
+      snapshot.seatId ? RECONNECT_TIMEOUT_MS : CONNECT_TIMEOUT_MS,
+    );
+    next.on('data', data => {
+      if (next !== socket) {
         return;
       }
       lastSeen = now();
@@ -319,8 +334,8 @@ export function createPlayerClient({
         onLine(line);
       }
     });
-    opened.on('error', () => dropped(opened));
-    opened.on('close', () => dropped(opened));
+    next.on('error', () => dropped(next));
+    next.on('close', () => dropped(next));
   }
 
   const tick = () => {

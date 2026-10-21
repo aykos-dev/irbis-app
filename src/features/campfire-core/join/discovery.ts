@@ -1,6 +1,5 @@
 import NetInfo, { NetInfoStateType } from '@react-native-community/netinfo';
 import { Platform } from 'react-native';
-import TcpSocket from 'react-native-tcp-socket';
 import Zeroconf, { type Service } from 'react-native-zeroconf';
 
 import { campNet } from '../native/campNet';
@@ -11,6 +10,7 @@ import {
   encode,
 } from '../protocol/codec';
 import { SERVICE_TYPE } from '../room/hostServer';
+import { connectCamp } from './connection';
 
 /** Bonjour / NSD gets this long before the subnet scan starts. */
 export const ZEROCONF_WINDOW_MS = 3000;
@@ -18,6 +18,8 @@ export const ZEROCONF_WINDOW_MS = 3000;
 export const DISCOVERY_TIMEOUT_MS = 8000;
 /** One subnet probe waits this long for an answer. */
 export const PROBE_TIMEOUT_MS = 400;
+/** The native connect is capped too, so timed-out probes do not sit in the socket queue for seconds. */
+export const PROBE_CONNECT_TIMEOUT_MS = PROBE_TIMEOUT_MS;
 /** Subnet probes in flight at once. */
 export const SCAN_PARALLEL = 32;
 
@@ -61,16 +63,28 @@ export function probeHost(
   return new Promise(resolve => {
     let done = false;
     const split = createLineBuffer();
-    const socket = TcpSocket.createConnection(connectOptions(host, port), () => {
-      socket.write(encode({ type: 'probe', code }));
-    });
+    const connection = connectCamp(
+      {
+        ...connectOptions(host, port),
+        connectTimeout: PROBE_CONNECT_TIMEOUT_MS,
+      },
+      socket => {
+        if (done) {
+          connection.close();
+          return;
+        }
+        socket.write(encode({ type: 'probe', code }));
+      },
+    );
+    const { socket } = connection;
     const finish = (result: ProbeResult) => {
       if (done) {
         return;
       }
       done = true;
       clearTimeout(timer);
-      socket.destroy();
+      // A connect still queued on a native thread is destroyed by `connectCamp` when it settles.
+      connection.close();
       resolve(result);
     };
     const timer = setTimeout(() => finish({ kind: 'miss' }), timeoutMs);

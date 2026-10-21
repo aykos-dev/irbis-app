@@ -69,17 +69,19 @@ export function GameOver({ phase, winner, roles, out, roster, host }: Props) {
           const player = roster.find(seat => seat.seatId === seatId);
           const fate = out.find(entry => entry.seatId === seatId);
           const roleId = roles[seatId];
+          const avatar = fate?.player?.avatar ?? player?.avatar;
+          const nickname = fate?.player?.nickname ?? player?.nickname ?? '';
           return (
             <View
               key={seatId}
               testID={`maf.over.${seatId}`}
               style={[layout.row, styles.row, fate ? layout.out : null]}
             >
-              {player ? (
-                <SeatAvatar avatar={player.avatar} size={mafiaSizes.rowAvatar} />
+              {avatar ? (
+                <SeatAvatar avatar={avatar} size={mafiaSizes.rowAvatar} />
               ) : null}
               <View style={layout.fill}>
-                <AppText variant="body">{player?.nickname ?? ''}</AppText>
+                <AppText variant="body">{nickname}</AppText>
                 <AppText variant="small" tone={fate ? 'red700' : 'muted'}>
                   {fate ? fateLabel(fate) : t('camp.maf.alive')}
                 </AppText>

@@ -26,11 +26,15 @@ export function phaseLabel(phase: MafiaPhase): string {
   });
 }
 
-/** "killed · Night 2" / "exiled · Day 1". */
+/** "killed · Night 2" / "exiled · Day 1"; a seat that left at night reads "left · Night 1". */
 export function fateLabel(entry: Pick<MafiaOut, 'reason' | 'phase'>): string {
-  return t(entry.reason === 'killed' ? 'camp.maf.killed' : 'camp.maf.exiled', {
-    n: entry.phase.n,
-  });
+  if (entry.reason === 'killed') {
+    return t('camp.maf.killed', { n: entry.phase.n });
+  }
+  return t(
+    entry.phase.kind === 'night' ? 'camp.maf.leftNight' : 'camp.maf.exiled',
+    { n: entry.phase.n },
+  );
 }
 
 /** A role's colour chip with its glyph and name. */
@@ -61,17 +65,19 @@ export function OutList({ out, roster }: Props) {
       </AppText>
       {out.map(entry => {
         const player = roster.find(seat => seat.seatId === entry.seatId);
+        const avatar = entry.player?.avatar ?? player?.avatar;
+        const nickname = entry.player?.nickname ?? player?.nickname ?? '';
         return (
           <View
             key={entry.seatId}
             testID={`maf.out.${entry.seatId}`}
             style={[layout.row, styles.row]}
           >
-            {player ? (
-              <SeatAvatar avatar={player.avatar} size={mafiaSizes.rowAvatar} />
+            {avatar ? (
+              <SeatAvatar avatar={avatar} size={mafiaSizes.rowAvatar} />
             ) : null}
             <View style={layout.fill}>
-              <AppText variant="body">{player?.nickname ?? ''}</AppText>
+              <AppText variant="body">{nickname}</AppText>
               <AppText variant="small">{fateLabel(entry)}</AppText>
             </View>
             {entry.roleId ? <RoleChip roleId={entry.roleId} /> : null}
