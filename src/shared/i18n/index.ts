@@ -16,6 +16,7 @@ import enNav from './en/nav.json';
 import enOnboarding from './en/onboarding.json';
 import enPath from './en/path.json';
 import enPlaces from './en/places.json';
+import enTrip from './en/trip.json';
 import ruAuth from './ru/auth.json';
 import ruCamp from './ru/camp.json';
 import ruCommon from './ru/common.json';
@@ -29,6 +30,7 @@ import ruNav from './ru/nav.json';
 import ruOnboarding from './ru/onboarding.json';
 import ruPath from './ru/path.json';
 import ruPlaces from './ru/places.json';
+import ruTrip from './ru/trip.json';
 import uzAuth from './uz/auth.json';
 import uzCamp from './uz/camp.json';
 import uzCommon from './uz/common.json';
@@ -42,6 +44,7 @@ import uzNav from './uz/nav.json';
 import uzOnboarding from './uz/onboarding.json';
 import uzPath from './uz/path.json';
 import uzPlaces from './uz/places.json';
+import uzTrip from './uz/trip.json';
 
 /**
  * i18n setup. Translations live in `<locale>/<namespace>.json`; keys are `<namespace>.<key>`
@@ -74,6 +77,7 @@ export const i18n = new I18n({
     onboarding: enOnboarding,
     path: enPath,
     places: enPlaces,
+    trip: enTrip,
   },
   ru: {
     auth: ruAuth,
@@ -89,6 +93,7 @@ export const i18n = new I18n({
     onboarding: ruOnboarding,
     path: ruPath,
     places: ruPlaces,
+    trip: ruTrip,
   },
   uz: {
     auth: uzAuth,
@@ -104,6 +109,7 @@ export const i18n = new I18n({
     onboarding: uzOnboarding,
     path: uzPath,
     places: uzPlaces,
+    trip: uzTrip,
   },
 });
 

@@ -11,3 +11,4 @@ export * from './path/path.zod.ts';
 export * from './places/places.zod.ts';
 export * from './profile/profile.zod.ts';
 export * from './qa/qa.zod.ts';
+export * from './trips/trips.zod.ts';

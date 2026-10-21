@@ -357,3 +357,34 @@ export const MeDeleteAvatarResponse = zod.object({
 })
 })
 
+/**
+ * @summary The saved emergency contact (phone masked); 204 when none
+ */
+export const GetEmergencyContactResponse = zod.object({
+  "name": zod.string(),
+  "relation": zod.string(),
+  "phoneMasked": zod.string()
+})
+
+/**
+ * @summary Save or replace the emergency contact (phone stored encrypted)
+ */
+export const putEmergencyContactBodyNameMax = 60;
+
+export const putEmergencyContactBodyRelationMax = 30;
+
+export const putEmergencyContactBodyPhoneRegExp = new RegExp('^\\+998\\d{9}$');
+
+
+export const PutEmergencyContactBody = zod.object({
+  "name": zod.string().max(putEmergencyContactBodyNameMax),
+  "relation": zod.string().max(putEmergencyContactBodyRelationMax),
+  "phone": zod.string().regex(putEmergencyContactBodyPhoneRegExp)
+})
+
+export const PutEmergencyContactResponse = zod.object({
+  "name": zod.string(),
+  "relation": zod.string(),
+  "phoneMasked": zod.string()
+})
+

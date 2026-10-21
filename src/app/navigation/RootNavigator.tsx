@@ -16,6 +16,7 @@ import { PlaceScreen } from '../../features/places/screens/PlaceScreen';
 import { OnboardingNavigator } from '../../features/onboarding/OnboardingNavigator';
 import { isOnboardingDone, markOnboardingDone } from '../../features/onboarding/onboardingStore';
 import { SafetyScreen } from '../../features/auth/screens/SafetyScreen';
+import { TripPlanScreen } from '../../features/trip-plan/screens/TripPlanScreen';
 import { appConfig } from '../../shared/constants/config';
 import { useAuth } from '../../shared/contexts/auth';
 import { AuthNavigator } from './AuthNavigator';
@@ -70,6 +71,7 @@ export function RootNavigator() {
       <Stack.Screen name="RecoveryPhone" component={RecoveryPhoneScreen} />
       <Stack.Screen name="Safety" component={SafetyScreen} />
       <Stack.Screen name="Place" component={PlaceScreen} />
+      <Stack.Screen name="TripPlan" component={TripPlanScreen} />
       <Stack.Screen name="Level" component={LevelScreen} />
       <Stack.Screen name="Companions" component={CompanionsScreen} />
       <Stack.Screen name="Quiz" component={QuizScreen} options={{ gestureEnabled: false }} />

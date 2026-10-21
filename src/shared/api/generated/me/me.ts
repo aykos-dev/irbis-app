@@ -27,11 +27,13 @@ import type {
 import type {
   CodeSentResponseDto,
   DeleteAccountDto,
+  EmergencyContactDto,
   ErrorResponseDto,
   GuestMergeDto,
   GuestMergeResponseDto,
   MeResponseDto,
   MeUploadAvatarBody,
+  PutEmergencyContactDto,
   RecoveryPhoneDto,
   UpdateMeDto,
   VerifyRecoveryPhoneDto
@@ -620,4 +622,163 @@ export const useMeDeleteAvatar = <TError = ErrorType<ErrorResponseDto>,
         TContext
       > => {
       return useMutation(getMeDeleteAvatarMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary The saved emergency contact (phone masked); 204 when none
+ */
+export const getEmergencyContact = (
+
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<EmergencyContactDto | void>(
+      {url: `/v1/me/emergency-contact`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getGetEmergencyContactQueryKey = () => {
+    return [
+    `/v1/me/emergency-contact`
+    ] as const;
+    }
+
+
+export const getGetEmergencyContactQueryOptions = <TData = Awaited<ReturnType<typeof getEmergencyContact>>, TError = ErrorType<ErrorResponseDto>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEmergencyContact>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetEmergencyContactQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getEmergencyContact>>> = ({ signal }) => getEmergencyContact(requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getEmergencyContact>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetEmergencyContactQueryResult = NonNullable<Awaited<ReturnType<typeof getEmergencyContact>>>
+export type GetEmergencyContactQueryError = ErrorType<ErrorResponseDto>
+
+
+export function useGetEmergencyContact<TData = Awaited<ReturnType<typeof getEmergencyContact>>, TError = ErrorType<ErrorResponseDto>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEmergencyContact>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEmergencyContact>>,
+          TError,
+          Awaited<ReturnType<typeof getEmergencyContact>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetEmergencyContact<TData = Awaited<ReturnType<typeof getEmergencyContact>>, TError = ErrorType<ErrorResponseDto>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEmergencyContact>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEmergencyContact>>,
+          TError,
+          Awaited<ReturnType<typeof getEmergencyContact>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetEmergencyContact<TData = Awaited<ReturnType<typeof getEmergencyContact>>, TError = ErrorType<ErrorResponseDto>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEmergencyContact>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary The saved emergency contact (phone masked); 204 when none
+ */
+
+export function useGetEmergencyContact<TData = Awaited<ReturnType<typeof getEmergencyContact>>, TError = ErrorType<ErrorResponseDto>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEmergencyContact>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetEmergencyContactQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary Save or replace the emergency contact (phone stored encrypted)
+ */
+export const putEmergencyContact = (
+    putEmergencyContactDto: BodyType<PutEmergencyContactDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<EmergencyContactDto>(
+      {url: `/v1/me/emergency-contact`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: putEmergencyContactDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getPutEmergencyContactMutationKey = () => ['putEmergencyContact'] as const;
+
+export const getPutEmergencyContactMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putEmergencyContact>>, TError,PutEmergencyContactMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof putEmergencyContact>>, TError,PutEmergencyContactMutationVariables, TContext> => {
+
+const mutationKey = getPutEmergencyContactMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putEmergencyContact>>, PutEmergencyContactMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  putEmergencyContact(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutEmergencyContactMutationResult = NonNullable<Awaited<ReturnType<typeof putEmergencyContact>>>
+    export type PutEmergencyContactMutationBody = BodyType<PutEmergencyContactDto>
+    export type PutEmergencyContactMutationError = ErrorType<ErrorResponseDto>
+    export type PutEmergencyContactMutationVariables = {data: BodyType<PutEmergencyContactDto>}
+
+    /**
+ * @summary Save or replace the emergency contact (phone stored encrypted)
+ */
+export const usePutEmergencyContact = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putEmergencyContact>>, TError,PutEmergencyContactMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putEmergencyContact>>,
+        TError,
+        PutEmergencyContactMutationVariables,
+        TContext
+      > => {
+      return useMutation(getPutEmergencyContactMutationOptions(options), queryClient);
     }

@@ -49,6 +49,8 @@ type StorageSchema = {
   [key: `camp.used.${string}`]: string;
   /** The last loaded monthly path per Tashkent month `YYYY-MM`, for offline opens: JSON PathDto (no personal data). */
   [key: `path.cache.${string}`]: string;
+  /** Trip-plan gear ticks per draft id (new plan) or trip id: JSON array of gear keys (device only). */
+  [key: `trip.gear.${string}`]: string;
 };
 
 export type StorageKey = keyof StorageSchema;

@@ -73,6 +73,8 @@ export type RootStackParamList = {
   Status: undefined;
   /** Place screen (places AC7). Explore passes the device position when it has one. */
   Place: { id: string; lat?: number; lng?: number };
+  /** Trip plan for one place (trip-plan AC1–AC6); `tripId` edits a saved plan. */
+  TripPlan: { placeId: string; tripId?: string };
   /** Level screen (levels AC5): your level, or level 1 for a guest. */
   Level: undefined;
   /** All seven companions (levels AC6). */

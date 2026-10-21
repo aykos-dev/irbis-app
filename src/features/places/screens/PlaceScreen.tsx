@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { RootStackScreenProps } from '../../../app/navigation/types';
 import type { PlaceConditionDto, PlaceDetailDto } from '../../../shared/api/generated/model';
@@ -15,10 +16,11 @@ import { Pressable } from '../../../shared/components/Pressable';
 import { Screen } from '../../../shared/components/Screen';
 import { Skeleton } from '../../../shared/components/Skeleton';
 import { StatusChip } from '../../../shared/components/StatusChip';
-import { borders, radii, sizes, spacing } from '../../../shared/constants/spacing';
+import { borders, radii, screenPadding, sizes, spacing } from '../../../shared/constants/spacing';
 import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
 import { useLocale } from '../../../shared/hooks/useLocale';
 import { useNetworkStatus } from '../../../shared/hooks/useNetworkStatus';
+import { useRequireAccount } from '../../../shared/hooks/useRequireAccount';
 import { t, type Locale } from '../../../shared/i18n';
 import { DifficultyBoots } from '../components/DifficultyBoots';
 import { LevelCard } from '../components/LevelCard';
@@ -33,6 +35,9 @@ const SKELETON_HERO = 200;
 const SKELETON_TITLE = 32;
 const SKELETON_TILE = 72;
 const SKELETON_CARD = 120;
+
+/** Statuses that hide "Start adventure" (trip-plan AC1, product rule). */
+const NO_TRIP_STATUSES: ReadonlySet<string> = new Set(['not_now', 'seasonal_lock']);
 
 /** Localised text with the Uzbek original as fallback (AC7). */
 export function localized<T extends string | null>(
@@ -53,6 +58,13 @@ export function PlaceScreen({ navigation, route }: RootStackScreenProps<'Place'>
   const { isOnline } = useNetworkStatus();
   const { data, error, isNotFound, refetch } = usePlace(id, coords);
   const condition = usePlaceCondition(id, data?.slug);
+  const requireAccount = useRequireAccount('trip');
+  const conditionStatus = condition.data?.status ?? null;
+  // Hidden until the condition settles, so a Not now place never flashes the button.
+  const showTripCta =
+    data !== undefined &&
+    !condition.isPending &&
+    (conditionStatus === null || !NO_TRIP_STATUSES.has(conditionStatus));
   // A cold deep link leaves Place alone in the stack: fall back to the Explore tab (D2).
   const goBack = () =>
     navigation.canGoBack()
@@ -107,10 +119,37 @@ export function PlaceScreen({ navigation, route }: RootStackScreenProps<'Place'>
   }
 
   return (
-    <Screen testID="place.screen" scroll>
-      <BackButton onPress={goBack} />
-      {body}
-    </Screen>
+    <View style={layout.fill}>
+      <Screen testID="place.screen" scroll bottomInset={!showTripCta}>
+        <BackButton onPress={goBack} />
+        {body}
+      </Screen>
+      {showTripCta ? (
+        <StartAdventureBar
+          onPress={() => requireAccount(() => navigation.navigate('TripPlan', { placeId: id }))}
+        />
+      ) : null}
+    </View>
+  );
+}
+
+/** Sticky "Start adventure" (trip-plan AC1); guests go through the account gate first. */
+function StartAdventureBar({ onPress }: { onPress: () => void }) {
+  const insets = useSafeAreaInsets();
+  const styles = useStyles();
+  return (
+    <View
+      style={[
+        styles.ctaBar,
+        {
+          paddingBottom: insets.bottom || spacing[20],
+          paddingStart: screenPadding + insets.left,
+          paddingEnd: screenPadding + insets.right,
+        },
+      ]}
+    >
+      <AppButton testID="place.start-adventure" label={t('trip.place.startAdventure')} onPress={onPress} />
+    </View>
   );
 }
 
@@ -244,6 +283,7 @@ function PlaceHazards({ hazards }: { hazards: PlaceDetailDto['hazards'] }) {
 }
 
 const layout = StyleSheet.create({
+  fill: { flex: 1 },
   head: { gap: spacing[8] },
   section: { gap: spacing[12] },
   tiles: { flexDirection: 'row', gap: spacing[12] },
@@ -252,6 +292,12 @@ const layout = StyleSheet.create({
 });
 
 const useStyles = createThemedStyles(c => ({
+  ctaBar: {
+    paddingTop: spacing[12],
+    borderTopWidth: borders.card,
+    borderTopColor: c.line,
+    backgroundColor: c.bg,
+  },
   back: {
     width: sizes.touchTarget,
     height: sizes.touchTarget,

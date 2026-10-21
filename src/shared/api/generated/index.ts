@@ -11,3 +11,4 @@ export * from './path/path.ts';
 export * from './places/places.ts';
 export * from './profile/profile.ts';
 export * from './qa/qa.ts';
+export * from './trips/trips.ts';
