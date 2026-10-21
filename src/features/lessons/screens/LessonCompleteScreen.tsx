@@ -23,7 +23,7 @@ import { useCompanionLevel } from '../hooks/useCompanionLevel';
 import { useHearts } from '../hooks/useHearts';
 import { useLessonsCatalog } from '../hooks/useLessonsCatalog';
 import { burstColors } from '../lessonColors';
-import { sounds } from '../sounds';
+import { sounds } from '../../../shared/sounds/sounds';
 import { progressOf } from './LessonsHubScreen';
 
 const COMPANION = 120;

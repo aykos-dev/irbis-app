@@ -89,6 +89,10 @@ export const hostGame = {
   mafMarkBack: (seatId: string): void => hostGameServer?.mafMarkBack(seatId),
   mafEnd: (winner: MafiaWinner): void => hostGameServer?.mafEnd(winner),
   mafPlayAgain: (): void => hostGameServer?.mafPlayAgain(),
+  xoMove: (cell: number): void => hostGameServer?.xoMove(HOST_SEAT_ID, cell),
+  xoNext: (): void => hostGameServer?.xoNext(),
+  xoEnd: (): void => hostGameServer?.xoEnd(),
+  xoPlayAgain: (): void => hostGameServer?.xoPlayAgain(),
 };
 
 /** Random 4-digit room code, 1000–9999. */
@@ -299,6 +303,10 @@ export function useHostRoom(resume: boolean) {
     live.current?.server.startMafia(settings);
   }, []);
 
+  const startXo = useCallback(() => {
+    live.current?.server.startXo();
+  }, []);
+
   /** Broadcasts `closed`, stops server, hotspot and zeroconf, forgets the saved room. */
   const close = useCallback(() => {
     const current = live.current;
@@ -312,5 +320,5 @@ export function useHostRoom(resume: boolean) {
     qaLog('camp_room_closed', { seats: current.room.seats.length });
   }, []);
 
-  return { state, retry, remove, close, startGame, startMafia };
+  return { state, retry, remove, close, startGame, startMafia, startXo };
 }

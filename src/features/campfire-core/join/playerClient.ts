@@ -17,6 +17,7 @@ import {
   type RosterPlayer,
   type Secret,
   type WyrPick,
+  type XoPublic,
 } from '../protocol/codec';
 import type { PartyGame } from '../games/packs';
 import { connectOptions } from './discovery';
@@ -31,7 +32,8 @@ export type PlayerEnd = 'removed' | 'closed' | 'left' | 'unreachable' | RejectRe
 /** The round as every phone sees it (`game` message). */
 export type PlayerGame =
   | { game: PartyGame; round: number; phase: GamePhase; public: PublicGame }
-  | { game: 'mafia'; round: number; phase: MafiaPhase; public: MafiaPublic };
+  | { game: 'mafia'; round: number; phase: MafiaPhase; public: MafiaPublic }
+  | { game: 'xo'; round: number; public: XoPublic };
 
 /** This seat's secret for one round (`deal` message); Mafia: our role. */
 export type PlayerDeal =
@@ -65,6 +67,10 @@ export type PlayerClient = {
   showMine: () => void;
   /** Mafia: we have seen our role. */
   mafReady: () => void;
+  /** X and O: our move on `cell` (0–8) in the current game; the host decides if it counts. */
+  xoMove: (cell: number) => void;
+  /** X and O: asks for the next game after a result (AC4); the host ignores an old `gameNo`. */
+  xoNext: () => void;
   getSnapshot: () => PlayerSnapshot;
   subscribe: (listener: () => void) => () => void;
 };
@@ -216,6 +222,13 @@ export function createPlayerClient({
         return;
       case 'game': {
         const { deal } = snapshot;
+        if (message.game === 'xo') {
+          update({
+            game: { game: 'xo', round: message.round, public: message.public },
+            deal: null,
+          });
+          return;
+        }
         update({
           game:
             message.game === 'mafia'
@@ -348,6 +361,23 @@ export function createPlayerClient({
       const { game } = snapshot;
       if (game?.game === 'mafia') {
         send({ type: 'mafReady', round: game.round });
+      }
+    },
+    xoMove: cell => {
+      const { game } = snapshot;
+      if (game?.game === 'xo') {
+        send({
+          type: 'xoMove',
+          round: game.round,
+          gameNo: game.public.gameNo,
+          cell,
+        });
+      }
+    },
+    xoNext: () => {
+      const { game } = snapshot;
+      if (game?.game === 'xo' && game.public.result) {
+        send({ type: 'xoNext', round: game.round, gameNo: game.public.gameNo });
       }
     },
     stop: () => {

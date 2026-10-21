@@ -5,10 +5,10 @@ import { animals } from '../playerProfile';
 
 /**
  * Local Campfire protocol (spec § Local protocol): newline-delimited JSON over TCP, `v: 3`
- * (v2 added the party games: `deal`, `game`, `lobby`, `wyrVote`, `showMine`; v3 adds Mafia:
- * its `deal` / `game` shapes and `mafReady`).
+ * (v2 added the party games: `deal`, `game`, `lobby`, `wyrVote`, `showMine`; v3 added Mafia:
+ * its `deal` / `game` shapes and `mafReady`; v4 adds X and O: its `game` shape, `xoMove` and `xoNext`).
  */
-export const PROTOCOL_VERSION = 3;
+export const PROTOCOL_VERSION = 4;
 export const CAMP_PORT = 47821;
 export const MAX_SEATS = 15;
 /** Clients ping this often; the host answers `pong`. */
@@ -136,6 +136,44 @@ export const mafiaPublicSchema = z.object({
 });
 export type MafiaPublic = z.infer<typeof mafiaPublicSchema>;
 
+/** X and O: a cell's mark, or null while empty. */
+export const xoMarkSchema = z.enum(['x', 'o']);
+export type XoMark = z.infer<typeof xoMarkSchema>;
+const xoCell = z.number().int().min(0).max(8);
+
+/** A finished X and O game: the winner's mark and its 3 cells, or a draw. */
+export const xoResultSchema = z.discriminatedUnion('kind', [
+  z.object({
+    kind: z.literal('win'),
+    mark: xoMarkSchema,
+    line: z.tuple([xoCell, xoCell, xoCell]),
+  }),
+  z.object({ kind: z.literal('draw') }),
+]);
+export type XoResult = z.infer<typeof xoResultSchema>;
+
+/** What every phone sees about the X and O game (both players see everything). */
+export const xoPublicSchema = z.object({
+  board: z.array(xoMarkSchema.nullable()).length(9),
+  xSeatId: seatId,
+  oSeatId: seatId,
+  turn: xoMarkSchema,
+  result: xoResultSchema.nullable(),
+  score: z.record(seatId, z.number().int().min(0)),
+  draws: z.number().int().min(0),
+  gameNo: z.number().int().min(1),
+  paused: z.boolean(),
+  /** The host ended the series (AC7): finished games, draws and wins per seat, shown on both phones. */
+  ended: z
+    .object({
+      games: z.number().int().min(0),
+      draws: z.number().int().min(0),
+      score: z.record(seatId, z.number().int().min(0)),
+    })
+    .optional(),
+});
+export type XoPublic = z.infer<typeof xoPublicSchema>;
+
 /** Host → one seat: that seat's secret for the round (no deal in Would you rather; none for the Mafia host). */
 const dealMessageSchema = z.discriminatedUnion('game', [
   z.object({
@@ -172,6 +210,13 @@ const gameMessageSchema = z.discriminatedUnion('game', [
     phase: mafiaPhaseSchema,
     public: mafiaPublicSchema,
   }),
+  z.object({
+    v: version,
+    type: z.literal('game'),
+    game: z.literal('xo'),
+    round,
+    public: xoPublicSchema,
+  }),
 ]);
 
 export const clientMessageSchema = z.discriminatedUnion('type', [
@@ -190,6 +235,21 @@ export const clientMessageSchema = z.discriminatedUnion('type', [
   z.object({ v: version, type: z.literal('showMine'), round }),
   /** Mafia: this seat has seen its role. */
   z.object({ v: version, type: z.literal('mafReady'), round }),
+  /** X and O: the joiner's move; the host checks it is their turn, the cell empty and the game current. */
+  z.object({
+    v: version,
+    type: z.literal('xoMove'),
+    round,
+    gameNo: z.number().int().min(1),
+    cell: xoCell,
+  }),
+  /** X and O: the joiner asks for the next game once this one has a result (AC4). */
+  z.object({
+    v: version,
+    type: z.literal('xoNext'),
+    round,
+    gameNo: z.number().int().min(1),
+  }),
 ]);
 export type ClientMessage = z.infer<typeof clientMessageSchema>;
 

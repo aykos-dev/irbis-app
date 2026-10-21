@@ -8,7 +8,7 @@ export const campScheme: ColorScheme = 'dark';
 
 export const campColors = themeColors[campScheme];
 
-export type GameId = 'imposter' | 'mafia' | 'whoami' | 'rather';
+export type GameId = 'imposter' | 'mafia' | 'whoami' | 'rather' | 'xo';
 
 /** Game icon tile colours (canvas CampHub). */
 export const gameColors: Record<GameId, string> = {
@@ -16,6 +16,7 @@ export const gameColors: Record<GameId, string> = {
   mafia: palette.red700,
   whoami: palette.teal,
   rather: palette.orange,
+  xo: palette.sky,
 };
 
 /** CampHub sizes from the canvas. */
@@ -111,3 +112,24 @@ export const mafiaConfetti = [
   { color: palette.red, left: '70%', rotate: '-30deg' },
   { color: palette.teal, left: '88%', rotate: '12deg' },
 ] as const;
+
+/** X and O marks and the winning line (campfire-xo). */
+export const xoColors = {
+  x: palette.teal,
+  o: palette.orange,
+  line: palette.gold,
+} as const;
+
+/** X and O board (campfire-xo AC2, AC3): marks draw in `markMs`; cells stay ≥ 44 pt. */
+export const xoSizes = {
+  board: 312,
+  /** SVG units: the board is drawn in a 300 × 300 box, each mark in a 100 × 100 cell. */
+  boardBox: 300,
+  cellBox: 100,
+  gridStroke: 4,
+  markStroke: 10,
+  lineStroke: 12,
+  headerMark: 18,
+  scoreAvatar: 40,
+  markMs: 200,
+} as const;

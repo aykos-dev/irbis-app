@@ -10,10 +10,13 @@ import {
   roundSeats,
   toMafiaPublic,
   toPublic,
+  toXoPublic,
+  xoRange,
   type GameSeat,
   type GameSettings,
   type HostAction,
   type HostGame,
+  type XoState,
 } from '../games/gameReducer';
 import {
   mafiaRange,
@@ -34,6 +37,7 @@ import {
   type WyrPick,
 } from '../protocol/codec';
 import {
+  HOST_SEAT_ID,
   roomReducer,
   toRoster,
   type RoomAction,
@@ -81,6 +85,16 @@ export type HostServer = {
   nextQuestion: () => void;
   /** Who am I: deals the seat its own character (`mine`), to that seat only. */
   showMine: (seatId: string) => void;
+  /** X and O: the host is X, the one other connected seat O; only with exactly 2 seats. */
+  startXo: () => void;
+  /** X and O: a seat's move (the host's own taps included); ignored unless valid (AC2). */
+  xoMove: (seatId: string, cell: number) => void;
+  /** X and O: the next game after a result, marks swapped, X first (AC4; the host's own tap). */
+  xoNext: () => void;
+  /** X and O: the host ends the series; both phones show the final score (AC7). */
+  xoEnd: () => void;
+  /** X and O, after the final score: a fresh series, else back to the lobby (AC7). */
+  xoPlayAgain: () => void;
   /** Mafia: Night n → Day n → Night n+1. */
   mafPhaseNext: () => void;
   /** Mafia: the narrator marks a player out (killed at night, exiled by day). */
@@ -157,6 +171,15 @@ export function createHostServer({
         round: game.round,
         phase: game.phase,
         public: toMafiaPublic(game),
+      });
+      return;
+    }
+    if (game.game === 'xo') {
+      send(conn, {
+        type: 'game',
+        game: 'xo',
+        round: game.round,
+        public: toXoPublic(game),
       });
       return;
     }
@@ -263,6 +286,74 @@ export function createHostServer({
     qaLog('camp_whoami_show_mine', { round });
   };
 
+  /** X and O: applies a move; an accepted one goes to every phone and is logged, with the result if it ended the game. */
+  const xoMove = (seatId: string, round: number, gameNo: number, cell: number) => {
+    const before = game;
+    if (
+      before?.game !== 'xo' ||
+      !applyGame({ type: 'xoMove', seatId, round, gameNo, cell })
+    ) {
+      return;
+    }
+    broadcastGame(false);
+    const next = current();
+    if (next?.game !== 'xo') {
+      return;
+    }
+    qaLog('xo_move', {
+      gameNo: next.gameNo,
+      cell,
+      mark: seatId === next.xSeatId ? 'x' : 'o',
+    });
+    logXoResult(next);
+  };
+
+  /** X and O: "Next game" from either phone; ignored without a result or for an old game (AC4). */
+  const xoNext = (round: number, gameNo: number) => {
+    if (game?.game !== 'xo' || !applyGame({ type: 'xoNext', round, gameNo })) {
+      return;
+    }
+    broadcastGame(false);
+    const next = current();
+    if (next?.game === 'xo') {
+      qaLog('xo_next', { gameNo: next.gameNo });
+    }
+  };
+
+  /** X and O: pauses while a player's seat reconnects and resumes when it is back (AC6). */
+  const syncXoPresence = () => {
+    const seats = gameSeats().filter(seat =>
+      state.seats.some(own => own.seatId === seat.seatId),
+    );
+    if (game?.game !== 'xo' || !applyGame({ type: 'xoPresence', seats })) {
+      return;
+    }
+    broadcastGame(false);
+    const next = current();
+    if (next?.game === 'xo') {
+      qaLog('xo_paused', { paused: next.paused });
+    }
+  };
+
+  /** X and O: the final score went to both phones (host End or the other player removed). */
+  const logXoEnded = (next: HostGame | null) => {
+    if (next?.game === 'xo' && next.ended) {
+      qaLog('camp_game_ended', {
+        game: 'xo',
+        games: next.ended.games,
+        draws: next.ended.draws,
+      });
+    }
+  };
+
+  const logXoResult = ({ result, gameNo }: XoState) => {
+    if (result?.kind === 'win') {
+      qaLog('xo_result', { gameNo, kind: 'win', mark: result.mark });
+    } else if (result?.kind === 'draw') {
+      qaLog('xo_result', { gameNo, kind: 'draw' });
+    }
+  };
+
   const apply = (action: RoomAction): RoomOutcome => {
     const result = roomReducer(state, action);
     if (result.state !== state) {
@@ -270,6 +361,7 @@ export function createHostServer({
       onChange(state, game);
       if (!state.closed) {
         broadcastRoster();
+        syncXoPresence();
       }
     }
     return result.outcome;
@@ -314,9 +406,13 @@ export function createHostServer({
       case 'leave': {
         const seatId = seatOf(conn);
         freed(apply({ type: 'leave', connId: conn.id }), null);
+        const wasEnded = game?.game === 'xo' && game.ended !== undefined;
         if (seatId && applyGame({ type: 'seatRemoved', seatId })) {
           broadcastGame(false);
           revealIfAllVoted();
+          if (!wasEnded) {
+            logXoEnded(current());
+          }
         }
         return;
       }
@@ -334,6 +430,18 @@ export function createHostServer({
         }
         return;
       }
+      case 'xoMove': {
+        const seatId = seatOf(conn);
+        if (seatId) {
+          xoMove(seatId, message.round, message.gameNo, message.cell);
+        }
+        return;
+      }
+      case 'xoNext':
+        if (seatOf(conn)) {
+          xoNext(message.round, message.gameNo);
+        }
+        return;
       case 'mafReady': {
         const seatId = seatOf(conn);
         if (
@@ -452,6 +560,17 @@ export function createHostServer({
         send(conn, { type: 'lobby' });
       }
     });
+    if (ended.game === 'xo') {
+      if (!ended.ended) {
+        const wins = Object.values(ended.score).reduce((sum, n) => sum + n, 0);
+        qaLog('camp_game_ended', {
+          game: 'xo',
+          games: wins + ended.draws,
+          draws: ended.draws,
+        });
+      }
+      return;
+    }
     if (ended.game !== 'mafia' || !ended.ended) {
       qaLog('camp_game_ended', { game: ended.game, rounds: ended.round });
     }
@@ -465,6 +584,7 @@ export function createHostServer({
         listening.once('error', reject);
         listening.listen({ port: CAMP_PORT, host: '0.0.0.0' }, () => {
           ticker = setInterval(checkSilence, PING_INTERVAL_MS);
+          syncXoPresence();
           zeroconf.publishService(
             SERVICE_TYPE,
             'tcp',
@@ -481,9 +601,13 @@ export function createHostServer({
       if (outcome.kind === 'freed') {
         freed(outcome, { type: 'removed' });
         qaLog('camp_player_removed', { seats: state.seats.length });
+        const wasEnded = game?.game === 'xo' && game.ended !== undefined;
         if (applyGame({ type: 'seatRemoved', seatId })) {
           broadcastGame(false);
           revealIfAllVoted();
+          if (!wasEnded) {
+            logXoEnded(current());
+          }
         }
       }
     },
@@ -541,8 +665,58 @@ export function createHostServer({
         solo: teams.solo,
       });
     },
+    startXo: () => {
+      const players = roundSeats(gameSeats()).length;
+      if (game || players < xoRange.min || players > xoRange.max) {
+        return;
+      }
+      if (
+        !applyGame({ type: 'startXo', seats: gameSeats(), hostSeatId: HOST_SEAT_ID })
+      ) {
+        return;
+      }
+      broadcastGame(false);
+      qaLog('camp_game_started', { game: 'xo', players });
+    },
+    xoMove: (seatId, cell) => {
+      if (game?.game === 'xo') {
+        xoMove(seatId, game.round, game.gameNo, cell);
+      }
+    },
+    xoNext: () => {
+      if (game?.game === 'xo') {
+        xoNext(game.round, game.gameNo);
+      }
+    },
+    xoEnd: () => {
+      if (game?.game !== 'xo' || !applyGame({ type: 'xoEnd' })) {
+        return;
+      }
+      broadcastGame(false);
+      logXoEnded(current());
+    },
+    xoPlayAgain: () => {
+      if (game?.game !== 'xo' || !game.ended) {
+        return;
+      }
+      if (
+        !applyGame({
+          type: 'xoPlayAgain',
+          seats: gameSeats(),
+          hostSeatId: HOST_SEAT_ID,
+        })
+      ) {
+        endGame();
+        return;
+      }
+      broadcastGame(false);
+      const next = current();
+      if (next?.game === 'xo') {
+        qaLog('camp_round_started', { game: 'xo', round: next.round });
+      }
+    },
     newRound: (rng = Math.random) => {
-      if (!game || game.game === 'mafia') {
+      if (!game || game.game === 'mafia' || game.game === 'xo') {
         return;
       }
       const ids = draw(game.game, game.settings.packId, rng);
@@ -623,7 +797,12 @@ export function createHostServer({
       qaLog('maf_back');
     },
     reveal: () => {
-      if (!game || !applyGame({ type: 'reveal' }) || game.game === 'mafia') {
+      if (
+        !game ||
+        !applyGame({ type: 'reveal' }) ||
+        game.game === 'mafia' ||
+        game.game === 'xo'
+      ) {
         return;
       }
       broadcastGame(false);

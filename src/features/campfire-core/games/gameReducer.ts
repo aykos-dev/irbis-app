@@ -9,12 +9,14 @@ import {
   partyGameSchema,
   secretSchema,
   wyrPickSchema,
+  xoPublicSchema,
   type MafiaPublic,
   type MafiaSecret,
   type MafiaWinner,
   type PublicGame,
   type Secret,
   type WyrPick,
+  type XoPublic,
 } from '../protocol/codec';
 import {
   dealBlocked,
@@ -25,6 +27,7 @@ import {
 import { dealtRoles } from './mafia/winCheck';
 import type { PartyGame } from './packs';
 import { shuffle, type Rng } from './usedStore';
+import { emptyBoard, findWin, isFull } from './xo/xoRules';
 
 /** Players per game, host included (spec AC1). */
 export const playerRange: Record<PartyGame, { min: number; max: number }> = {
@@ -32,6 +35,9 @@ export const playerRange: Record<PartyGame, { min: number; max: number }> = {
   whoami: { min: 3, max: 12 },
   rather: { min: 2, max: 15 },
 };
+
+/** X and O: exactly 2 players, host included (campfire-xo AC1). */
+export const xoRange = { min: 2, max: 2 } as const;
 
 /** Would you rather questions per round. */
 export const RATHER_PER_ROUND = 20;
@@ -86,10 +92,20 @@ export const mafiaStateSchema = z.object({
 });
 export type MafiaState = z.infer<typeof mafiaStateSchema>;
 
-/** The host's running game, party or Mafia (saved with the room for resume). */
+/** X and O host state: the public board plus who plays (`players`) and who joined to watch (`waiting`). */
+export const xoStateSchema = xoPublicSchema.extend({
+  game: z.literal('xo'),
+  round: z.number().int().min(1),
+  players: z.array(z.string()),
+  waiting: z.array(z.string()),
+});
+export type XoState = z.infer<typeof xoStateSchema>;
+
+/** The host's running game, party, Mafia or X and O (saved with the room for resume). */
 export const hostGameSchema = z.discriminatedUnion('game', [
   gameStateSchema,
   mafiaStateSchema,
+  xoStateSchema,
 ]);
 export type HostGame = z.infer<typeof hostGameSchema>;
 
@@ -135,7 +151,26 @@ export type MafiaAction =
   /** After game over: same counts and reveal setting, a new deal over `seats` (players only). */
   | { type: 'playAgain'; seats: GameSeat[]; rng: Rng };
 
-export type HostAction = GameAction | MafiaAction;
+export type XoAction =
+  /** The host is X; the one other connected seat is O. */
+  | { type: 'startXo'; seats: GameSeat[]; hostSeatId: string }
+  | {
+      type: 'xoMove';
+      seatId: string;
+      round: number;
+      gameNo: number;
+      cell: number;
+    }
+  /** Either phone's "Next game" once the current game has a result (AC4); `gameNo` is the finished game. */
+  | { type: 'xoNext'; round: number; gameNo: number }
+  /** Seat statuses changed: the series pauses while a player's seat is reconnecting (AC6). */
+  | { type: 'xoPresence'; seats: GameSeat[] }
+  /** The host's End (AC7): both phones show the final score. */
+  | { type: 'xoEnd' }
+  /** After the final score: a fresh series over the 2 connected seats, host X, next round (AC7). */
+  | { type: 'xoPlayAgain'; seats: GameSeat[]; hostSeatId: string };
+
+export type HostAction = GameAction | MafiaAction | XoAction;
 
 /** Players in a round: the seats connected when it starts, host included. */
 export function roundSeats(seats: GameSeat[]): string[] {
@@ -270,13 +305,24 @@ export function gameReducer(
   if (action.type === 'startMafia') {
     return startMafia(action.settings, action.seats, action.rng) ?? state;
   }
+  if (action.type === 'startXo') {
+    return startXo(action.seats, action.hostSeatId) ?? state;
+  }
   if (!state) {
     return state;
   }
   if (state.game === 'mafia') {
     return mafiaReducer(state, action);
   }
+  if (state.game === 'xo') {
+    return xoReducer(state, action);
+  }
   switch (action.type) {
+    case 'xoMove':
+    case 'xoNext':
+    case 'xoPresence':
+    case 'xoEnd':
+    case 'xoPlayAgain':
     case 'mafReady':
     case 'mafPhaseNext':
     case 'mafMarkOut':
@@ -548,6 +594,175 @@ function withWaiting(
     state.players.includes(action.seatId)
     ? state
     : { ...state, waiting: [...state.waiting, action.seatId] };
+}
+
+function startXo(
+  seats: GameSeat[],
+  hostSeatId: string,
+  round = 1,
+): XoState | null {
+  const players = roundSeats(seats);
+  const joiner = players.find(seat => seat !== hostSeatId);
+  if (
+    players.length < xoRange.min ||
+    players.length > xoRange.max ||
+    !players.includes(hostSeatId) ||
+    !joiner
+  ) {
+    return null;
+  }
+  return {
+    game: 'xo',
+    round,
+    players: [hostSeatId, joiner],
+    waiting: [],
+    board: emptyBoard(),
+    xSeatId: hostSeatId,
+    oSeatId: joiner,
+    turn: 'x',
+    result: null,
+    score: { [hostSeatId]: 0, [joiner]: 0 },
+    draws: 0,
+    gameNo: 1,
+    paused: false,
+  };
+}
+
+/**
+ * X and O: moves and "Next game" change the board; a third phone waits (watches); the host's End
+ * or removing the other player shows the final score; the lobby ends the game.
+ */
+function xoReducer(state: XoState, action: HostAction): XoState | null {
+  switch (action.type) {
+    case 'end':
+      return null;
+    case 'seatJoined':
+      return state.players.includes(action.seatId) ||
+        state.waiting.includes(action.seatId)
+        ? state
+        : { ...state, waiting: [...state.waiting, action.seatId] };
+    case 'seatRemoved':
+      if (state.waiting.includes(action.seatId)) {
+        return {
+          ...state,
+          waiting: state.waiting.filter(seat => seat !== action.seatId),
+        };
+      }
+      return state.players.includes(action.seatId) ? xoEnded(state) : state;
+    case 'xoEnd':
+      return xoEnded(state);
+    case 'xoPlayAgain':
+      return state.ended
+        ? (startXo(action.seats, action.hostSeatId, state.round + 1) ?? state)
+        : state;
+    case 'xoPresence': {
+      const paused = state.players.some(seatId =>
+        action.seats.some(seat => seat.seatId === seatId && !seat.connected),
+      );
+      return state.ended || paused === state.paused
+        ? state
+        : { ...state, paused };
+    }
+    case 'xoNext':
+      if (
+        state.ended ||
+        state.paused ||
+        state.result === null ||
+        action.round !== state.round ||
+        action.gameNo !== state.gameNo
+      ) {
+        return state;
+      }
+      return {
+        ...state,
+        board: emptyBoard(),
+        gameNo: state.gameNo + 1,
+        xSeatId: state.oSeatId,
+        oSeatId: state.xSeatId,
+        turn: 'x',
+        result: null,
+      };
+    case 'xoMove':
+      return state.ended ? state : xoMove(state, action);
+    default:
+      return state;
+  }
+}
+
+/** Final score (AC7): finished games = wins + draws; a second End changes nothing. */
+function xoEnded(state: XoState): XoState {
+  if (state.ended) {
+    return state;
+  }
+  const wins = Object.values(state.score).reduce((sum, n) => sum + n, 0);
+  return {
+    ...state,
+    paused: false,
+    ended: { games: wins + state.draws, draws: state.draws, score: state.score },
+  };
+}
+
+/** A move counts only from the seat whose turn it is, on an empty cell of the current, running game (AC2, AC3). */
+function xoMove(
+  state: XoState,
+  action: Extract<XoAction, { type: 'xoMove' }>,
+): XoState {
+  const mark =
+    action.seatId === state.xSeatId
+      ? 'x'
+      : action.seatId === state.oSeatId
+        ? 'o'
+        : null;
+  if (
+    mark !== state.turn ||
+    action.round !== state.round ||
+    action.gameNo !== state.gameNo ||
+    state.result !== null ||
+    state.paused ||
+    !Number.isInteger(action.cell) ||
+    action.cell < 0 ||
+    action.cell > 8 ||
+    state.board[action.cell] !== null
+  ) {
+    return state;
+  }
+  const board = state.board.map((cell, index) =>
+    index === action.cell ? mark : cell,
+  );
+  const turn = mark === 'x' ? 'o' : 'x';
+  const win = findWin(board);
+  if (win) {
+    return {
+      ...state,
+      board,
+      turn,
+      result: { kind: 'win', mark: win.mark, line: win.line },
+      score: {
+        ...state.score,
+        [action.seatId]: (state.score[action.seatId] ?? 0) + 1,
+      },
+    };
+  }
+  if (isFull(board)) {
+    return { ...state, board, turn, result: { kind: 'draw' }, draws: state.draws + 1 };
+  }
+  return { ...state, board, turn };
+}
+
+/** X and O broadcast: the whole board state (nothing is secret). */
+export function toXoPublic(state: XoState): XoPublic {
+  return {
+    board: state.board,
+    xSeatId: state.xSeatId,
+    oSeatId: state.oSeatId,
+    turn: state.turn,
+    result: state.result,
+    score: state.score,
+    draws: state.draws,
+    gameNo: state.gameNo,
+    paused: state.paused,
+    ...(state.ended ? { ended: state.ended } : {}),
+  };
 }
 
 /** Mafia broadcast: phase, ready and out (with roles only when the host reveals them). */

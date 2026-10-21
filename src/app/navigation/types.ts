@@ -98,7 +98,7 @@ export type RootStackParamList = {
     | {
         resume?: boolean;
         player?: boolean;
-        game?: 'imposter' | 'mafia' | 'whoami' | 'rather';
+        game?: 'imposter' | 'mafia' | 'whoami' | 'rather' | 'xo';
       }
     | undefined;
   /** A party game round over the lobby (campfire-party AC2): the host's, or the player's with `player`. */

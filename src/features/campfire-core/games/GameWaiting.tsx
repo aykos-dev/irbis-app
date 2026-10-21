@@ -24,10 +24,11 @@ import type {
   Secret,
   WhoamiSecret,
   WyrPick,
+  XoPublic,
 } from '../protocol/codec';
 import { HOST_SEAT_ID } from '../room/roomReducer';
 import { hostGame } from '../room/useHostRoom';
-import { toPublic, type MafiaState } from './gameReducer';
+import { toPublic, toXoPublic, type MafiaState } from './gameReducer';
 import { ImposterScreen } from './imposter/ImposterScreen';
 import { GameOver } from './mafia/GameOver';
 import { MafiaScreen, mafiaWinner } from './mafia/MafiaScreen';
@@ -35,6 +36,7 @@ import { WinSheet } from './mafia/WinSheet';
 import type { PartyGame } from './packs';
 import { RatherScreen } from './rather/RatherScreen';
 import { WhoAmIScreen } from './whoami/WhoAmIScreen';
+import { XoScreen } from './xo/XoScreen';
 
 type GameView = {
   game: PartyGame;
@@ -87,6 +89,11 @@ type MafiaView =
   /** Not dealt in; `info` once the game is over (every phone shows the result). */
   | { kind: 'waiting'; info: MafiaPublic };
 
+const xoHostControls = {
+  onPlayAgain: () => hostGame.xoPlayAgain(),
+  onLobby: () => hostGame.end(),
+};
+
 const ratherHostControls = {
   onReveal: () => hostGame.revealVotes(),
   onNext: () => hostGame.nextQuestion(),
@@ -121,7 +128,24 @@ export function GameWaiting({
 
   let mafia: MafiaView | null = null;
   let view: GameView | null = null;
-  if (hosted?.game === 'mafia') {
+  let xo: {
+    info: XoPublic;
+    selfSeatId: string | null;
+    roster: RosterPlayer[];
+  } | null = null;
+  if (hosted?.game === 'xo') {
+    xo = {
+      info: toXoPublic(hosted),
+      selfSeatId: HOST_SEAT_ID,
+      roster: hostRoster,
+    };
+  } else if (player?.game?.game === 'xo') {
+    xo = {
+      info: player.game.public,
+      selfSeatId: player.seatId,
+      roster: player.players,
+    };
+  } else if (hosted?.game === 'mafia') {
     mafia = { kind: 'host', game: hosted };
   } else if (player?.game?.game === 'mafia') {
     const { deal } = player;
@@ -163,13 +187,20 @@ export function GameWaiting({
       roster: player.players,
     };
   }
-  const active = view !== null || mafia !== null;
+  const active = view !== null || mafia !== null || xo !== null;
   const mafiaHost = mafia?.kind === 'host' ? mafia.game : null;
-  const mafiaOver = mafiaHost?.ended !== undefined;
+  const xoHost = hosted?.game === 'xo' ? hosted : null;
+  // Host: after a Mafia game over or the X and O final score, Back goes straight to the lobby.
+  const hostGameOver = mafiaHost?.ended !== undefined || xoHost?.ended !== undefined;
+  // X and O: a third phone (neither X nor O) waits for the next game.
+  const xoWatcher =
+    xo !== null &&
+    xo.selfSeatId !== xo.info.xSeatId &&
+    xo.selfSeatId !== xo.info.oSeatId;
 
   // Host: leaving the game screen ends the game, so Back asks first (after a Mafia game over: lobby).
   usePreventRemove(!isPlayer && active, () => {
-    if (mafiaOver) {
+    if (hostGameOver) {
       hostGame.end();
       return;
     }
@@ -186,6 +217,9 @@ export function GameWaiting({
     isPlayer ? client?.vote(pick) : hostGame.vote(pick);
   const showMine = () =>
     isPlayer ? client?.showMine() : hostGame.showMine();
+  const xoMove = (cell: number) =>
+    isPlayer ? client?.xoMove(cell) : hostGame.xoMove(cell);
+  const xoNext = () => (isPlayer ? client?.xoNext() : hostGame.xoNext());
 
   const endGame = (winner?: MafiaWinner) => {
     haptics.warning();
@@ -194,12 +228,16 @@ export function GameWaiting({
       hostGame.mafEnd(winner ?? 'none');
       return;
     }
+    if (xoHost) {
+      hostGame.xoEnd();
+      return;
+    }
     hostGame.end();
   };
   // Mafia End game: a matching winner asks "<team> wins?", else "End without a winner?" (AC6).
   const endWinner = mafiaHost && confirmEnd ? mafiaWinner(mafiaHost) : null;
 
-  if (!view && !mafia) {
+  if (!view && !mafia && !xo) {
     return null;
   }
   return (
@@ -239,6 +277,35 @@ export function GameWaiting({
           </AppText>
         ) : null}
         {mafia?.kind === 'waiting' && !mafia.info.ended ? (
+          <AppText
+            testID="camp.game.in-progress"
+            variant="body"
+            tone="muted"
+            style={layout.center}
+          >
+            {t('camp.maf.inProgress')}
+          </AppText>
+        ) : null}
+        {xo && !xoWatcher ? (
+          <XoScreen
+            info={xo.info}
+            selfSeatId={xo.selfSeatId}
+            roster={xo.roster}
+            onMove={xoMove}
+            onNext={xoNext}
+            host={
+              isPlayer
+                ? undefined
+                : { ...xoHostControls, onEnd: () => setConfirmEnd(true) }
+            }
+          />
+        ) : null}
+        {xoWatcher ? (
+          <AppText variant="h1" accessibilityRole="header" style={layout.center}>
+            {t('camp.games.xo')}
+          </AppText>
+        ) : null}
+        {xoWatcher ? (
           <AppText
             testID="camp.game.in-progress"
             variant="body"
@@ -291,7 +358,7 @@ export function GameWaiting({
             {t('camp.game.inProgress')}
           </AppText>
         )}
-        {isPlayer || mafiaOver ? null : (
+        {isPlayer || hostGameOver || xoHost ? null : (
           <AppButton
             testID="camp.game.end"
             label={t('camp.game.end')}
@@ -315,11 +382,18 @@ export function GameWaiting({
             title={
               mafiaHost
                 ? t('camp.maf.endNoWinner')
-                : t('camp.game.endConfirm')
+                : xoHost
+                  ? t('camp.xo.endConfirm')
+                  : t('camp.game.endConfirm')
             }
             confirmLabel={
-              mafiaHost ? t('camp.maf.endGame') : t('camp.game.end')
+              mafiaHost
+                ? t('camp.maf.endGame')
+                : xoHost
+                  ? t('camp.xo.end')
+                  : t('camp.game.end')
             }
+            cancelLabel={xoHost ? t('camp.xo.keepPlaying') : undefined}
             confirmTestID="camp.game.end-confirm"
             cancelTestID="camp.game.end-cancel"
             onConfirm={() => endGame()}
