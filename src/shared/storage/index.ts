@@ -44,6 +44,12 @@ type StorageSchema = {
   'path.swapDismissed': string;
   /** The active trip's recorded track (device only): JSON Track (active-trip trackStore), one trip at a time. */
   'active.track': string;
+  /** XP the server granted per waypoint check-in of the active trip (summary total): JSON `{ tripId, xp }`. */
+  'active.waypointXp': string;
+  /** Offline waypoint check-ins of the active trip, sent in order on reconnect: JSON `{ tripId, items }`. */
+  'active.waypointQueue': string;
+  /** The active trip's SOS SMS target and rescue number: JSON `{ tripId, phone, sosCallNumber }`; cleared at check-out. */
+  'active.sosContact': string;
 } & {
   /** Campfire seat token per room code, so a player gets the same seat back (rejoin, restart). */
   [key: `camp.seats.${string}`]: string;

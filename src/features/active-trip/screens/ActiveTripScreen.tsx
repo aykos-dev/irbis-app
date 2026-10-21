@@ -10,11 +10,10 @@ import { getGetCurrentTripsQueryKey, useCheckOutTrip, useGetCurrentTrips } from 
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
 import { ErrorState } from '../../../shared/components/ErrorState';
-import { Mascot } from '../../../shared/components/Mascot';
 import { OfflineBanner } from '../../../shared/components/OfflineBanner';
 import { Skeleton } from '../../../shared/components/Skeleton';
 import { toast } from '../../../shared/components/toastBus';
-import { radii, screenPadding, sizes, spacing } from '../../../shared/constants/spacing';
+import { radii, screenPadding, spacing } from '../../../shared/constants/spacing';
 import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
 import { useLocale } from '../../../shared/hooks/useLocale';
 import { useNetworkStatus } from '../../../shared/hooks/useNetworkStatus';
@@ -23,11 +22,17 @@ import { haptics } from '../../../shared/utils/haptics';
 import { qaLog } from '../../../shared/utils/qaLog';
 import { CheckoutSheet } from '../components/CheckoutSheet';
 import { ContactRow } from '../components/ContactRow';
+import { SosButton } from '../components/SosButton';
+import { SosSheet } from '../components/SosSheet';
 import { StatsCard } from '../components/StatsCard';
 import { TripMap } from '../components/TripMap';
+import { WaypointPanel } from '../components/WaypointPanel';
+import { clearSosContact, useSos } from '../hooks/useSos';
 import { useTripPings } from '../hooks/useTripPings';
 import { useTripTracking } from '../hooks/useTripTracking';
-import { clearTrack, type Track } from '../trackStore';
+import { useWaypointCheckIn } from '../hooks/useWaypointCheckIn';
+import { clearTrack, loadWaypointXp, type Fix, type Track } from '../trackStore';
+import { clearQueue } from '../waypointQueue';
 
 const MINUTE_MS = 60_000;
 const SKELETON_CARD = 140;
@@ -54,8 +59,8 @@ function totals(track: Track) {
   };
 }
 
-/** Summary counts of a checked-out trip (AC8); waypoint XP joins with the check-in results of slice 2. */
-function summaryOf(done: TripDto) {
+/** Summary counts of a checked-out trip (AC8); XP is the sum the server granted per check-in. */
+function summaryOf(done: TripDto, xp: number) {
   const end = done.checkedOutAt ? Date.parse(done.checkedOutAt) : Date.now();
   const start = done.startedAt ? Date.parse(done.startedAt) : end;
   return {
@@ -64,12 +69,12 @@ function summaryOf(done: TripDto) {
     climbM: done.climbM,
     durationMin: Math.max(0, Math.floor((end - start) / MINUTE_MS)),
     waypoints: done.waypoints.length,
-    xp: 0,
+    xp,
   };
 }
 
 /**
- * Active trip (AC1–AC4, AC8): the live map, status and stats on top, the companion, contact row and
+ * Active trip (AC1–AC4, AC6–AC8): the live map, status and stats on top, waypoint check-in, SOS, contact row and
  * check-out at the bottom. Tracks and pings only while the trip is the current active one; if there
  * is none, goes back to Path.
  */
@@ -105,8 +110,11 @@ export function ActiveTripScreen({ navigation, route }: RootStackScreenProps<'Ac
       const done = await checkOut.mutateAsync({ id: active.id, data: totals(track) });
       haptics.success();
       qaLog('trip_checked_out', { tripId: active.id, late: Date.now() > Date.parse(active.backBy), from: 'active' });
+      const xp = loadWaypointXp(active.id);
       clearTrack();
-      navigation.replace('TripSummary', summaryOf(done));
+      clearQueue();
+      clearSosContact();
+      navigation.replace('TripSummary', summaryOf(done, xp));
       void queryClient.invalidateQueries({ queryKey: getGetCurrentTripsQueryKey() });
     } catch (error) {
       haptics.error();
@@ -169,12 +177,8 @@ export function ActiveTripScreen({ navigation, route }: RootStackScreenProps<'Ac
             },
           ]}
         >
-          <View style={layout.companion}>
-            <Mascot kind="fox" size={sizes.placeTypeDot} />
-            <View style={layout.fill}>
-              <ContactRow trip={trip} now={now} locale={locale} />
-            </View>
-          </View>
+          <TripActions trip={trip} last={track.last} />
+          <ContactRow trip={trip} now={now} locale={locale} />
           <AppButton
             testID="active.checkout"
             variant="white"
@@ -202,6 +206,18 @@ export function ActiveTripScreen({ navigation, route }: RootStackScreenProps<'Ac
   );
 }
 
+/** Waypoint check-in with the SOS hold beside it (AC6, AC7); mounted only for the active trip. */
+function TripActions({ trip, last }: { trip: TripDto; last: Fix | null }) {
+  const checkIn = useWaypointCheckIn(trip);
+  const sos = useSos(trip, last);
+  return (
+    <>
+      <WaypointPanel checkIn={checkIn} sos={<SosButton disabled={sos.sending} onFire={sos.send} />} />
+      {sos.outcome ? <SosSheet outcome={sos.outcome} onDismiss={sos.closeOutcome} /> : null}
+    </>
+  );
+}
+
 const layout = StyleSheet.create({
   top: { position: 'absolute', top: 0, start: 0, end: 0, gap: spacing[8] },
   card: { padding: spacing[16] },
@@ -215,8 +231,6 @@ const layout = StyleSheet.create({
     borderTopLeftRadius: radii.sheet,
     borderTopRightRadius: radii.sheet,
   },
-  companion: { flexDirection: 'row', alignItems: 'center', gap: spacing[12] },
-  fill: { flex: 1 },
   center: { textAlign: 'center' },
 });
 

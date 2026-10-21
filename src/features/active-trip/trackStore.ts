@@ -21,6 +21,7 @@ export const MAX_POINTS = 5000;
 export const CLIMB_STEP_M = 3;
 
 const KEY = 'active.track';
+const XP_KEY = 'active.waypointXp';
 const EARTH_RADIUS_M = 6_371_000;
 
 const toRad = (deg: number) => (deg * Math.PI) / 180;
@@ -98,7 +99,34 @@ export function saveTrack(track: Track): void {
   storage.setString(KEY, JSON.stringify(track));
 }
 
-/** After check-out (AC2): the track leaves the device (only one trip is ever stored). */
+/** XP the server granted for this trip's waypoint check-ins (never optimistic); 0 for another trip. */
+export function loadWaypointXp(tripId: string): number {
+  const raw = storage.getString(XP_KEY);
+  if (!raw) {
+    return 0;
+  }
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return typeof parsed === 'object' &&
+      parsed !== null &&
+      'tripId' in parsed &&
+      parsed.tripId === tripId &&
+      'xp' in parsed &&
+      typeof parsed.xp === 'number'
+      ? parsed.xp
+      : 0;
+  } catch {
+    return 0;
+  }
+}
+
+/** Adds one check-in's `xpAwarded` to the trip's total. */
+export function addWaypointXp(tripId: string, xp: number): void {
+  storage.setString(XP_KEY, JSON.stringify({ tripId, xp: loadWaypointXp(tripId) + xp }));
+}
+
+/** After check-out (AC2): the track and its waypoint XP leave the device (only one trip is ever stored). */
 export function clearTrack(): void {
   storage.remove(KEY);
+  storage.remove(XP_KEY);
 }

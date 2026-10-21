@@ -32,6 +32,8 @@ export class ApiError extends Error {
   readonly reasonCode?: string;
   /** ACCOUNT_LOCKED, RATE_LIMITED: seconds until the client may retry. */
   readonly retryAfterSec?: number;
+  /** Code-specific numbers (e.g. WAYPOINT_TOO_CLOSE remainingM, SOS_TOO_SOON retryInSec). */
+  readonly details?: Record<string, number>;
 
   constructor(params: {
     code: string;
@@ -41,6 +43,7 @@ export class ApiError extends Error {
     requestId?: string;
     reasonCode?: string;
     retryAfterSec?: number;
+    details?: Record<string, number>;
   }) {
     super(params.message);
     this.name = 'ApiError';
@@ -50,6 +53,7 @@ export class ApiError extends Error {
     this.requestId = params.requestId;
     this.reasonCode = params.reasonCode;
     this.retryAfterSec = params.retryAfterSec;
+    this.details = params.details;
   }
 }
 
@@ -64,6 +68,7 @@ type ErrorBody = {
   requestId?: unknown;
   reasonCode?: unknown;
   retryAfterSec?: unknown;
+  details?: unknown;
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -80,6 +85,19 @@ function readFieldErrors(value: unknown): FieldErrors | undefined {
       result[field] = messages.filter((m): m is string => typeof m === 'string');
     } else if (typeof messages === 'string') {
       result[field] = [messages];
+    }
+  }
+  return result;
+}
+
+function readDetails(value: unknown): Record<string, number> | undefined {
+  if (!isRecord(value)) {
+    return undefined;
+  }
+  const result: Record<string, number> = {};
+  for (const [key, number] of Object.entries(value)) {
+    if (typeof number === 'number') {
+      result[key] = number;
     }
   }
   return result;
@@ -118,6 +136,7 @@ export function normaliseError(failure: RawFailure): ApiError {
     requestId: typeof body.requestId === 'string' ? body.requestId : undefined,
     reasonCode: typeof body.reasonCode === 'string' ? body.reasonCode : undefined,
     retryAfterSec: typeof body.retryAfterSec === 'number' ? body.retryAfterSec : undefined,
+    details: readDetails(body.details),
   });
 }
 

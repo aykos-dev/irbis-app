@@ -63,6 +63,8 @@ export const sizes = {
   icon: 20,
   iconStroke: 2.5,
   touchTarget: 44,
+  /** Active-trip SOS hold button. */
+  sosButton: 76,
   /** Tinted icon tile (canvas AccGate .pi) — derived, confirm in design.md. */
   iconTile: 36,
   /** Mascot on a status card (derived from the canvas — confirm in design.md). */

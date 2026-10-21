@@ -38,5 +38,27 @@
     "waypoints": "nuqta",
     "xp": "XP olindi",
     "done": "Tayyor"
+  },
+  "waypoint": {
+    "next": "Keyingi: %{n}-nuqta",
+    "hint": "Yo'nalishni yozish va +10 XP olish uchun belgilaning",
+    "cta": "Nuqtada belgilanish",
+    "allDone": "Barcha %{max} nuqta belgilandi",
+    "xp": "+%{xp} XP",
+    "tooClose": "Keyingi nuqtagacha yana %{m} m yuring",
+    "tooSoon": "Keyingi nuqta %{min} daqiqadan keyin",
+    "inaccurate": "GPS signali zaif — ochiq joyda urinib ko'ring",
+    "queued": "Saqlandi — internet bo'lganda yuboriladi"
+  },
+  "sos": {
+    "label": "SOS",
+    "hold": "3 s bosib turing",
+    "a11y": "SOS — 3 soniya bosib turing",
+    "sent": "SOS yuborildi: %{name}",
+    "tapSend": "SMS ilovasida «Yuborish»ni bosing",
+    "smsText": "%{name}dan SOS, %{place} yaqinida. Joylashuv: %{maps}. Jonli: %{url} — Irbis",
+    "call": "Yordam chaqirish · %{number}",
+    "close": "Yopish",
+    "tooSoon": "Keyingi SOS %{sec} soniyadan keyin"
   }
 }

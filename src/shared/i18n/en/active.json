@@ -38,5 +38,27 @@
     "waypoints": "waypoints",
     "xp": "XP earned",
     "done": "Done"
+  },
+  "waypoint": {
+    "next": "Next: Waypoint %{n}",
+    "hint": "Check in to log your route and earn +10 XP",
+    "cta": "Check in at waypoint",
+    "allDone": "All %{max} waypoints logged",
+    "xp": "+%{xp} XP",
+    "tooClose": "Walk %{m} m more for the next waypoint",
+    "tooSoon": "Next waypoint in %{min} min",
+    "inaccurate": "GPS is too weak here — try in the open",
+    "queued": "Saved — syncs when online"
+  },
+  "sos": {
+    "label": "SOS",
+    "hold": "Hold 3 s",
+    "a11y": "SOS — press and hold for 3 seconds",
+    "sent": "SOS sent to %{name}",
+    "tapSend": "Tap Send in your SMS app",
+    "smsText": "SOS from %{name} near %{place}. Location: %{maps}. Live: %{url} — Irbis",
+    "call": "Call for help · %{number}",
+    "close": "Close",
+    "tooSoon": "You can send another SOS in %{sec} s"
   }
 }
