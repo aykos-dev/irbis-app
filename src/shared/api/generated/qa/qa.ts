@@ -18,6 +18,8 @@ import type {
 import type {
   ErrorResponseDto,
   MyLevelDto,
+  PathDto,
+  PathVisitDto,
   QaGrantDto
 } from '../model';
 
@@ -96,4 +98,72 @@ export const useQaLevelsGrant = <TError = ErrorType<ErrorResponseDto>,
         TContext
       > => {
       return useMutation(getQaLevelsGrantMutationOptions(options), queryClient);
+    }
+    /**
+ * Builds this month's path if missing, then records the visit (no XP). Answers 404 NOT_FOUND unless QA_TOOLS_ENABLED=true.
+ * @summary QA only: mark a place visited on your path this month
+ */
+export const qaPathVisit = (
+    pathVisitDto: BodyType<PathVisitDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<PathDto>(
+      {url: `/v1/qa/path/visits`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: pathVisitDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getQaPathVisitMutationKey = () => ['qaPathVisit'] as const;
+
+export const getQaPathVisitMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof qaPathVisit>>, TError,QaPathVisitMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof qaPathVisit>>, TError,QaPathVisitMutationVariables, TContext> => {
+
+const mutationKey = getQaPathVisitMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof qaPathVisit>>, QaPathVisitMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  qaPathVisit(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type QaPathVisitMutationResult = NonNullable<Awaited<ReturnType<typeof qaPathVisit>>>
+    export type QaPathVisitMutationBody = BodyType<PathVisitDto>
+    export type QaPathVisitMutationError = ErrorType<ErrorResponseDto>
+    export type QaPathVisitMutationVariables = {data: BodyType<PathVisitDto>}
+
+    /**
+ * @summary QA only: mark a place visited on your path this month
+ */
+export const useQaPathVisit = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof qaPathVisit>>, TError,QaPathVisitMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof qaPathVisit>>,
+        TError,
+        QaPathVisitMutationVariables,
+        TContext
+      > => {
+      return useMutation(getQaPathVisitMutationOptions(options), queryClient);
     }

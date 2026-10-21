@@ -40,11 +40,15 @@ type StorageSchema = {
   'lessons.completions': string;
   /** '1' when quiz sounds are off; absent or '0' = on. */
   'lessons.muted': string;
+  /** Smart swaps the user kept the plan for: JSON `{ month: 'YYYY-MM', keys: ['<month>:<position>'] }`. */
+  'path.swapDismissed': string;
 } & {
   /** Campfire seat token per room code, so a player gets the same seat back (rejoin, restart). */
   [key: `camp.seats.${string}`]: string;
   /** Campfire pack items already dealt, per `<game>.<packId>`: JSON array of item ids (no-repeat). */
   [key: `camp.used.${string}`]: string;
+  /** The last loaded monthly path per Tashkent month `YYYY-MM`, for offline opens: JSON PathDto (no personal data). */
+  [key: `path.cache.${string}`]: string;
 };
 
 export type StorageKey = keyof StorageSchema;

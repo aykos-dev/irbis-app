@@ -187,7 +187,7 @@ describe('auth — tokens and session end (AC9, AC11)', () => {
     expect(qaEvents()).toContainEqual({ event: 'account_blocked_shown' });
 
     await fireEvent.press(screen.getByTestId('auth.continue-guest'));
-    expect(await screen.findByTestId('empty.coming-soon')).toBeOnTheScreen();
+    expect(await screen.findByTestId('path.screen')).toBeOnTheScreen();
   });
 
   it('AC11: a block found at refresh time ends the session once, with the blocked message only', async () => {

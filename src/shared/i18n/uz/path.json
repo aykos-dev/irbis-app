@@ -1,0 +1,76 @@
+{
+  "title": "Oy yo'li",
+  "subtitle": "%{month} · %{levelName} uchun, %{season}",
+  "status": {
+    "go": "Boring · %{day}",
+    "caution": "Ehtiyot · %{reason}",
+    "notNow": "Hozir emas",
+    "opens": "%{month}da ochiladi"
+  },
+  "days": {
+    "fri": "Ju",
+    "sat": "Sh",
+    "sun": "Ya"
+  },
+  "openPlace": "Joyni ochish",
+  "done": "Bajarildi",
+  "chest": {
+    "progress": "%{done} / %{required} · Barcha %{required} joyda belgilaning",
+    "locked": "Ochish uchun barcha %{required} joyda belgilaning",
+    "reward": "Sandiq ochildi! +%{xp} XP",
+    "opened": "Bu oy ochilgan"
+  },
+  "swap": {
+    "title": "Buning o'rniga %{name}",
+    "body": "%{elev} m, %{original}dan %{km} km, %{day} kuni ochiq havo.",
+    "see": "Joyni ko'rish",
+    "keep": "Rejani qoldirish",
+    "badge": "Aqlli almashtirish"
+  },
+  "weather": {
+    "credit": "Ob-havo: Open-Meteo.com"
+  },
+  "empty": {
+    "title": "Bu oy darajangiz va qiziqishlaringizga mos joy yo'q",
+    "cta": "Xaritani ochish"
+  },
+  "offline": "Internet yo'q. Yo'l aloqa tiklanganda yuklanadi.",
+  "info": {
+    "title": "Yo'l qanday tuziladi",
+    "body": "Har oy darajangiz va qiziqishlaringizga mos, mavsumga eng yaxshi va Toshkentga yaqin 3 ta joy tanlaymiz. Halqalar shu dam olish kunlari sharoitini ko'rsatadi. Sandiqni ochish uchun uchala joyda belgilaning."
+  },
+  "seasons": {
+    "winter": "qish",
+    "spring": "bahor",
+    "summer": "yoz",
+    "autumn": "kuz"
+  },
+  "months": {
+    "1": "Yanvar",
+    "2": "Fevral",
+    "3": "Mart",
+    "4": "Aprel",
+    "5": "May",
+    "6": "Iyun",
+    "7": "Iyul",
+    "8": "Avgust",
+    "9": "Sentabr",
+    "10": "Oktabr",
+    "11": "Noyabr",
+    "12": "Dekabr"
+  },
+  "monthsIn": {
+    "1": "yanvar",
+    "2": "fevral",
+    "3": "mart",
+    "4": "aprel",
+    "5": "may",
+    "6": "iyun",
+    "7": "iyul",
+    "8": "avgust",
+    "9": "sentabr",
+    "10": "oktabr",
+    "11": "noyabr",
+    "12": "dekabr"
+  }
+}

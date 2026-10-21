@@ -6,5 +6,6 @@ export * from './health/health.zod.ts';
 export * from './lessons/lessons.zod.ts';
 export * from './levels/levels.zod.ts';
 export * from './me/me.zod.ts';
+export * from './path/path.zod.ts';
 export * from './places/places.zod.ts';
 export * from './qa/qa.zod.ts';

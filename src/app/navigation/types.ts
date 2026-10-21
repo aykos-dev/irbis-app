@@ -54,6 +54,9 @@ export type DebugGrantParams = {
   spots?: number;
 };
 
+/** QA path visit from `irbis://debug/path/visit/<placeId>` (weekly-path AC4). */
+export type DebugPathVisitParams = { pathVisit: string };
+
 export type RootStackParamList = {
   /** First launch only (no `onboarding.done`, no session). */
   Onboarding: NavigatorScreenParams<OnboardingStackParamList> | undefined;
@@ -62,8 +65,11 @@ export type RootStackParamList = {
   RecoveryPhone: undefined;
   /** Safety & SOS: its empty state until `safety-center` ships. */
   Safety: undefined;
-  /** Dev and staging builds only. Grant params come from the QA grant link (levels AC8). */
-  Debug: DebugGrantParams | undefined;
+  /**
+   * Dev and staging builds only. Grant params come from the QA grant link (levels AC8), visit
+   * params from the QA path visit link (weekly-path AC4).
+   */
+  Debug: DebugGrantParams | DebugPathVisitParams | undefined;
   Status: undefined;
   /** Place screen (places AC7). Explore passes the device position when it has one. */
   Place: { id: string; lat?: number; lng?: number };
