@@ -95,6 +95,9 @@ const lastDeal = (socket: FakeSocket | undefined) =>
     .filter(message => message.type === 'deal')
     .at(-1);
 
+/** Character names can contain regex characters, e.g. "Ibn Sina (Avicenna)". */
+const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 describe('campfire-party — Who am I (AC6)', () => {
   it('AC6: own character absent before showMine; every other player listed with their character; secure screen on', async () => {
     await startWhoami();
@@ -102,8 +105,8 @@ describe('campfire-party — Who am I (AC6)', () => {
     expect(screen.getByText(/Pack: .* · 3 players/)).toBeOnTheScreen();
     expect(screen.getByTestId('whoami.own')).toHaveTextContent(/\?.*YOU · guest_0.*Your character is hidden on your phone/);
     expect(screen.queryByText(characterOf('host'))).not.toBeOnTheScreen();
-    expect(screen.getByTestId('whoami.player.p1')).toHaveTextContent(new RegExp(`guest_1.*${characterOf('p1')}`));
-    expect(screen.getByTestId('whoami.player.p2')).toHaveTextContent(new RegExp(`guest_2.*${characterOf('p2')}`));
+    expect(screen.getByTestId('whoami.player.p1')).toHaveTextContent(new RegExp(`guest_1.*${escapeRegExp(characterOf('p1'))}`));
+    expect(screen.getByTestId('whoami.player.p2')).toHaveTextContent(new RegExp(`guest_2.*${escapeRegExp(characterOf('p2'))}`));
     expect(screen.queryByTestId('whoami.player.host')).not.toBeOnTheScreen();
     expect(screen.getByText('Only they can\'t see it')).toBeOnTheScreen();
     expect(secure.setSecure).toHaveBeenLastCalledWith(true);
