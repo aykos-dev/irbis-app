@@ -1,0 +1,371 @@
+{
+  "id": "croc-heroes",
+  "game": "croc",
+  "name": {
+    "uz": "Kino va multfilm qahramonlari",
+    "ru": "Герои кино и мультфильмов",
+    "en": "Movie & cartoon heroes"
+  },
+  "items": [
+    {
+      "id": "shrek",
+      "uz": "Shrek",
+      "ru": "Шрек",
+      "en": "Shrek"
+    },
+    {
+      "id": "spider-man",
+      "uz": "Oʻrgimchak-odam",
+      "ru": "Человек-паук",
+      "en": "Spider-Man"
+    },
+    {
+      "id": "cheburashka",
+      "uz": "Cheburashka",
+      "ru": "Чебурашка",
+      "en": "Cheburashka"
+    },
+    {
+      "id": "nu-pogodi-wolf",
+      "uz": "Boʻri («Nu, pogodi!»)",
+      "ru": "Волк («Ну, погоди!»)",
+      "en": "The Wolf (Nu, Pogodi!)"
+    },
+    {
+      "id": "harry-potter",
+      "uz": "Garri Potter",
+      "ru": "Гарри Поттер",
+      "en": "Harry Potter"
+    },
+    {
+      "id": "elsa",
+      "uz": "Elza",
+      "ru": "Эльза",
+      "en": "Elsa"
+    },
+    {
+      "id": "jack-sparrow",
+      "uz": "Jek Sparrou",
+      "ru": "Джек Воробей",
+      "en": "Jack Sparrow"
+    },
+    {
+      "id": "nasreddin-hodja",
+      "uz": "Xoʻja Nasriddin",
+      "ru": "Ходжа Насреддин",
+      "en": "Nasreddin Hodja"
+    },
+    {
+      "id": "masha",
+      "uz": "Masha («Masha va Ayiq»)",
+      "ru": "Маша («Маша и Медведь»)",
+      "en": "Masha (Masha and the Bear)"
+    },
+    {
+      "id": "batman",
+      "uz": "Betmen",
+      "ru": "Бэтмен",
+      "en": "Batman"
+    },
+    {
+      "id": "superman",
+      "uz": "Supermen",
+      "ru": "Супермен",
+      "en": "Superman"
+    },
+    {
+      "id": "iron-man",
+      "uz": "Temir odam",
+      "ru": "Железный человек",
+      "en": "Iron Man"
+    },
+    {
+      "id": "hulk",
+      "uz": "Xalk",
+      "ru": "Халк",
+      "en": "Hulk"
+    },
+    {
+      "id": "captain-america",
+      "uz": "Kapitan Amerika",
+      "ru": "Капитан Америка",
+      "en": "Captain America"
+    },
+    {
+      "id": "thor",
+      "uz": "Tor",
+      "ru": "Тор",
+      "en": "Thor"
+    },
+    {
+      "id": "groot",
+      "uz": "Grut",
+      "ru": "Грут",
+      "en": "Groot"
+    },
+    {
+      "id": "mickey-mouse",
+      "uz": "Mikki Maus",
+      "ru": "Микки Маус",
+      "en": "Mickey Mouse"
+    },
+    {
+      "id": "donald-duck",
+      "uz": "Donald Dak",
+      "ru": "Дональд Дак",
+      "en": "Donald Duck"
+    },
+    {
+      "id": "tom",
+      "uz": "Tom («Tom va Jerri»)",
+      "ru": "Том («Том и Джерри»)",
+      "en": "Tom (Tom and Jerry)"
+    },
+    {
+      "id": "winnie-the-pooh",
+      "uz": "Vinni-Pux",
+      "ru": "Винни-Пух",
+      "en": "Winnie-the-Pooh"
+    },
+    {
+      "id": "karlsson",
+      "uz": "Karlson",
+      "ru": "Карлсон",
+      "en": "Karlsson-on-the-Roof"
+    },
+    {
+      "id": "buratino",
+      "uz": "Buratino",
+      "ru": "Буратино",
+      "en": "Pinocchio (Buratino)"
+    },
+    {
+      "id": "cinderella",
+      "uz": "Zolushka",
+      "ru": "Золушка",
+      "en": "Cinderella"
+    },
+    {
+      "id": "snow-white",
+      "uz": "Oppoqoy",
+      "ru": "Белоснежка",
+      "en": "Snow White"
+    },
+    {
+      "id": "little-red-riding-hood",
+      "uz": "Qizil qalpoqcha",
+      "ru": "Красная Шапочка",
+      "en": "Little Red Riding Hood"
+    },
+    {
+      "id": "aladdin",
+      "uz": "Aladdin",
+      "ru": "Аладдин",
+      "en": "Aladdin"
+    },
+    {
+      "id": "genie",
+      "uz": "Jin («Aladdin»)",
+      "ru": "Джинн («Аладдин»)",
+      "en": "Genie (Aladdin)"
+    },
+    {
+      "id": "simba",
+      "uz": "Simba («Sher qirol»)",
+      "ru": "Симба («Король Лев»)",
+      "en": "Simba (The Lion King)"
+    },
+    {
+      "id": "nemo",
+      "uz": "Nemo",
+      "ru": "Немо",
+      "en": "Nemo"
+    },
+    {
+      "id": "spongebob",
+      "uz": "SpanchBob",
+      "ru": "Губка Боб",
+      "en": "SpongeBob"
+    },
+    {
+      "id": "minion",
+      "uz": "Minion",
+      "ru": "Миньон",
+      "en": "Minion"
+    },
+    {
+      "id": "puss-in-boots",
+      "uz": "Etikli mushuk",
+      "ru": "Кот в сапогах",
+      "en": "Puss in Boots"
+    },
+    {
+      "id": "po",
+      "uz": "Po («Kung-fu Panda»)",
+      "ru": "По («Кунг-фу Панда»)",
+      "en": "Po (Kung Fu Panda)"
+    },
+    {
+      "id": "olaf",
+      "uz": "Olaf",
+      "ru": "Олаф",
+      "en": "Olaf"
+    },
+    {
+      "id": "ariel",
+      "uz": "Ariel («Suv parisi»)",
+      "ru": "Ариэль («Русалочка»)",
+      "en": "Ariel (The Little Mermaid)"
+    },
+    {
+      "id": "rapunzel",
+      "uz": "Rapunzel",
+      "ru": "Рапунцель",
+      "en": "Rapunzel"
+    },
+    {
+      "id": "buzz-lightyear",
+      "uz": "Bazz Laytyer",
+      "ru": "Базз Лайтер",
+      "en": "Buzz Lightyear"
+    },
+    {
+      "id": "darth-vader",
+      "uz": "Dart Veyder",
+      "ru": "Дарт Вейдер",
+      "en": "Darth Vader"
+    },
+    {
+      "id": "yoda",
+      "uz": "Yoda",
+      "ru": "Йода",
+      "en": "Yoda"
+    },
+    {
+      "id": "terminator",
+      "uz": "Terminator",
+      "ru": "Терминатор",
+      "en": "The Terminator"
+    },
+    {
+      "id": "rambo",
+      "uz": "Rembo",
+      "ru": "Рэмбо",
+      "en": "Rambo"
+    },
+    {
+      "id": "rocky",
+      "uz": "Rokki Balboa",
+      "ru": "Рокки Бальбоа",
+      "en": "Rocky Balboa"
+    },
+    {
+      "id": "james-bond",
+      "uz": "Jeyms Bond",
+      "ru": "Джеймс Бонд",
+      "en": "James Bond"
+    },
+    {
+      "id": "indiana-jones",
+      "uz": "Indiana Jons",
+      "ru": "Индиана Джонс",
+      "en": "Indiana Jones"
+    },
+    {
+      "id": "sherlock-holmes",
+      "uz": "Sherlok Xolms",
+      "ru": "Шерлок Холмс",
+      "en": "Sherlock Holmes"
+    },
+    {
+      "id": "neo",
+      "uz": "Neo («Matritsa»)",
+      "ru": "Нео («Матрица»)",
+      "en": "Neo (The Matrix)"
+    },
+    {
+      "id": "tarzan",
+      "uz": "Tarzan",
+      "ru": "Тарзан",
+      "en": "Tarzan"
+    },
+    {
+      "id": "zorro",
+      "uz": "Zorro",
+      "ru": "Зорро",
+      "en": "Zorro"
+    },
+    {
+      "id": "king-kong",
+      "uz": "King-Kong",
+      "ru": "Кинг-Конг",
+      "en": "King Kong"
+    },
+    {
+      "id": "godzilla",
+      "uz": "Godzilla",
+      "ru": "Годзилла",
+      "en": "Godzilla"
+    },
+    {
+      "id": "joker",
+      "uz": "Joker",
+      "ru": "Джокер",
+      "en": "The Joker"
+    },
+    {
+      "id": "gollum",
+      "uz": "Gollum",
+      "ru": "Голлум",
+      "en": "Gollum"
+    },
+    {
+      "id": "gandalf",
+      "uz": "Gandalf",
+      "ru": "Гэндальф",
+      "en": "Gandalf"
+    },
+    {
+      "id": "forrest-gump",
+      "uz": "Forrest Gamp",
+      "ru": "Форрест Гамп",
+      "en": "Forrest Gump"
+    },
+    {
+      "id": "mowgli",
+      "uz": "Maugli",
+      "ru": "Маугли",
+      "en": "Mowgli"
+    },
+    {
+      "id": "baba-yaga",
+      "uz": "Baba-Yaga",
+      "ru": "Баба-Яга",
+      "en": "Baba Yaga"
+    },
+    {
+      "id": "leopold",
+      "uz": "Leopold mushuk",
+      "ru": "Кот Леопольд",
+      "en": "Leopold the Cat"
+    },
+    {
+      "id": "gena-the-crocodile",
+      "uz": "Timsoh Gena",
+      "ru": "Крокодил Гена",
+      "en": "Gena the Crocodile"
+    },
+    {
+      "id": "hottabych",
+      "uz": "Xottabich",
+      "ru": "Старик Хоттабыч",
+      "en": "Old Khottabych"
+    },
+    {
+      "id": "mr-bean",
+      "uz": "Mister Bin",
+      "ru": "Мистер Бин",
+      "en": "Mr. Bean"
+    }
+  ]
+}

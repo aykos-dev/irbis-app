@@ -40,6 +40,7 @@ import {
   xoRange,
   type GameSettings,
 } from '../games/gameReducer';
+import { CrocSetup } from '../games/croc/CrocSetup';
 import { MafiaSetup } from '../games/mafia/MafiaSetup';
 import {
   localized,
@@ -56,7 +57,7 @@ import type { RosterPlayer } from '../protocol/codec';
 import { reconnectingCount, toRoster } from '../room/roomReducer';
 import { useHostRoom, type HostNetwork } from '../room/useHostRoom';
 
-const lobbyGames: GameId[] = ['imposter', 'mafia', 'whoami', 'rather', 'xo'];
+const lobbyGames: GameId[] = ['imposter', 'mafia', 'whoami', 'rather', 'xo', 'croc'];
 
 function isPartyGame(game: GameId): game is PartyGame {
   return partyGames.some(party => party === game);
@@ -68,8 +69,9 @@ const firstPacks = (): Record<PartyGame, string> => ({
   rather: packsFor('rather')[0]?.id ?? '',
 });
 
-const countKey: Record<PartyGame, string> = {
+const countKey: Record<Pack['game'], string> = {
   imposter: 'camp.game.words',
+  croc: 'camp.game.words',
   whoami: 'camp.game.characters',
   rather: 'camp.game.questions',
 };
@@ -124,7 +126,8 @@ export function CampLobbyScreen(props: RootStackScreenProps<'CampLobby'>) {
  */
 function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
   useLocale();
-  const { state, retry, remove, close, startGame, startMafia, startXo } = useHostRoom(
+  const { state, retry, remove, close, startGame, startMafia, startXo, startCroc } =
+    useHostRoom(
     route.params?.resume === true,
   );
   const [game, setGame] = useState<GameId>(
@@ -343,6 +346,8 @@ function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
                   startXo();
                 }}
               />
+            ) : game === 'croc' ? (
+              <CrocSetup players={connected} onStart={startCroc} />
             ) : (
               <MafiaSetup
                 players={Math.max(0, connected - 1)}

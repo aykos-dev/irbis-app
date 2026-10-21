@@ -79,7 +79,7 @@ async function join(nickname: string): Promise<FakeSocket> {
   const code = String(screen.getByTestId('camp.lobby.code').props.children);
   const client = fakeNet.server().connect();
   await act(() => {
-    client.send({ v: 4, type: 'hello', code, nickname, avatar: 'bear' });
+    client.send({ v: 5, type: 'hello', code, nickname, avatar: 'bear' });
   });
   return client;
 }
@@ -284,7 +284,7 @@ describe('campfire-party — player phone (AC5)', () => {
     await server.start();
     fakeNet.serve(HOST_IP, fakeNet.server());
     const other = fakeNet.server().connect();
-    await act(() => other.send({ v: 4, type: 'hello', code: '4821', nickname: 'guest_2', avatar: 'eagle' }));
+    await act(() => other.send({ v: 5, type: 'hello', code: '4821', nickname: 'guest_2', avatar: 'eagle' }));
 
     await renderApp();
     await openTab('community');

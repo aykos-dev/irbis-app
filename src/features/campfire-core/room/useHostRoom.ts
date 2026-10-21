@@ -2,7 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import DeviceInfo from 'react-native-device-info';
 
 import { qaLog } from '../../../shared/utils/qaLog';
-import type { GameSettings, HostGame } from '../games/gameReducer';
+import {
+  gameReducer,
+  type CrocSettings,
+  type GameSettings,
+  type HostGame,
+} from '../games/gameReducer';
 import type { MafiaSettings } from '../games/mafia/roles';
 import type { PartyGame } from '../games/packs';
 import { campNet } from '../native/campNet';
@@ -93,6 +98,13 @@ export const hostGame = {
   xoNext: (): void => hostGameServer?.xoNext(),
   xoEnd: (): void => hostGameServer?.xoEnd(),
   xoPlayAgain: (): void => hostGameServer?.xoPlayAgain(),
+  crocPick: (seatId: string): void => hostGameServer?.crocPick(seatId),
+  crocSkip: (): void => hostGameServer?.crocSkip(HOST_SEAT_ID),
+  crocStart: (): void => hostGameServer?.crocStart(HOST_SEAT_ID),
+  crocGuessed: (): void => hostGameServer?.crocGuessed(HOST_SEAT_ID),
+  crocNext: (): void => hostGameServer?.crocNext(),
+  crocEnd: (): void => hostGameServer?.crocEnd(),
+  crocPlayAgain: (): void => hostGameServer?.crocPlayAgain(),
 };
 
 /** Random 4-digit room code, 1000–9999. */
@@ -203,7 +215,11 @@ export function useHostRoom(resume: boolean) {
       }
       const network = opened.network;
       const saved = resume ? loadHostRoom() : null;
-      const savedGame = saved ? loadHostGame() : null;
+      const loadedGame = saved ? loadHostGame() : null;
+      // A game saved mid-turn picks up without its timers (Crocodile: running → ready, result → pick).
+      const savedGame = loadedGame
+        ? gameReducer(loadedGame, { type: 'resumed' })
+        : null;
       const profile = readProfile() ?? initialProfile(null, undefined);
       const room = saved
         ? resumeRoom(saved)
@@ -307,6 +323,10 @@ export function useHostRoom(resume: boolean) {
     live.current?.server.startXo();
   }, []);
 
+  const startCroc = useCallback((settings: CrocSettings) => {
+    live.current?.server.startCroc(settings);
+  }, []);
+
   /** Broadcasts `closed`, stops server, hotspot and zeroconf, forgets the saved room. */
   const close = useCallback(() => {
     const current = live.current;
@@ -320,5 +340,5 @@ export function useHostRoom(resume: boolean) {
     qaLog('camp_room_closed', { seats: current.room.seats.length });
   }, []);
 
-  return { state, retry, remove, close, startGame, startMafia, startXo };
+  return { state, retry, remove, close, startGame, startMafia, startXo, startCroc };
 }

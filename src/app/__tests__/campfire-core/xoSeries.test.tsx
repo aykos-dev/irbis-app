@@ -59,7 +59,7 @@ async function join(nickname: string, seatToken?: string): Promise<FakeSocket> {
   const client = fakeNet.server().connect();
   await act(() => {
     client.send({
-      v: 4,
+      v: 5,
       type: 'hello',
       code,
       nickname,
@@ -92,7 +92,7 @@ const lastGame = (socket: FakeSocket) =>
 const tap = (cell: number) => fireEvent.press(screen.getByTestId(`xo.cell.${cell}`));
 
 async function joinerMove(socket: FakeSocket, cell: number, gameNo: number) {
-  await act(() => socket.send({ v: 4, type: 'xoMove', round: 1, gameNo, cell }));
+  await act(() => socket.send({ v: 5, type: 'xoMove', round: 1, gameNo, cell }));
 }
 
 /** Game 1, host X: the host takes the top row. */
@@ -132,9 +132,9 @@ describe('campfire-xo — series, next game, score, sounds (AC4, AC5, AC8)', () 
     expect(played()).toEqual(['lesson-complete', 'lesson-wrong']);
     expect(screen.getByTestId('xo.score.p1')).toHaveTextContent(/1/);
 
-    await act(() => joiner.send({ v: 4, type: 'xoNext', round: 1, gameNo: 1 }));
+    await act(() => joiner.send({ v: 5, type: 'xoNext', round: 1, gameNo: 1 }));
     expect(screen.getByTestId('xo.game')).toHaveTextContent('Game 2');
-    await act(() => joiner.send({ v: 4, type: 'xoNext', round: 1, gameNo: 2 }));
+    await act(() => joiner.send({ v: 5, type: 'xoNext', round: 1, gameNo: 2 }));
     expect(screen.getByTestId('xo.game')).toHaveTextContent('Game 3');
     expect(screen.getByTestId('xo.turn')).toHaveTextContent('Your turn');
 
@@ -233,6 +233,6 @@ describe('campfire-xo — End, final score, play again (AC7)', () => {
     expect(screen.getByTestId('xo.final.line')).toHaveTextContent("It's a tie 0–0");
     await fireEvent.press(screen.getByTestId('xo.lobby'));
     expect(await screen.findByTestId('camp.lobby.code')).toBeOnTheScreen();
-    expect(joiner.received().at(-1)).toEqual({ v: 4, type: 'lobby' });
+    expect(joiner.received().at(-1)).toEqual({ v: 5, type: 'lobby' });
   });
 });

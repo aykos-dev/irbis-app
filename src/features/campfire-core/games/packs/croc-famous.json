@@ -1,0 +1,371 @@
+{
+  "id": "croc-famous",
+  "game": "croc",
+  "name": {
+    "uz": "Mashhur insonlar",
+    "ru": "Знаменитости",
+    "en": "Famous people"
+  },
+  "items": [
+    {
+      "id": "amir-temur",
+      "uz": "Amir Temur",
+      "ru": "Амир Темур",
+      "en": "Amir Timur"
+    },
+    {
+      "id": "ulugh-beg",
+      "uz": "Mirzo Ulugʻbek",
+      "ru": "Мирзо Улугбек",
+      "en": "Ulugh Beg"
+    },
+    {
+      "id": "alisher-navoi",
+      "uz": "Alisher Navoiy",
+      "ru": "Алишер Навои",
+      "en": "Alisher Navoi"
+    },
+    {
+      "id": "ibn-sina",
+      "uz": "Ibn Sino",
+      "ru": "Ибн Сина (Авиценна)",
+      "en": "Ibn Sina (Avicenna)"
+    },
+    {
+      "id": "al-khwarizmi",
+      "uz": "Al-Xorazmiy",
+      "ru": "Аль-Хорезми",
+      "en": "Al-Khwarizmi"
+    },
+    {
+      "id": "al-biruni",
+      "uz": "Abu Rayhon Beruniy",
+      "ru": "Абу Рейхан Бируни",
+      "en": "Al-Biruni"
+    },
+    {
+      "id": "babur",
+      "uz": "Zahiriddin Muhammad Bobur",
+      "ru": "Захириддин Мухаммад Бабур",
+      "en": "Babur"
+    },
+    {
+      "id": "al-farabi",
+      "uz": "Abu Nasr Forobiy",
+      "ru": "Аль-Фараби",
+      "en": "Al-Farabi"
+    },
+    {
+      "id": "jaloliddin",
+      "uz": "Jaloliddin Manguberdi",
+      "ru": "Джалолиддин Мангуберды",
+      "en": "Jalal ad-Din Mingburnu"
+    },
+    {
+      "id": "tomyris",
+      "uz": "Toʻmaris",
+      "ru": "Томирис",
+      "en": "Tomyris"
+    },
+    {
+      "id": "genghis-khan",
+      "uz": "Chingizxon",
+      "ru": "Чингисхан",
+      "en": "Genghis Khan"
+    },
+    {
+      "id": "abdulla-qodiriy",
+      "uz": "Abdulla Qodiriy",
+      "ru": "Абдулла Кадыри",
+      "en": "Abdulla Qodiriy"
+    },
+    {
+      "id": "abai",
+      "uz": "Abay Qoʻnonboyev",
+      "ru": "Абай Кунанбаев",
+      "en": "Abai Kunanbaev"
+    },
+    {
+      "id": "chinghiz-aitmatov",
+      "uz": "Chingiz Aytmatov",
+      "ru": "Чингиз Айтматов",
+      "en": "Chinghiz Aitmatov"
+    },
+    {
+      "id": "gennady-golovkin",
+      "uz": "Gennadiy Golovkin",
+      "ru": "Геннадий Головкин",
+      "en": "Gennady Golovkin"
+    },
+    {
+      "id": "bakhodir-jalolov",
+      "uz": "Bahodir Jalolov",
+      "ru": "Баходир Джалолов",
+      "en": "Bakhodir Jalolov"
+    },
+    {
+      "id": "oksana-chusovitina",
+      "uz": "Oksana Chusovitina",
+      "ru": "Оксана Чусовитина",
+      "en": "Oksana Chusovitina"
+    },
+    {
+      "id": "yulduz-usmonova",
+      "uz": "Yulduz Usmonova",
+      "ru": "Юлдуз Усмонова",
+      "en": "Yulduz Usmonova"
+    },
+    {
+      "id": "sevara-nazarkhan",
+      "uz": "Sevara Nazarxon",
+      "ru": "Севара Назархан",
+      "en": "Sevara Nazarkhan"
+    },
+    {
+      "id": "dimash",
+      "uz": "Dimash Qudaybergen",
+      "ru": "Димаш Кудайберген",
+      "en": "Dimash Kudaibergen"
+    },
+    {
+      "id": "einstein",
+      "uz": "Albert Eynshteyn",
+      "ru": "Альберт Эйнштейн",
+      "en": "Albert Einstein"
+    },
+    {
+      "id": "messi",
+      "uz": "Lionel Messi",
+      "ru": "Лионель Месси",
+      "en": "Lionel Messi"
+    },
+    {
+      "id": "cristiano-ronaldo",
+      "uz": "Krishtianu Ronaldu",
+      "ru": "Криштиану Роналду",
+      "en": "Cristiano Ronaldo"
+    },
+    {
+      "id": "michael-jackson",
+      "uz": "Maykl Jekson",
+      "ru": "Майкл Джексон",
+      "en": "Michael Jackson"
+    },
+    {
+      "id": "leonardo-da-vinci",
+      "uz": "Leonardo da Vinchi",
+      "ru": "Леонардо да Винчи",
+      "en": "Leonardo da Vinci"
+    },
+    {
+      "id": "charlie-chaplin",
+      "uz": "Charli Chaplin",
+      "ru": "Чарли Чаплин",
+      "en": "Charlie Chaplin"
+    },
+    {
+      "id": "yuri-gagarin",
+      "uz": "Yuriy Gagarin",
+      "ru": "Юрий Гагарин",
+      "en": "Yuri Gagarin"
+    },
+    {
+      "id": "isaac-newton",
+      "uz": "Isaak Nyuton",
+      "ru": "Исаак Ньютон",
+      "en": "Isaac Newton"
+    },
+    {
+      "id": "mozart",
+      "uz": "Volfgang Amadey Motsart",
+      "ru": "Вольфганг Амадей Моцарт",
+      "en": "Wolfgang Amadeus Mozart"
+    },
+    {
+      "id": "beethoven",
+      "uz": "Lyudvig van Betxoven",
+      "ru": "Людвиг ван Бетховен",
+      "en": "Ludwig van Beethoven"
+    },
+    {
+      "id": "shakespeare",
+      "uz": "Uilyam Shekspir",
+      "ru": "Уильям Шекспир",
+      "en": "William Shakespeare"
+    },
+    {
+      "id": "pushkin",
+      "uz": "Aleksandr Pushkin",
+      "ru": "Александр Пушкин",
+      "en": "Alexander Pushkin"
+    },
+    {
+      "id": "leo-tolstoy",
+      "uz": "Lev Tolstoy",
+      "ru": "Лев Толстой",
+      "en": "Leo Tolstoy"
+    },
+    {
+      "id": "picasso",
+      "uz": "Pablo Pikasso",
+      "ru": "Пабло Пикассо",
+      "en": "Pablo Picasso"
+    },
+    {
+      "id": "van-gogh",
+      "uz": "Vinsent van Gog",
+      "ru": "Винсент ван Гог",
+      "en": "Vincent van Gogh"
+    },
+    {
+      "id": "columbus",
+      "uz": "Xristofor Kolumb",
+      "ru": "Христофор Колумб",
+      "en": "Christopher Columbus"
+    },
+    {
+      "id": "napoleon",
+      "uz": "Napoleon Bonapart",
+      "ru": "Наполеон Бонапарт",
+      "en": "Napoleon Bonaparte"
+    },
+    {
+      "id": "cleopatra",
+      "uz": "Kleopatra",
+      "ru": "Клеопатра",
+      "en": "Cleopatra"
+    },
+    {
+      "id": "marie-curie",
+      "uz": "Mariya Kyuri",
+      "ru": "Мария Кюри",
+      "en": "Marie Curie"
+    },
+    {
+      "id": "nikola-tesla",
+      "uz": "Nikola Tesla",
+      "ru": "Никола Тесла",
+      "en": "Nikola Tesla"
+    },
+    {
+      "id": "thomas-edison",
+      "uz": "Tomas Edison",
+      "ru": "Томас Эдисон",
+      "en": "Thomas Edison"
+    },
+    {
+      "id": "charles-darwin",
+      "uz": "Charlz Darvin",
+      "ru": "Чарльз Дарвин",
+      "en": "Charles Darwin"
+    },
+    {
+      "id": "mendeleev",
+      "uz": "Dmitriy Mendeleyev",
+      "ru": "Дмитрий Менделеев",
+      "en": "Dmitri Mendeleev"
+    },
+    {
+      "id": "neil-armstrong",
+      "uz": "Nil Armstrong",
+      "ru": "Нил Армстронг",
+      "en": "Neil Armstrong"
+    },
+    {
+      "id": "marco-polo",
+      "uz": "Marko Polo",
+      "ru": "Марко Поло",
+      "en": "Marco Polo"
+    },
+    {
+      "id": "muhammad-ali",
+      "uz": "Muhammad Ali",
+      "ru": "Мухаммед Али",
+      "en": "Muhammad Ali"
+    },
+    {
+      "id": "bruce-lee",
+      "uz": "Bryus Li",
+      "ru": "Брюс Ли",
+      "en": "Bruce Lee"
+    },
+    {
+      "id": "jackie-chan",
+      "uz": "Jeki Chan",
+      "ru": "Джеки Чан",
+      "en": "Jackie Chan"
+    },
+    {
+      "id": "usain-bolt",
+      "uz": "Useyn Bolt",
+      "ru": "Усэйн Болт",
+      "en": "Usain Bolt"
+    },
+    {
+      "id": "pele",
+      "uz": "Pele",
+      "ru": "Пеле",
+      "en": "Pelé"
+    },
+    {
+      "id": "maradona",
+      "uz": "Diyego Maradona",
+      "ru": "Диего Марадона",
+      "en": "Diego Maradona"
+    },
+    {
+      "id": "mike-tyson",
+      "uz": "Mayk Tayson",
+      "ru": "Майк Тайсон",
+      "en": "Mike Tyson"
+    },
+    {
+      "id": "michael-jordan",
+      "uz": "Maykl Jordan",
+      "ru": "Майкл Джордан",
+      "en": "Michael Jordan"
+    },
+    {
+      "id": "elvis-presley",
+      "uz": "Elvis Presli",
+      "ru": "Элвис Пресли",
+      "en": "Elvis Presley"
+    },
+    {
+      "id": "freddie-mercury",
+      "uz": "Freddi Merkyuri",
+      "ru": "Фредди Меркьюри",
+      "en": "Freddie Mercury"
+    },
+    {
+      "id": "arnold-schwarzenegger",
+      "uz": "Arnold Shvartsenegger",
+      "ru": "Арнольд Шварценеггер",
+      "en": "Arnold Schwarzenegger"
+    },
+    {
+      "id": "steve-jobs",
+      "uz": "Stiv Jobs",
+      "ru": "Стив Джобс",
+      "en": "Steve Jobs"
+    },
+    {
+      "id": "bill-gates",
+      "uz": "Bill Geyts",
+      "ru": "Билл Гейтс",
+      "en": "Bill Gates"
+    },
+    {
+      "id": "walt-disney",
+      "uz": "Uolt Disney",
+      "ru": "Уолт Дисней",
+      "en": "Walt Disney"
+    },
+    {
+      "id": "harry-houdini",
+      "uz": "Garri Gudini",
+      "ru": "Гарри Гудини",
+      "en": "Harry Houdini"
+    }
+  ]
+}

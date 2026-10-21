@@ -119,7 +119,7 @@ export function GameOver({ phase, winner, roles, out, roster, host }: Props) {
   );
 }
 
-/** A few coloured rects falling and fading once (≤ 1.5 s); decorative (also X and O final score). */
+/** A few coloured rects falling and fading once (≤ 1.5 s); decorative (also X and O final score and the Crocodile summary). */
 export function Confetti() {
   const progress = useSharedValue(0);
   useEffect(() => {

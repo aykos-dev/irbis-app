@@ -26,7 +26,9 @@
     "whoamiMeta": "3–12 · 10–20 min",
     "ratherMeta": "2–15 · endless",
     "xo": "X and O",
-    "xoMeta": "2 · 1–5 min"
+    "xoMeta": "2 · 1–5 min",
+    "croc": "Crocodile",
+    "crocMeta": "3–15 · mime"
   },
   "comingSoon": "Coming soon",
   "comingSoonToast": "Coming in the next update",
@@ -131,7 +133,8 @@
       "imposter": "Imposter",
       "whoami": "Who am I?",
       "rather": "Would you rather",
-      "xo": "X and O"
+      "xo": "X and O",
+      "croc": "Crocodile"
     }
   },
   "secret": {
@@ -344,5 +347,27 @@
     "finalStats": "Draws %{d} · Games %{n}",
     "mute": "Mute sounds",
     "unmute": "Turn sounds on"
+  },
+  "croc": {
+    "needThree": "Crocodile needs 3+ players",
+    "needPack": "Pick at least one pack",
+    "timer": "Turn time",
+    "seconds": "%{n} s",
+    "packs": "Word packs",
+    "pickTitle": "Who shows next?",
+    "choosing": "The host is choosing who shows",
+    "showing": "%{name} is showing",
+    "rule": "Show it, don't say it — no words, no sounds",
+    "skip": "Skip",
+    "start": "Start",
+    "guessed": "Guessed!",
+    "timeUp": "Time's up!",
+    "wordWas": "The word: %{word}",
+    "left": "%{name} left — the word is not counted",
+    "next": "Next",
+    "end": "End",
+    "endConfirm": "End the game?",
+    "over": "Game over",
+    "totals": "Words guessed %{g} · Skipped %{s} · Turns %{t}"
   }
 }

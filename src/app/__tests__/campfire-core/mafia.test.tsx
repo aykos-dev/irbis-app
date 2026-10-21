@@ -60,7 +60,7 @@ function roomCode(): string {
   return shownCode;
 }
 
-async function join(nickname: string, seatToken?: string, v = 4): Promise<FakeSocket> {
+async function join(nickname: string, seatToken?: string, v = 5): Promise<FakeSocket> {
   const client = fakeNet.server().connect();
   await act(() => {
     client.send({
@@ -172,14 +172,14 @@ describe('campfire-mafia — deal (AC2)', () => {
       const deals = dealsOf(client);
       expect(deals).toHaveLength(1);
       expect(deals[0]).toEqual({
-        v: 4,
+        v: 5,
         type: 'deal',
         game: 'mafia',
         round: 1,
         secret: saved.deals[`p${i + 1}`],
       });
       expect(client.received().at(-1)).toEqual({
-        v: 4,
+        v: 5,
         type: 'game',
         game: 'mafia',
         round: 1,
@@ -201,7 +201,7 @@ describe('campfire-mafia — deal (AC2)', () => {
     await screen.findByTestId('maf.over');
     await press('maf.lobby');
     expect(await screen.findByTestId('maf.setup')).toBeOnTheScreen();
-    clients.forEach(client => expect(client.received().at(-1)).toEqual({ v: 4, type: 'lobby' }));
+    clients.forEach(client => expect(client.received().at(-1)).toEqual({ v: 5, type: 'lobby' }));
   });
 
   it('AC2: reconnect → same role; mid-game joiner waits; leaving puts the seat out (exiled); a v2 phone is rejected', async () => {
@@ -225,13 +225,13 @@ describe('campfire-mafia — deal (AC2)', () => {
     const late = await join('guest_9');
     expect(late.received().map(message => message.type)).toEqual(['welcome', 'roster', 'game']);
 
-    await act(() => clients[1]?.send({ v: 4, type: 'leave' }));
+    await act(() => clients[1]?.send({ v: 5, type: 'leave' }));
     expect(back.received().at(-1)).toMatchObject({
       type: 'game',
       public: { out: [{ seatId: 'p2', reason: 'exiled', phase: { kind: 'night', n: 1 } }] },
     });
 
     const old = await join('guest_old', undefined, 2);
-    expect(old.received()).toEqual([{ v: 4, type: 'rejected', reason: 'version' }]);
+    expect(old.received()).toEqual([{ v: 5, type: 'rejected', reason: 'version' }]);
   });
 });

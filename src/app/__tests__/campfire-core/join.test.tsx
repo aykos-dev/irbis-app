@@ -62,7 +62,7 @@ async function hostRoom(seats = 0, tokenSeat = false): Promise<{ server: HostSer
     room = roomReducer(room, {
       type: 'hello',
       connId: `c${index}`,
-      hello: { v: 4, type: 'hello', code: '4821', nickname: 'guest_x', avatar: 'ibex' },
+      hello: { v: 5, type: 'hello', code: '4821', nickname: 'guest_x', avatar: 'ibex' },
       seatToken: index === 0 && tokenSeat ? 'seat_token_1' : `token_${index}`,
     }).state;
     room = roomReducer(room, { type: 'disconnect', connId: `c${index}` }).state;
@@ -165,7 +165,7 @@ describe('campfire-core — join by QR or code (AC5)', () => {
     const future = jest.requireMock<typeof import('react-native-tcp-socket')>('react-native-tcp-socket').default.createServer(
       socket => {
         socket.on('data', () => {
-          socket.write(`${JSON.stringify({ v: 5, type: 'probeOk', players: 1, network: 'x' })}\n`);
+          socket.write(`${JSON.stringify({ v: 4, type: 'probeOk', players: 1, network: 'x' })}\n`);
         });
       },
     );
@@ -251,7 +251,7 @@ describe('campfire-core — player lobby (AC6, AC7 player)', () => {
     expect(screen.queryByTestId('camp.lobby.game.mafia')).not.toBeOnTheScreen();
 
     const other = fakeNet.server().connect();
-    await act(() => other.send({ v: 4, type: 'hello', code: '4821', nickname: 'guest_2', avatar: 'eagle' }));
+    await act(() => other.send({ v: 5, type: 'hello', code: '4821', nickname: 'guest_2', avatar: 'eagle' }));
     expect(screen.getByTestId('camp.lobby.count')).toHaveTextContent('Players · 3 / 15', { exact: false });
 
     await fireEvent.press(screen.getByTestId('camp.lobby.leave'));

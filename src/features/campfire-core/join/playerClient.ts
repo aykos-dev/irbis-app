@@ -7,7 +7,11 @@ import {
   encode,
   PING_INTERVAL_MS,
   SILENCE_TIMEOUT_MS,
+  type CrocPhase,
+  type CrocPublic,
+  type CrocSecret,
   type GamePhase,
+  type HostMessage,
   type MafiaPhase,
   type MafiaPublic,
   type MafiaSecret,
@@ -33,12 +37,14 @@ export type PlayerEnd = 'removed' | 'closed' | 'left' | 'unreachable' | RejectRe
 export type PlayerGame =
   | { game: PartyGame; round: number; phase: GamePhase; public: PublicGame }
   | { game: 'mafia'; round: number; phase: MafiaPhase; public: MafiaPublic }
-  | { game: 'xo'; round: number; public: XoPublic };
+  | { game: 'xo'; round: number; public: XoPublic }
+  | { game: 'croc'; round: number; phase: CrocPhase; public: CrocPublic };
 
 /** This seat's secret for one round (`deal` message); Mafia: our role. */
 export type PlayerDeal =
   | { game: PartyGame; round: number; secret: Secret }
-  | { game: 'mafia'; round: number; secret: MafiaSecret };
+  | { game: 'mafia'; round: number; secret: MafiaSecret }
+  | { game: 'croc'; round: number; secret: CrocSecret };
 
 export type PlayerSnapshot = {
   status: 'connecting' | 'connected' | 'reconnecting' | 'ended';
@@ -71,6 +77,10 @@ export type PlayerClient = {
   xoMove: (cell: number) => void;
   /** X and O: asks for the next game after a result (AC4); the host ignores an old `gameNo`. */
   xoNext: () => void;
+  /** Crocodile, as describer: another word / start the turn / guessed (for the current turn only). */
+  crocSkip: () => void;
+  crocStart: () => void;
+  crocGuessed: () => void;
   getSnapshot: () => PlayerSnapshot;
   subscribe: (listener: () => void) => () => void;
 };
@@ -213,12 +223,7 @@ export function createPlayerClient({
         end(message.type);
         return;
       case 'deal':
-        update({
-          deal:
-            message.game === 'mafia'
-              ? { game: 'mafia', round: message.round, secret: message.secret }
-              : { game: message.game, round: message.round, secret: message.secret },
-        });
+        update({ deal: toDeal(message) });
         return;
       case 'game': {
         const { deal } = snapshot;
@@ -226,6 +231,25 @@ export function createPlayerClient({
           update({
             game: { game: 'xo', round: message.round, public: message.public },
             deal: null,
+          });
+          return;
+        }
+        if (message.game === 'croc') {
+          const { public: info } = message;
+          // The word card belongs to this turn's describer only; a new turn drops the old card.
+          const keep =
+            deal?.game === 'croc' &&
+            deal.round === message.round &&
+            deal.secret.turnNo === info.turnNo &&
+            info.describerSeatId === snapshot.seatId;
+          update({
+            game: {
+              game: 'croc',
+              round: message.round,
+              phase: message.phase,
+              public: info,
+            },
+            deal: keep ? deal : null,
           });
           return;
         }
@@ -380,6 +404,24 @@ export function createPlayerClient({
         send({ type: 'xoNext', round: game.round, gameNo: game.public.gameNo });
       }
     },
+    crocSkip: () => {
+      const { game } = snapshot;
+      if (game?.game === 'croc') {
+        send({ type: 'crocSkip', round: game.round, turnNo: game.public.turnNo });
+      }
+    },
+    crocStart: () => {
+      const { game } = snapshot;
+      if (game?.game === 'croc') {
+        send({ type: 'crocStart', round: game.round, turnNo: game.public.turnNo });
+      }
+    },
+    crocGuessed: () => {
+      const { game } = snapshot;
+      if (game?.game === 'croc') {
+        send({ type: 'crocGuessed', round: game.round, turnNo: game.public.turnNo });
+      }
+    },
     stop: () => {
       clearTimers();
       if (ticker) {
@@ -396,6 +438,19 @@ export function createPlayerClient({
       };
     },
   };
+}
+
+type DealMessage = Extract<HostMessage, { type: 'deal' }>;
+
+function toDeal(message: DealMessage): PlayerDeal {
+  switch (message.game) {
+    case 'mafia':
+      return { game: 'mafia', round: message.round, secret: message.secret };
+    case 'croc':
+      return { game: 'croc', round: message.round, secret: message.secret };
+    default:
+      return { game: message.game, round: message.round, secret: message.secret };
+  }
 }
 
 let activeClient: PlayerClient | null = null;

@@ -8,7 +8,7 @@ export const campScheme: ColorScheme = 'dark';
 
 export const campColors = themeColors[campScheme];
 
-export type GameId = 'imposter' | 'mafia' | 'whoami' | 'rather' | 'xo';
+export type GameId = 'imposter' | 'mafia' | 'whoami' | 'rather' | 'xo' | 'croc';
 
 /** Game icon tile colours (canvas CampHub). */
 export const gameColors: Record<GameId, string> = {
@@ -17,6 +17,7 @@ export const gameColors: Record<GameId, string> = {
   whoami: palette.teal,
   rather: palette.orange,
   xo: palette.sky,
+  croc: palette.pine,
 };
 
 /** CampHub sizes from the canvas. */
@@ -132,4 +133,22 @@ export const xoSizes = {
   headerMark: 18,
   scoreAvatar: 40,
   markMs: 200,
+} as const;
+
+/** Crocodile turn timer (canvas CrocRun): ring, seconds and the last-seconds warning. */
+export const crocSizes = {
+  ring: 168,
+  ringStroke: 12,
+  /** The ring and seconds turn `crocColors.warning` from here down. */
+  warnFromSec: 10,
+  /** A light haptic on each of the last seconds. */
+  hapticFromSec: 5,
+  /** Seconds are re-read this often from the local deadline. */
+  tickMs: 250,
+} as const;
+
+export const crocColors = {
+  ring: palette.pine,
+  warning: palette.orange,
+  track: campColors.line,
 } as const;

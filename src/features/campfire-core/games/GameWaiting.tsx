@@ -1,5 +1,5 @@
 import { usePreventRemove } from '@react-navigation/native';
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { StyleSheet } from 'react-native';
 
 import type { RootStackScreenProps } from '../../../app/navigation/types';
@@ -14,6 +14,9 @@ import { campScheme } from '../campTheme';
 import { ConfirmSheet } from '../components/ConfirmSheet';
 import { playerSession } from '../join/playerClient';
 import type {
+  CrocPhase,
+  CrocPublic,
+  CrocSecret,
   GamePhase,
   ImposterSecret,
   MafiaPublic,
@@ -28,7 +31,14 @@ import type {
 } from '../protocol/codec';
 import { HOST_SEAT_ID } from '../room/roomReducer';
 import { hostGame } from '../room/useHostRoom';
-import { toPublic, toXoPublic, type MafiaState } from './gameReducer';
+import { CrocScreen, type CrocHostControls } from './croc/CrocScreen';
+import {
+  crocSecretFor,
+  toCrocPublic,
+  toPublic,
+  toXoPublic,
+  type MafiaState,
+} from './gameReducer';
 import { ImposterScreen } from './imposter/ImposterScreen';
 import { GameOver } from './mafia/GameOver';
 import { MafiaScreen, mafiaWinner } from './mafia/MafiaScreen';
@@ -94,6 +104,20 @@ const xoHostControls = {
   onLobby: () => hostGame.end(),
 };
 
+/** Crocodile on this phone: the word card only when this seat is the describer. */
+type CrocView = {
+  phase: CrocPhase;
+  info: CrocPublic;
+  secret: CrocSecret | null;
+  roster: RosterPlayer[];
+};
+
+const crocHostControls: CrocHostControls = {
+  onNext: () => hostGame.crocNext(),
+  onPlayAgain: () => hostGame.crocPlayAgain(),
+  onLobby: () => hostGame.end(),
+};
+
 const ratherHostControls = {
   onReveal: () => hostGame.revealVotes(),
   onNext: () => hostGame.nextQuestion(),
@@ -125,6 +149,12 @@ export function GameWaiting({
     client?.getSnapshot ?? noSnapshot,
   );
   const [confirmEnd, setConfirmEnd] = useState(false);
+  // Turn time left is stamped once per host state change (like each broadcast), not on every render.
+  const hostCroc = useMemo(
+    () =>
+      hosted?.game === 'croc' ? toCrocPublic(hosted, Date.now()) : null,
+    [hosted],
+  );
 
   let mafia: MafiaView | null = null;
   let view: GameView | null = null;
@@ -133,6 +163,7 @@ export function GameWaiting({
     selfSeatId: string | null;
     roster: RosterPlayer[];
   } | null = null;
+  let croc: CrocView | null = null;
   if (hosted?.game === 'xo') {
     xo = {
       info: toXoPublic(hosted),
@@ -143,6 +174,21 @@ export function GameWaiting({
     xo = {
       info: player.game.public,
       selfSeatId: player.seatId,
+      roster: player.players,
+    };
+  } else if (hosted?.game === 'croc') {
+    croc = {
+      phase: hosted.phase,
+      info: hostCroc ?? toCrocPublic(hosted),
+      secret: crocSecretFor(hosted, HOST_SEAT_ID),
+      roster: hostRoster,
+    };
+  } else if (player?.game?.game === 'croc') {
+    const { deal } = player;
+    croc = {
+      phase: player.game.phase,
+      info: player.game.public,
+      secret: deal?.game === 'croc' ? deal.secret : null,
       roster: player.players,
     };
   } else if (hosted?.game === 'mafia') {
@@ -182,23 +228,30 @@ export function GameWaiting({
       round: player.game.round,
       phase: player.game.phase,
       info: player.game.public,
-      secret: deal && deal.game !== 'mafia' ? deal.secret : null,
+      secret:
+        deal && deal.game !== 'mafia' && deal.game !== 'croc'
+          ? deal.secret
+          : null,
       selfSeatId: player.seatId,
       roster: player.players,
     };
   }
-  const active = view !== null || mafia !== null || xo !== null;
+  const active = view !== null || mafia !== null || xo !== null || croc !== null;
   const mafiaHost = mafia?.kind === 'host' ? mafia.game : null;
   const xoHost = hosted?.game === 'xo' ? hosted : null;
-  // Host: after a Mafia game over or the X and O final score, Back goes straight to the lobby.
-  const hostGameOver = mafiaHost?.ended !== undefined || xoHost?.ended !== undefined;
+  const crocOver = croc?.phase === 'ended';
+  // Host: after a Mafia game over, the X and O final score or the Crocodile summary, Back goes to the lobby.
+  const hostGameOver =
+    mafiaHost?.ended !== undefined ||
+    xoHost?.ended !== undefined ||
+    crocOver;
   // X and O: a third phone (neither X nor O) waits for the next game.
   const xoWatcher =
     xo !== null &&
     xo.selfSeatId !== xo.info.xSeatId &&
     xo.selfSeatId !== xo.info.oSeatId;
 
-  // Host: leaving the game screen ends the game, so Back asks first (after a Mafia game over: lobby).
+  // Host: leaving the game screen ends the game, so Back asks first (after a game over: lobby).
   usePreventRemove(!isPlayer && active, () => {
     if (hostGameOver) {
       hostGame.end();
@@ -220,6 +273,11 @@ export function GameWaiting({
   const xoMove = (cell: number) =>
     isPlayer ? client?.xoMove(cell) : hostGame.xoMove(cell);
   const xoNext = () => (isPlayer ? client?.xoNext() : hostGame.xoNext());
+  const crocSkip = () => (isPlayer ? client?.crocSkip() : hostGame.crocSkip());
+  const crocStart = () =>
+    isPlayer ? client?.crocStart() : hostGame.crocStart();
+  const crocGuessed = () =>
+    isPlayer ? client?.crocGuessed() : hostGame.crocGuessed();
 
   const endGame = (winner?: MafiaWinner) => {
     haptics.warning();
@@ -232,12 +290,16 @@ export function GameWaiting({
       hostGame.xoEnd();
       return;
     }
+    if (croc) {
+      hostGame.crocEnd();
+      return;
+    }
     hostGame.end();
   };
   // Mafia End game: a matching winner asks "<team> wins?", else "End without a winner?" (AC6).
   const endWinner = mafiaHost && confirmEnd ? mafiaWinner(mafiaHost) : null;
 
-  if (!view && !mafia && !xo) {
+  if (!view && !mafia && !xo && !croc) {
     return null;
   }
   return (
@@ -315,6 +377,19 @@ export function GameWaiting({
             {t('camp.maf.inProgress')}
           </AppText>
         ) : null}
+        {croc ? (
+          <CrocScreen
+            phase={croc.phase}
+            info={croc.info}
+            secret={croc.secret}
+            roster={croc.roster}
+            onPick={isPlayer ? undefined : hostGame.crocPick}
+            onSkip={crocSkip}
+            onStart={crocStart}
+            onGuessed={crocGuessed}
+            host={isPlayer ? undefined : crocHostControls}
+          />
+        ) : null}
         {view?.game === 'imposter' ? (
           <ImposterScreen
             round={view.round}
@@ -360,8 +435,8 @@ export function GameWaiting({
         )}
         {isPlayer || hostGameOver || xoHost ? null : (
           <AppButton
-            testID="camp.game.end"
-            label={t('camp.game.end')}
+            testID={croc ? 'croc.end' : 'camp.game.end'}
+            label={croc ? t('camp.croc.end') : t('camp.game.end')}
             variant="white"
             onPress={() => {
               haptics.tap();
@@ -384,14 +459,18 @@ export function GameWaiting({
                 ? t('camp.maf.endNoWinner')
                 : xoHost
                   ? t('camp.xo.endConfirm')
-                  : t('camp.game.endConfirm')
+                  : croc
+                    ? t('camp.croc.endConfirm')
+                    : t('camp.game.endConfirm')
             }
             confirmLabel={
               mafiaHost
                 ? t('camp.maf.endGame')
                 : xoHost
                   ? t('camp.xo.end')
-                  : t('camp.game.end')
+                  : croc
+                    ? t('camp.croc.end')
+                    : t('camp.game.end')
             }
             cancelLabel={xoHost ? t('camp.xo.keepPlaying') : undefined}
             confirmTestID="camp.game.end-confirm"

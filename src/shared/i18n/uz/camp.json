@@ -26,7 +26,9 @@
     "whoamiMeta": "3–12 · 10–20 daq",
     "ratherMeta": "2–15 · cheksiz",
     "xo": "X va O",
-    "xoMeta": "2 · 1–5 daq"
+    "xoMeta": "2 · 1–5 daq",
+    "croc": "Timsoh",
+    "crocMeta": "3–15 · pantomima"
   },
   "comingSoon": "Tez orada",
   "comingSoonToast": "Keyingi yangilanishda chiqadi",
@@ -131,7 +133,8 @@
       "imposter": "Sotqin",
       "whoami": "Men kimman?",
       "rather": "Qaysi birini tanlarding",
-      "xo": "X va O"
+      "xo": "X va O",
+      "croc": "Timsoh"
     }
   },
   "secret": {
@@ -344,5 +347,27 @@
     "finalStats": "Durang %{d} · O'yinlar %{n}",
     "mute": "Ovozni o'chirish",
     "unmute": "Ovozni yoqish"
+  },
+  "croc": {
+    "needThree": "«Timsoh» uchun 3+ o'yinchi kerak",
+    "needPack": "Kamida bitta to'plamni tanlang",
+    "timer": "Navbat vaqti",
+    "seconds": "%{n} s",
+    "packs": "So'z to'plamlari",
+    "pickTitle": "Kim ko'rsatadi?",
+    "choosing": "Boshlovchi kim ko'rsatishini tanlayapti",
+    "showing": "%{name} ko'rsatyapti",
+    "rule": "Ko'rsating, aytmang — so'zsiz va ovozsiz",
+    "skip": "Boshqa so'z",
+    "start": "Boshlash",
+    "guessed": "Topildi!",
+    "timeUp": "Vaqt tugadi!",
+    "wordWas": "So'z: %{word}",
+    "left": "%{name} chiqib ketdi — so'z hisoblanmaydi",
+    "next": "Keyingisi",
+    "end": "Tugatish",
+    "endConfirm": "O'yinni tugatasizmi?",
+    "over": "O'yin tugadi",
+    "totals": "Topildi %{g} · O'tkazildi %{s} · Navbatlar %{t}"
   }
 }

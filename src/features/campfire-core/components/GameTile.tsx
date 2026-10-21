@@ -8,11 +8,12 @@ import { borders, radii, sizes, spacing } from '../../../shared/constants/spacin
 import { createThemedStyles } from '../../../shared/contexts/theme';
 import { t } from '../../../shared/i18n';
 import { campSizes, gameColors, type GameId } from '../campTheme';
+import { CrocGlyph } from '../games/croc/CrocGlyph';
 import { XoGlyph } from '../games/xo/XoGlyph';
 
 const VIEWBOX = '0 0 24 24';
 
-/** Simple white glyph per game: mask, hat, question mark, split arrows, an X and an O. */
+/** Simple white glyph per game: mask, hat, question mark, split arrows, an X and an O, croc jaw. */
 function GameGlyph({ game }: { game: GameId }) {
   const stroke = {
     stroke: palette.white,
@@ -55,6 +56,8 @@ function GameGlyph({ game }: { game: GameId }) {
       );
     case 'xo':
       return <XoGlyph size={size} />;
+    case 'croc':
+      return <CrocGlyph size={size} />;
   }
 }
 

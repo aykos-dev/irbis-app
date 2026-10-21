@@ -2,6 +2,9 @@ import { z } from 'zod';
 
 import { getLocale } from '../../../../shared/i18n';
 import { qaLog } from '../../../../shared/utils/qaLog';
+import crocAnimals from './croc-animals.json';
+import crocFamous from './croc-famous.json';
+import crocHeroes from './croc-heroes.json';
 import imposterAnimals from './imposter-animals.json';
 import imposterCamping from './imposter-camping.json';
 import imposterFood from './imposter-food.json';
@@ -14,6 +17,8 @@ import whoamiThings from './whoami-things.json';
 /** The party games that ship (Mafia is still "Coming soon"). */
 export const partyGames = ['imposter', 'whoami', 'rather'] as const;
 export type PartyGame = (typeof partyGames)[number];
+/** Every game that draws from a content pack (Crocodile has its own lobby settings). */
+export type PackGame = PartyGame | 'croc';
 
 const text = z.string().trim().min(1);
 const localizedSchema = z.object({ uz: text, ru: text, en: text });
@@ -39,6 +44,12 @@ const packSchema = z
     }),
     z.object({
       id,
+      game: z.literal('croc'),
+      name: localizedSchema,
+      items: z.array(wordSchema).min(1),
+    }),
+    z.object({
+      id,
       game: z.literal('rather'),
       name: localizedSchema,
       items: z.array(questionSchema).min(1),
@@ -54,6 +65,7 @@ const packSchema = z
 export type Pack = z.infer<typeof packSchema>;
 export type WordPack = Extract<Pack, { game: 'imposter' | 'whoami' }>;
 export type QuestionPack = Extract<Pack, { game: 'rather' }>;
+export type CrocPack = Extract<Pack, { game: 'croc' }>;
 
 /** Validates one content pack: known game, ids unique, uz / ru / en present on every text. */
 export function parsePack(raw: unknown): Pack | null {
@@ -81,6 +93,25 @@ export const packs: Pack[] = shipped.reduce<Pack[]>((valid, raw) => {
   }
   return [...valid, pack];
 }, []);
+
+/** Crocodile packs, kept apart from the party packs (own lobby settings: several packs at once). */
+const shippedCroc: unknown[] = [crocAnimals, crocHeroes, crocFamous];
+
+export const crocPacks: CrocPack[] = shippedCroc.reduce<CrocPack[]>(
+  (valid, raw, index) => {
+    const pack = parsePack(raw);
+    if (pack?.game !== 'croc' || valid.some(other => other.id === pack.id)) {
+      qaLog('camp_pack_invalid', { index, game: 'croc' });
+      return valid;
+    }
+    return [...valid, pack];
+  },
+  [],
+);
+
+export function findCrocPack(packId: string): CrocPack | undefined {
+  return crocPacks.find(pack => pack.id === packId);
+}
 
 export function packsFor(game: PartyGame): Pack[] {
   return packs.filter(pack => pack.game === game);

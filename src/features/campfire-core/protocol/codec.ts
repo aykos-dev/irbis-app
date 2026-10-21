@@ -4,11 +4,13 @@ import { roleIds } from '../games/mafia/roles';
 import { animals } from '../playerProfile';
 
 /**
- * Local Campfire protocol (spec § Local protocol): newline-delimited JSON over TCP, `v: 3`
+ * Local Campfire protocol (spec § Local protocol): newline-delimited JSON over TCP, `v: 5`
  * (v2 added the party games: `deal`, `game`, `lobby`, `wyrVote`, `showMine`; v3 added Mafia:
- * its `deal` / `game` shapes and `mafReady`; v4 adds X and O: its `game` shape, `xoMove` and `xoNext`).
+ * its `deal` / `game` shapes and `mafReady`; v4 added X and O: its `game` shape, `xoMove` and
+ * `xoNext`; v5 adds Crocodile: its `deal` / `game` shapes and `crocStart`, `crocSkip`,
+ * `crocGuessed`).
  */
-export const PROTOCOL_VERSION = 4;
+export const PROTOCOL_VERSION = 5;
 export const CAMP_PORT = 47821;
 export const MAX_SEATS = 15;
 /** Clients ping this often; the host answers `pong`. */
@@ -174,6 +176,66 @@ export const xoPublicSchema = z.object({
 });
 export type XoPublic = z.infer<typeof xoPublicSchema>;
 
+/**
+ * Crocodile: pick the describer → ready (describer holds the word) → running (the turn) → result
+ * (~3 s) → pick; `ended` once the host ends the game.
+ */
+export const crocPhaseSchema = z.enum([
+  'pick',
+  'ready',
+  'running',
+  'result',
+  'ended',
+]);
+export type CrocPhase = z.infer<typeof crocPhaseSchema>;
+
+const turnNo = z.number().int().min(0);
+
+/** The describer's card: word and pack ids (the phone shows them in its language), for turn `turnNo`. */
+export const crocSecretSchema = z.object({
+  word: z.string().min(1),
+  pack: z.string().min(1),
+  turnNo,
+});
+export type CrocSecret = z.infer<typeof crocSecretSchema>;
+
+export const crocTotalsSchema = z.object({
+  guessed: z.number().int().min(0),
+  skipped: z.number().int().min(0),
+  turns: z.number().int().min(0),
+});
+export type CrocTotals = z.infer<typeof crocTotalsSchema>;
+
+/** A Crocodile word: item id in pack `pack` (each phone shows it in its own language). */
+export const crocWordSchema = z.object({
+  id: z.string().min(1),
+  pack: z.string().min(1),
+});
+export type CrocWord = z.infer<typeof crocWordSchema>;
+
+/** How a turn ended; `name` = the describer who left (cancelled only). The word is public by now. */
+export const crocResultSchema = z.object({
+  kind: z.enum(['guessed', 'timeUp', 'cancelled']),
+  word: crocWordSchema,
+  name: z.string().optional(),
+});
+export type CrocResult = z.infer<typeof crocResultSchema>;
+
+/** What every phone may see about the Crocodile game. Never the word while the turn runs. */
+export const crocPublicSchema = z.object({
+  phase: crocPhaseSchema,
+  turnNo,
+  durationSec: z.number().int().min(1),
+  totals: crocTotalsSchema,
+  /** Who shows this turn (ready / running / result only). */
+  describerSeatId: seatId.optional(),
+  /** Running only: turn time left when the host sent this (each phone counts down from it). */
+  remainingMs: z.number().int().min(0).optional(),
+  /** Result only. */
+  result: crocResultSchema.optional(),
+});
+export type CrocPublic = z.infer<typeof crocPublicSchema>;
+
 /** Host → one seat: that seat's secret for the round (no deal in Would you rather; none for the Mafia host). */
 const dealMessageSchema = z.discriminatedUnion('game', [
   z.object({
@@ -189,6 +251,13 @@ const dealMessageSchema = z.discriminatedUnion('game', [
     game: z.literal('mafia'),
     round,
     secret: mafiaSecretSchema,
+  }),
+  z.object({
+    v: version,
+    type: z.literal('deal'),
+    game: z.literal('croc'),
+    round,
+    secret: crocSecretSchema,
   }),
 ]);
 
@@ -216,6 +285,14 @@ const gameMessageSchema = z.discriminatedUnion('game', [
     game: z.literal('xo'),
     round,
     public: xoPublicSchema,
+  }),
+  z.object({
+    v: version,
+    type: z.literal('game'),
+    game: z.literal('croc'),
+    round,
+    phase: crocPhaseSchema,
+    public: crocPublicSchema,
   }),
 ]);
 
@@ -250,6 +327,10 @@ export const clientMessageSchema = z.discriminatedUnion('type', [
     round,
     gameNo: z.number().int().min(1),
   }),
+  /** Crocodile, describer only: start the turn, another word, or the word was guessed. */
+  z.object({ v: version, type: z.literal('crocStart'), round, turnNo }),
+  z.object({ v: version, type: z.literal('crocSkip'), round, turnNo }),
+  z.object({ v: version, type: z.literal('crocGuessed'), round, turnNo }),
 ]);
 export type ClientMessage = z.infer<typeof clientMessageSchema>;
 

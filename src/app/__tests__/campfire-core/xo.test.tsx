@@ -46,7 +46,7 @@ afterEach(async () => {
 
 const roomCode = () => String(screen.getByTestId('camp.lobby.code').props.children);
 
-async function join(nickname: string, v = 4): Promise<FakeSocket> {
+async function join(nickname: string, v = 5): Promise<FakeSocket> {
   const client = fakeNet.server().connect();
   await act(() => {
     client.send({ v, type: 'hello', code: roomCode(), nickname, avatar: 'bear' });
@@ -69,7 +69,7 @@ const lastGame = (socket: FakeSocket) =>
     .at(-1);
 
 async function move(socket: FakeSocket, cell: number, gameNo = 1) {
-  await act(() => socket.send({ v: 4, type: 'xoMove', round: 1, gameNo, cell }));
+  await act(() => socket.send({ v: 5, type: 'xoMove', round: 1, gameNo, cell }));
 }
 
 describe('campfire-xo — tile and Start (AC1)', () => {
@@ -89,7 +89,7 @@ describe('campfire-xo — tile and Start (AC1)', () => {
     expect(screen.getByTestId('camp.lobby.start-reason')).toHaveTextContent('X and O is for 2 players');
 
     const old = await join('guest_9', 3);
-    expect(old.received().at(-1)).toEqual({ v: 4, type: 'rejected', reason: 'version' });
+    expect(old.received().at(-1)).toEqual({ v: 5, type: 'rejected', reason: 'version' });
 
     await join('guest_1');
     expect(screen.getByTestId('camp.lobby.start')).toBeEnabled();
