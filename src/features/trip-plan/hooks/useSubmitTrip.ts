@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { errorMessageKey, isApiError } from '../../../shared/api/errors';
-import type { TripDto } from '../../../shared/api/generated/model';
+import type { TripDto, TripLocationDto } from '../../../shared/api/generated/model';
 import {
   getGetCurrentTripsQueryKey,
   useCreateTrip,
@@ -14,6 +14,7 @@ import { t } from '../../../shared/i18n';
 import { haptics } from '../../../shared/utils/haptics';
 import { qaLog } from '../../../shared/utils/qaLog';
 import { moveTicks } from '../gearTicks';
+import { useStartLocation } from './useStartLocation';
 
 /** API codes the plan screen branches on (trip-plan api briefs). */
 const TRIP_ALREADY_ACTIVE = 'TRIP_ALREADY_ACTIVE';
@@ -36,24 +37,27 @@ type Input = {
 
 /**
  * Save (`start: false`) or Start (`start: true`) a plan (AC6). New plans go through createTrip;
- * an edited plan is updated first and started with startTrip. Errors branch on `code`.
+ * an edited plan is updated first and started with startTrip. Start sends the device location
+ * when it is granted (AC6). Errors branch on `code`.
  */
 export function useSubmitTrip() {
   const queryClient = useQueryClient();
+  const locate = useStartLocation();
+  const [locating, setLocating] = useState(false);
   const create = useCreateTrip(silent);
   const update = useUpdateTrip(silent);
   const startMutation = useStartTrip(silent);
   const [timesRejected, setTimesRejected] = useState(false);
 
-  const persist = async (input: Input, start: boolean): Promise<TripDto> => {
+  const persist = async (input: Input, start: boolean, location: TripLocationDto | undefined): Promise<TripDto> => {
     const { trip, placeId, startAt, backBy, alertEnabled } = input;
     if (!trip) {
-      return create.mutateAsync({ data: { placeId, startAt, backBy, alertEnabled, start } });
+      return create.mutateAsync({ data: { placeId, startAt, backBy, alertEnabled, start, location } });
     }
     const changes = trip.status === 'planned' ? { startAt, backBy, alertEnabled } : { backBy, alertEnabled };
     const updated = await update.mutateAsync({ id: trip.id, data: changes });
     if (start && updated.status === 'planned') {
-      return startMutation.mutateAsync({ id: trip.id, data: {} });
+      return startMutation.mutateAsync({ id: trip.id, data: { location } });
     }
     return updated;
   };
@@ -61,12 +65,17 @@ export function useSubmitTrip() {
   const submit = async (input: Input, start: boolean): Promise<void> => {
     setTimesRejected(false);
     try {
-      const saved = await persist(input, start);
+      let location: TripLocationDto | undefined;
+      if (start) {
+        setLocating(true);
+        location = await locate().finally(() => setLocating(false));
+      }
+      const saved = await persist(input, start, location);
       moveTicks(input.ticksId, saved.id);
       await queryClient.invalidateQueries({ queryKey: getGetCurrentTripsQueryKey() });
       if (start) {
         haptics.heavy();
-        qaLog('trip_started', { tripId: saved.id, hasLocation: false });
+        qaLog('trip_started', { tripId: saved.id, hasLocation: location !== undefined });
         toast.show({ variant: 'success', message: t('trip.started') });
       } else {
         haptics.success();
@@ -91,7 +100,7 @@ export function useSubmitTrip() {
 
   return {
     submit,
-    pending: create.isPending || update.isPending || startMutation.isPending,
+    pending: locating || create.isPending || update.isPending || startMutation.isPending,
     timesRejected,
     clearTimesRejected: () => setTimesRejected(false),
   };

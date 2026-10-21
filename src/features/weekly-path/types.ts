@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import type { Interest, PlaceType } from '../../shared/api/generated/model';
 import type { IconName } from '../../shared/components/Icon';
 
@@ -11,4 +13,6 @@ export type PlaceGlyph = { xml: string } | { icon: IconName };
 export type PathDeps = {
   readInterests: () => readonly Interest[];
   placeType: (type: PlaceType) => { color: string; glyph: PlaceGlyph };
+  /** The trip-plan card (trip-plan AC7), shown above the path; renders nothing when there is no trip. */
+  tripCard: ReactNode;
 };

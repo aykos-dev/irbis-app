@@ -54,5 +54,22 @@
   "offline": "Нет сети. Подключитесь, чтобы сохранить или начать.",
   "saved": "План сохранён",
   "started": "Хорошего похода!",
-  "welcomeBack": "С возвращением!"
+  "welcomeBack": "С возвращением!",
+  "shareTelegram": "Telegram",
+  "shareSms": "SMS",
+  "shareLink": "Ссылка",
+  "shareText": "Иду на %{place} %{date}. Старт %{start}, вернусь к %{backBy}. Если не отмечусь, Irbis оповестит %{name} в %{alertAt}.",
+  "locationRationale": "Irbis отправит место старта контакту, только если вы задержитесь.",
+  "card": {
+    "active": "Поход идёт",
+    "backBy": "Вернусь к %{time}",
+    "checkout": "Я вернулся",
+    "changeBackBy": "Изменить время возвращения",
+    "planned": "Запланировано · %{date}",
+    "start": "Начать",
+    "edit": "Изменить",
+    "delete": "Удалить",
+    "deleteConfirm": "Удалить этот план?",
+    "alerted": "%{name} получил(а) оповещение"
+  }
 }

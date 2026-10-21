@@ -124,3 +124,8 @@ export function formatDay(day: string, locale: string): string {
     timeZone: 'UTC',
   }).format(new Date(`${day}T00:00:00Z`));
 }
+
+/** A new back-by for an active trip (AC7): after now and within the cap from the start. */
+export function isValidNewBackBy(startAt: Date, backBy: Date, now: Date): boolean {
+  return backBy.getTime() > now.getTime() && backBy.getTime() - startAt.getTime() <= MAX_DURATION_H * HOUR_MS;
+}

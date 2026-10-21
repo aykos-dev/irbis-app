@@ -54,5 +54,22 @@
   "offline": "Internet yo'q. Saqlash yoki boshlash uchun ulaning.",
   "saved": "Reja saqlandi",
   "started": "Yaxshi sayohat!",
-  "welcomeBack": "Xush kelibsiz!"
+  "welcomeBack": "Xush kelibsiz!",
+  "shareTelegram": "Telegram",
+  "shareSms": "SMS",
+  "shareLink": "Havola",
+  "shareText": "%{date} kuni %{place}ga boraman. Boshlanish %{start}, qaytish %{backBy}. Belgilamasam, Irbis %{alertAt} da %{name}ni ogohlantiradi.",
+  "locationRationale": "Irbis boshlanish joyingizni faqat kechiksangiz kontaktga yuboradi.",
+  "card": {
+    "active": "Sayohat davom etmoqda",
+    "backBy": "Qaytish %{time}",
+    "checkout": "Eson-omon qaytdim",
+    "changeBackBy": "Qaytish vaqtini o'zgartirish",
+    "planned": "Rejalashtirilgan · %{date}",
+    "start": "Boshlash",
+    "edit": "Tahrirlash",
+    "delete": "O'chirish",
+    "deleteConfirm": "Bu rejani o'chirasizmi?",
+    "alerted": "%{name} ogohlantirildi"
+  }
 }

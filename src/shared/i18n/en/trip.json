@@ -54,5 +54,22 @@
   "offline": "You're offline. Connect to save or start.",
   "saved": "Plan saved",
   "started": "Have a great trip!",
-  "welcomeBack": "Welcome back!"
+  "welcomeBack": "Welcome back!",
+  "shareTelegram": "Telegram",
+  "shareSms": "SMS",
+  "shareLink": "Link",
+  "shareText": "I'm going to %{place} on %{date}. Start %{start}, back by %{backBy}. If I don't check out, Irbis alerts %{name} at %{alertAt}.",
+  "locationRationale": "Irbis sends your start location to your contact only if you're late.",
+  "card": {
+    "active": "Trip in progress",
+    "backBy": "Back by %{time}",
+    "checkout": "I'm back safe",
+    "changeBackBy": "Change return time",
+    "planned": "Planned · %{date}",
+    "start": "Start",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this trip plan?",
+    "alerted": "%{name} was alerted"
+  }
 }

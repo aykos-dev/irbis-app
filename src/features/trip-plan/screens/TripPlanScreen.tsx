@@ -26,6 +26,7 @@ import { AlertSwitch } from '../components/AlertSwitch';
 import { ContactCard } from '../components/ContactCard';
 import { ContactSheet } from '../components/ContactSheet';
 import { GearList } from '../components/GearList';
+import { ShareChips } from '../components/ShareChips';
 import { TimeRow } from '../components/TimeRow';
 import { WhenPicker } from '../components/WhenPicker';
 import { draftTicksId } from '../gearTicks';
@@ -40,6 +41,7 @@ import {
   addMinutes,
   daysBetween,
   formatClock,
+  formatDay,
   tashkentClock,
   tashkentDay,
   timesError,
@@ -167,6 +169,16 @@ function TripPlanForm({ place, trip, onDone }: FormProps) {
 
   const alertAt = trip && trip.backBy === backByIso ? new Date(trip.alertAt) : addMinutes(backBy, ALERT_DELAY_MIN);
   const alertLine = contact ? t('trip.alertAt', { name: contact.name, time: formatClock(alertAt, locale) }) : null;
+  const shareText = contact
+    ? t('trip.shareText', {
+        place: localizedName(place, locale),
+        date: formatDay(plan.day, locale),
+        start: formatClock(startAt, locale),
+        backBy: formatClock(backBy, locale),
+        name: contact.name,
+        alertAt: formatClock(alertAt, locale),
+      })
+    : null;
 
   const blocked = !isOnline || !contact || inlineError !== null || pending;
   const send = (start: boolean) => {
@@ -260,6 +272,7 @@ function TripPlanForm({ place, trip, onDone }: FormProps) {
           <GearList items={preview.data.gear} ticks={ticks} locale={locale} onToggle={toggle} />
         ) : null}
         <AlertSwitch value={alertEnabled} onChange={setAlertEnabled} alertLine={alertLine} />
+        {shareText && inlineError === null ? <ShareChips shareText={shareText} /> : null}
       </Screen>
       <View style={[styles.footer, { paddingBottom: insets.bottom || spacing[20], paddingStart: screenPadding + insets.left, paddingEnd: screenPadding + insets.right }]}>
         <AppText testID="trip.footnote" variant="small" style={layout.footnote}>

@@ -6,6 +6,7 @@ import { LessonsHubScreen } from '../../features/lessons/screens/LessonsHubScree
 import { getInterests } from '../../features/onboarding/onboardingStore';
 import { placeTypes } from '../../features/places/placeTypes';
 import { ExploreScreen } from '../../features/places/screens/ExploreScreen';
+import { TripCard } from '../../features/trip-plan/components/TripCard';
 import { PathScreen } from '../../features/weekly-path/screens/PathScreen';
 import type { PlaceType } from '../../shared/api/generated/model';
 import { TabBar } from './TabBar';
@@ -28,7 +29,7 @@ export function TabNavigator() {
       screenOptions={{ headerShown: false }}
     >
       <Tab.Screen name="Path">
-        {props => <PathScreen {...props} readInterests={getInterests} placeType={placeType} />}
+        {props => <PathScreen {...props} readInterests={getInterests} placeType={placeType} tripCard={<TripCard />} />}
       </Tab.Screen>
       <Tab.Screen name="Explore" component={ExploreScreen} />
       <Tab.Screen name="Lessons" component={LessonsHubScreen} />
