@@ -1,8 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { StyleSheet } from 'react-native';
-import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import { StyleSheet, View } from 'react-native';
 
 import { getGetEmergencyContactQueryKey, usePutEmergencyContact } from '../../../shared/api/generated/me/me';
 import { errorMessageKey, isApiError } from '../../../shared/api/errors';
@@ -81,7 +80,7 @@ export function ContactSheet({ initial, onDismiss }: Props) {
 
   return (
     <Sheet testID="trip.contact.sheet" accessibilityLabel={t('trip.contact')} closing={closing} onDismiss={onDismiss}>
-      <KeyboardAvoidingView behavior="padding" style={layout.form}>
+      <View style={layout.form}>
         <AppText variant="h2" accessibilityRole="header">
           {t('trip.contact')}
         </AppText>
@@ -149,7 +148,7 @@ export function ContactSheet({ initial, onDismiss }: Props) {
           disabled={!filled}
           onPress={submit}
         />
-      </KeyboardAvoidingView>
+      </View>
     </Sheet>
   );
 }

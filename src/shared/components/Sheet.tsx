@@ -4,7 +4,7 @@ import {
   BottomSheetView,
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
-import { useCallback, useEffect, useRef, type ReactNode } from 'react';
+import { createContext, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -23,6 +23,12 @@ type Props = {
 };
 
 const BACKDROP_OPACITY = 0.55;
+
+/**
+ * True inside a `Sheet`: `TextField` then renders gorhom's `BottomSheetTextInput`, which registers its focus
+ * target so the sheet lifts above the keyboard (a plain `TextInput` is ignored and stays covered).
+ */
+export const InSheetContext = createContext(false);
 
 /**
  * Bottom sheet (`@gorhom/bottom-sheet`): mount it to open, unmount it after `onDismiss`.
@@ -66,6 +72,10 @@ export function Sheet({ testID, accessibilityLabel, children, closing = false, o
       backgroundStyle={styles.background}
       handleIndicatorStyle={styles.handle}
       accessibilityLabel={accessibilityLabel}
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
+      // Edge-to-edge (KeyboardProvider): the window never resizes, so the sheet lifts itself by the keyboard height.
+      android_keyboardInputMode="adjustPan"
     >
       <BottomSheetView>
         <View
@@ -73,7 +83,7 @@ export function Sheet({ testID, accessibilityLabel, children, closing = false, o
           accessibilityViewIsModal
           style={[layout.content, { paddingBottom: insets.bottom || spacing[20] }]}
         >
-          {children}
+          <InSheetContext.Provider value>{children}</InSheetContext.Provider>
         </View>
       </BottomSheetView>
     </BottomSheetModal>
