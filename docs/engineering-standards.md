@@ -19,7 +19,7 @@ Before marking any feature complete, every line must be true or explicitly waive
 - [ ] Every interactive element has a press state and a transition (nothing snaps)
 - [ ] Every meaningful action fires the correct haptic, via `shared/utils/haptics.ts`
 - [ ] Screen respects safe area on all four edges — notch, Dynamic Island, home indicator, landscape
-- [ ] Every focused input stays visible above the keyboard; keyboard dismisses correctly
+- [ ] Every focused input stays visible above the keyboard; keyboard dismisses correctly — inputs on screens via `Screen`, inputs in sheets via shared `TextField` inside shared `Sheet` (§4)
 - [ ] Zero inline styles, zero raw hex, zero magic numbers — tokens only
 - [ ] All server data goes through **orval-generated hooks** over the axios `apiClient`. No raw `fetch`, no hand-written API types
 - [ ] Navigation typed, back behaviour correct (incl. Android hardware back), deep-linkable where it makes sense
@@ -107,6 +107,14 @@ inconsistent across platforms and cannot animate in sync with the keyboard.
   `phone-pad`, `decimal-pad` for money, `number-pad` for OTP / quantity.
 - **`autoFocus` only** where typing is the whole point of the screen (search, OTP).
 - A submit button pinned above the keyboard stays reachable; it never scrolls out of view.
+- **Where an input lives decides how it is kept visible:**
+  - On a screen: inside `Screen` (its `KeyboardAwareScrollView`).
+  - In a sheet: shared `TextField` inside shared `Sheet`. Never a raw `TextInput`, never a
+    `KeyboardAvoidingView` inside a sheet. Why: `@gorhom/bottom-sheet` only lifts for inputs that
+    register as its focus target (`BottomSheetTextInput`, which `TextField` renders inside a `Sheet`); a
+    plain `TextInput` stays under the keyboard and a portaled sheet cannot be padded from inside.
+  - Never a raw `TextInput` in a feature — use `TextField` (existing exceptions: the OTP `CodeInput` and
+    the campfire `RoomCodeInput`, both on screens).
 
 ## 5. StyleSheet discipline
 
