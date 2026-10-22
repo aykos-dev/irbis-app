@@ -129,6 +129,10 @@
     "inProgress": "Raund ketmoqda — keyingisida qatnashasiz",
     "end": "O'yinni tugatish",
     "endConfirm": "O'yin hamma uchun tugatilsinmi?",
+    "leaveTitle": "O'yindan chiqasizmi?",
+    "leaveBody": "Xonadan chiqasiz. Boshqalar o'ynashda davom etadi.",
+    "leave": "Chiqish",
+    "stay": "Qolish",
     "name": {
       "imposter": "Sotqin",
       "whoami": "Men kimman?",

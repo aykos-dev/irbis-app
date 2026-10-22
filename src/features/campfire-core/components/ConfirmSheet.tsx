@@ -9,6 +9,8 @@ import { t } from '../../../shared/i18n';
 type Props = {
   testID: string;
   title: string;
+  /** Optional line under the title. */
+  body?: string;
   confirmLabel: string;
   confirmTestID: string;
   cancelTestID: string;
@@ -18,10 +20,11 @@ type Props = {
   onDismiss: () => void;
 };
 
-/** Campfire "are you sure" sheet: danger action + Cancel (remove player, close room, end game). */
+/** Campfire "are you sure" sheet: danger action + Cancel (remove player, close room, end or leave a game). */
 export function ConfirmSheet({
   testID,
   title,
+  body,
   confirmLabel,
   confirmTestID,
   cancelTestID,
@@ -35,6 +38,11 @@ export function ConfirmSheet({
         <AppText variant="h3" accessibilityRole="header">
           {title}
         </AppText>
+        {body ? (
+          <AppText variant="body" tone="muted">
+            {body}
+          </AppText>
+        ) : null}
         <AppButton
           testID={confirmTestID}
           label={confirmLabel}

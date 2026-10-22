@@ -149,6 +149,8 @@ export function GameWaiting({
     client?.getSnapshot ?? noSnapshot,
   );
   const [confirmEnd, setConfirmEnd] = useState(false);
+  const [confirmLeave, setConfirmLeave] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   // Turn time left is stamped once per host state change (like each broadcast), not on every render.
   const hostCroc = useMemo(
     () =>
@@ -252,8 +254,9 @@ export function GameWaiting({
     xo.selfSeatId !== xo.info.oSeatId;
 
   // Host: leaving the game screen ends the game, so Back asks first (after a game over: lobby).
-  // Player: Back must not drop the running board (XO-1) — the host ends the series for both phones.
-  usePreventRemove(isPlayer && active, () => undefined);
+  // Player: Back must not silently drop the running board (XO-1) — it asks "Leave the game?" first;
+  // Leave pops to the hub like the lobby's Leave (the lobby unmount gives up the seat).
+  usePreventRemove(isPlayer && active && !leaving, () => setConfirmLeave(true));
   usePreventRemove(!isPlayer && active, () => {
     if (hostGameOver) {
       hostGame.end();
@@ -261,6 +264,13 @@ export function GameWaiting({
     }
     setConfirmEnd(true);
   });
+
+  // Runs after usePreventRemove has released the route, so popToTop is not blocked.
+  useEffect(() => {
+    if (leaving) {
+      navigation.popToTop();
+    }
+  }, [leaving, navigation]);
 
   useEffect(() => {
     if (!active && navigation.canGoBack()) {
@@ -479,6 +489,23 @@ export function GameWaiting({
             cancelTestID="camp.game.end-cancel"
             onConfirm={() => endGame()}
             onDismiss={() => setConfirmEnd(false)}
+          />
+        ) : null}
+        {confirmLeave ? (
+          <ConfirmSheet
+            testID="camp.game.leave-sheet"
+            title={t('camp.game.leaveTitle')}
+            body={t('camp.game.leaveBody')}
+            confirmLabel={t('camp.game.leave')}
+            cancelLabel={t('camp.game.stay')}
+            confirmTestID="camp.game.leave-confirm"
+            cancelTestID="camp.game.leave-stay"
+            onConfirm={() => {
+              haptics.tap();
+              setConfirmLeave(false);
+              setLeaving(true);
+            }}
+            onDismiss={() => setConfirmLeave(false)}
           />
         ) : null}
       </Screen>

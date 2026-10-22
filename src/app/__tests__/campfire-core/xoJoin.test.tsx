@@ -104,4 +104,30 @@ describe('campfire-xo — Back on the player board (XO-1)', () => {
     expect(await screen.findByTestId('xo.final')).toBeOnTheScreen();
     expect(screen.queryByTestId('camp.lobby.wait')).not.toBeOnTheScreen();
   });
+
+  it('player Back during a game asks "Leave the game?"; Stay keeps the board, Leave frees the seat → hub', async () => {
+    const server = await hostRoom();
+    await joinByQr();
+    await act(() => server.startXo());
+    expect(await screen.findByTestId('xo.board')).toBeOnTheScreen();
+
+    await act(() => {
+      navigationRef.goBack();
+    });
+    expect(screen.getByTestId('camp.game.leave-sheet')).toBeOnTheScreen();
+    expect(screen.getByText('Leave the game?')).toBeOnTheScreen();
+    expect(screen.getByText("You'll leave the room. The others keep playing.")).toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByTestId('camp.game.leave-stay'));
+    expect(screen.queryByTestId('camp.game.leave-sheet')).not.toBeOnTheScreen();
+    expect(screen.getByTestId('xo.board')).toBeOnTheScreen();
+
+    await act(() => {
+      navigationRef.goBack();
+    });
+    await fireEvent.press(screen.getByTestId('camp.game.leave-confirm'));
+    await advance(10);
+    expect(await screen.findByTestId('camp.hub.screen')).toBeOnTheScreen();
+    expect(storage.getString('camp.seats.4821')).toBeUndefined();
+  });
 });

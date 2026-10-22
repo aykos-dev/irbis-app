@@ -129,6 +129,10 @@
     "inProgress": "Round in progress — you're in the next one",
     "end": "End game",
     "endConfirm": "End the game for everyone?",
+    "leaveTitle": "Leave the game?",
+    "leaveBody": "You'll leave the room. The others keep playing.",
+    "leave": "Leave",
+    "stay": "Stay",
     "name": {
       "imposter": "Imposter",
       "whoami": "Who am I?",
