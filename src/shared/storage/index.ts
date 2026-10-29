@@ -50,6 +50,8 @@ type StorageSchema = {
   'active.waypointQueue': string;
   /** The active trip's SOS SMS target and rescue number: JSON `{ tripId, phone, sosCallNumber }`; cleared at check-out. */
   'active.sosContact': string;
+  /** Check-ins waiting to be sent, oldest first (max 20): JSON array of CreateCheckInDto (check-in AC5). */
+  'checkIn.queue': string;
 } & {
   /** Campfire seat token per room code, so a player gets the same seat back (rejoin, restart). */
   [key: `camp.seats.${string}`]: string;

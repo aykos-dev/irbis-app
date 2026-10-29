@@ -35,6 +35,7 @@ import type {
   MeUploadAvatarBody,
   PutEmergencyContactDto,
   RecoveryPhoneDto,
+  SecureAccountDto,
   UpdateMeDto,
   VerifyRecoveryPhoneDto
 } from '../model';
@@ -287,6 +288,73 @@ export const useMeDelete = <TError = ErrorType<ErrorResponseDto>,
         TContext
       > => {
       return useMutation(getMeDeleteMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Turn a demo account into a normal one: set username and password; keeps this session
+ */
+export const meSecure = (
+    secureAccountDto: BodyType<SecureAccountDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<MeResponseDto>(
+      {url: `/v1/me/secure`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: secureAccountDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getMeSecureMutationKey = () => ['meSecure'] as const;
+
+export const getMeSecureMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meSecure>>, TError,MeSecureMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof meSecure>>, TError,MeSecureMutationVariables, TContext> => {
+
+const mutationKey = getMeSecureMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof meSecure>>, MeSecureMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  meSecure(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MeSecureMutationResult = NonNullable<Awaited<ReturnType<typeof meSecure>>>
+    export type MeSecureMutationBody = BodyType<SecureAccountDto>
+    export type MeSecureMutationError = ErrorType<ErrorResponseDto>
+    export type MeSecureMutationVariables = {data: BodyType<SecureAccountDto>}
+
+    /**
+ * @summary Turn a demo account into a normal one: set username and password; keeps this session
+ */
+export const useMeSecure = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meSecure>>, TError,MeSecureMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof meSecure>>,
+        TError,
+        MeSecureMutationVariables,
+        TContext
+      > => {
+      return useMutation(getMeSecureMutationOptions(options), queryClient);
     }
     /**
  * @summary Add or change the recovery phone; sends a code

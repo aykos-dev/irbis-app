@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { StatusBar, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -78,7 +78,12 @@ function summaryOf(done: TripDto, xp: number) {
  * check-out at the bottom. Tracks and pings only while the trip is the current active one; if there
  * is none, goes back to Path.
  */
-export function ActiveTripScreen({ navigation, route }: RootStackScreenProps<'ActiveTrip'>) {
+type Props = RootStackScreenProps<'ActiveTrip'> & {
+  /** Check in at the trip's place (check-in AC4), wired by the app layer. */
+  renderCheckIn?: (trip: TripDto) => ReactNode;
+};
+
+export function ActiveTripScreen({ navigation, route, renderCheckIn }: Props) {
   const { tripId } = route.params;
   const query = useGetCurrentTrips();
   const trip = query.data?.active?.id === tripId ? query.data.active : undefined;
@@ -176,6 +181,7 @@ export function ActiveTripScreen({ navigation, route }: RootStackScreenProps<'Ac
           ]}
         >
           <TripActions trip={trip} last={track.last} />
+          {renderCheckIn ? renderCheckIn(trip) : null}
           <ContactRow trip={trip} now={now} locale={locale} />
           <AppButton
             testID="active.checkout"

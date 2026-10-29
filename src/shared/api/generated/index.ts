@@ -1,6 +1,7 @@
 export * from './admin/admin.ts';
 export * from './admin-auth/admin-auth.ts';
 export * from './auth/auth.ts';
+export * from './check-ins/check-ins.ts';
 export * from './conditions/conditions.ts';
 export * from './health/health.ts';
 export * from './lessons/lessons.ts';

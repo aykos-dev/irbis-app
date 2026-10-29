@@ -6,6 +6,7 @@ import { storage } from '../storage';
 import enActive from './en/active.json';
 import enAuth from './en/auth.json';
 import enCamp from './en/camp.json';
+import enCheckin from './en/checkin.json';
 import enCommon from './en/common.json';
 import enConditions from './en/conditions.json';
 import enDebug from './en/debug.json';
@@ -21,6 +22,7 @@ import enTrip from './en/trip.json';
 import ruActive from './ru/active.json';
 import ruAuth from './ru/auth.json';
 import ruCamp from './ru/camp.json';
+import ruCheckin from './ru/checkin.json';
 import ruCommon from './ru/common.json';
 import ruConditions from './ru/conditions.json';
 import ruDebug from './ru/debug.json';
@@ -36,6 +38,7 @@ import ruTrip from './ru/trip.json';
 import uzActive from './uz/active.json';
 import uzAuth from './uz/auth.json';
 import uzCamp from './uz/camp.json';
+import uzCheckin from './uz/checkin.json';
 import uzCommon from './uz/common.json';
 import uzConditions from './uz/conditions.json';
 import uzDebug from './uz/debug.json';
@@ -70,6 +73,7 @@ export const i18n = new I18n({
     active: enActive,
     auth: enAuth,
     camp: enCamp,
+    checkin: enCheckin,
     common: enCommon,
     conditions: enConditions,
     debug: enDebug,
@@ -87,6 +91,7 @@ export const i18n = new I18n({
     active: ruActive,
     auth: ruAuth,
     camp: ruCamp,
+    checkin: ruCheckin,
     common: ruCommon,
     conditions: ruConditions,
     debug: ruDebug,
@@ -104,6 +109,7 @@ export const i18n = new I18n({
     active: uzActive,
     auth: uzAuth,
     camp: uzCamp,
+    checkin: uzCheckin,
     common: uzCommon,
     conditions: uzConditions,
     debug: uzDebug,

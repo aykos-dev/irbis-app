@@ -38,6 +38,7 @@ export const AdminAuthLogInResponse = zod.object({
   "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
   "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
   "role": zod.enum(['user', 'admin']),
+  "isDemo": zod.boolean().describe('Demo account (ADR-006): auto username, no password; secure it with POST /v1/me/secure.'),
   "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
   "createdAt": zod.iso.datetime({"offset":true}),

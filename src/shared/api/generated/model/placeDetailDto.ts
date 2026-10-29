@@ -41,4 +41,6 @@ export interface PlaceDetailDto {
   hazards: Hazard[];
   origin: PlaceOrigin;
   viewer: PlaceViewerDto;
+  /** A check-in must be within this many metres of the place (by type, from config). */
+  checkInRadiusM: number;
 }

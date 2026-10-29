@@ -30,6 +30,7 @@ export const MeGetResponse = zod.object({
   "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
   "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
   "role": zod.enum(['user', 'admin']),
+  "isDemo": zod.boolean().describe('Demo account (ADR-006): auto username, no password; secure it with POST /v1/me/secure.'),
   "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
   "createdAt": zod.iso.datetime({"offset":true}),
@@ -118,6 +119,7 @@ export const MeUpdateResponse = zod.object({
   "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
   "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
   "role": zod.enum(['user', 'admin']),
+  "isDemo": zod.boolean().describe('Demo account (ADR-006): auto username, no password; secure it with POST /v1/me/secure.'),
   "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
   "createdAt": zod.iso.datetime({"offset":true}),
@@ -153,6 +155,62 @@ export const MeDeleteBody = zod.object({
 })
 
 export const MeDeleteResponse = zod.void()
+
+/**
+ * @summary Turn a demo account into a normal one: set username and password; keeps this session
+ */
+export const MeSecureBody = zod.object({
+  "username": zod.string().describe('3-20 chars a-z 0-9 . _ ; case-insensitive; no leading/trailing dot.'),
+  "password": zod.string().describe('6-64 chars, not the username, not a common password.'),
+  "acceptTerms": zod.boolean().describe('Must be true, as on sign-up.')
+})
+
+export const meSecureResponseDisplayNameMax = 40;
+
+export const meSecureResponseBioMax = 150;
+
+export const meSecureResponseLevelMax = 7;
+
+
+
+export const MeSecureResponse = zod.object({
+  "id": zod.uuid(),
+  "username": zod.string(),
+  "displayName": zod.string().max(meSecureResponseDisplayNameMax).nullable(),
+  "bio": zod.string().max(meSecureResponseBioMax).nullable(),
+  "avatarUrl": zod.string().nullable().describe('Derived from the stored avatar key; null when unset or storage is unavailable.'),
+  "homeRegion": zod.union([zod.enum(['tashkent_city', 'tashkent_region', 'andijan', 'bukhara', 'fergana', 'jizzakh', 'karakalpakstan', 'khorezm', 'namangan', 'navoiy', 'kashkadarya', 'samarkand', 'syrdarya', 'surkhandarya', 'other']),zod.null()]),
+  "locale": zod.enum(['uz', 'ru', 'en']),
+  "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
+  "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
+  "role": zod.enum(['user', 'admin']),
+  "isDemo": zod.boolean().describe('Demo account (ADR-006): auto username, no password; secure it with POST /v1/me/secure.'),
+  "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
+  "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "level": zod.int().min(1).max(meSecureResponseLevelMax),
+  "xpTotal": zod.int().describe('Lifetime XP.'),
+  "preferences": zod.object({
+  "showStats": zod.boolean(),
+  "showHomeRegion": zod.boolean(),
+  "units": zod.enum(['metric', 'imperial']),
+  "appearance": zod.enum(['light', 'dark', 'auto']),
+  "notifications": zod.object({
+  "tripSafety": zod.boolean().describe('Trip & safety alerts; always on and not writable.'),
+  "streakReminders": zod.boolean(),
+  "dailyGame": zod.boolean(),
+  "dailyGameTime": zod.string().describe('Asia/Tashkent, HH:MM.'),
+  "groupsMessages": zod.boolean(),
+  "social": zod.boolean(),
+  "offers": zod.boolean()
+}),
+  "privacy": zod.object({
+  "publicProfile": zod.boolean(),
+  "findBuddies": zod.boolean(),
+  "shareLocation": zod.enum(['trips']).describe('Always trips for now; not writable.').describe('Always trips for now; not writable.')
+})
+})
+})
 
 /**
  * @summary Add or change the recovery phone; sends a code
@@ -191,6 +249,7 @@ export const MeVerifyRecoveryPhoneResponse = zod.object({
   "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
   "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
   "role": zod.enum(['user', 'admin']),
+  "isDemo": zod.boolean().describe('Demo account (ADR-006): auto username, no password; secure it with POST /v1/me/secure.'),
   "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
   "createdAt": zod.iso.datetime({"offset":true}),
@@ -281,6 +340,7 @@ export const MeUploadAvatarResponse = zod.object({
   "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
   "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
   "role": zod.enum(['user', 'admin']),
+  "isDemo": zod.boolean().describe('Demo account (ADR-006): auto username, no password; secure it with POST /v1/me/secure.'),
   "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
   "createdAt": zod.iso.datetime({"offset":true}),
@@ -330,6 +390,7 @@ export const MeDeleteAvatarResponse = zod.object({
   "experience": zod.union([zod.enum(['beginner', 'weekend', 'experienced']),zod.null()]),
   "interests": zod.array(zod.enum(['peaks', 'caves', 'lakes', 'camping', 'trails'])),
   "role": zod.enum(['user', 'admin']),
+  "isDemo": zod.boolean().describe('Demo account (ADR-006): auto username, no password; secure it with POST /v1/me/secure.'),
   "hasRecoveryPhone": zod.boolean().describe('A verified recovery phone exists.'),
   "recoveryPhonePending": zod.boolean().describe('A recovery phone was added and its code is waiting to be verified.'),
   "createdAt": zod.iso.datetime({"offset":true}),

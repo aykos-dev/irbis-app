@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 
-import { ActiveTripScreen } from '../../features/active-trip/screens/ActiveTripScreen';
 import { TripSummaryScreen } from '../../features/active-trip/screens/TripSummaryScreen';
 import { GameWaiting } from '../../features/campfire-core/games/GameWaiting';
 import { CampJoinScreen } from '../../features/campfire-core/screens/CampJoinScreen';
@@ -14,7 +13,7 @@ import { QuizScreen } from '../../features/lessons/screens/QuizScreen';
 import { CompanionsScreen } from '../../features/levels/screens/CompanionsScreen';
 import { LevelUpScreen } from '../../features/levels/screens/LevelUpScreen';
 import { LevelScreen } from '../../features/levels/screens/LevelScreen';
-import { PlaceScreen } from '../../features/places/screens/PlaceScreen';
+import { SummitScreen } from '../../features/check-in/screens/SummitScreen';
 import { OnboardingNavigator } from '../../features/onboarding/OnboardingNavigator';
 import { isOnboardingDone, markOnboardingDone } from '../../features/onboarding/onboardingStore';
 import { SafetyScreen } from '../../features/auth/screens/SafetyScreen';
@@ -22,6 +21,7 @@ import { TripPlanScreen } from '../../features/trip-plan/screens/TripPlanScreen'
 import { appConfig } from '../../shared/constants/config';
 import { useAuth } from '../../shared/contexts/auth';
 import { AuthNavigator } from './AuthNavigator';
+import { ActiveTripRoute, PlaceRoute } from './checkInRoutes';
 import { TabNavigator } from './TabNavigator';
 import type { RootStackParamList } from './types';
 
@@ -72,12 +72,17 @@ export function RootNavigator() {
       />
       <Stack.Screen name="RecoveryPhone" component={RecoveryPhoneScreen} />
       <Stack.Screen name="Safety" component={SafetyScreen} />
-      <Stack.Screen name="Place" component={PlaceScreen} />
+      <Stack.Screen name="Place" component={PlaceRoute} />
       <Stack.Screen name="TripPlan" component={TripPlanScreen} />
-      <Stack.Screen name="ActiveTrip" component={ActiveTripScreen} />
+      <Stack.Screen name="ActiveTrip" component={ActiveTripRoute} />
       <Stack.Screen
         name="TripSummary"
         component={TripSummaryScreen}
+        options={{ animation: 'fade', gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name="Summit"
+        component={SummitScreen}
         options={{ animation: 'fade', gestureEnabled: false }}
       />
       <Stack.Screen name="Level" component={LevelScreen} />

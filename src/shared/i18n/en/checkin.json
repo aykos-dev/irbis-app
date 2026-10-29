@@ -1,0 +1,24 @@
+{
+  "button": "Check in",
+  "locating": "Finding you…",
+  "tooFar": "You're %{distance} away — get within %{radius} to check in.",
+  "km": "%{n} km",
+  "m": "%{n} m",
+  "inaccurate": "Couldn't get an accurate fix. Step into the open and try again.",
+  "permission": "Turn on location to check in here.",
+  "settings": "Open settings",
+  "allow": "Allow",
+  "rejected": "This check-in couldn't be verified",
+  "summit": {
+    "peak": "Summit reached!",
+    "other": "You made it!",
+    "elevation": "%{m} m",
+    "xp": "+%{xp} XP earned",
+    "notCounted": "Already counted this month",
+    "queued": "Checked in · XP arrives when you're online",
+    "share": "Share",
+    "shareText": "I checked in at %{place} on Irbis!",
+    "continue": "Continue",
+    "art": "Your companion celebrates"
+  }
+}

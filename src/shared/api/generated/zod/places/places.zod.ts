@@ -122,6 +122,7 @@ export const PlacesGetResponse = zod.object({
   "viewer": zod.object({
   "level": zod.int(),
   "qualifies": zod.boolean().describe('requiredLevel <= level.')
-})
+}),
+  "checkInRadiusM": zod.int().describe('A check-in must be within this many metres of the place (by type, from config).')
 })
 

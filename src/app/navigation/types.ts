@@ -79,6 +79,19 @@ export type RootStackParamList = {
   ActiveTrip: { tripId: string };
   /** After check-out (active-trip AC8): the checked-out trip's counts. */
   TripSummary: { tripId: string; distanceM: number; climbM: number; durationMin: number; waypoints: number; xp: number };
+  /**
+   * Summit after a check-in (check-in AC7). `queued`: stored offline, no result yet (counted and
+   * xp unused). `elevationM` is absent when the place detail could not be loaded.
+   */
+  Summit: {
+    placeId: string;
+    placeName: string;
+    placeType: string;
+    elevationM?: number;
+    queued: boolean;
+    counted: boolean;
+    xp: number;
+  };
   /** Level screen (levels AC5): your level, or level 1 for a guest. */
   Level: undefined;
   /** All seven companions (levels AC6). */

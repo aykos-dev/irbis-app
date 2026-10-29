@@ -1,0 +1,24 @@
+{
+  "button": "Belgilanish",
+  "locating": "Joylashuvingiz aniqlanmoqda…",
+  "tooFar": "Siz %{distance} uzoqdasiz — belgilanish uchun %{radius} ichiga yaqinlashing.",
+  "km": "%{n} km",
+  "m": "%{n} m",
+  "inaccurate": "Joylashuv aniq topilmadi. Ochiq joyga chiqib, qayta urinib ko‘ring.",
+  "permission": "Bu yerda belgilanish uchun joylashuvni yoqing.",
+  "settings": "Sozlamalarni ochish",
+  "allow": "Ruxsat berish",
+  "rejected": "Bu belgilanishni tasdiqlab bo‘lmadi",
+  "summit": {
+    "peak": "Cho‘qqi zabt etildi!",
+    "other": "Yetib keldingiz!",
+    "elevation": "%{m} m",
+    "xp": "+%{xp} XP olindi",
+    "notCounted": "Bu oy allaqachon hisoblangan",
+    "queued": "Belgilandi · XP internet paydo bo‘lganda keladi",
+    "share": "Ulashish",
+    "shareText": "Men Irbis’da %{place} joyida belgilandim!",
+    "continue": "Davom etish",
+    "art": "Hamrohingiz quvonmoqda"
+  }
+}

@@ -51,7 +51,12 @@ export function localized<T extends string | null>(
  * Place screen (AC7, AC8): one place's facts, required level, weekend condition and weather,
  * season and hazards. The condition loads alongside the place; its failure never hides the place.
  */
-export function PlaceScreen({ navigation, route }: RootStackScreenProps<'Place'>) {
+type Props = RootStackScreenProps<'Place'> & {
+  /** Check in (check-in AC4), wired by the app layer; rendered under the place once it loads. */
+  renderCheckIn?: (place: PlaceDetailDto, name: string) => ReactNode;
+};
+
+export function PlaceScreen({ navigation, route, renderCheckIn }: Props) {
   const { id, lat, lng } = route.params;
   const coords = lat !== undefined && lng !== undefined ? { lat, lng } : undefined;
   const locale = useLocale();
@@ -123,6 +128,7 @@ export function PlaceScreen({ navigation, route }: RootStackScreenProps<'Place'>
       <Screen testID="place.screen" scroll bottomInset={!showTripCta}>
         <BackButton onPress={goBack} />
         {body}
+        {data && renderCheckIn ? <View style={layout.checkIn}>{renderCheckIn(data, localized(data.name, locale))}</View> : null}
       </Screen>
       {showTripCta ? (
         <StartAdventureBar
@@ -286,6 +292,7 @@ const layout = StyleSheet.create({
   fill: { flex: 1 },
   head: { gap: spacing[8] },
   section: { gap: spacing[12] },
+  checkIn: { marginTop: spacing[16] },
   tiles: { flexDirection: 'row', gap: spacing[12] },
   tile: { flex: 1, gap: spacing[4] },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[8] },
