@@ -1,5 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import { clearTripDevice } from '../../features/active-trip/tripDevice';
 import { ProfileScreen } from '../../features/auth/screens/ProfileScreen';
 import { CommunityScreen } from '../../features/campfire-core/screens/CommunityScreen';
 import { LessonsHubScreen } from '../../features/lessons/screens/LessonsHubScreen';
@@ -29,7 +30,7 @@ export function TabNavigator() {
       screenOptions={{ headerShown: false }}
     >
       <Tab.Screen name="Path">
-        {props => <PathScreen {...props} readInterests={getInterests} placeType={placeType} tripCard={<TripCard />} />}
+        {props => <PathScreen {...props} readInterests={getInterests} placeType={placeType} tripCard={<TripCard onCheckedOut={clearTripDevice} />} />}
       </Tab.Screen>
       <Tab.Screen name="Explore" component={ExploreScreen} />
       <Tab.Screen name="Lessons" component={LessonsHubScreen} />

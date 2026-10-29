@@ -27,9 +27,9 @@ function placeName(place: TripPlaceDto, locale: Locale): string {
 /**
  * Home trip card (AC7): the active trip (check out, change back-by, alerted line) and the planned
  * ones (start, edit, delete). Signed-in only; nothing to show → not rendered. Offline keeps the
- * cached trips with every button disabled.
+ * cached trips with every button disabled. `onCheckedOut` runs after a successful check-out.
  */
-export function TripCard() {
+export function TripCard({ onCheckedOut }: { onCheckedOut?: () => void } = {}) {
   const { status } = useAuth();
   const signedIn = status === 'signedIn';
   const query = useGetCurrentTrips({ query: { enabled: signedIn } });
@@ -37,7 +37,7 @@ export function TripCard() {
   const locale = useLocale();
   const { isOnline } = useNetworkStatus();
   const styles = useStyles();
-  const actions = useTripCardActions();
+  const actions = useTripCardActions(onCheckedOut);
   const [deleting, setDeleting] = useState<{ trip: TripDto; closing: boolean } | null>(null);
 
   if (!signedIn) {

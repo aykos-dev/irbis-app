@@ -34,8 +34,11 @@ function showError(error: unknown) {
   toast.show({ variant: 'error', message });
 }
 
-/** Home trip card actions (AC7): check out, change back-by, start and delete a planned trip. */
-export function useTripCardActions() {
+/**
+ * Home trip card actions (AC7): check out, change back-by, start and delete a planned trip.
+ * `onCheckedOut` lets the app layer clear what active-trip keeps on the device.
+ */
+export function useTripCardActions(onCheckedOut?: () => void) {
   const queryClient = useQueryClient();
   const checkOut = useCheckOutTrip(silent);
   const update = useUpdateTrip(silent);
@@ -49,6 +52,7 @@ export function useTripCardActions() {
   const checkOutTrip = async (trip: TripDto) => {
     try {
       await checkOut.mutateAsync({ id: trip.id, data: {} });
+      onCheckedOut?.();
       haptics.success();
       qaLog('trip_checked_out', { tripId: trip.id, late: Date.now() > Date.parse(trip.backBy), from: 'card' });
       toast.show({ variant: 'success', message: t('trip.welcomeBack') });

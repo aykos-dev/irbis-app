@@ -13,6 +13,7 @@ import {
   type HttpStub,
 } from '../auth/harness';
 import { navigationRef } from '../../navigation/navigationRef';
+import { storage } from '../../../shared/storage';
 
 jest.mock('@react-native-community/datetimepicker', () => {
   const { createElement } = require('react');
@@ -214,6 +215,21 @@ describe('trip-plan — Home trip card (AC7)', () => {
     expect(await screen.findByTestId('app.toast')).toHaveTextContent('Welcome back!');
     expect(qaEvents()).toContainEqual({ event: 'trip_checked_out', tripId: TRIP_ID, late: false, from: 'card' });
     await waitFor(() => expect(screen.queryByTestId('home.trip-card')).not.toBeOnTheScreen());
+  });
+
+  it('AC7: check-out from the card clears the stored track, waypoint queue and SOS contact', async () => {
+    storage.setString('active.track', JSON.stringify({ tripId: TRIP_ID, points: [], distanceM: 0, climbM: 0, anchorAlt: null, last: null }));
+    storage.setString('active.sosContact', JSON.stringify({ tripId: TRIP_ID, phone: '+998XXXXXXXXX', sosCallNumber: null }));
+    await openHome({ active: activeBody(), planned: [] });
+    await screen.findByTestId('home.trip-card');
+    http.reply(`${TRIP_URL}/check-out`, { status: 200, body: activeBody({ status: 'completed' }) });
+    http.reply(CURRENT_URL, { status: 200, body: { active: null, planned: [] } });
+
+    await fireEvent.press(screen.getByTestId('home.trip.checkout'));
+
+    expect(await screen.findByTestId('app.toast')).toHaveTextContent('Welcome back!');
+    expect(storage.getString('active.track')).toBeUndefined();
+    expect(storage.getString('active.sosContact')).toBeUndefined();
   });
 
   it('AC7: change back-by sends the picked time and shows it', async () => {

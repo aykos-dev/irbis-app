@@ -27,12 +27,12 @@ import { SosSheet } from '../components/SosSheet';
 import { StatsCard } from '../components/StatsCard';
 import { TripMap } from '../components/TripMap';
 import { WaypointPanel } from '../components/WaypointPanel';
-import { clearSosContact, useSos } from '../hooks/useSos';
+import { useSos } from '../hooks/useSos';
 import { useTripPings } from '../hooks/useTripPings';
 import { useTripTracking } from '../hooks/useTripTracking';
 import { useWaypointCheckIn } from '../hooks/useWaypointCheckIn';
-import { clearTrack, loadWaypointXp, type Fix, type Track } from '../trackStore';
-import { clearQueue } from '../waypointQueue';
+import { loadWaypointXp, type Fix, type Track } from '../trackStore';
+import { clearTripDevice } from '../tripDevice';
 
 const MINUTE_MS = 60_000;
 const SKELETON_CARD = 140;
@@ -111,9 +111,7 @@ export function ActiveTripScreen({ navigation, route }: RootStackScreenProps<'Ac
       haptics.success();
       qaLog('trip_checked_out', { tripId: active.id, late: Date.now() > Date.parse(active.backBy), from: 'active' });
       const xp = loadWaypointXp(active.id);
-      clearTrack();
-      clearQueue();
-      clearSosContact();
+      clearTripDevice();
       navigation.replace('TripSummary', summaryOf(done, xp));
       void queryClient.invalidateQueries({ queryKey: getGetCurrentTripsQueryKey() });
     } catch (error) {
