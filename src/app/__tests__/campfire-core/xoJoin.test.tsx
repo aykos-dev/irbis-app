@@ -89,6 +89,8 @@ describe('campfire-xo — Back on the player board (XO-1)', () => {
     await act(() => {
       navigationRef.goBack();
     });
+    // Back asks "Leave the game?" (owner brief 1022); Stay keeps the player in the game.
+    await fireEvent.press(screen.getByTestId('camp.game.leave-stay'));
 
     // XO-1: the running board stays; Back must not drop the joiner into the lobby.
     expect(screen.getByTestId('xo.board')).toBeOnTheScreen();
