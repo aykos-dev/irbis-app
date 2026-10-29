@@ -7,6 +7,9 @@ import { LessonsHubScreen } from '../../features/lessons/screens/LessonsHubScree
 import { getInterests } from '../../features/onboarding/onboardingStore';
 import { placeTypes } from '../../features/places/placeTypes';
 import { ExploreScreen } from '../../features/places/screens/ExploreScreen';
+import { ProfileStreaksCard } from '../../features/streaks/components/ProfileStreaksCard';
+import { StreakChips } from '../../features/streaks/components/StreakChips';
+import { StreakLessonsLine } from '../../features/streaks/components/StreakLessonsLine';
 import { TripCard } from '../../features/trip-plan/components/TripCard';
 import { PathScreen } from '../../features/weekly-path/screens/PathScreen';
 import type { PlaceType } from '../../shared/api/generated/model';
@@ -20,7 +23,8 @@ const placeType = (type: PlaceType) => placeTypes[type];
 
 /**
  * Explore is the places map (places AC4–AC6), Lessons the lessons hub (lessons AC4), Community the campfire hub
- * (campfire-core AC1), Path this month's path (weekly-path AC1).
+ * (campfire-core AC1), Path this month's path (weekly-path AC1). Streaks (AC6, AC7) are slotted into Path, Lessons
+ * and Profile here.
  */
 export function TabNavigator() {
   return (
@@ -30,12 +34,20 @@ export function TabNavigator() {
       screenOptions={{ headerShown: false }}
     >
       <Tab.Screen name="Path">
-        {props => <PathScreen {...props} readInterests={getInterests} placeType={placeType} tripCard={<TripCard onCheckedOut={clearTripDevice} />} />}
+        {props => (
+          <PathScreen
+            {...props}
+            readInterests={getInterests}
+            placeType={placeType}
+            tripCard={<TripCard onCheckedOut={clearTripDevice} />}
+            streakChips={<StreakChips />}
+          />
+        )}
       </Tab.Screen>
       <Tab.Screen name="Explore" component={ExploreScreen} />
-      <Tab.Screen name="Lessons" component={LessonsHubScreen} />
+      <Tab.Screen name="Lessons">{props => <LessonsHubScreen {...props} streakLine={<StreakLessonsLine />} />}</Tab.Screen>
       <Tab.Screen name="Community" component={CommunityScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Profile">{props => <ProfileScreen {...props} streaksCard={<ProfileStreaksCard />} />}</Tab.Screen>
     </Tab.Navigator>
   );
 }

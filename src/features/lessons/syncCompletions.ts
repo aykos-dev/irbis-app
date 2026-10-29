@@ -1,6 +1,11 @@
 import type { QueryClient } from '@tanstack/react-query';
 
-import { getLessonsListQueryKey, getMeLevelGetQueryKey, lessonsComplete } from '../../shared/api/generated';
+import {
+  getLessonsListQueryKey,
+  getMeLevelGetQueryKey,
+  getMeStreaksQueryKey,
+  lessonsComplete,
+} from '../../shared/api/generated';
 import { isApiError } from '../../shared/api/errors';
 import { qaLog } from '../../shared/utils/qaLog';
 import { completionsStore } from './completionsStore';
@@ -41,6 +46,7 @@ async function sendQueued(queryClient: QueryClient): Promise<void> {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: getLessonsListQueryKey() }),
       queryClient.invalidateQueries({ queryKey: getMeLevelGetQueryKey() }),
+      queryClient.invalidateQueries({ queryKey: getMeStreaksQueryKey() }),
     ]);
   }
   qaLog('lesson_sync', { sent, queued: completionsStore.unsynced().length });

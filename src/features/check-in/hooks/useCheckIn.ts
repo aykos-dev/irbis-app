@@ -11,6 +11,7 @@ import { getMeLevelGetQueryKey } from '../../../shared/api/generated/levels/leve
 import type { CheckInResult, CreateCheckInDto, PlaceType } from '../../../shared/api/generated/model';
 import { getPathGetQueryKey } from '../../../shared/api/generated/path/path';
 import { getPlacesGetQueryOptions } from '../../../shared/api/generated/places/places';
+import { getMeStreaksQueryKey } from '../../../shared/api/generated/streaks/streaks';
 import { useAuth } from '../../../shared/contexts/auth';
 import { useLocale } from '../../../shared/hooks/useLocale';
 import { useNetworkStatus } from '../../../shared/hooks/useNetworkStatus';
@@ -85,11 +86,12 @@ function freshFix(): Promise<Fix | null> {
   });
 }
 
-/** After a sent check-in: XP, level and the monthly path changed on the server. */
+/** After a sent check-in: XP, level, streaks and the monthly path changed on the server. */
 export function invalidateAfterCheckIn(queryClient: QueryClient): void {
   void queryClient.invalidateQueries({ queryKey: getMeGetQueryKey() });
   void queryClient.invalidateQueries({ queryKey: getMeLevelGetQueryKey() });
   void queryClient.invalidateQueries({ queryKey: getPathGetQueryKey() });
+  void queryClient.invalidateQueries({ queryKey: getMeStreaksQueryKey() });
 }
 
 /** The place's radius and elevation: from the target, else the place detail (cached or fetched). */

@@ -14,7 +14,6 @@ import { QuizScreen } from '../../features/lessons/screens/QuizScreen';
 import { CompanionsScreen } from '../../features/levels/screens/CompanionsScreen';
 import { LevelUpScreen } from '../../features/levels/screens/LevelUpScreen';
 import { LevelScreen } from '../../features/levels/screens/LevelScreen';
-import { SummitScreen } from '../../features/check-in/screens/SummitScreen';
 import { OnboardingNavigator } from '../../features/onboarding/OnboardingNavigator';
 import { isOnboardingDone, markOnboardingDone } from '../../features/onboarding/onboardingStore';
 import { SafetyScreen } from '../../features/auth/screens/SafetyScreen';
@@ -22,7 +21,7 @@ import { TripPlanScreen } from '../../features/trip-plan/screens/TripPlanScreen'
 import { appConfig } from '../../shared/constants/config';
 import { useAuth } from '../../shared/contexts/auth';
 import { AuthNavigator } from './AuthNavigator';
-import { ActiveTripRoute, PlaceRoute } from './checkInRoutes';
+import { ActiveTripRoute, PlaceRoute, SummitRoute } from './checkInRoutes';
 import { TabNavigator } from './TabNavigator';
 import type { RootStackParamList } from './types';
 
@@ -84,7 +83,7 @@ export function RootNavigator() {
       />
       <Stack.Screen
         name="Summit"
-        component={SummitScreen}
+        component={SummitRoute}
         options={{ animation: 'fade', gestureEnabled: false }}
       />
       <Stack.Screen name="Level" component={LevelScreen} />

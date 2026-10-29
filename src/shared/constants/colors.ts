@@ -170,6 +170,13 @@ export const pathColors = {
   sparkle: palette.gold,
 } as const;
 
+/** Streak glyphs (streaks AC6): lit flame, explorer boot, weather-shield badge. Unlit flame uses theme `stone`. */
+export const streakColors = {
+  flame: palette.orange,
+  boot: '#8C5A33',
+  shield: '#1F74C7',
+} as const;
+
 /** Path node drop shadow (design.md Shape: `rgba(0,0,0,.18)`). */
 export const shadowColor = '#000000';
 

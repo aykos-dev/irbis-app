@@ -1,6 +1,8 @@
 import { CheckInButton } from '../../features/check-in/components/CheckInButton';
 import { ActiveTripScreen } from '../../features/active-trip/screens/ActiveTripScreen';
+import { SummitScreen } from '../../features/check-in/screens/SummitScreen';
 import { PlaceScreen } from '../../features/places/screens/PlaceScreen';
+import { WeekStreakTile } from '../../features/streaks/components/WeekStreakTile';
 import { useLocale } from '../../shared/hooks/useLocale';
 import type { RootStackScreenProps } from './types';
 
@@ -41,4 +43,9 @@ export function ActiveTripRoute(props: RootStackScreenProps<'ActiveTrip'>) {
       )}
     />
   );
+}
+
+/** Summit with the "{n} Week streak" tile (streaks AC7). */
+export function SummitRoute(props: RootStackScreenProps<'Summit'>) {
+  return <SummitScreen {...props} weekStreak={<WeekStreakTile />} />;
 }

@@ -32,7 +32,10 @@ export type IconName =
   | 'waterfall'
   | 'canyon'
   /** Active trip: share the live link. */
-  | 'share';
+  | 'share'
+  /** Streaks: daily flame and weekly explorer boot (boot geometry from `assets/svg/boot.ts`). */
+  | 'flame'
+  | 'boot';
 
 type Props = {
   name: IconName;
@@ -168,6 +171,20 @@ function draw(name: IconName, color: string, accent: string) {
             strokeWidth={2.2}
           />
         </>
+      );
+    case 'flame':
+      return (
+        <Path
+          d="M12 1.8c.9 3.4 5.6 5.6 5.6 11.2a5.6 5.6 0 0 1-11.2 0c0-2.4 1.1-4.2 2.6-5.5.2 1.8 1 2.9 2.1 3.4C10.6 8 10.9 4.8 12 1.8z"
+          fill={color}
+        />
+      );
+    case 'boot':
+      return (
+        <Path
+          d="M5 2.5h7.5v7.2l5.7 2.6A3.2 3.2 0 0 1 20 15.2V18H5zM5.3 19.2h13.9a1.3 1.3 0 0 1 0 2.6H5.3a1.3 1.3 0 0 1 0-2.6z"
+          fill={color}
+        />
       );
     case 'shield':
       return <Path d="M12 2l8 3v6.2c0 5-3.4 9-8 10.8-4.6-1.8-8-5.8-8-10.8V5z" fill={color} />;

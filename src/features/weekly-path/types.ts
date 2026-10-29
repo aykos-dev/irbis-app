@@ -15,4 +15,6 @@ export type PathDeps = {
   placeType: (type: PlaceType) => { color: string; glyph: PlaceGlyph };
   /** The trip-plan card (trip-plan AC7), shown above the path; renders nothing when there is no trip. */
   tripCard: ReactNode;
+  /** Streak chips (streaks AC6), next to XP; renders nothing for guests. */
+  streakChips?: ReactNode;
 };

@@ -1,0 +1,29 @@
+{
+  "flameA11y": "%{count} kunlik seriya",
+  "bootA11y": "%{count} haftalik sayohatchi seriyasi",
+  "bootShieldedA11y": "%{count} haftalik sayohatchi seriyasi, ob-havo qalqoni bilan himoyalangan",
+  "sheet": {
+    "title": "Seriyalaringiz",
+    "mascot": "Irbis",
+    "flame": {
+      "one": "Ketma-ket %{count} kun",
+      "other": "Ketma-ket %{count} kun"
+    },
+    "boot": {
+      "one": "%{count} hafta sayohat",
+      "other": "%{count} hafta sayohat"
+    },
+    "todayDone": "Bugun: bajarildi",
+    "todayNotYet": "Bugun: hali yoʻq",
+    "weekDone": "Bu hafta: belgilangan",
+    "weekNotYet": "Bu hafta: hali yoʻq",
+    "freezes": "Bu oy %{perMonth} ta muzlatishdan %{left} tasi qoldi",
+    "shield": "Yomon ob-havoli dam olish kunlari sayohatchi seriyangizni hech qachon uzmaydi."
+  },
+  "summit": "%{count} haftalik seriya",
+  "lessonsLine": "Yana bitta 3 daqiqalik dars %{count} kunlik seriyangizni saqlab qoladi.",
+  "profile": {
+    "label": "Seriyalar",
+    "value": "%{flame} kun · %{boot} hafta"
+  }
+}

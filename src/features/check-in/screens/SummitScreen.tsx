@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { Share, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
 import { SvgXml } from 'react-native-svg';
@@ -85,11 +85,16 @@ function SummitArt({ level }: { level: number }) {
   return <CompanionArt level={level} size={ART_SIZE} accessibilityLabel={t('checkin.summit.art')} />;
 }
 
+type Props = RootStackScreenProps<'Summit'> & {
+  /** The "{n} Week streak" tile from the app layer (streaks AC7), under a sent check-in's result. */
+  weekStreak?: ReactNode;
+};
+
 /**
  * Summit (AC7): the celebration after a check-in. Sent: "+XP earned" or "Already counted this
  * month"; queued (offline): the waiting line instead of the XP tile. Share and Continue (back).
  */
-export function SummitScreen({ navigation, route }: RootStackScreenProps<'Summit'>) {
+export function SummitScreen({ navigation, route, weekStreak }: Props) {
   const { placeName, placeType, elevationM, queued, counted, xp } = route.params;
   const { user } = useAuth();
   const locale = useLocale();
@@ -131,6 +136,7 @@ export function SummitScreen({ navigation, route }: RootStackScreenProps<'Summit
               </AppText>
             </View>
           )}
+          {queued ? null : weekStreak}
           <View style={layout.actions}>
             <AppButton testID="summit.share" variant="white" label={t('checkin.summit.share')} onPress={share} />
             <AppButton

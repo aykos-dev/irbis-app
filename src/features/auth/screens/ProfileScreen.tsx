@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import type { MainTabScreenProps, RootStackParamList } from '../../../app/navigation/types';
@@ -32,7 +32,12 @@ const ROW_ICON = 22;
 type RootNav = NativeStackNavigationProp<RootStackParamList>;
 
 /** Profile tab: the guest profile (A6) until signed in, then the account (AC2, AC6). */
-export function ProfileScreen(_props: MainTabScreenProps<'Profile'>) {
+type Props = MainTabScreenProps<'Profile'> & {
+  /** The account's streak row from the app layer (streaks AC7). */
+  streaksCard?: ReactNode;
+};
+
+export function ProfileScreen({ streaksCard }: Props) {
   const { status } = useAuth();
   if (status === 'loading') {
     return (
@@ -43,7 +48,7 @@ export function ProfileScreen(_props: MainTabScreenProps<'Profile'>) {
       </Screen>
     );
   }
-  return status === 'signedIn' ? <AccountProfile /> : <GuestProfile />;
+  return status === 'signedIn' ? <AccountProfile streaksCard={streaksCard} /> : <GuestProfile />;
 }
 
 /**
@@ -228,7 +233,7 @@ function DemoSignOutSheet({
 }
 
 /** Signed-in profile: username, recovery phone, sign out (AC6); a demo account adds Secure (check-in AC8). */
-function AccountProfile() {
+function AccountProfile({ streaksCard }: { streaksCard?: ReactNode }) {
   const { navigation, languageRow, safetyRow, debugRow, sheet } = useProfileRows();
   const { colors } = useTheme();
   const { user, userError, reloadUser, signOut } = useAuth();
@@ -283,6 +288,7 @@ function AccountProfile() {
         </AppText>
       </View>
       {user.isDemo ? <SecureCard onPress={() => navigation.navigate('SecureAccount')} /> : null}
+      {streaksCard}
       <ListCard>
         {languageRow}
         <ListRow
