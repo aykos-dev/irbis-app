@@ -193,11 +193,12 @@ function TripPlanForm({ place, trip, onDone }: FormProps) {
     void submit({ placeId: place.id, startAt: startIso, backBy: backByIso, alertEnabled, trip, ticksId, onDone }, start);
   };
 
-  let footnote = t('trip.sharedOnStart');
+  // While the contact is still loading the footnote waits, so "shared on start" never flashes for a user without one.
+  let footnote: string | null = null;
   if (!isOnline) {
     footnote = t('trip.offline');
-  } else if (!contact && !contactQuery.isPending) {
-    footnote = t('trip.contactRequired');
+  } else if (!contactQuery.isPending) {
+    footnote = contact ? t('trip.sharedOnStart') : t('trip.contactRequired');
   }
 
   return (
@@ -283,9 +284,11 @@ function TripPlanForm({ place, trip, onDone }: FormProps) {
         {shareText && inlineError === null ? <ShareChips shareText={shareText} /> : null}
       </Screen>
       <View style={[styles.footer, { paddingBottom: insets.bottom || spacing[20], paddingStart: screenPadding + insets.left, paddingEnd: screenPadding + insets.right }]}>
-        <AppText testID="trip.footnote" variant="small" style={layout.footnote}>
-          {footnote}
-        </AppText>
+        {footnote === null ? null : (
+          <AppText testID="trip.footnote" variant="small" style={layout.footnote}>
+            {footnote}
+          </AppText>
+        )}
         <View style={layout.buttons}>
           <View style={layout.button}>
             <AppButton testID="trip.save" variant="white" label={t('trip.save')} disabled={blocked} onPress={() => send(false)} />
