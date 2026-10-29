@@ -52,9 +52,20 @@ export function saveQueue(items: CreateCheckInDto[]): void {
   storage.setString(KEY, JSON.stringify(items.slice(-MAX_QUEUED)));
 }
 
+const queuedListeners = new Set<() => void>();
+
+/** Calls `listener` after each new check-in is queued; returns the unsubscribe. */
+export function onQueued(listener: () => void): () => void {
+  queuedListeners.add(listener);
+  return () => {
+    queuedListeners.delete(listener);
+  };
+}
+
 /** Appends one check-in; past MAX_QUEUED the oldest is dropped. */
 export function enqueue(item: CreateCheckInDto): void {
   saveQueue([...loadQueue(), item]);
+  queuedListeners.forEach(listener => listener());
 }
 
 /** Drops one check-in (sent or rejected) by its clientId. */

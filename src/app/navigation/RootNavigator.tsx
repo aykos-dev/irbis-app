@@ -6,6 +6,7 @@ import { GameWaiting } from '../../features/campfire-core/games/GameWaiting';
 import { CampJoinScreen } from '../../features/campfire-core/screens/CampJoinScreen';
 import { CampLobbyScreen } from '../../features/campfire-core/screens/CampLobbyScreen';
 import { RecoveryPhoneScreen } from '../../features/auth/screens/RecoveryPhoneScreen';
+import { SecureAccountScreen } from '../../features/auth/screens/SecureAccountScreen';
 import { DebugScreen } from '../../features/debug/screens/DebugScreen';
 import { StatusScreen } from '../../features/health/screens/StatusScreen';
 import { LessonCompleteScreen } from '../../features/lessons/screens/LessonCompleteScreen';
@@ -71,6 +72,7 @@ export function RootNavigator() {
         options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }}
       />
       <Stack.Screen name="RecoveryPhone" component={RecoveryPhoneScreen} />
+      <Stack.Screen name="SecureAccount" component={SecureAccountScreen} />
       <Stack.Screen name="Safety" component={SafetyScreen} />
       <Stack.Screen name="Place" component={PlaceRoute} />
       <Stack.Screen name="TripPlan" component={TripPlanScreen} />

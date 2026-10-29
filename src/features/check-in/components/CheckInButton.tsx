@@ -4,23 +4,14 @@ import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
 import { Pressable } from '../../../shared/components/Pressable';
 import { spacing } from '../../../shared/constants/spacing';
-import { useAuth } from '../../../shared/contexts/auth';
 import { t } from '../../../shared/i18n';
 import { useCheckIn, type CheckInTarget } from '../hooks/useCheckIn';
 
 /**
- * "Check in" (AC4) for the Place and active trip screens; signed-in users only for now (guests
- * come with the demo account). Shows the locating state and the inline feedback under the button.
+ * "Check in" (AC4) for the Place and active trip screens, for guests too (AC6: no log-in prompt;
+ * the queue sync creates their demo account). Shows the locating state and the inline feedback.
  */
-export function CheckInButton(props: CheckInTarget) {
-  const { status } = useAuth();
-  if (status !== 'signedIn') {
-    return null;
-  }
-  return <SignedInCheckIn {...props} />;
-}
-
-function SignedInCheckIn(target: CheckInTarget) {
+export function CheckInButton(target: CheckInTarget) {
   const { busy, tooFar, message, permissionDenied, checkIn } = useCheckIn(target);
   return (
     <View style={layout.root}>

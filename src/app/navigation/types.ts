@@ -63,6 +63,8 @@ export type RootStackParamList = {
   MainTabs: NavigatorScreenParams<MainTabParamList> | undefined;
   Auth: NavigatorScreenParams<AuthStackParamList> | undefined;
   RecoveryPhone: undefined;
+  /** Secure your account: a demo account sets a username + password (check-in AC8). */
+  SecureAccount: undefined;
   /** Safety & SOS: its empty state until `safety-center` ships. */
   Safety: undefined;
   /**

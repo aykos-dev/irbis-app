@@ -11,6 +11,7 @@ import { getMeLevelGetQueryKey } from '../../../shared/api/generated/levels/leve
 import type { CheckInResult, CreateCheckInDto, PlaceType } from '../../../shared/api/generated/model';
 import { getPathGetQueryKey } from '../../../shared/api/generated/path/path';
 import { getPlacesGetQueryOptions } from '../../../shared/api/generated/places/places';
+import { useAuth } from '../../../shared/contexts/auth';
 import { useLocale } from '../../../shared/hooks/useLocale';
 import { useNetworkStatus } from '../../../shared/hooks/useNetworkStatus';
 import { t } from '../../../shared/i18n';
@@ -111,13 +112,15 @@ async function placeFacts(
 /**
  * Check in (AC4, AC5): permission → one accurate fix → local radius check → send. Online success
  * opens Summit with the result; offline, network or 5xx stores it in the queue and opens Summit
- * queued. A 4xx answer is shown inline and nothing is stored.
+ * queued. A 4xx answer is shown inline and nothing is stored. A guest's check-in is always queued
+ * (AC6): the sync creates their demo account before sending it.
  */
 export function useCheckIn(target: CheckInTarget): CheckInState {
   const navigation = useNavigation();
   const queryClient = useQueryClient();
   const locale = useLocale();
   const { isOnline } = useNetworkStatus();
+  const { status } = useAuth();
   const { mutateAsync } = useCheckInsCreate({ mutation: { meta: { silentError: true } } });
   const [busy, setBusy] = useState(false);
   const [tooFar, setTooFar] = useState<string | null>(null);
@@ -184,7 +187,7 @@ export function useCheckIn(target: CheckInTarget): CheckInState {
       ...fix,
       accuracyM: Math.round(fix.accuracyM),
     };
-    if (!isOnline) {
+    if (!isOnline || status !== 'signedIn') {
       queue(item, elevationM);
       return;
     }

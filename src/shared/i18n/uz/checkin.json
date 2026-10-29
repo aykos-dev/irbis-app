@@ -20,5 +20,8 @@
     "shareText": "Men Irbis’da %{place} joyida belgilandim!",
     "continue": "Davom etish",
     "art": "Hamrohingiz quvonmoqda"
+  },
+  "demo": {
+    "saved": "Yutuqlaringiz %{username} nomi bilan saqlandi"
   }
 }

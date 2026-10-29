@@ -14,11 +14,12 @@ import { CompanionArt } from '../../../shared/components/levels/CompanionArt';
 import { levelMeta, MIN_LEVEL } from '../../../shared/components/levels/levelMeta';
 import { Pressable } from '../../../shared/components/Pressable';
 import { Screen } from '../../../shared/components/Screen';
+import { Sheet } from '../../../shared/components/Sheet';
 import { Skeleton } from '../../../shared/components/Skeleton';
 import { appConfig } from '../../../shared/constants/config';
-import { borders, spacing } from '../../../shared/constants/spacing';
+import { borders, radii, spacing } from '../../../shared/constants/spacing';
 import { useAuth } from '../../../shared/contexts/auth';
-import { useTheme } from '../../../shared/contexts/theme';
+import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
 import { useLocale } from '../../../shared/hooks/useLocale';
 import { getLocale, languageNames, t } from '../../../shared/i18n';
 import { haptics } from '../../../shared/utils/haptics';
@@ -164,12 +165,76 @@ function GuestProfile() {
   );
 }
 
-/** Signed-in profile: username, recovery phone, sign out (AC6). */
+/** A demo account (check-in AC8): "Secure your account" card, opens SecureAccount. */
+function SecureCard({ onPress }: { onPress: () => void }) {
+  const themed = useCardStyles();
+  const { colors } = useTheme();
+  return (
+    <Pressable
+      testID="profile.secure-card"
+      accessibilityRole="button"
+      accessibilityLabel={t('auth.secure.card')}
+      onPress={() => {
+        haptics.tap();
+        onPress();
+      }}
+      style={themed.card}
+    >
+      <Icon name="shield" color={colors.navActiveFg} size={ROW_ICON} />
+      <AppText variant="small" style={themed.text}>
+        {t('auth.secure.card')}
+      </AppText>
+      <Icon name="chevron" color={colors.navActiveFg} size={spacing[18]} />
+    </Pressable>
+  );
+}
+
+/** Signing out of a demo account loses it (ADR-006): ask first. */
+function DemoSignOutSheet({
+  username,
+  closing,
+  onSignOut,
+  onSecure,
+  onDismiss,
+}: {
+  username: string;
+  closing: boolean;
+  onSignOut: () => void;
+  onSecure: () => void;
+  onDismiss: () => void;
+}) {
+  return (
+    <Sheet
+      testID="profile.demo-sign-out"
+      accessibilityLabel={t('auth.profile.demoSignOutTitle')}
+      closing={closing}
+      onDismiss={onDismiss}
+    >
+      <AppText variant="h2" accessibilityRole="header">
+        {t('auth.profile.demoSignOutTitle')}
+      </AppText>
+      <AppText variant="body" tone="muted">
+        {t('auth.profile.demoSignOutBody', { username })}
+      </AppText>
+      <AppButton testID="profile.demo-sign-out-secure" label={t('auth.profile.secureAction')} onPress={onSecure} />
+      <AppButton
+        testID="profile.demo-sign-out-confirm"
+        label={t('auth.profile.signOut')}
+        variant="white"
+        onPress={onSignOut}
+      />
+    </Sheet>
+  );
+}
+
+/** Signed-in profile: username, recovery phone, sign out (AC6); a demo account adds Secure (check-in AC8). */
 function AccountProfile() {
   const { navigation, languageRow, safetyRow, debugRow, sheet } = useProfileRows();
   const { colors } = useTheme();
   const { user, userError, reloadUser, signOut } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmClosing, setConfirmClosing] = useState(false);
 
   if (!user) {
     return (
@@ -199,6 +264,7 @@ function AccountProfile() {
       : t('auth.profile.phoneAdd');
 
   const onSignOut = async () => {
+    setConfirmClosing(true);
     haptics.warning();
     setSigningOut(true);
     try {
@@ -216,6 +282,7 @@ function AccountProfile() {
           {user.username}
         </AppText>
       </View>
+      {user.isDemo ? <SecureCard onPress={() => navigation.navigate('SecureAccount')} /> : null}
       <ListCard>
         {languageRow}
         <ListRow
@@ -240,9 +307,31 @@ function AccountProfile() {
         label={t('auth.profile.signOut')}
         variant="white"
         loading={signingOut}
-        onPress={onSignOut}
+        onPress={() => {
+          if (user.isDemo) {
+            setConfirmClosing(false);
+            setConfirmOpen(true);
+          } else {
+            void onSignOut();
+          }
+        }}
       />
       {sheet}
+      {confirmOpen ? (
+        <DemoSignOutSheet
+          username={user.username}
+          closing={confirmClosing}
+          onSignOut={() => void onSignOut()}
+          onSecure={() => {
+            setConfirmClosing(true);
+            navigation.navigate('SecureAccount');
+          }}
+          onDismiss={() => {
+            setConfirmOpen(false);
+            setConfirmClosing(false);
+          }}
+        />
+      ) : null}
     </Screen>
   );
 }
@@ -260,3 +349,18 @@ const styles = StyleSheet.create({
   centered: { textAlign: 'center' },
   actions: { gap: spacing[12] },
 });
+
+const useCardStyles = createThemedStyles(c => ({
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[12],
+    paddingVertical: spacing[12],
+    paddingHorizontal: spacing[14],
+    borderRadius: radii.tile,
+    borderWidth: borders.card,
+    borderColor: c.navActiveBorder,
+    backgroundColor: c.navActiveBg,
+  },
+  text: { flex: 1, color: c.navActiveFg },
+}));

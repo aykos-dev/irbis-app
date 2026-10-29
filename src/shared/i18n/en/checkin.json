@@ -20,5 +20,8 @@
     "shareText": "I checked in at %{place} on Irbis!",
     "continue": "Continue",
     "art": "Your companion celebrates"
+  },
+  "demo": {
+    "saved": "Your progress is saved as %{username}"
   }
 }
