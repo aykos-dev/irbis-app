@@ -11,10 +11,19 @@ import { statusVariant } from '../../../shared/components/conditions/reasonText'
 import { Pressable } from '../../../shared/components/Pressable';
 import { StatusChip } from '../../../shared/components/StatusChip';
 import { difficultyBootColor } from '../../../shared/constants/colors';
-import { borders, radii, sizes, spacing } from '../../../shared/constants/spacing';
+import {
+  borders,
+  radii,
+  sizes,
+  spacing,
+} from '../../../shared/constants/spacing';
 import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
 import { t, type Locale } from '../../../shared/i18n';
-import { formatDistance } from '../../../shared/utils/units';
+import {
+  formatDistance as formatUnitDistance,
+  getStoredUnits,
+} from '../../../shared/utils/units';
+import { formatDistance } from '../formatDistance';
 import { placeTypes } from '../placeTypes';
 import { localized } from '../screens/PlaceScreen';
 
@@ -38,21 +47,34 @@ type Props = {
  * status chip when there is one (conditions AC8), boots, and a "Level N" lock chip in the level colour
  * when the place needs a higher level than the viewer's (levels AC8).
  */
-export const PlaceCard = memo(function PlaceCard({ place, locale, viewerLevel, onPress }: Props) {
+export const PlaceCard = memo(function PlaceCard({
+  place,
+  locale,
+  viewerLevel,
+  onPress,
+}: Props) {
   const { colors } = useTheme();
   const styles = useStyles();
   const info = placeTypes[place.type];
   const name = localized(place.name, locale);
   const meta = t('places.explore.cardMeta', {
     type: t(info.labelKey),
-    distance: formatDistance(place.distanceM),
+    distance:
+      getStoredUnits() === 'imperial'
+        ? formatUnitDistance(place.distanceM, 'imperial', locale)
+        : t('places.distanceKm', {
+            d: formatDistance(place.distanceM, locale),
+          }),
   });
   const difficulty = t('places.difficulty', { d: place.difficulty });
   const status = place.conditionStatus ?? null;
   const statusLabel = status ? t(`conditions.status.${status}`) : null;
-  const locked = place.requiredLevel > viewerLevel ? levelMeta(place.requiredLevel) : null;
+  const locked =
+    place.requiredLevel > viewerLevel ? levelMeta(place.requiredLevel) : null;
   const lockLabel = locked ? t('levels.lockA11y', { n: locked.level }) : null;
-  const a11yLabel = [name, meta, statusLabel, difficulty, lockLabel].filter(Boolean).join(', ');
+  const a11yLabel = [name, meta, statusLabel, difficulty, lockLabel]
+    .filter(Boolean)
+    .join(', ');
 
   return (
     <Pressable
@@ -63,14 +85,24 @@ export const PlaceCard = memo(function PlaceCard({ place, locale, viewerLevel, o
       style={styles.card}
     >
       <View style={layout.thumb}>
-        <Image source={info.hero} resizeMode="cover" accessible={false} style={layout.image} />
+        <Image
+          source={info.hero}
+          resizeMode="cover"
+          accessible={false}
+          style={layout.image}
+        />
       </View>
       <View style={layout.text}>
         <AppText variant="h3" numberOfLines={1}>
           {name}
         </AppText>
         <View style={layout.meta}>
-          <AppText variant="small" tone="muted" numberOfLines={1} style={layout.metaText}>
+          <AppText
+            variant="small"
+            tone="muted"
+            numberOfLines={1}
+            style={layout.metaText}
+          >
             {meta}
           </AppText>
           {status && statusLabel ? (
@@ -85,7 +117,10 @@ export const PlaceCard = memo(function PlaceCard({ place, locale, viewerLevel, o
           {locked ? (
             <View
               testID={`explore.card.${place.slug}.lock`}
-              style={[layout.lock, { backgroundColor: locked.tint, borderColor: locked.color }]}
+              style={[
+                layout.lock,
+                { backgroundColor: locked.tint, borderColor: locked.color },
+              ]}
             >
               <Icon name="lock" color={locked.text} size={LOCK_ICON} />
               <AppText variant="chip" style={{ color: locked.text }}>
@@ -99,7 +134,9 @@ export const PlaceCard = memo(function PlaceCard({ place, locale, viewerLevel, o
               xml={bootSvg}
               width={BOOT}
               height={BOOT}
-              color={index < place.difficulty ? difficultyBootColor : colors.line}
+              color={
+                index < place.difficulty ? difficultyBootColor : colors.line
+              }
             />
           ))}
         </View>

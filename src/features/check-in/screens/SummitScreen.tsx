@@ -1,6 +1,11 @@
 import { useEffect, type ReactNode } from 'react';
 import { Share, StyleSheet, View } from 'react-native';
-import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { SvgXml } from 'react-native-svg';
 
 import type { RootStackScreenProps } from '../../../app/navigation/types';
@@ -13,8 +18,10 @@ import { levelUpColors } from '../../../shared/constants/colors';
 import { borders, radii, spacing } from '../../../shared/constants/spacing';
 import { createThemedStyles } from '../../../shared/contexts/theme';
 import { useAuth } from '../../../shared/contexts/auth';
+import { useLocale } from '../../../shared/hooks/useLocale';
 import { t } from '../../../shared/i18n';
-import { formatElevation } from '../../../shared/utils/units';
+import { formatNumber } from '../../../shared/utils/format';
+import { formatElevation, getStoredUnits } from '../../../shared/utils/units';
 import { haptics } from '../../../shared/utils/haptics';
 import { qaLog } from '../../../shared/utils/qaLog';
 
@@ -41,7 +48,9 @@ function Confetti() {
   const reducedMotion = useReducedMotion();
   const progress = useSharedValue(0);
   useEffect(() => {
-    progress.value = withTiming(1, { duration: reducedMotion ? 0 : CONFETTI_MS });
+    progress.value = withTiming(1, {
+      duration: reducedMotion ? 0 : CONFETTI_MS,
+    });
   }, [progress, reducedMotion]);
   const fall = useAnimatedStyle(() => ({
     opacity: 1 - progress.value,
@@ -63,7 +72,8 @@ function Confetti() {
             {
               left: piece.left,
               top: piece.top,
-              backgroundColor: levelUpColors.confetti[index % levelUpColors.confetti.length],
+              backgroundColor:
+                levelUpColors.confetti[index % levelUpColors.confetti.length],
               transform: [{ rotate: piece.rotate }],
             },
           ]}
@@ -76,12 +86,26 @@ function Confetti() {
 function SummitArt({ level }: { level: number }) {
   if (level === FOX_LEVEL) {
     return (
-      <View accessible accessibilityRole="image" accessibilityLabel={t('checkin.summit.art')}>
-        <SvgXml xml={companionFoxCheeringSvg} width={ART_SIZE} height={ART_SIZE} />
+      <View
+        accessible
+        accessibilityRole="image"
+        accessibilityLabel={t('checkin.summit.art')}
+      >
+        <SvgXml
+          xml={companionFoxCheeringSvg}
+          width={ART_SIZE}
+          height={ART_SIZE}
+        />
       </View>
     );
   }
-  return <CompanionArt level={level} size={ART_SIZE} accessibilityLabel={t('checkin.summit.art')} />;
+  return (
+    <CompanionArt
+      level={level}
+      size={ART_SIZE}
+      accessibilityLabel={t('checkin.summit.art')}
+    />
+  );
 }
 
 type Props = RootStackScreenProps<'Summit'> & {
@@ -94,18 +118,29 @@ type Props = RootStackScreenProps<'Summit'> & {
  * month"; queued (offline): the waiting line instead of the XP tile. Share and Continue (back).
  */
 export function SummitScreen({ navigation, route, weekStreak }: Props) {
-  const { placeName, placeType, elevationM, queued, counted, xp } = route.params;
+  const { placeName, placeType, elevationM, queued, counted, xp } =
+    route.params;
   const { user } = useAuth();
+  const locale = useLocale();
   const styles = useStyles();
-  const title = placeType === 'peak' ? t('checkin.summit.peak') : t('checkin.summit.other');
+  const title =
+    placeType === 'peak' ? t('checkin.summit.peak') : t('checkin.summit.other');
   const subtitle =
     elevationM === undefined
       ? placeName
-      : `${placeName} · ${formatElevation(elevationM)}`;
+      : `${placeName} · ${
+          getStoredUnits() === 'imperial'
+            ? formatElevation(elevationM, 'imperial', locale)
+            : t('checkin.summit.elevation', {
+                m: formatNumber(elevationM, locale),
+              })
+        }`;
 
   const share = () => {
     haptics.tap();
-    Share.share({ message: t('checkin.summit.shareText', { place: placeName }) }).catch(() => {
+    Share.share({
+      message: t('checkin.summit.shareText', { place: placeName }),
+    }).catch(() => {
       qaLog('check_in_share_failed', {});
     });
   };
@@ -117,26 +152,47 @@ export function SummitScreen({ navigation, route, weekStreak }: Props) {
           <View style={layout.art}>
             <SummitArt level={user?.level ?? 1} />
           </View>
-          <AppText testID="summit.title" variant="h1" accessibilityRole="header" style={layout.center}>
+          <AppText
+            testID="summit.title"
+            variant="h1"
+            accessibilityRole="header"
+            style={layout.center}
+          >
             {title}
           </AppText>
-          <AppText testID="summit.place" variant="body" tone="muted" style={layout.center}>
+          <AppText
+            testID="summit.place"
+            variant="body"
+            tone="muted"
+            style={layout.center}
+          >
             {subtitle}
           </AppText>
           {queued ? (
-            <AppText testID="summit.queued" variant="body" style={layout.center}>
+            <AppText
+              testID="summit.queued"
+              variant="body"
+              style={layout.center}
+            >
               {t('checkin.summit.queued')}
             </AppText>
           ) : (
             <View testID="summit.xp" style={styles.tile}>
               <AppText variant="h3" style={layout.center}>
-                {counted ? t('checkin.summit.xp', { xp }) : t('checkin.summit.notCounted')}
+                {counted
+                  ? t('checkin.summit.xp', { xp })
+                  : t('checkin.summit.notCounted')}
               </AppText>
             </View>
           )}
           {queued ? null : weekStreak}
           <View style={layout.actions}>
-            <AppButton testID="summit.share" variant="white" label={t('checkin.summit.share')} onPress={share} />
+            <AppButton
+              testID="summit.share"
+              variant="white"
+              label={t('checkin.summit.share')}
+              onPress={share}
+            />
             <AppButton
               testID="summit.continue"
               label={t('checkin.summit.continue')}
