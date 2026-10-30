@@ -315,6 +315,32 @@ export const MeGuestMergeResponse = zod.object({
 })
 
 /**
+ * @summary The signed-in user's all-time profile stats
+ */
+export const meStatsResponsePeaksMin = 0;
+
+export const meStatsResponseLakesMin = 0;
+
+export const meStatsResponseCavesMin = 0;
+
+export const meStatsResponseWalkedMMin = 0;
+
+export const meStatsResponseClimbedMMin = 0;
+
+export const meStatsResponseSpotsMin = 0;
+
+
+
+export const MeStatsResponse = zod.object({
+  "peaks": zod.int().min(meStatsResponsePeaksMin).describe('Distinct peaks visited.'),
+  "lakes": zod.int().min(meStatsResponseLakesMin).describe('Distinct lakes visited.'),
+  "caves": zod.int().min(meStatsResponseCavesMin).describe('Distinct caves visited.'),
+  "walkedM": zod.int().min(meStatsResponseWalkedMMin).describe('Metres walked on checked-out trips.'),
+  "climbedM": zod.int().min(meStatsResponseClimbedMMin).describe('Metres climbed on checked-out trips.'),
+  "spots": zod.int().min(meStatsResponseSpotsMin).describe('Verified spots added.')
+})
+
+/**
  * @summary Upload an avatar (JPEG/PNG/WebP, ≤ 2 MB); stored as a 512×512 JPEG without metadata
  */
 export const MeUploadAvatarBody = zod.object({

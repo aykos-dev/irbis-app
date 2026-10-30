@@ -1,6 +1,7 @@
 export * from './admin/admin.zod.ts';
 export * from './admin-auth/admin-auth.zod.ts';
 export * from './auth/auth.zod.ts';
+export * from './badges/badges.zod.ts';
 export * from './check-ins/check-ins.zod.ts';
 export * from './conditions/conditions.zod.ts';
 export * from './health/health.zod.ts';
@@ -13,5 +14,6 @@ export * from './path/path.zod.ts';
 export * from './places/places.zod.ts';
 export * from './profile/profile.zod.ts';
 export * from './qa/qa.zod.ts';
+export * from './search/search.zod.ts';
 export * from './streaks/streaks.zod.ts';
 export * from './trips/trips.zod.ts';

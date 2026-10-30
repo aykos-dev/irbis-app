@@ -33,6 +33,7 @@ import type {
   GuestMergeResponseDto,
   MeResponseDto,
   MeUploadAvatarBody,
+  ProfileStatsDto,
   PutEmergencyContactDto,
   RecoveryPhoneDto,
   SecureAccountDto,
@@ -558,6 +559,98 @@ export const useMeGuestMerge = <TError = ErrorType<ErrorResponseDto>,
       return useMutation(getMeGuestMergeMutationOptions(options), queryClient);
     }
     /**
+ * @summary The signed-in user's all-time profile stats
+ */
+export const meStats = (
+
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<ProfileStatsDto>(
+      {url: `/v1/me/stats`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getMeStatsQueryKey = () => {
+    return [
+    `/v1/me/stats`
+    ] as const;
+    }
+
+
+export const getMeStatsQueryOptions = <TData = Awaited<ReturnType<typeof meStats>>, TError = ErrorType<ErrorResponseDto>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof meStats>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getMeStatsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof meStats>>> = ({ signal }) => meStats(requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof meStats>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type MeStatsQueryResult = NonNullable<Awaited<ReturnType<typeof meStats>>>
+export type MeStatsQueryError = ErrorType<ErrorResponseDto>
+
+
+export function useMeStats<TData = Awaited<ReturnType<typeof meStats>>, TError = ErrorType<ErrorResponseDto>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof meStats>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof meStats>>,
+          TError,
+          Awaited<ReturnType<typeof meStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useMeStats<TData = Awaited<ReturnType<typeof meStats>>, TError = ErrorType<ErrorResponseDto>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof meStats>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof meStats>>,
+          TError,
+          Awaited<ReturnType<typeof meStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useMeStats<TData = Awaited<ReturnType<typeof meStats>>, TError = ErrorType<ErrorResponseDto>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof meStats>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary The signed-in user's all-time profile stats
+ */
+
+export function useMeStats<TData = Awaited<ReturnType<typeof meStats>>, TError = ErrorType<ErrorResponseDto>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof meStats>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getMeStatsQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
  * @summary Upload an avatar (JPEG/PNG/WebP, ≤ 2 MB); stored as a 512×512 JPEG without metadata
  */
 export const meUploadAvatar = (

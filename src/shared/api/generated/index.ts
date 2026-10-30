@@ -1,6 +1,7 @@
 export * from './admin/admin.ts';
 export * from './admin-auth/admin-auth.ts';
 export * from './auth/auth.ts';
+export * from './badges/badges.ts';
 export * from './check-ins/check-ins.ts';
 export * from './conditions/conditions.ts';
 export * from './health/health.ts';
@@ -13,5 +14,6 @@ export * from './path/path.ts';
 export * from './places/places.ts';
 export * from './profile/profile.ts';
 export * from './qa/qa.ts';
+export * from './search/search.ts';
 export * from './streaks/streaks.ts';
 export * from './trips/trips.ts';

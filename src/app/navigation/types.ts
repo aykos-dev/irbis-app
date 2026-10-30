@@ -80,7 +80,14 @@ export type RootStackParamList = {
   /** The running trip (active-trip AC1–AC4, AC8). */
   ActiveTrip: { tripId: string };
   /** After check-out (active-trip AC8): the checked-out trip's counts. */
-  TripSummary: { tripId: string; distanceM: number; climbM: number; durationMin: number; waypoints: number; xp: number };
+  TripSummary: {
+    tripId: string;
+    distanceM: number;
+    climbM: number;
+    durationMin: number;
+    waypoints: number;
+    xp: number;
+  };
   /**
    * Summit after a check-in (check-in AC7). `queued`: stored offline, no result yet (counted and
    * xp unused). `elevationM` is absent when the place detail could not be loaded.
@@ -96,13 +103,21 @@ export type RootStackParamList = {
   };
   /** Level screen (levels AC5): your level, or level 1 for a guest. */
   Level: undefined;
+  /** Full 64-item badge catalogue and the signed-in user's four profile picks. */
+  Badges: undefined;
   /** All seven companions (levels AC6). */
   Companions: undefined;
   /** Full-screen level-up celebration for one pending level-up (levels AC7). */
   /** One lesson's quiz (lessons AC5; opened from the hub, AC4). */
   Quiz: { lessonId: string };
   /** After the last right answer (lessons AC7): counts of the run that just ended. */
-  LessonComplete: { lessonId: string; practice: boolean; perfect: boolean; firstTry: number; total: number };
+  LessonComplete: {
+    lessonId: string;
+    practice: boolean;
+    perfect: boolean;
+    firstTry: number;
+    total: number;
+  };
   LevelUp: {
     id: string;
     fromLevel: number;
@@ -128,26 +143,27 @@ export type RootStackParamList = {
   CampJoin: undefined;
 };
 
-export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<
-  RootStackParamList,
-  T
->;
+export type RootStackScreenProps<T extends keyof RootStackParamList> =
+  NativeStackScreenProps<RootStackParamList, T>;
 
-export type AuthStackScreenProps<T extends keyof AuthStackParamList> = CompositeScreenProps<
-  NativeStackScreenProps<AuthStackParamList, T>,
-  RootStackScreenProps<'Auth'>
->;
-
-export type OnboardingStackScreenProps<T extends keyof OnboardingStackParamList> =
+export type AuthStackScreenProps<T extends keyof AuthStackParamList> =
   CompositeScreenProps<
-    NativeStackScreenProps<OnboardingStackParamList, T>,
-    RootStackScreenProps<'Onboarding'>
+    NativeStackScreenProps<AuthStackParamList, T>,
+    RootStackScreenProps<'Auth'>
   >;
 
-export type MainTabScreenProps<T extends keyof MainTabParamList> = CompositeScreenProps<
-  BottomTabScreenProps<MainTabParamList, T>,
-  RootStackScreenProps<'MainTabs'>
+export type OnboardingStackScreenProps<
+  T extends keyof OnboardingStackParamList,
+> = CompositeScreenProps<
+  NativeStackScreenProps<OnboardingStackParamList, T>,
+  RootStackScreenProps<'Onboarding'>
 >;
+
+export type MainTabScreenProps<T extends keyof MainTabParamList> =
+  CompositeScreenProps<
+    BottomTabScreenProps<MainTabParamList, T>,
+    RootStackScreenProps<'MainTabs'>
+  >;
 
 /** Types `useNavigation()` and `Link` app-wide (React Navigation's global param list). */
 declare global {
