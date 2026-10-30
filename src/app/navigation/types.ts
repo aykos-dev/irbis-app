@@ -111,6 +111,7 @@ export type RootStackParamList = {
   Settings: undefined;
   DeleteAccount: undefined;
   Notifs: undefined;
+  Search: undefined;
   /** All seven companions (levels AC6). */
   Companions: undefined;
   /** Full-screen level-up celebration for one pending level-up (levels AC7). */

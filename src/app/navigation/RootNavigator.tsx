@@ -20,6 +20,7 @@ import { EditProfileScreen } from '../../features/profile/screens/EditProfileScr
 import { NotifsScreen } from '../../features/profile/screens/NotifsScreen';
 import { PublicProfileScreen } from '../../features/profile/screens/PublicProfileScreen';
 import { SettingsScreen } from '../../features/profile/screens/SettingsScreen';
+import { SearchScreen } from '../../features/search/screens/SearchScreen';
 import { OnboardingNavigator } from '../../features/onboarding/OnboardingNavigator';
 import {
   isOnboardingDone,
@@ -108,6 +109,7 @@ export function RootNavigator() {
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} />
       <Stack.Screen name="Notifs" component={NotifsScreen} />
+      <Stack.Screen name="Search" component={SearchScreen} />
       <Stack.Screen name="Companions" component={CompanionsScreen} />
       <Stack.Screen
         name="Quiz"

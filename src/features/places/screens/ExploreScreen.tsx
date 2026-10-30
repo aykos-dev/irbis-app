@@ -5,15 +5,24 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { MainTabScreenProps } from '../../../app/navigation/types';
 import { useMeLevelGet } from '../../../shared/api/generated';
-import type { PlaceListItemDto, PlaceListResponseDto } from '../../../shared/api/generated/model';
+import type {
+  PlaceListItemDto,
+  PlaceListResponseDto,
+} from '../../../shared/api/generated/model';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
 import { EmptyState } from '../../../shared/components/EmptyState';
 import { ErrorState } from '../../../shared/components/ErrorState';
 import { OfflineBanner } from '../../../shared/components/OfflineBanner';
 import { Skeleton } from '../../../shared/components/Skeleton';
+import { Icon } from '../../../shared/components/Icon';
+import { Pressable } from '../../../shared/components/Pressable';
 import { MIN_LEVEL } from '../../../shared/components/levels/levelMeta';
-import { radii, screenPadding, spacing } from '../../../shared/constants/spacing';
+import {
+  radii,
+  screenPadding,
+  spacing,
+} from '../../../shared/constants/spacing';
 import { useAuth } from '../../../shared/contexts/auth';
 import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
 import { useLocale } from '../../../shared/hooks/useLocale';
@@ -24,7 +33,11 @@ import { FilterSheet } from '../components/FilterSheet';
 import { LocationBanner } from '../components/LocationBanner';
 import { PlaceCard } from '../components/PlaceCard';
 import { PlacesMap, type MapCamera } from '../components/PlacesMap';
-import { exploreFilters, useExploreFilters, type ExploreFilters } from '../exploreFilters';
+import {
+  exploreFilters,
+  useExploreFilters,
+  type ExploreFilters,
+} from '../exploreFilters';
 import { useExplorePlaces } from '../hooks/useExplorePlaces';
 import { useOrigin } from '../hooks/useOrigin';
 
@@ -40,22 +53,31 @@ const SKELETON_CARD = 84;
 /** Explore tab (AC4–AC6): clustered map, distance-sorted list sheet, filters, location origin. */
 export function ExploreScreen({ navigation }: MainTabScreenProps<'Explore'>) {
   const insets = useSafeAreaInsets();
-  const { scheme } = useTheme();
+  const { scheme, colors } = useTheme();
   const styles = useStyles();
   const locale = useLocale();
   const { isOnline } = useNetworkStatus();
   const filters = useExploreFilters();
   const origin = useOrigin();
   const [appliedAt, setAppliedAt] = useState(0);
-  const [sheet, setSheet] = useState<{ kind: FilterKind; closing: boolean } | null>(null);
-  const query = useExplorePlaces(filters, origin.coords, origin.state.status !== 'pending', appliedAt);
+  const [sheet, setSheet] = useState<{
+    kind: FilterKind;
+    closing: boolean;
+  } | null>(null);
+  const query = useExplorePlaces(
+    filters,
+    origin.coords,
+    origin.state.status !== 'pending',
+    appliedAt,
+  );
   const { coords } = origin;
   const viewerLevel = useViewerLevel();
 
   const camera: MapCamera = coords ? { ...coords, zoom: USER_ZOOM } : TASHKENT;
 
   const openPlace = useCallback(
-    (place: PlaceListItemDto) => navigation.navigate('Place', { id: place.id, ...coords }),
+    (place: PlaceListItemDto) =>
+      navigation.navigate('Place', { id: place.id, ...coords }),
     [navigation, coords],
   );
 
@@ -75,7 +97,12 @@ export function ExploreScreen({ navigation }: MainTabScreenProps<'Explore'>) {
   if (data) {
     body =
       data.items.length > 0 ? (
-        <PlacesList data={data} locale={locale} viewerLevel={viewerLevel} onOpenPlace={openPlace} />
+        <PlacesList
+          data={data}
+          locale={locale}
+          viewerLevel={viewerLevel}
+          onOpenPlace={openPlace}
+        />
       ) : (
         <EmptyState
           testID="explore.empty"
@@ -84,7 +111,11 @@ export function ExploreScreen({ navigation }: MainTabScreenProps<'Explore'>) {
           mascotLabel={t('places.explore.empty')}
           title={t('places.explore.empty')}
           action={
-            <AppButton testID="explore.filter.reset" label={t('places.filter.reset')} onPress={reset} />
+            <AppButton
+              testID="explore.filter.reset"
+              label={t('places.filter.reset')}
+              onPress={reset}
+            />
           }
         />
       );
@@ -109,17 +140,41 @@ export function ExploreScreen({ navigation }: MainTabScreenProps<'Explore'>) {
 
   return (
     <View testID="explore.screen" style={styles.root}>
-      <StatusBar barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'} />
-      <PlacesMap places={data?.items ?? []} view={camera} onOpenPlace={openPlace} />
+      <StatusBar
+        barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'}
+      />
+      <PlacesMap
+        places={data?.items ?? []}
+        view={camera}
+        onOpenPlace={openPlace}
+      />
       <View
         style={[
           layout.overlay,
-          { paddingTop: insets.top + spacing[8], paddingStart: screenPadding + insets.left, paddingEnd: screenPadding + insets.right },
+          {
+            paddingTop: insets.top + spacing[8],
+            paddingStart: screenPadding + insets.left,
+            paddingEnd: screenPadding + insets.right,
+          },
         ]}
         pointerEvents="box-none"
       >
-        <FilterChips filters={filters} onOpen={kind => setSheet({ kind, closing: false })} />
-        {origin.state.status === 'none' ? <LocationBanner onTurnOn={origin.turnOn} /> : null}
+        <Pressable
+          testID="explore.search"
+          accessibilityLabel="Search"
+          onPress={() => navigation.navigate('Search')}
+          style={styles.search}
+        >
+          <Icon name="explore" color={colors.teal700} />
+          <AppText variant="body">Search places and people</AppText>
+        </Pressable>
+        <FilterChips
+          filters={filters}
+          onOpen={kind => setSheet({ kind, closing: false })}
+        />
+        {origin.state.status === 'none' ? (
+          <LocationBanner onTurnOn={origin.turnOn} />
+        ) : null}
         <OfflineBanner />
       </View>
       <BottomSheet
@@ -129,7 +184,11 @@ export function ExploreScreen({ navigation }: MainTabScreenProps<'Explore'>) {
         backgroundStyle={styles.sheet}
         handleIndicatorStyle={styles.handle}
       >
-        <View testID="explore.sheet" style={layout.fill} accessibilityLabel={t('places.explore.list')}>
+        <View
+          testID="explore.sheet"
+          style={layout.fill}
+          accessibilityLabel={t('places.explore.list')}
+        >
           {body}
         </View>
       </BottomSheet>
@@ -162,7 +221,10 @@ function useViewerLevel(): number {
 }
 
 function PlacesList({ data, locale, viewerLevel, onOpenPlace }: ListProps) {
-  const countKey = data.origin === 'device' ? 'places.explore.countDevice' : 'places.explore.countTashkent';
+  const countKey =
+    data.origin === 'device'
+      ? 'places.explore.countDevice'
+      : 'places.explore.countTashkent';
   return (
     <BottomSheetFlatList
       data={data.items}
@@ -170,7 +232,11 @@ function PlacesList({ data, locale, viewerLevel, onOpenPlace }: ListProps) {
       contentContainerStyle={layout.list}
       ListHeaderComponent={
         <View style={layout.header}>
-          <AppText testID="explore.count" variant="h2" accessibilityRole="header">
+          <AppText
+            testID="explore.count"
+            variant="h2"
+            accessibilityRole="header"
+          >
             {t(countKey, { count: data.total })}
           </AppText>
           <AppText variant="small" tone="muted">
@@ -179,7 +245,12 @@ function PlacesList({ data, locale, viewerLevel, onOpenPlace }: ListProps) {
         </View>
       }
       renderItem={({ item }: { item: PlaceListItemDto }) => (
-        <PlaceCard place={item} locale={locale} viewerLevel={viewerLevel} onPress={onOpenPlace} />
+        <PlaceCard
+          place={item}
+          locale={locale}
+          viewerLevel={viewerLevel}
+          onPress={onOpenPlace}
+        />
       )}
     />
   );
@@ -199,13 +270,30 @@ function ListSkeleton() {
 const layout = StyleSheet.create({
   fill: { flex: 1 },
   overlay: { position: 'absolute', top: 0, start: 0, end: 0, gap: spacing[8] },
-  list: { gap: spacing[12], paddingHorizontal: screenPadding, paddingBottom: spacing[24] },
+  list: {
+    gap: spacing[12],
+    paddingHorizontal: screenPadding,
+    paddingBottom: spacing[24],
+  },
   padded: { paddingHorizontal: screenPadding },
   header: { gap: spacing[4], paddingBottom: spacing[4] },
 });
 
 const useStyles = createThemedStyles(c => ({
   root: { flex: 1, backgroundColor: c.bg },
-  sheet: { backgroundColor: c.card, borderTopLeftRadius: radii.sheet, borderTopRightRadius: radii.sheet },
+  sheet: {
+    backgroundColor: c.card,
+    borderTopLeftRadius: radii.sheet,
+    borderTopRightRadius: radii.sheet,
+  },
   handle: { backgroundColor: c.line, width: spacing[44] },
+  search: {
+    minHeight: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[10],
+    paddingHorizontal: spacing[14],
+    borderRadius: radii.pill,
+    backgroundColor: c.card,
+  },
 }));
