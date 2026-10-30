@@ -27,7 +27,7 @@ import { LevelCard } from '../components/LevelCard';
 import { PlaceHero } from '../components/PlaceHero';
 import { SeasonBar } from '../components/SeasonBar';
 import { TypePill } from '../components/TypePill';
-import { formatDistance } from '../formatDistance';
+import { formatDistance, formatElevation } from '../../../shared/utils/units';
 import { usePlace } from '../hooks/usePlace';
 import { usePlaceCondition } from '../hooks/usePlaceCondition';
 
@@ -206,10 +206,8 @@ function PlaceBody({ place, locale, condition, conditionData }: BodyProps) {
   const description = localized(place.description, locale);
   const paragraphs = description ? description.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean) : [];
   const distanceLabel = place.origin === 'device' ? t('places.fromYou') : t('places.fromTashkent');
-  const distance = t('places.distanceKm', { d: formatDistance(place.distanceM, locale) });
-  const elevation = t('places.elevationValue', {
-    n: new Intl.NumberFormat(locale).format(place.elevationM),
-  });
+  const distance = formatDistance(place.distanceM);
+  const elevation = formatElevation(place.elevationM);
 
   return (
     <>

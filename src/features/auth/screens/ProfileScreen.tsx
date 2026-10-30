@@ -1,17 +1,25 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState, type ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Image, Share, StyleSheet, View } from 'react-native';
 
-import type { MainTabScreenProps, RootStackParamList } from '../../../app/navigation/types';
+import type {
+  MainTabScreenProps,
+  RootStackParamList,
+} from '../../../app/navigation/types';
 import { useMeLevelGet } from '../../../shared/api/generated';
+import { useBadgesList } from '../../../shared/api/generated/badges/badges';
+import { useMeStats } from '../../../shared/api/generated/me/me';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
 import { ErrorState } from '../../../shared/components/ErrorState';
 import { Icon } from '../../../shared/components/Icon';
 import { ListCard, ListRow } from '../../../shared/components/ListRow';
 import { CompanionArt } from '../../../shared/components/levels/CompanionArt';
-import { levelMeta, MIN_LEVEL } from '../../../shared/components/levels/levelMeta';
+import {
+  levelMeta,
+  MIN_LEVEL,
+} from '../../../shared/components/levels/levelMeta';
 import { Pressable } from '../../../shared/components/Pressable';
 import { Screen } from '../../../shared/components/Screen';
 import { Sheet } from '../../../shared/components/Sheet';
@@ -24,6 +32,7 @@ import { useLocale } from '../../../shared/hooks/useLocale';
 import { getLocale, languageNames, t } from '../../../shared/i18n';
 import { haptics } from '../../../shared/utils/haptics';
 import { LanguageSheet } from '../../../shared/components/LanguageSheet';
+import { formatDistance, formatElevation } from '../../../shared/utils/units';
 
 const COMPANION_RING = 132;
 const COMPANION_ART = 108;
@@ -42,13 +51,21 @@ export function ProfileScreen({ streaksCard }: Props) {
   if (status === 'loading') {
     return (
       <Screen testID="profile.loading" bottomInset={false}>
-        <Skeleton height={COMPANION_RING} radius={COMPANION_RING} width={COMPANION_RING} />
+        <Skeleton
+          height={COMPANION_RING}
+          radius={COMPANION_RING}
+          width={COMPANION_RING}
+        />
         <Skeleton height={spacing[44]} />
         <Skeleton height={spacing[56]} />
       </Screen>
     );
   }
-  return status === 'signedIn' ? <AccountProfile streaksCard={streaksCard} /> : <GuestProfile />;
+  return status === 'signedIn' ? (
+    <AccountProfile streaksCard={streaksCard} />
+  ) : (
+    <GuestProfile />
+  );
 }
 
 /**
@@ -68,7 +85,10 @@ function CompanionBadge({ level }: { level: number }) {
         haptics.tap();
         navigation.navigate('Level');
       }}
-      style={[styles.ring, { backgroundColor: meta.tint, borderColor: meta.color }]}
+      style={[
+        styles.ring,
+        { backgroundColor: meta.tint, borderColor: meta.color },
+      ]}
     >
       <CompanionArt level={meta.level} size={COMPANION_ART} />
     </Pressable>
@@ -134,13 +154,18 @@ function useProfileRows() {
 
 /** A6 — "You're exploring as a guest". */
 function GuestProfile() {
-  const { navigation, languageRow, safetyRow, debugRow, sheet } = useProfileRows();
+  const { navigation, languageRow, safetyRow, debugRow, sheet } =
+    useProfileRows();
 
   return (
     <Screen testID="profile.guest" scroll bottomInset={false}>
       <View style={styles.hero}>
         <CompanionBadge level={MIN_LEVEL} />
-        <AppText variant="h2" accessibilityRole="header" style={styles.centered}>
+        <AppText
+          variant="h2"
+          accessibilityRole="header"
+          style={styles.centered}
+        >
           {t('auth.profile.guestTitle')}
         </AppText>
         <AppText variant="body" tone="muted" style={styles.centered}>
@@ -221,7 +246,11 @@ function DemoSignOutSheet({
       <AppText variant="body" tone="muted">
         {t('auth.profile.demoSignOutBody', { username })}
       </AppText>
-      <AppButton testID="profile.demo-sign-out-secure" label={t('auth.profile.secureAction')} onPress={onSecure} />
+      <AppButton
+        testID="profile.demo-sign-out-secure"
+        label={t('auth.profile.secureAction')}
+        onPress={onSecure}
+      />
       <AppButton
         testID="profile.demo-sign-out-confirm"
         label={t('auth.profile.signOut')}
@@ -234,12 +263,15 @@ function DemoSignOutSheet({
 
 /** Signed-in profile: username, recovery phone, sign out (AC6); a demo account adds Secure (check-in AC8). */
 function AccountProfile({ streaksCard }: { streaksCard?: ReactNode }) {
-  const { navigation, languageRow, safetyRow, debugRow, sheet } = useProfileRows();
+  const { navigation, languageRow, safetyRow, debugRow, sheet } =
+    useProfileRows();
   const { colors } = useTheme();
   const { user, userError, reloadUser, signOut } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmClosing, setConfirmClosing] = useState(false);
+  const statsQuery = useMeStats();
+  const badgesQuery = useBadgesList();
 
   if (!user) {
     return (
@@ -253,7 +285,11 @@ function AccountProfile({ streaksCard }: { streaksCard?: ReactNode }) {
           />
         ) : (
           <>
-            <Skeleton height={COMPANION_RING} radius={COMPANION_RING} width={COMPANION_RING} />
+            <Skeleton
+              height={COMPANION_RING}
+              radius={COMPANION_RING}
+              width={COMPANION_RING}
+            />
             <Skeleton height={spacing[44]} />
             <Skeleton height={spacing[56]} />
           </>
@@ -267,6 +303,27 @@ function AccountProfile({ streaksCard }: { streaksCard?: ReactNode }) {
     : user.recoveryPhonePending
       ? t('auth.profile.phonePending')
       : t('auth.profile.phoneAdd');
+
+  const name = user.displayName ?? `@${user.username}`;
+  const initials = (user.displayName ?? user.username)
+    .slice(0, 2)
+    .toUpperCase();
+  const since = new Date(user.createdAt).toLocaleDateString(getLocale(), {
+    month: 'short',
+    year: 'numeric',
+  });
+  const home =
+    user.preferences?.showHomeRegion && user.homeRegion
+      ? ` · ${user.homeRegion.replaceAll('_', ' ')}`
+      : '';
+  const profileStats = statsQuery.data ?? {
+    peaks: 0,
+    lakes: 0,
+    caves: 0,
+    walkedM: 0,
+    climbedM: 0,
+    spots: 0,
+  };
 
   const onSignOut = async () => {
     setConfirmClosing(true);
@@ -282,13 +339,176 @@ function AccountProfile({ streaksCard }: { streaksCard?: ReactNode }) {
   return (
     <Screen testID="profile.account" scroll bottomInset={false}>
       <View style={styles.hero}>
-        <AccountCompanionBadge />
-        <AppText variant="h2" testID="profile.username" accessibilityRole="header" style={styles.centered}>
+        <View style={styles.identityActions}>
+          <Pressable
+            testID="profile.settings"
+            accessibilityLabel="Settings"
+            onPress={() => navigation.navigate('Settings')}
+          >
+            <Icon name="info" color={colors.ink} />
+          </Pressable>
+          <Pressable
+            testID="profile.share"
+            accessibilityLabel="Share profile"
+            onPress={() => {
+              void Share.share({
+                message: `${name}\n@${user.username}\nirbis://profile/${user.username}`,
+              });
+            }}
+          >
+            <Icon name="share" color={colors.ink} />
+          </Pressable>
+        </View>
+        {user.avatarUrl ? (
+          <Image
+            testID="profile.avatar"
+            source={{ uri: user.avatarUrl }}
+            style={styles.avatar}
+            accessibilityLabel={`${name} profile photo`}
+          />
+        ) : (
+          <View
+            testID="profile.avatar"
+            style={[styles.avatar, { backgroundColor: colors.navActiveBg }]}
+            accessibilityLabel={`${name} initials`}
+          >
+            <AppText variant="h1" style={{ color: colors.navActiveFg }}>
+              {initials}
+            </AppText>
+          </View>
+        )}
+        <AppText
+          variant="h2"
+          testID="profile.name"
+          accessibilityRole="header"
+          style={styles.centered}
+        >
+          {name}
+        </AppText>
+        <AppText
+          variant="body"
+          testID="profile.username"
+          tone="muted"
+          style={styles.centered}
+        >
           {user.username}
         </AppText>
+        <AppText
+          variant="small"
+          testID="profile.meta"
+          tone="muted"
+          style={styles.centered}
+        >
+          @{user.username}
+          {home} · since {since}
+        </AppText>
+        {user.bio ? (
+          <AppText variant="body" style={styles.centered}>
+            {user.bio}
+          </AppText>
+        ) : null}
+        <View testID="profile.level" style={styles.levelRow}>
+          <AccountCompanionBadge />
+          <AppText variant="chip">
+            Level {user.level} · {t(levelMeta(user.level).nameKey)}
+          </AppText>
+        </View>
       </View>
-      {user.isDemo ? <SecureCard onPress={() => navigation.navigate('SecureAccount')} /> : null}
+      {user.isDemo ? (
+        <SecureCard onPress={() => navigation.navigate('SecureAccount')} />
+      ) : null}
       {streaksCard}
+      <View testID="profile.stats" style={styles.section}>
+        <AppText variant="h3">Adventure stats</AppText>
+        <View style={styles.statsGrid}>
+          <Stat
+            testID="profile.stats-peaks"
+            value={String(profileStats.peaks)}
+            label="Peaks"
+          />
+          <Stat
+            testID="profile.stats-lakes"
+            value={String(profileStats.lakes)}
+            label="Lakes"
+          />
+          <Stat
+            testID="profile.stats-caves"
+            value={String(profileStats.caves)}
+            label="Caves"
+          />
+          <Stat
+            testID="profile.stats-walked"
+            value={formatDistance(profileStats.walkedM)}
+            label="Walked"
+          />
+          <Stat
+            testID="profile.stats-climbed"
+            value={formatElevation(profileStats.climbedM)}
+            label="Climbed"
+          />
+          <Stat
+            testID="profile.stats-spots"
+            value={String(profileStats.spots)}
+            label="Spots"
+          />
+        </View>
+        {Object.values(profileStats).every(value => value === 0) ? (
+          <AppText variant="small" tone="muted">
+            Stats start with your first check-in.
+          </AppText>
+        ) : null}
+      </View>
+      <Pressable
+        testID="profile.badges"
+        accessibilityLabel="Open badges"
+        onPress={() => navigation.navigate('Badges')}
+        style={styles.section}
+      >
+        <AppText variant="h3">Badges</AppText>
+        <View style={styles.badgeRow}>
+          {(
+            badgesQuery.data?.items.filter(item => item.showcase).slice(0, 4) ??
+            []
+          ).map(item => (
+            <View
+              key={item.key}
+              style={[styles.badgeDot, { backgroundColor: colors.navActiveBg }]}
+            >
+              <Icon name="star" color={colors.navActiveFg} />
+            </View>
+          ))}
+          {Array.from(
+            {
+              length: Math.max(0, 4 - (badgesQuery.data?.showcase.length ?? 0)),
+            },
+            (_, index) => (
+              <View
+                key={index}
+                style={[styles.badgeDot, { backgroundColor: colors.soft }]}
+              >
+                <Icon name="lock" color={colors.muted} />
+              </View>
+            ),
+          )}
+        </View>
+        <AppText variant="small" tone="muted">
+          {badgesQuery.data?.collected
+            ? `${badgesQuery.data.collected} collected`
+            : 'Badges unlock with check-ins.'}
+        </AppText>
+      </Pressable>
+      <View testID="profile.ratings" style={styles.section}>
+        <AppText variant="h3">Buddy ratings</AppText>
+        <AppText variant="small" tone="muted">
+          No buddy ratings yet.
+        </AppText>
+      </View>
+      <View testID="profile.league" style={styles.section}>
+        <AppText variant="h3">League</AppText>
+        <AppText variant="small" tone="muted">
+          Unranked
+        </AppText>
+      </View>
       <ListCard>
         {languageRow}
         <ListRow
@@ -298,14 +518,29 @@ function AccountProfile({ streaksCard }: { streaksCard?: ReactNode }) {
           icon={<Icon name="phone" color={colors.muted} size={ROW_ICON} />}
           trailing={
             user.hasRecoveryPhone ? (
-              <Icon name="checkCircle" color={colors.pine} accent={colors.white} size={ROW_ICON} />
+              <Icon
+                name="checkCircle"
+                color={colors.pine}
+                accent={colors.white}
+                size={ROW_ICON}
+              />
             ) : (
               <Icon name="chevron" color={colors.stone} size={spacing[18]} />
             )
           }
-          onPress={user.hasRecoveryPhone ? undefined : () => navigation.navigate('RecoveryPhone')}
+          onPress={
+            user.hasRecoveryPhone
+              ? undefined
+              : () => navigation.navigate('RecoveryPhone')
+          }
         />
         {safetyRow}
+        <ListRow
+          testID="profile.marketplace"
+          label="Marketplace"
+          value="Preview"
+          icon={<Icon name="star" color={colors.muted} size={ROW_ICON} />}
+        />
         {debugRow}
       </ListCard>
       <AppButton
@@ -342,6 +577,25 @@ function AccountProfile({ streaksCard }: { streaksCard?: ReactNode }) {
   );
 }
 
+function Stat({
+  testID,
+  value,
+  label,
+}: {
+  testID: string;
+  value: string;
+  label: string;
+}) {
+  return (
+    <View testID={testID} style={styles.stat}>
+      <AppText variant="h3">{value}</AppText>
+      <AppText variant="caption" tone="muted">
+        {label}
+      </AppText>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   hero: { alignItems: 'center', gap: spacing[10], paddingTop: spacing[18] },
   ring: {
@@ -354,6 +608,34 @@ const styles = StyleSheet.create({
   },
   centered: { textAlign: 'center' },
   actions: { gap: spacing[12] },
+  identityActions: {
+    alignSelf: 'stretch',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  avatar: {
+    width: 112,
+    height: 112,
+    borderRadius: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  levelRow: { alignItems: 'center', gap: spacing[8] },
+  section: {
+    backgroundColor: 'transparent',
+    gap: spacing[10],
+    paddingVertical: spacing[8],
+  },
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[12] },
+  stat: { width: '29%', gap: spacing[4] },
+  badgeRow: { flexDirection: 'row', gap: spacing[10] },
+  badgeDot: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 const useCardStyles = createThemedStyles(c => ({

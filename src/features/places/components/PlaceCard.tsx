@@ -14,7 +14,7 @@ import { difficultyBootColor } from '../../../shared/constants/colors';
 import { borders, radii, sizes, spacing } from '../../../shared/constants/spacing';
 import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
 import { t, type Locale } from '../../../shared/i18n';
-import { formatDistance } from '../formatDistance';
+import { formatDistance } from '../../../shared/utils/units';
 import { placeTypes } from '../placeTypes';
 import { localized } from '../screens/PlaceScreen';
 
@@ -45,7 +45,7 @@ export const PlaceCard = memo(function PlaceCard({ place, locale, viewerLevel, o
   const name = localized(place.name, locale);
   const meta = t('places.explore.cardMeta', {
     type: t(info.labelKey),
-    distance: t('places.distanceKm', { d: formatDistance(place.distanceM, locale) }),
+    distance: formatDistance(place.distanceM),
   });
   const difficulty = t('places.difficulty', { d: place.difficulty });
   const status = place.conditionStatus ?? null;

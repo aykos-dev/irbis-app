@@ -43,6 +43,8 @@
 	<string>Irbis finds and joins Campfire game rooms on your local network.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Irbis uses your location to show how far places are from you. Irbis sends your start location to your contact only if you're late.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Irbis uses your photo library when you choose a profile picture.</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>

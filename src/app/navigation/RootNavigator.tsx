@@ -15,6 +15,11 @@ import { QuizScreen } from '../../features/lessons/screens/QuizScreen';
 import { CompanionsScreen } from '../../features/levels/screens/CompanionsScreen';
 import { LevelUpScreen } from '../../features/levels/screens/LevelUpScreen';
 import { LevelScreen } from '../../features/levels/screens/LevelScreen';
+import { DeleteAccountScreen } from '../../features/profile/screens/DeleteAccountScreen';
+import { EditProfileScreen } from '../../features/profile/screens/EditProfileScreen';
+import { NotifsScreen } from '../../features/profile/screens/NotifsScreen';
+import { PublicProfileScreen } from '../../features/profile/screens/PublicProfileScreen';
+import { SettingsScreen } from '../../features/profile/screens/SettingsScreen';
 import { OnboardingNavigator } from '../../features/onboarding/OnboardingNavigator';
 import {
   isOnboardingDone,
@@ -98,6 +103,11 @@ export function RootNavigator() {
       />
       <Stack.Screen name="Level" component={LevelScreen} />
       <Stack.Screen name="Badges" component={BadgesScreen} />
+      <Stack.Screen name="PublicProfile" component={PublicProfileScreen} />
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} />
+      <Stack.Screen name="Notifs" component={NotifsScreen} />
       <Stack.Screen name="Companions" component={CompanionsScreen} />
       <Stack.Screen
         name="Quiz"

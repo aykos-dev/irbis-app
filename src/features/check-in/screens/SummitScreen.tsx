@@ -13,9 +13,8 @@ import { levelUpColors } from '../../../shared/constants/colors';
 import { borders, radii, spacing } from '../../../shared/constants/spacing';
 import { createThemedStyles } from '../../../shared/contexts/theme';
 import { useAuth } from '../../../shared/contexts/auth';
-import { useLocale } from '../../../shared/hooks/useLocale';
 import { t } from '../../../shared/i18n';
-import { formatNumber } from '../../../shared/utils/format';
+import { formatElevation } from '../../../shared/utils/units';
 import { haptics } from '../../../shared/utils/haptics';
 import { qaLog } from '../../../shared/utils/qaLog';
 
@@ -97,13 +96,12 @@ type Props = RootStackScreenProps<'Summit'> & {
 export function SummitScreen({ navigation, route, weekStreak }: Props) {
   const { placeName, placeType, elevationM, queued, counted, xp } = route.params;
   const { user } = useAuth();
-  const locale = useLocale();
   const styles = useStyles();
   const title = placeType === 'peak' ? t('checkin.summit.peak') : t('checkin.summit.other');
   const subtitle =
     elevationM === undefined
       ? placeName
-      : `${placeName} · ${t('checkin.summit.elevation', { m: formatNumber(elevationM, locale) })}`;
+      : `${placeName} · ${formatElevation(elevationM)}`;
 
   const share = () => {
     haptics.tap();

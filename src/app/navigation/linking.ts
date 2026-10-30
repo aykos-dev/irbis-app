@@ -1,10 +1,16 @@
-import { getStateFromPath, type LinkingOptions } from '@react-navigation/native';
+import {
+  getStateFromPath,
+  type LinkingOptions,
+} from '@react-navigation/native';
 
 import { DEBUG_GRANT, parseGrantQuery } from '../../features/debug/grantLink';
 import { DEBUG_HEARTS } from '../../features/debug/heartsLink';
 import { parsePathVisitLink } from '../../features/debug/pathVisitLink';
 import { heartsStore } from '../../features/lessons/heartsStore';
-import { markOnboardingDone, resetOnboarding } from '../../features/onboarding/onboardingStore';
+import {
+  markOnboardingDone,
+  resetOnboarding,
+} from '../../features/onboarding/onboardingStore';
 import { appConfig } from '../../shared/constants/config';
 import { resetGuestMerge } from '../../shared/guest/guestStore';
 import { setLocale, supportedLocales } from '../../shared/i18n';
@@ -32,11 +38,16 @@ type LinkState = ReturnType<typeof getStateFromPath<RootStackParamList>>;
  * so the next sign-in merges again like a fresh install) and restarts it at Splash;
  * `irbis://debug/onboarding/done` marks it ended and opens Debug.
  */
-function debugOnboardingState(action: string, options: Parameters<typeof getStateFromPath>[1]): LinkState {
+function debugOnboardingState(
+  action: string,
+  options: Parameters<typeof getStateFromPath>[1],
+): LinkState {
   if (action === 'reset') {
     resetOnboarding();
     resetGuestMerge();
-    return { routes: [{ name: 'Onboarding', state: { routes: [{ name: 'Splash' }] } }] };
+    return {
+      routes: [{ name: 'Onboarding', state: { routes: [{ name: 'Splash' }] } }],
+    };
   }
   markOnboardingDone();
   return getStateFromPath('debug', options);
@@ -46,39 +57,47 @@ function debugOnboardingState(action: string, options: Parameters<typeof getStat
  * `irbis://debug/lang/<code>` (QA harness): a supported code goes through the same setter as the
  * Profile language sheet (persisted), anything else is ignored; either way the link opens Debug.
  */
-const debugLangParser: Pick<LinkingOptions<RootStackParamList>, 'getStateFromPath'> =
-  appConfig.isQaEnabled
-    ? {
-        getStateFromPath: (path, options) => {
-          const grant = DEBUG_GRANT.exec(path);
-          if (grant) {
-            return { routes: [{ name: 'Debug', params: parseGrantQuery(grant[1] ?? '') }] };
-          }
-          const visit = parsePathVisitLink(path);
-          if (visit) {
-            return { routes: [{ name: 'Debug', params: visit }] };
-          }
-          const hearts = DEBUG_HEARTS.exec(path);
-          if (hearts?.[1]) {
-            heartsStore.setHearts(Number(hearts[1]));
-            return getStateFromPath('debug', options);
-          }
-          const onboarding = DEBUG_ONBOARDING.exec(path);
-          if (onboarding?.[1]) {
-            return debugOnboardingState(onboarding[1], options);
-          }
-          const match = DEBUG_LANG.exec(path);
-          if (!match) {
-            return getStateFromPath(path, options);
-          }
-          const locale = supportedLocales.find(candidate => candidate === match[1]);
-          if (locale) {
-            setLocale(locale);
-          }
+const debugLangParser: Pick<
+  LinkingOptions<RootStackParamList>,
+  'getStateFromPath'
+> = appConfig.isQaEnabled
+  ? {
+      getStateFromPath: (path, options) => {
+        const grant = DEBUG_GRANT.exec(path);
+        if (grant) {
+          return {
+            routes: [
+              { name: 'Debug', params: parseGrantQuery(grant[1] ?? '') },
+            ],
+          };
+        }
+        const visit = parsePathVisitLink(path);
+        if (visit) {
+          return { routes: [{ name: 'Debug', params: visit }] };
+        }
+        const hearts = DEBUG_HEARTS.exec(path);
+        if (hearts?.[1]) {
+          heartsStore.setHearts(Number(hearts[1]));
           return getStateFromPath('debug', options);
-        },
-      }
-    : {};
+        }
+        const onboarding = DEBUG_ONBOARDING.exec(path);
+        if (onboarding?.[1]) {
+          return debugOnboardingState(onboarding[1], options);
+        }
+        const match = DEBUG_LANG.exec(path);
+        if (!match) {
+          return getStateFromPath(path, options);
+        }
+        const locale = supportedLocales.find(
+          candidate => candidate === match[1],
+        );
+        if (locale) {
+          setLocale(locale);
+        }
+        return getStateFromPath('debug', options);
+      },
+    }
+  : {};
 
 export const linking: LinkingOptions<RootStackParamList> = {
   prefixes: ['irbis://'],
@@ -89,6 +108,8 @@ export const linking: LinkingOptions<RootStackParamList> = {
           Profile: 'profile',
         },
       },
+      PublicProfile: 'profile/:username',
+      Notifs: 'notifications',
       Place: 'place/:id',
       ...debugScreens,
     },

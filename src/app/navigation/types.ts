@@ -105,6 +105,12 @@ export type RootStackParamList = {
   Level: undefined;
   /** Full 64-item badge catalogue and the signed-in user's four profile picks. */
   Badges: undefined;
+  /** Public profile opened from search or irbis://profile/:username. */
+  PublicProfile: { username: string };
+  EditProfile: undefined;
+  Settings: undefined;
+  DeleteAccount: undefined;
+  Notifs: undefined;
   /** All seven companions (levels AC6). */
   Companions: undefined;
   /** Full-screen level-up celebration for one pending level-up (levels AC7). */

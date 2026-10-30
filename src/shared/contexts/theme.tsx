@@ -1,4 +1,10 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 import {
   StyleSheet,
   useColorScheme,
@@ -7,7 +13,12 @@ import {
   type ViewStyle,
 } from 'react-native';
 
-import { themeColors, type ColorScheme, type ThemeColors } from '../constants/colors';
+import {
+  themeColors,
+  type ColorScheme,
+  type ThemeColors,
+} from '../constants/colors';
+import { storage } from '../storage';
 
 /**
  * Light/dark tokens. M0 follows the system scheme; Settings → Appearance (Light / Dark / Auto)
@@ -16,7 +27,16 @@ import { themeColors, type ColorScheme, type ThemeColors } from '../constants/co
 type Theme = {
   scheme: ColorScheme;
   colors: ThemeColors;
+  appearance: AppearancePreference;
+  setAppearance: (appearance: AppearancePreference) => void;
 };
+
+export type AppearancePreference = 'light' | 'dark' | 'auto';
+
+function storedAppearance(): AppearancePreference {
+  const value = storage.getString('prefs.colorScheme');
+  return value === 'light' || value === 'dark' ? value : 'auto';
+}
 
 const ThemeContext = createContext<Theme | null>(null);
 
@@ -26,11 +46,27 @@ type ThemeProviderProps = {
   scheme?: ColorScheme;
 };
 
-export function ThemeProvider({ children, scheme: forced }: ThemeProviderProps) {
+export function ThemeProvider({
+  children,
+  scheme: forced,
+}: ThemeProviderProps) {
   const system = useColorScheme();
-  const scheme: ColorScheme = forced ?? (system === 'dark' ? 'dark' : 'light');
-  const value = useMemo(() => ({ scheme, colors: themeColors[scheme] }), [scheme]);
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  const [appearance, setAppearanceState] =
+    useState<AppearancePreference>(storedAppearance);
+  const preferred =
+    appearance === 'auto' ? (system === 'dark' ? 'dark' : 'light') : appearance;
+  const scheme: ColorScheme = forced ?? preferred;
+  const setAppearance = (next: AppearancePreference) => {
+    setAppearanceState(next);
+    storage.setString('prefs.colorScheme', next);
+  };
+  const value = useMemo(
+    () => ({ scheme, colors: themeColors[scheme], appearance, setAppearance }),
+    [scheme, appearance],
+  );
+  return (
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+  );
 }
 
 export function useTheme(): Theme {
