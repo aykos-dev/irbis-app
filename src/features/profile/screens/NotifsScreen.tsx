@@ -23,6 +23,15 @@ import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type Tab = 'all' | NotificationCategory;
 
+function tashkentDay(value: string | Date): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Tashkent',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date(value));
+}
+
 export function NotifsScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
@@ -93,28 +102,47 @@ export function NotifsScreen() {
         />
       ) : query.data?.items.length ? (
         <View testID="notifs.list" style={layout.list}>
-          {query.data.items.map(item => (
-            <View
-              key={item.id}
-              testID={`notifs.item-${item.id}`}
-              style={[layout.item, styles.item]}
-            >
-              {item.readAt ? null : (
-                <View style={[layout.dot, { backgroundColor: colors.teal }]} />
-              )}
-              <View style={layout.copy}>
-                <AppText variant="body">{item.title}</AppText>
-                {item.body ? (
-                  <AppText variant="small" tone="muted">
-                    {item.body}
+          {query.data.items.map((item, index) => {
+            const today =
+              tashkentDay(item.createdAt) === tashkentDay(new Date());
+            const previous = query.data.items[index - 1];
+            const showHeading =
+              index === 0 ||
+              (!!previous &&
+                (tashkentDay(previous.createdAt) ===
+                  tashkentDay(new Date())) !==
+                  today);
+            return (
+              <View key={item.id} style={layout.group}>
+                {showHeading ? (
+                  <AppText variant="chip" tone="muted">
+                    {today ? 'Today' : 'Earlier'}
                   </AppText>
                 ) : null}
-                <AppText variant="caption" tone="muted">
-                  {new Date(item.createdAt).toLocaleString()}
-                </AppText>
+                <View
+                  testID={`notifs.item-${item.id}`}
+                  style={[layout.item, styles.item]}
+                >
+                  {item.readAt ? null : (
+                    <View
+                      style={[layout.dot, { backgroundColor: colors.teal }]}
+                    />
+                  )}
+                  <View style={layout.copy}>
+                    <AppText variant="body">{item.title}</AppText>
+                    {item.body ? (
+                      <AppText variant="small" tone="muted">
+                        {item.body}
+                      </AppText>
+                    ) : null}
+                    <AppText variant="caption" tone="muted">
+                      {new Date(item.createdAt).toLocaleString()}
+                    </AppText>
+                  </View>
+                </View>
               </View>
-            </View>
-          ))}
+            );
+          })}
         </View>
       ) : (
         <EmptyState
@@ -139,6 +167,7 @@ const layout = StyleSheet.create({
     borderRadius: radii.pill,
   },
   list: { gap: spacing[10] },
+  group: { gap: spacing[8] },
   item: {
     minHeight: 80,
     flexDirection: 'row',

@@ -49,14 +49,15 @@ export function SettingsScreen() {
 
   const save = async (
     preferences: MePreferencesInputDto,
-    optimistic?: () => void,
+    optimistic?: () => (() => void) | void,
   ) => {
     const before = user;
-    optimistic?.();
+    const rollback = optimistic?.();
     try {
       const next = await update.mutateAsync({ data: { preferences } });
       setUser(next);
     } catch {
+      rollback?.();
       setUser(before);
       toast.show({
         variant: 'error',
@@ -82,11 +83,17 @@ export function SettingsScreen() {
     }
   };
   const chooseUnits = (units: Units) =>
-    void save({ units }, () => setStoredUnits(units));
+    void save({ units }, () => {
+      const previous = prefs.units;
+      setStoredUnits(units);
+      return () => setStoredUnits(previous);
+    });
   const chooseAppearance = (appearance: Appearance) =>
-    void save({ appearance }, () =>
-      setAppearance(appearance as AppearancePreference),
-    );
+    void save({ appearance }, () => {
+      const previous = prefs.appearance;
+      setAppearance(appearance as AppearancePreference);
+      return () => setAppearance(previous as AppearancePreference);
+    });
 
   return (
     <Screen testID="settings.screen" scroll>
@@ -271,7 +278,7 @@ export function SettingsScreen() {
             testID="settings.help"
             label="Help & feedback"
             icon={<Icon name="info" color={colors.muted} />}
-            onPress={() => navigation.navigate('DeleteAccount')}
+            onPress={() => navigation.navigate('Help')}
           />
         </ListCard>
       </Section>

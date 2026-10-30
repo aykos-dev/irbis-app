@@ -17,6 +17,7 @@ import { LevelUpScreen } from '../../features/levels/screens/LevelUpScreen';
 import { LevelScreen } from '../../features/levels/screens/LevelScreen';
 import { DeleteAccountScreen } from '../../features/profile/screens/DeleteAccountScreen';
 import { EditProfileScreen } from '../../features/profile/screens/EditProfileScreen';
+import { HelpScreen } from '../../features/profile/screens/HelpScreen';
 import { NotifsScreen } from '../../features/profile/screens/NotifsScreen';
 import { PublicProfileScreen } from '../../features/profile/screens/PublicProfileScreen';
 import { SettingsScreen } from '../../features/profile/screens/SettingsScreen';
@@ -108,6 +109,7 @@ export function RootNavigator() {
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} />
+      <Stack.Screen name="Help" component={HelpScreen} />
       <Stack.Screen name="Notifs" component={NotifsScreen} />
       <Stack.Screen name="Search" component={SearchScreen} />
       <Stack.Screen name="Companions" component={CompanionsScreen} />

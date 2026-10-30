@@ -110,6 +110,7 @@ export type RootStackParamList = {
   EditProfile: undefined;
   Settings: undefined;
   DeleteAccount: undefined;
+  Help: undefined;
   Notifs: undefined;
   Search: undefined;
   /** All seven companions (levels AC6). */

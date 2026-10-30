@@ -32,7 +32,9 @@ import {
 } from '../guest/guestStore';
 import { getLocale, setLocale, t } from '../i18n';
 import { storage } from '../storage';
+import { setStoredUnits } from '../utils/units';
 import { qaLog } from '../utils/qaLog';
+import { useTheme } from './theme';
 
 /**
  * Session state (guest-first, ADR-001): guest until a sign-up / log-in / reset succeeds, then
@@ -85,6 +87,7 @@ function isRefusal(error: unknown): boolean {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const { setAppearance } = useTheme();
   const queryClient = useQueryClient();
   const [status, setStatus] = useState<SessionStatus>('loading');
   const [blockedNotice, setBlockedNotice] = useState<BlockedNotice | null>(
@@ -103,6 +106,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const me = useMeGet({
     query: { enabled: status === 'signedIn', staleTime: staleTimes.profile },
   });
+
+  useEffect(() => {
+    if (me.data?.preferences) {
+      setAppearance(me.data.preferences.appearance);
+      setStoredUnits(me.data.preferences.units);
+    }
+  }, [me.data, setAppearance]);
 
   const refreshRef = useRef(refreshAsync);
   refreshRef.current = refreshAsync;
@@ -176,8 +186,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLocale(session.me.locale);
         qaLog('locale_applied', { locale: session.me.locale });
       }
+      if (session.me.preferences) {
+        setAppearance(session.me.preferences.appearance);
+        setStoredUnits(session.me.preferences.units);
+      }
     },
-    [queryClient, mergeGuestData],
+    [queryClient, mergeGuestData, setAppearance],
   );
 
   const setUser = useCallback(
@@ -199,8 +213,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     qaLog('signed_out');
     storage.remove('prefs.colorScheme');
     storage.remove('prefs.units');
+    setAppearance('auto');
     await tokenManager.clear({ reason: 'user' });
-  }, [signOutAsync]);
+  }, [signOutAsync, setAppearance]);
 
   const showBlocked = useCallback((reasonCode?: string) => {
     setBlockedNotice({ reasonCode: reasonCode ?? null });
