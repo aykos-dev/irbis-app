@@ -2,17 +2,23 @@ import { z } from 'zod';
 
 import { storage } from '../../../shared/storage';
 import { qaLog } from '../../../shared/utils/qaLog';
-import type { Pack, PackGame } from './packs';
+import type { PackGame } from './packs';
 
 /** Random number in [0, 1); injected so tests can pin the shuffle. */
 export type Rng = () => number;
 
+/** Games that remember dealt items: the pack games plus GeoCore (pack id = mode). */
+export type UsedGame = PackGame | 'geo';
+
+/** Anything with item ids: a content pack, or GeoCore's countries / cities under a mode id. */
+export type DrawSource = { id: string; items: readonly { id: string }[] };
+
 const usedSchema = z.array(z.string());
 
-const usedKey = (game: PackGame, packId: string) =>
+const usedKey = (game: UsedGame, packId: string) =>
   `camp.used.${game}.${packId}` as const;
 
-export function readUsed(game: PackGame, packId: string): string[] {
+export function readUsed(game: UsedGame, packId: string): string[] {
   const raw = storage.getString(usedKey(game, packId));
   if (!raw) {
     return [];
@@ -42,8 +48,8 @@ export function shuffle<T>(items: readonly T[], rng: Rng): T[] {
  * used. Not enough left → the pack starts over (`camp_pack_reshuffled`).
  */
 export function drawIds(
-  game: PackGame,
-  pack: Pack,
+  game: UsedGame,
+  pack: DrawSource,
   count: number,
   rng: Rng,
 ): string[] {

@@ -1,0 +1,4297 @@
+{
+ "id": "geo-countries",
+ "game": "geo",
+ "source": "Natural Earth 5.1.2 (public domain); uz names: Wikidata labels (CC0), owner review pending",
+ "items": [
+  {
+   "id": "ad",
+   "iso": "AD",
+   "n3": "020",
+   "continent": "Europe",
+   "name": {
+    "uz": "Andorra",
+    "ru": "Андорра",
+    "en": "Andorra"
+   },
+   "lat": 42.548,
+   "lng": 1.539,
+   "capital": {
+    "name": {
+     "uz": "Andorra-la-Velya",
+     "ru": "Андорра-ла-Велья",
+     "en": "Andorra la Vella"
+    },
+    "lat": 42.5,
+    "lng": 1.5165
+   }
+  },
+  {
+   "id": "ae",
+   "iso": "AE",
+   "n3": "784",
+   "continent": "Asia",
+   "name": {
+    "uz": "Birlashgan Arab Amirliklari",
+    "ru": "Объединённые Арабские Эмираты",
+    "en": "United Arab Emirates"
+   },
+   "lat": 23.466,
+   "lng": 54.547,
+   "capital": {
+    "name": {
+     "uz": "Abu Dabi",
+     "ru": "Абу-Даби",
+     "en": "Abu Dhabi"
+    },
+    "lat": 24.4667,
+    "lng": 54.3666
+   }
+  },
+  {
+   "id": "af",
+   "iso": "AF",
+   "n3": "004",
+   "continent": "Asia",
+   "name": {
+    "uz": "Afgʻoniston",
+    "ru": "Афганистан",
+    "en": "Afghanistan"
+   },
+   "lat": 34.164,
+   "lng": 66.497,
+   "capital": {
+    "name": {
+     "uz": "Qobul",
+     "ru": "Кабул",
+     "en": "Kabul"
+    },
+    "lat": 34.5186,
+    "lng": 69.1813
+   }
+  },
+  {
+   "id": "ag",
+   "iso": "AG",
+   "n3": "028",
+   "continent": "North America",
+   "name": {
+    "uz": "Antigua va Barbuda",
+    "ru": "Антигуа и Барбуда",
+    "en": "Antigua and Barbuda"
+   },
+   "lat": 17.352,
+   "lng": -61.791,
+   "capital": {
+    "name": {
+     "uz": "Sent Jons",
+     "ru": "Сент-Джонс",
+     "en": "Saint John's"
+    },
+    "lat": 17.118,
+    "lng": -61.85
+   }
+  },
+  {
+   "id": "al",
+   "iso": "AL",
+   "n3": "008",
+   "continent": "Europe",
+   "name": {
+    "uz": "Albaniya",
+    "ru": "Албания",
+    "en": "Albania"
+   },
+   "lat": 40.655,
+   "lng": 20.114,
+   "capital": {
+    "name": {
+     "uz": "Tirana",
+     "ru": "Тирана",
+     "en": "Tirana"
+    },
+    "lat": 41.3275,
+    "lng": 19.8189
+   }
+  },
+  {
+   "id": "am",
+   "iso": "AM",
+   "n3": "051",
+   "continent": "Asia",
+   "name": {
+    "uz": "Armaniston",
+    "ru": "Армения",
+    "en": "Armenia"
+   },
+   "lat": 40.459,
+   "lng": 44.801,
+   "capital": {
+    "name": {
+     "uz": "Yerevan",
+     "ru": "Ереван",
+     "en": "Yerevan"
+    },
+    "lat": 40.1831,
+    "lng": 44.5116
+   }
+  },
+  {
+   "id": "ao",
+   "iso": "AO",
+   "n3": "024",
+   "continent": "Africa",
+   "name": {
+    "uz": "Angola",
+    "ru": "Ангола",
+    "en": "Angola"
+   },
+   "lat": -12.183,
+   "lng": 17.984,
+   "capital": {
+    "name": {
+     "uz": "Luanda",
+     "ru": "Луанда",
+     "en": "Luanda"
+    },
+    "lat": -8.8363,
+    "lng": 13.2325
+   }
+  },
+  {
+   "id": "ar",
+   "iso": "AR",
+   "n3": "032",
+   "continent": "South America",
+   "name": {
+    "uz": "Argentina",
+    "ru": "Аргентина",
+    "en": "Argentina"
+   },
+   "lat": -33.501,
+   "lng": -64.173,
+   "capital": {
+    "name": {
+     "uz": "Buenos Ayres",
+     "ru": "Буэнос-Айрес",
+     "en": "Buenos Aires"
+    },
+    "lat": -34.6006,
+    "lng": -58.3995
+   }
+  },
+  {
+   "id": "at",
+   "iso": "AT",
+   "n3": "040",
+   "continent": "Europe",
+   "name": {
+    "uz": "Avstriya",
+    "ru": "Австрия",
+    "en": "Austria"
+   },
+   "lat": 47.519,
+   "lng": 14.131,
+   "capital": {
+    "name": {
+     "uz": "Vena",
+     "ru": "Вена",
+     "en": "Vienna"
+    },
+    "lat": 48.202,
+    "lng": 16.3647
+   }
+  },
+  {
+   "id": "au",
+   "iso": "AU",
+   "n3": "036",
+   "continent": "Oceania",
+   "name": {
+    "uz": "Avstraliya",
+    "ru": "Австралия",
+    "en": "Australia"
+   },
+   "lat": -24.13,
+   "lng": 134.05,
+   "capital": {
+    "name": {
+     "uz": "Kanberra",
+     "ru": "Канберра",
+     "en": "Canberra"
+    },
+    "lat": -35.283,
+    "lng": 149.129
+   }
+  },
+  {
+   "id": "az",
+   "iso": "AZ",
+   "n3": "031",
+   "continent": "Asia",
+   "name": {
+    "uz": "Ozarbayjon",
+    "ru": "Азербайджан",
+    "en": "Azerbaijan"
+   },
+   "lat": 40.402,
+   "lng": 47.211,
+   "capital": {
+    "name": {
+     "uz": "Boku",
+     "ru": "Баку",
+     "en": "Baku"
+    },
+    "lat": 40.3972,
+    "lng": 49.8603
+   }
+  },
+  {
+   "id": "ba",
+   "iso": "BA",
+   "n3": "070",
+   "continent": "Europe",
+   "name": {
+    "uz": "Bosniya va Gersegovina",
+    "ru": "Босния и Герцеговина",
+    "en": "Bosnia and Herzegovina"
+   },
+   "lat": 44.091,
+   "lng": 18.068,
+   "capital": {
+    "name": {
+     "uz": "Sarayevo",
+     "ru": "Сараево",
+     "en": "Sarajevo"
+    },
+    "lat": 43.85,
+    "lng": 18.383
+   }
+  },
+  {
+   "id": "bb",
+   "iso": "BB",
+   "n3": "052",
+   "continent": "North America",
+   "name": {
+    "uz": "Barbados",
+    "ru": "Барбадос",
+    "en": "Barbados"
+   },
+   "lat": 13.164,
+   "lng": -59.569,
+   "capital": {
+    "name": {
+     "uz": "Bridjtaun",
+     "ru": "Бриджтаун",
+     "en": "Bridgetown"
+    },
+    "lat": 13.102,
+    "lng": -59.6165
+   }
+  },
+  {
+   "id": "bd",
+   "iso": "BD",
+   "n3": "050",
+   "continent": "Asia",
+   "name": {
+    "uz": "Bangladesh",
+    "ru": "Бангладеш",
+    "en": "Bangladesh"
+   },
+   "lat": 24.215,
+   "lng": 89.685,
+   "capital": {
+    "name": {
+     "uz": "Dakka",
+     "ru": "Дакка",
+     "en": "Dhaka"
+    },
+    "lat": 23.725,
+    "lng": 90.4066
+   }
+  },
+  {
+   "id": "be",
+   "iso": "BE",
+   "n3": "056",
+   "continent": "Europe",
+   "name": {
+    "uz": "Belgiya",
+    "ru": "Бельгия",
+    "en": "Belgium"
+   },
+   "lat": 50.785,
+   "lng": 4.8,
+   "capital": {
+    "name": {
+     "uz": "Bryussel",
+     "ru": "Брюссель",
+     "en": "Brussels"
+    },
+    "lat": 50.8353,
+    "lng": 4.3314
+   }
+  },
+  {
+   "id": "bf",
+   "iso": "BF",
+   "n3": "854",
+   "continent": "Africa",
+   "name": {
+    "uz": "Burkina Faso",
+    "ru": "Буркина-Фасо",
+    "en": "Burkina Faso"
+   },
+   "lat": 12.673,
+   "lng": -1.364,
+   "capital": {
+    "name": {
+     "uz": "Uagadugu",
+     "ru": "Уагадугу",
+     "en": "Ouagadougou"
+    },
+    "lat": 12.3723,
+    "lng": -1.5267
+   }
+  },
+  {
+   "id": "bg",
+   "iso": "BG",
+   "n3": "100",
+   "continent": "Europe",
+   "name": {
+    "uz": "Bolgariya",
+    "ru": "Болгария",
+    "en": "Bulgaria"
+   },
+   "lat": 42.509,
+   "lng": 25.157,
+   "capital": {
+    "name": {
+     "uz": "Sofiya",
+     "ru": "София",
+     "en": "Sofia"
+    },
+    "lat": 42.6853,
+    "lng": 23.3147
+   }
+  },
+  {
+   "id": "bh",
+   "iso": "BH",
+   "n3": "048",
+   "continent": "Asia",
+   "name": {
+    "uz": "Bahrayn",
+    "ru": "Бахрейн",
+    "en": "Bahrain"
+   },
+   "lat": 26.056,
+   "lng": 50.555,
+   "capital": {
+    "name": {
+     "uz": "Manama",
+     "ru": "Манама",
+     "en": "Manama"
+    },
+    "lat": 26.2361,
+    "lng": 50.5831
+   }
+  },
+  {
+   "id": "bi",
+   "iso": "BI",
+   "n3": "108",
+   "continent": "Africa",
+   "name": {
+    "uz": "Burundi",
+    "ru": "Бурунди",
+    "en": "Burundi"
+   },
+   "lat": -3.333,
+   "lng": 29.917,
+   "capital": {
+    "name": {
+     "uz": "Gitega",
+     "ru": "Гитега",
+     "en": "Gitega"
+    },
+    "lat": -3.426,
+    "lng": 29.8436
+   }
+  },
+  {
+   "id": "bj",
+   "iso": "BJ",
+   "n3": "204",
+   "continent": "Africa",
+   "name": {
+    "uz": "Benin",
+    "ru": "Бенин",
+    "en": "Benin"
+   },
+   "lat": 10.325,
+   "lng": 2.352,
+   "capital": {
+    "name": {
+     "uz": "Porto-Novo",
+     "ru": "Порто-Ново",
+     "en": "Porto-Novo"
+    },
+    "lat": 6.4833,
+    "lng": 2.6166
+   }
+  },
+  {
+   "id": "bn",
+   "iso": "BN",
+   "n3": "096",
+   "continent": "Asia",
+   "name": {
+    "uz": "Bruney",
+    "ru": "Бруней",
+    "en": "Brunei"
+   },
+   "lat": 4.448,
+   "lng": 114.552,
+   "capital": {
+    "name": {
+     "uz": "Bandar-Seri-Begavan",
+     "ru": "Бандар-Сери-Бегаван",
+     "en": "Bandar Seri Begawan"
+    },
+    "lat": 4.8833,
+    "lng": 114.9333
+   }
+  },
+  {
+   "id": "bo",
+   "iso": "BO",
+   "n3": "068",
+   "continent": "South America",
+   "name": {
+    "uz": "Boliviya",
+    "ru": "Боливия",
+    "en": "Bolivia"
+   },
+   "lat": -16.666,
+   "lng": -64.593,
+   "capital": {
+    "name": {
+     "uz": "Sukre",
+     "ru": "Сукре",
+     "en": "Sucre"
+    },
+    "lat": -19.041,
+    "lng": -65.2595
+   }
+  },
+  {
+   "id": "br",
+   "iso": "BR",
+   "n3": "076",
+   "continent": "South America",
+   "name": {
+    "uz": "Braziliya",
+    "ru": "Бразилия",
+    "en": "Brazil"
+   },
+   "lat": -12.099,
+   "lng": -49.559,
+   "capital": {
+    "name": {
+     "uz": "Brazilia",
+     "ru": "Бразилиа",
+     "en": "Brasília"
+    },
+    "lat": -15.7814,
+    "lng": -47.918
+   }
+  },
+  {
+   "id": "bs",
+   "iso": "BS",
+   "n3": "044",
+   "continent": "North America",
+   "name": {
+    "uz": "Bagamalar",
+    "ru": "Багамские Острова",
+    "en": "The Bahamas"
+   },
+   "lat": 26.402,
+   "lng": -77.147,
+   "capital": {
+    "name": {
+     "uz": "Nassau",
+     "ru": "Нассау",
+     "en": "Nassau"
+    },
+    "lat": 25.0834,
+    "lng": -77.35
+   }
+  },
+  {
+   "id": "bt",
+   "iso": "BT",
+   "n3": "064",
+   "continent": "Asia",
+   "name": {
+    "uz": "Butan",
+    "ru": "Бутан",
+    "en": "Bhutan"
+   },
+   "lat": 27.537,
+   "lng": 90.04,
+   "capital": {
+    "name": {
+     "uz": "Tximpxu",
+     "ru": "Тхимпху",
+     "en": "Thimphu"
+    },
+    "lat": 27.473,
+    "lng": 89.639
+   }
+  },
+  {
+   "id": "bw",
+   "iso": "BW",
+   "n3": "072",
+   "continent": "Africa",
+   "name": {
+    "uz": "Botsvana",
+    "ru": "Ботсвана",
+    "en": "Botswana"
+   },
+   "lat": -22.103,
+   "lng": 24.179,
+   "capital": {
+    "name": {
+     "uz": "Gaborone",
+     "ru": "Габороне",
+     "en": "Gaborone"
+    },
+    "lat": -24.6463,
+    "lng": 25.9119
+   }
+  },
+  {
+   "id": "by",
+   "iso": "BY",
+   "n3": "112",
+   "continent": "Europe",
+   "name": {
+    "uz": "Belarus",
+    "ru": "Белоруссия",
+    "en": "Belarus"
+   },
+   "lat": 53.822,
+   "lng": 28.418,
+   "capital": {
+    "name": {
+     "uz": "Minsk",
+     "ru": "Минск",
+     "en": "Minsk"
+    },
+    "lat": 53.9019,
+    "lng": 27.5647
+   }
+  },
+  {
+   "id": "bz",
+   "iso": "BZ",
+   "n3": "084",
+   "continent": "North America",
+   "name": {
+    "uz": "Beliz",
+    "ru": "Белиз",
+    "en": "Belize"
+   },
+   "lat": 17.202,
+   "lng": -88.713,
+   "capital": {
+    "name": {
+     "uz": "Belmopan",
+     "ru": "Бельмопан",
+     "en": "Belmopan"
+    },
+    "lat": 17.252,
+    "lng": -88.7671
+   }
+  },
+  {
+   "id": "ca",
+   "iso": "CA",
+   "n3": "124",
+   "continent": "North America",
+   "name": {
+    "uz": "Kanada",
+    "ru": "Канада",
+    "en": "Canada"
+   },
+   "lat": 60.324,
+   "lng": -101.911,
+   "capital": {
+    "name": {
+     "uz": "Ottava",
+     "ru": "Оттава",
+     "en": "Ottawa"
+    },
+    "lat": 45.4186,
+    "lng": -75.702
+   }
+  },
+  {
+   "id": "cd",
+   "iso": "CD",
+   "n3": "180",
+   "continent": "Africa",
+   "name": {
+    "uz": "Kongo Demokratik Respublikasi",
+    "ru": "Демократическая Республика Конго",
+    "en": "Democratic Republic of the Congo"
+   },
+   "lat": -1.858,
+   "lng": 23.459,
+   "capital": {
+    "name": {
+     "uz": "Kinshasa",
+     "ru": "Киншаса",
+     "en": "Kinshasa"
+    },
+    "lat": -4.3278,
+    "lng": 15.313
+   }
+  },
+  {
+   "id": "cf",
+   "iso": "CF",
+   "n3": "140",
+   "continent": "Africa",
+   "name": {
+    "uz": "Markaziy Afrika Respublikasi",
+    "ru": "Центральноафриканская Республика",
+    "en": "Central African Republic"
+   },
+   "lat": 6.99,
+   "lng": 20.907,
+   "capital": {
+    "name": {
+     "uz": "Bangi",
+     "ru": "Банги",
+     "en": "Bangui"
+    },
+    "lat": 4.3666,
+    "lng": 18.5583
+   }
+  },
+  {
+   "id": "cg",
+   "iso": "CG",
+   "n3": "178",
+   "continent": "Africa",
+   "name": {
+    "uz": "Kongo Respublikasi",
+    "ru": "Республика Конго",
+    "en": "Republic of the Congo"
+   },
+   "lat": 0.142,
+   "lng": 15.9,
+   "capital": {
+    "name": {
+     "uz": "Brazzavil",
+     "ru": "Браззавиль",
+     "en": "Brazzaville"
+    },
+    "lat": -4.2572,
+    "lng": 15.2827
+   }
+  },
+  {
+   "id": "ch",
+   "iso": "CH",
+   "n3": "756",
+   "continent": "Europe",
+   "name": {
+    "uz": "Shveysariya",
+    "ru": "Швейцария",
+    "en": "Switzerland"
+   },
+   "lat": 46.719,
+   "lng": 7.464,
+   "capital": {
+    "name": {
+     "uz": "Bern",
+     "ru": "Берн",
+     "en": "Bern"
+    },
+    "lat": 46.9167,
+    "lng": 7.467
+   }
+  },
+  {
+   "id": "ci",
+   "iso": "CI",
+   "n3": "384",
+   "continent": "Africa",
+   "name": {
+    "uz": "Fil Suyak Sohili",
+    "ru": "Кот-д’Ивуар",
+    "en": "Ivory Coast"
+   },
+   "lat": 7.491,
+   "lng": -5.569,
+   "capital": {
+    "name": {
+     "uz": "Yamusukro",
+     "ru": "Ямусукро",
+     "en": "Yamoussoukro"
+    },
+    "lat": 6.8184,
+    "lng": -5.2755
+   }
+  },
+  {
+   "id": "cl",
+   "iso": "CL",
+   "n3": "152",
+   "continent": "South America",
+   "name": {
+    "uz": "Chili",
+    "ru": "Чили",
+    "en": "Chile"
+   },
+   "lat": -38.152,
+   "lng": -72.319,
+   "capital": {
+    "name": {
+     "uz": "Santiyago",
+     "ru": "Сантьяго",
+     "en": "Santiago"
+    },
+    "lat": -33.4481,
+    "lng": -70.669
+   }
+  },
+  {
+   "id": "cm",
+   "iso": "CM",
+   "n3": "120",
+   "continent": "Africa",
+   "name": {
+    "uz": "Kamerun",
+    "ru": "Камерун",
+    "en": "Cameroon"
+   },
+   "lat": 4.585,
+   "lng": 12.473,
+   "capital": {
+    "name": {
+     "uz": "Yaunde",
+     "ru": "Яунде",
+     "en": "Yaoundé"
+    },
+    "lat": 3.8686,
+    "lng": 11.5147
+   }
+  },
+  {
+   "id": "cn",
+   "iso": "CN",
+   "n3": "156",
+   "continent": "Asia",
+   "name": {
+    "uz": "Xitoy Xalq Respublikasi",
+    "ru": "Китайская Народная Республика",
+    "en": "People's Republic of China"
+   },
+   "lat": 32.498,
+   "lng": 106.337,
+   "capital": {
+    "name": {
+     "uz": "Pekin",
+     "ru": "Пекин",
+     "en": "Beijing"
+    },
+    "lat": 39.9308,
+    "lng": 116.3863
+   }
+  },
+  {
+   "id": "co",
+   "iso": "CO",
+   "n3": "170",
+   "continent": "South America",
+   "name": {
+    "uz": "Kolumbiya",
+    "ru": "Колумбия",
+    "en": "Colombia"
+   },
+   "lat": 3.373,
+   "lng": -73.174,
+   "capital": {
+    "name": {
+     "uz": "Bogota",
+     "ru": "Богота",
+     "en": "Bogotá"
+    },
+    "lat": 4.5984,
+    "lng": -74.0853
+   }
+  },
+  {
+   "id": "cr",
+   "iso": "CR",
+   "n3": "188",
+   "continent": "North America",
+   "name": {
+    "uz": "Kosta Rika",
+    "ru": "Коста-Рика",
+    "en": "Costa Rica"
+   },
+   "lat": 10.065,
+   "lng": -84.078,
+   "capital": {
+    "name": {
+     "uz": "San Xose",
+     "ru": "Сан-Хосе",
+     "en": "San José"
+    },
+    "lat": 9.937,
+    "lng": -84.086
+   }
+  },
+  {
+   "id": "cu",
+   "iso": "CU",
+   "n3": "192",
+   "continent": "North America",
+   "name": {
+    "uz": "Kuba",
+    "ru": "Куба",
+    "en": "Cuba"
+   },
+   "lat": 21.334,
+   "lng": -77.976,
+   "capital": {
+    "name": {
+     "uz": "Gavana",
+     "ru": "Гавана",
+     "en": "Havana"
+    },
+    "lat": 23.1339,
+    "lng": -82.3661
+   }
+  },
+  {
+   "id": "cv",
+   "iso": "CV",
+   "n3": "132",
+   "continent": "Africa",
+   "name": {
+    "uz": "Kabo Verde",
+    "ru": "Кабо-Верде",
+    "en": "Cape Verde"
+   },
+   "lat": 15.075,
+   "lng": -23.639,
+   "capital": {
+    "name": {
+     "uz": "Praya",
+     "ru": "Прая",
+     "en": "Praia"
+    },
+    "lat": 14.9167,
+    "lng": -23.5167
+   }
+  },
+  {
+   "id": "cy",
+   "iso": "CY",
+   "n3": "196",
+   "continent": "Asia",
+   "name": {
+    "uz": "Kipr",
+    "ru": "Кипр",
+    "en": "Cyprus"
+   },
+   "lat": 34.913,
+   "lng": 33.084,
+   "capital": {
+    "name": {
+     "uz": "Nikosiya",
+     "ru": "Никосия",
+     "en": "Nicosia"
+    },
+    "lat": 35.1667,
+    "lng": 33.3666
+   }
+  },
+  {
+   "id": "cz",
+   "iso": "CZ",
+   "n3": "203",
+   "continent": "Europe",
+   "name": {
+    "uz": "Chexiya",
+    "ru": "Чехия",
+    "en": "Czech Republic"
+   },
+   "lat": 49.882,
+   "lng": 15.378,
+   "capital": {
+    "name": {
+     "uz": "Praga",
+     "ru": "Прага",
+     "en": "Prague"
+    },
+    "lat": 50.0853,
+    "lng": 14.464
+   }
+  },
+  {
+   "id": "de",
+   "iso": "DE",
+   "n3": "276",
+   "continent": "Europe",
+   "name": {
+    "uz": "Germaniya",
+    "ru": "Германия",
+    "en": "Germany"
+   },
+   "lat": 50.962,
+   "lng": 9.678,
+   "capital": {
+    "name": {
+     "uz": "Berlin",
+     "ru": "Берлин",
+     "en": "Berlin"
+    },
+    "lat": 52.5238,
+    "lng": 13.3996
+   }
+  },
+  {
+   "id": "dj",
+   "iso": "DJ",
+   "n3": "262",
+   "continent": "Africa",
+   "name": {
+    "uz": "Jibuti",
+    "ru": "Джибути",
+    "en": "Djibouti"
+   },
+   "lat": 11.976,
+   "lng": 42.499,
+   "capital": {
+    "name": {
+     "uz": "Jibuti",
+     "ru": "Джибути",
+     "en": "Djibouti"
+    },
+    "lat": 11.595,
+    "lng": 43.148
+   }
+  },
+  {
+   "id": "dk",
+   "iso": "DK",
+   "n3": "208",
+   "continent": "Europe",
+   "name": {
+    "uz": "Daniya",
+    "ru": "Дания",
+    "en": "Denmark"
+   },
+   "lat": 55.967,
+   "lng": 9.018,
+   "capital": {
+    "name": {
+     "uz": "Kopengagen",
+     "ru": "Копенгаген",
+     "en": "Copenhagen"
+    },
+    "lat": 55.6805,
+    "lng": 12.5615
+   }
+  },
+  {
+   "id": "dm",
+   "iso": "DM",
+   "n3": "212",
+   "continent": "North America",
+   "name": {
+    "uz": "Dominika",
+    "ru": "Доминика",
+    "en": "Dominica"
+   },
+   "lat": 15.459,
+   "lng": -61.345,
+   "capital": {
+    "name": {
+     "uz": "Rozo",
+     "ru": "Розо",
+     "en": "Roseau"
+    },
+    "lat": 15.301,
+    "lng": -61.387
+   }
+  },
+  {
+   "id": "do",
+   "iso": "DO",
+   "n3": "214",
+   "continent": "North America",
+   "name": {
+    "uz": "Dominikana Respublikasi",
+    "ru": "Доминиканская Республика",
+    "en": "Dominican Republic"
+   },
+   "lat": 19.104,
+   "lng": -70.654,
+   "capital": {
+    "name": {
+     "uz": "Santa Domingo",
+     "ru": "Санто-Доминго",
+     "en": "Santo Domingo"
+    },
+    "lat": 18.472,
+    "lng": -69.902
+   }
+  },
+  {
+   "id": "dz",
+   "iso": "DZ",
+   "n3": "012",
+   "continent": "Africa",
+   "name": {
+    "uz": "Jazoir",
+    "ru": "Алжир",
+    "en": "Algeria"
+   },
+   "lat": 27.397,
+   "lng": 2.808,
+   "capital": {
+    "name": {
+     "uz": "Jazoir",
+     "ru": "Алжир",
+     "en": "Algiers"
+    },
+    "lat": 36.765,
+    "lng": 3.0486
+   }
+  },
+  {
+   "id": "ec",
+   "iso": "EC",
+   "n3": "218",
+   "continent": "South America",
+   "name": {
+    "uz": "Ekvador",
+    "ru": "Эквадор",
+    "en": "Ecuador"
+   },
+   "lat": -1.259,
+   "lng": -78.188,
+   "capital": {
+    "name": {
+     "uz": "Kito",
+     "ru": "Кито",
+     "en": "Quito"
+    },
+    "lat": -0.213,
+    "lng": -78.502
+   }
+  },
+  {
+   "id": "ee",
+   "iso": "EE",
+   "n3": "233",
+   "continent": "Europe",
+   "name": {
+    "uz": "Estoniya",
+    "ru": "Эстония",
+    "en": "Estonia"
+   },
+   "lat": 58.725,
+   "lng": 25.867,
+   "capital": {
+    "name": {
+     "uz": "Tallinn",
+     "ru": "Таллин",
+     "en": "Tallinn"
+    },
+    "lat": 59.4339,
+    "lng": 24.728
+   }
+  },
+  {
+   "id": "eg",
+   "iso": "EG",
+   "n3": "818",
+   "continent": "Africa",
+   "name": {
+    "uz": "Misr",
+    "ru": "Египет",
+    "en": "Egypt"
+   },
+   "lat": 26.186,
+   "lng": 29.446,
+   "capital": {
+    "name": {
+     "uz": "Qohira",
+     "ru": "Каир",
+     "en": "Cairo"
+    },
+    "lat": 30.0519,
+    "lng": 31.248
+   }
+  },
+  {
+   "id": "er",
+   "iso": "ER",
+   "n3": "232",
+   "continent": "Africa",
+   "name": {
+    "uz": "Eritreya",
+    "ru": "Эритрея",
+    "en": "Eritrea"
+   },
+   "lat": 15.787,
+   "lng": 38.286,
+   "capital": {
+    "name": {
+     "uz": "Asmera",
+     "ru": "Асмэра",
+     "en": "Asmara"
+    },
+    "lat": 15.3333,
+    "lng": 38.9333
+   }
+  },
+  {
+   "id": "es",
+   "iso": "ES",
+   "n3": "724",
+   "continent": "Europe",
+   "name": {
+    "uz": "Ispaniya",
+    "ru": "Испания",
+    "en": "Spain"
+   },
+   "lat": 40.091,
+   "lng": -3.465,
+   "capital": {
+    "name": {
+     "uz": "Madrid",
+     "ru": "Мадрид",
+     "en": "Madrid"
+    },
+    "lat": 40.402,
+    "lng": -3.6853
+   }
+  },
+  {
+   "id": "et",
+   "iso": "ET",
+   "n3": "231",
+   "continent": "Africa",
+   "name": {
+    "uz": "Efiopiya",
+    "ru": "Эфиопия",
+    "en": "Ethiopia"
+   },
+   "lat": 8.033,
+   "lng": 39.089,
+   "capital": {
+    "name": {
+     "uz": "Addis-Abeba",
+     "ru": "Аддис-Абеба",
+     "en": "Addis Ababa"
+    },
+    "lat": 9.0353,
+    "lng": 38.6981
+   }
+  },
+  {
+   "id": "fi",
+   "iso": "FI",
+   "n3": "246",
+   "continent": "Europe",
+   "name": {
+    "uz": "Finlandiya",
+    "ru": "Финляндия",
+    "en": "Finland"
+   },
+   "lat": 63.252,
+   "lng": 27.276,
+   "capital": {
+    "name": {
+     "uz": "Helsinki",
+     "ru": "Хельсинки",
+     "en": "Helsinki"
+    },
+    "lat": 60.1775,
+    "lng": 24.9322
+   }
+  },
+  {
+   "id": "fj",
+   "iso": "FJ",
+   "n3": "242",
+   "continent": "Oceania",
+   "name": {
+    "uz": "Fiji",
+    "ru": "Фиджи",
+    "en": "Fiji"
+   },
+   "lat": -17.826,
+   "lng": 177.975,
+   "capital": {
+    "name": {
+     "uz": "Suva",
+     "ru": "Сува",
+     "en": "Suva"
+    },
+    "lat": -18.133,
+    "lng": 178.4417
+   }
+  },
+  {
+   "id": "fm",
+   "iso": "FM",
+   "n3": "583",
+   "continent": "Oceania",
+   "name": {
+    "uz": "Mikroneziya Federativ Shtatlari",
+    "ru": "Микронезия",
+    "en": "Federated States of Micronesia"
+   },
+   "lat": 6.888,
+   "lng": 158.234,
+   "capital": {
+    "name": {
+     "uz": "Palikir",
+     "ru": "Паликир",
+     "en": "Palikir"
+    },
+    "lat": 6.9166,
+    "lng": 158.15
+   }
+  },
+  {
+   "id": "fr",
+   "iso": "FR",
+   "n3": "250",
+   "continent": "Europe",
+   "name": {
+    "uz": "Fransiya",
+    "ru": "Франция",
+    "en": "France"
+   },
+   "lat": 46.696,
+   "lng": 2.552,
+   "capital": {
+    "name": {
+     "uz": "Parij",
+     "ru": "Париж",
+     "en": "Paris"
+    },
+    "lat": 48.8686,
+    "lng": 2.3314
+   }
+  },
+  {
+   "id": "ga",
+   "iso": "GA",
+   "n3": "266",
+   "continent": "Africa",
+   "name": {
+    "uz": "Gabon",
+    "ru": "Габон",
+    "en": "Gabon"
+   },
+   "lat": -0.438,
+   "lng": 11.836,
+   "capital": {
+    "name": {
+     "uz": "Librevil",
+     "ru": "Либревиль",
+     "en": "Libreville"
+    },
+    "lat": 0.3854,
+    "lng": 9.458
+   }
+  },
+  {
+   "id": "gb",
+   "iso": "GB",
+   "n3": "826",
+   "continent": "Europe",
+   "name": {
+    "uz": "Birlashgan Qirollik",
+    "ru": "Великобритания",
+    "en": "United Kingdom"
+   },
+   "lat": 54.403,
+   "lng": -2.116,
+   "capital": {
+    "name": {
+     "uz": "London",
+     "ru": "Лондон",
+     "en": "London"
+    },
+    "lat": 51.5019,
+    "lng": -0.1187
+   }
+  },
+  {
+   "id": "gd",
+   "iso": "GD",
+   "n3": "308",
+   "continent": "North America",
+   "name": {
+    "uz": "Grenada",
+    "ru": "Гренада",
+    "en": "Grenada"
+   },
+   "lat": 12.113,
+   "lng": -61.68,
+   "capital": {
+    "name": {
+     "uz": "Sent-jorjes",
+     "ru": "Сент-Джорджес",
+     "en": "St. George's"
+    },
+    "lat": 12.0526,
+    "lng": -61.7416
+   }
+  },
+  {
+   "id": "ge",
+   "iso": "GE",
+   "n3": "268",
+   "continent": "Asia",
+   "name": {
+    "uz": "Gurjiston",
+    "ru": "Грузия",
+    "en": "Georgia"
+   },
+   "lat": 41.87,
+   "lng": 43.736,
+   "capital": {
+    "name": {
+     "uz": "Tbilisi",
+     "ru": "Тбилиси",
+     "en": "Tbilisi"
+    },
+    "lat": 41.727,
+    "lng": 44.7888
+   }
+  },
+  {
+   "id": "gh",
+   "iso": "GH",
+   "n3": "288",
+   "continent": "Africa",
+   "name": {
+    "uz": "Gana",
+    "ru": "Гана",
+    "en": "Ghana"
+   },
+   "lat": 7.718,
+   "lng": -1.037,
+   "capital": {
+    "name": {
+     "uz": "Akkra",
+     "ru": "Аккра",
+     "en": "Accra"
+    },
+    "lat": 5.552,
+    "lng": -0.2187
+   }
+  },
+  {
+   "id": "gm",
+   "iso": "GM",
+   "n3": "270",
+   "continent": "Africa",
+   "name": {
+    "uz": "Gambia",
+    "ru": "Гамбия",
+    "en": "The Gambia"
+   },
+   "lat": 13.642,
+   "lng": -14.998,
+   "capital": {
+    "name": {
+     "uz": "Banjul",
+     "ru": "Банжул",
+     "en": "Banjul"
+    },
+    "lat": 13.4539,
+    "lng": -16.5917
+   }
+  },
+  {
+   "id": "gn",
+   "iso": "GN",
+   "n3": "324",
+   "continent": "Africa",
+   "name": {
+    "uz": "Gvineya",
+    "ru": "Гвинея",
+    "en": "Guinea"
+   },
+   "lat": 10.619,
+   "lng": -10.016,
+   "capital": {
+    "name": {
+     "uz": "Konakri",
+     "ru": "Конакри",
+     "en": "Conakry"
+    },
+    "lat": 9.5335,
+    "lng": -13.6822
+   }
+  },
+  {
+   "id": "gq",
+   "iso": "GQ",
+   "n3": "226",
+   "continent": "Africa",
+   "name": {
+    "uz": "Ekvatorli Gvineya",
+    "ru": "Экваториальная Гвинея",
+    "en": "Equatorial Guinea"
+   },
+   "lat": 2.333,
+   "lng": 8.99,
+   "capital": {
+    "name": {
+     "uz": "Malabo",
+     "ru": "Малабо",
+     "en": "Malabo"
+    },
+    "lat": 3.75,
+    "lng": 8.7833
+   }
+  },
+  {
+   "id": "gr",
+   "iso": "GR",
+   "n3": "300",
+   "continent": "Europe",
+   "name": {
+    "uz": "Yunoniston",
+    "ru": "Греция",
+    "en": "Greece"
+   },
+   "lat": 39.493,
+   "lng": 21.726,
+   "capital": {
+    "name": {
+     "uz": "Afina",
+     "ru": "Афины",
+     "en": "Athens"
+    },
+    "lat": 37.9853,
+    "lng": 23.7314
+   }
+  },
+  {
+   "id": "gt",
+   "iso": "GT",
+   "n3": "320",
+   "continent": "North America",
+   "name": {
+    "uz": "Gvatemala",
+    "ru": "Гватемала",
+    "en": "Guatemala"
+   },
+   "lat": 14.982,
+   "lng": -90.497,
+   "capital": {
+    "name": {
+     "uz": "Gvatemala shahri",
+     "ru": "Гватемала",
+     "en": "Guatemala City"
+    },
+    "lat": 14.6231,
+    "lng": -90.5289
+   }
+  },
+  {
+   "id": "gw",
+   "iso": "GW",
+   "n3": "624",
+   "continent": "Africa",
+   "name": {
+    "uz": "Gvineya-Bissau",
+    "ru": "Гвинея-Бисау",
+    "en": "Guinea-Bissau"
+   },
+   "lat": 12.164,
+   "lng": -14.524,
+   "capital": {
+    "name": {
+     "uz": "Bisau",
+     "ru": "Бисау",
+     "en": "Bissau"
+    },
+    "lat": 11.865,
+    "lng": -15.5984
+   }
+  },
+  {
+   "id": "gy",
+   "iso": "GY",
+   "n3": "328",
+   "continent": "South America",
+   "name": {
+    "uz": "Gayana",
+    "ru": "Гайана",
+    "en": "Guyana"
+   },
+   "lat": 5.124,
+   "lng": -58.943,
+   "capital": {
+    "name": {
+     "uz": "Jorjtaun",
+     "ru": "Джорджтаун",
+     "en": "Georgetown"
+    },
+    "lat": 6.802,
+    "lng": -58.167
+   }
+  },
+  {
+   "id": "hn",
+   "iso": "HN",
+   "n3": "340",
+   "continent": "North America",
+   "name": {
+    "uz": "Gonduras",
+    "ru": "Гондурас",
+    "en": "Honduras"
+   },
+   "lat": 14.795,
+   "lng": -86.888,
+   "capital": {
+    "name": {
+     "uz": "Tegusigalpa",
+     "ru": "Тегусигальпа",
+     "en": "Tegucigalpa"
+    },
+    "lat": 14.104,
+    "lng": -87.2195
+   }
+  },
+  {
+   "id": "hr",
+   "iso": "HR",
+   "n3": "191",
+   "continent": "Europe",
+   "name": {
+    "uz": "Xorvatiya",
+    "ru": "Хорватия",
+    "en": "Croatia"
+   },
+   "lat": 45.806,
+   "lng": 16.372,
+   "capital": {
+    "name": {
+     "uz": "Zagreb",
+     "ru": "Загреб",
+     "en": "Zagreb"
+    },
+    "lat": 45.8,
+    "lng": 16.0
+   }
+  },
+  {
+   "id": "ht",
+   "iso": "HT",
+   "n3": "332",
+   "continent": "North America",
+   "name": {
+    "uz": "Gaiti",
+    "ru": "Республика Гаити",
+    "en": "Haiti"
+   },
+   "lat": 19.264,
+   "lng": -72.224,
+   "capital": {
+    "name": {
+     "uz": "Port-o-Prens",
+     "ru": "Порт-о-Пренс",
+     "en": "Port-au-Prince"
+    },
+    "lat": 18.543,
+    "lng": -72.338
+   }
+  },
+  {
+   "id": "hu",
+   "iso": "HU",
+   "n3": "348",
+   "continent": "Europe",
+   "name": {
+    "uz": "Mojariston",
+    "ru": "Венгрия",
+    "en": "Hungary"
+   },
+   "lat": 47.087,
+   "lng": 19.448,
+   "capital": {
+    "name": {
+     "uz": "Budapesht",
+     "ru": "Будапешт",
+     "en": "Budapest"
+    },
+    "lat": 47.502,
+    "lng": 19.0814
+   }
+  },
+  {
+   "id": "id",
+   "iso": "ID",
+   "n3": "360",
+   "continent": "Asia",
+   "name": {
+    "uz": "Indoneziya",
+    "ru": "Индонезия",
+    "en": "Indonesia"
+   },
+   "lat": -0.954,
+   "lng": 101.893,
+   "capital": {
+    "name": {
+     "uz": "Jakarta",
+     "ru": "Джакарта",
+     "en": "Jakarta"
+    },
+    "lat": -6.1725,
+    "lng": 106.8275
+   }
+  },
+  {
+   "id": "ie",
+   "iso": "IE",
+   "n3": "372",
+   "continent": "Europe",
+   "name": {
+    "uz": "Irlandiya",
+    "ru": "Ирландия",
+    "en": "Ireland"
+   },
+   "lat": 53.079,
+   "lng": -7.799,
+   "capital": {
+    "name": {
+     "uz": "Dublin",
+     "ru": "Дублин",
+     "en": "Dublin"
+    },
+    "lat": 53.335,
+    "lng": -6.2509
+   }
+  },
+  {
+   "id": "il",
+   "iso": "IL",
+   "n3": "376",
+   "continent": "Asia",
+   "name": {
+    "uz": "Isroil",
+    "ru": "Израиль",
+    "en": "Israel"
+   },
+   "lat": 30.911,
+   "lng": 34.848,
+   "capital": {
+    "name": {
+     "uz": "Quddus",
+     "ru": "Иерусалим",
+     "en": "Jerusalem"
+    },
+    "lat": 31.7784,
+    "lng": 35.2066
+   }
+  },
+  {
+   "id": "in",
+   "iso": "IN",
+   "n3": "356",
+   "continent": "Asia",
+   "name": {
+    "uz": "Hindiston",
+    "ru": "Индия",
+    "en": "India"
+   },
+   "lat": 22.687,
+   "lng": 79.358,
+   "capital": {
+    "name": {
+     "uz": "Nyu Deli",
+     "ru": "Нью-Дели",
+     "en": "New Delhi"
+    },
+    "lat": 28.6,
+    "lng": 77.2
+   }
+  },
+  {
+   "id": "iq",
+   "iso": "IQ",
+   "n3": "368",
+   "continent": "Asia",
+   "name": {
+    "uz": "Iroq",
+    "ru": "Ирак",
+    "en": "Iraq"
+   },
+   "lat": 33.094,
+   "lng": 43.262,
+   "capital": {
+    "name": {
+     "uz": "Bagʻdod",
+     "ru": "Багдад",
+     "en": "Baghdad"
+    },
+    "lat": 33.3406,
+    "lng": 44.3919
+   }
+  },
+  {
+   "id": "ir",
+   "iso": "IR",
+   "n3": "364",
+   "continent": "Asia",
+   "name": {
+    "uz": "Eron",
+    "ru": "Иран",
+    "en": "Iran"
+   },
+   "lat": 32.166,
+   "lng": 54.931,
+   "capital": {
+    "name": {
+     "uz": "Tehron",
+     "ru": "Тегеран",
+     "en": "Tehran"
+    },
+    "lat": 35.6739,
+    "lng": 51.4224
+   }
+  },
+  {
+   "id": "is",
+   "iso": "IS",
+   "n3": "352",
+   "continent": "Europe",
+   "name": {
+    "uz": "Islandiya",
+    "ru": "Исландия",
+    "en": "Iceland"
+   },
+   "lat": 64.779,
+   "lng": -18.674,
+   "capital": {
+    "name": {
+     "uz": "Reykyavik",
+     "ru": "Рейкьявик",
+     "en": "Reykjavík"
+    },
+    "lat": 64.15,
+    "lng": -21.95
+   }
+  },
+  {
+   "id": "it",
+   "iso": "IT",
+   "n3": "380",
+   "continent": "Europe",
+   "name": {
+    "uz": "Italiya",
+    "ru": "Италия",
+    "en": "Italy"
+   },
+   "lat": 44.732,
+   "lng": 11.077,
+   "capital": {
+    "name": {
+     "uz": "Rim",
+     "ru": "Рим",
+     "en": "Rome"
+    },
+    "lat": 41.8979,
+    "lng": 12.4813
+   }
+  },
+  {
+   "id": "jm",
+   "iso": "JM",
+   "n3": "388",
+   "continent": "North America",
+   "name": {
+    "uz": "Yamayka",
+    "ru": "Ямайка",
+    "en": "Jamaica"
+   },
+   "lat": 18.137,
+   "lng": -77.319,
+   "capital": {
+    "name": {
+     "uz": "Kingston",
+     "ru": "Кингстон",
+     "en": "Kingston"
+    },
+    "lat": 17.9771,
+    "lng": -76.7674
+   }
+  },
+  {
+   "id": "jo",
+   "iso": "JO",
+   "n3": "400",
+   "continent": "Asia",
+   "name": {
+    "uz": "Iordaniya",
+    "ru": "Иордания",
+    "en": "Jordan"
+   },
+   "lat": 30.805,
+   "lng": 36.376,
+   "capital": {
+    "name": {
+     "uz": "Amman",
+     "ru": "Амман",
+     "en": "Amman"
+    },
+    "lat": 31.952,
+    "lng": 35.9314
+   }
+  },
+  {
+   "id": "jp",
+   "iso": "JP",
+   "n3": "392",
+   "continent": "Asia",
+   "name": {
+    "uz": "Yaponiya",
+    "ru": "Япония",
+    "en": "Japan"
+   },
+   "lat": 36.143,
+   "lng": 138.442,
+   "capital": {
+    "name": {
+     "uz": "Tokio",
+     "ru": "Токио",
+     "en": "Tokyo"
+    },
+    "lat": 35.687,
+    "lng": 139.7495
+   }
+  },
+  {
+   "id": "ke",
+   "iso": "KE",
+   "n3": "404",
+   "continent": "Africa",
+   "name": {
+    "uz": "Keniya",
+    "ru": "Кения",
+    "en": "Kenya"
+   },
+   "lat": 0.549,
+   "lng": 37.908,
+   "capital": {
+    "name": {
+     "uz": "Nayrobi",
+     "ru": "Найроби",
+     "en": "Nairobi"
+    },
+    "lat": -1.2814,
+    "lng": 36.8147
+   }
+  },
+  {
+   "id": "kg",
+   "iso": "KG",
+   "n3": "417",
+   "continent": "Asia",
+   "name": {
+    "uz": "Qirgʻiziston",
+    "ru": "Киргизия",
+    "en": "Kyrgyzstan"
+   },
+   "lat": 41.669,
+   "lng": 74.533,
+   "capital": {
+    "name": {
+     "uz": "Bishkek",
+     "ru": "Бишкек",
+     "en": "Bishkek"
+    },
+    "lat": 42.875,
+    "lng": 74.5833
+   }
+  },
+  {
+   "id": "kh",
+   "iso": "KH",
+   "n3": "116",
+   "continent": "Asia",
+   "name": {
+    "uz": "Kambodja",
+    "ru": "Камбоджа",
+    "en": "Cambodia"
+   },
+   "lat": 12.648,
+   "lng": 104.505,
+   "capital": {
+    "name": {
+     "uz": "Pnompen",
+     "ru": "Пномпень",
+     "en": "Phnom Penh"
+    },
+    "lat": 11.552,
+    "lng": 104.9147
+   }
+  },
+  {
+   "id": "ki",
+   "iso": "KI",
+   "n3": "296",
+   "continent": "Oceania",
+   "name": {
+    "uz": "Kiribati",
+    "ru": "Кирибати",
+    "en": "Kiribati"
+   },
+   "lat": 1.82,
+   "lng": -157.385,
+   "capital": {
+    "name": {
+     "uz": "South Tarawa",
+     "ru": "Южная Тарава",
+     "en": "South Tarawa"
+    },
+    "lat": 1.3382,
+    "lng": 173.0176
+   }
+  },
+  {
+   "id": "km",
+   "iso": "KM",
+   "n3": "174",
+   "continent": "Africa",
+   "name": {
+    "uz": "Komoros",
+    "ru": "Коморы",
+    "en": "Comoros"
+   },
+   "lat": -11.728,
+   "lng": 43.318,
+   "capital": {
+    "name": {
+     "uz": "Moroni",
+     "ru": "Морони",
+     "en": "Moroni"
+    },
+    "lat": -11.7042,
+    "lng": 43.2402
+   }
+  },
+  {
+   "id": "kn",
+   "iso": "KN",
+   "n3": "659",
+   "continent": "North America",
+   "name": {
+    "uz": "Saint Kitts va Nevis",
+    "ru": "Сент-Китс и Невис",
+    "en": "Saint Kitts and Nevis"
+   },
+   "lat": 17.337,
+   "lng": -62.758,
+   "capital": {
+    "name": {
+     "uz": "Baster",
+     "ru": "Бастер",
+     "en": "Basseterre"
+    },
+    "lat": 17.302,
+    "lng": -62.717
+   }
+  },
+  {
+   "id": "kp",
+   "iso": "KP",
+   "n3": "408",
+   "continent": "Asia",
+   "name": {
+    "uz": "Koreya Xalq Demokratik Respublikasi",
+    "ru": "КНДР",
+    "en": "North Korea"
+   },
+   "lat": 39.885,
+   "lng": 126.445,
+   "capital": {
+    "name": {
+     "uz": "Pxenyan",
+     "ru": "Пхеньян",
+     "en": "Pyongyang"
+    },
+    "lat": 39.0214,
+    "lng": 125.7527
+   }
+  },
+  {
+   "id": "kr",
+   "iso": "KR",
+   "n3": "410",
+   "continent": "Asia",
+   "name": {
+    "uz": "Koreya Respublikasi",
+    "ru": "Республика Корея",
+    "en": "South Korea"
+   },
+   "lat": 36.385,
+   "lng": 128.13,
+   "capital": {
+    "name": {
+     "uz": "Seul",
+     "ru": "Сеул",
+     "en": "Seoul"
+    },
+    "lat": 37.5683,
+    "lng": 126.9978
+   }
+  },
+  {
+   "id": "kw",
+   "iso": "KW",
+   "n3": "414",
+   "continent": "Asia",
+   "name": {
+    "uz": "Quvayt",
+    "ru": "Кувейт",
+    "en": "Kuwait"
+   },
+   "lat": 29.414,
+   "lng": 47.314,
+   "capital": {
+    "name": {
+     "uz": "Al-Quvayt",
+     "ru": "Эль-Кувейт",
+     "en": "Kuwait City"
+    },
+    "lat": 29.3717,
+    "lng": 47.9764
+   }
+  },
+  {
+   "id": "kz",
+   "iso": "KZ",
+   "n3": "398",
+   "continent": "Asia",
+   "name": {
+    "uz": "Qozogʻiston",
+    "ru": "Казахстан",
+    "en": "Kazakhstan"
+   },
+   "lat": 49.054,
+   "lng": 68.686,
+   "capital": {
+    "name": {
+     "uz": "Ostona",
+     "ru": "Нур-Султан",
+     "en": "Nur-Sultan"
+    },
+    "lat": 51.1811,
+    "lng": 71.4278
+   }
+  },
+  {
+   "id": "la",
+   "iso": "LA",
+   "n3": "418",
+   "continent": "Asia",
+   "name": {
+    "uz": "Laos",
+    "ru": "Лаос",
+    "en": "Laos"
+   },
+   "lat": 19.432,
+   "lng": 102.534,
+   "capital": {
+    "name": {
+     "uz": "Ventyan",
+     "ru": "Вьентьян",
+     "en": "Vientiane"
+    },
+    "lat": 17.9667,
+    "lng": 102.6
+   }
+  },
+  {
+   "id": "lb",
+   "iso": "LB",
+   "n3": "422",
+   "continent": "Asia",
+   "name": {
+    "uz": "Livan",
+    "ru": "Ливан",
+    "en": "Lebanon"
+   },
+   "lat": 34.133,
+   "lng": 35.993,
+   "capital": {
+    "name": {
+     "uz": "Bayrut",
+     "ru": "Бейрут",
+     "en": "Beirut"
+    },
+    "lat": 33.8739,
+    "lng": 35.5078
+   }
+  },
+  {
+   "id": "lc",
+   "iso": "LC",
+   "n3": "662",
+   "continent": "North America",
+   "name": {
+    "uz": "Saint Lucia",
+    "ru": "Сент-Люсия",
+    "en": "Saint Lucia"
+   },
+   "lat": 13.892,
+   "lng": -60.98,
+   "capital": {
+    "name": {
+     "uz": "Kastri",
+     "ru": "Кастри",
+     "en": "Castries"
+    },
+    "lat": 14.002,
+    "lng": -61.0
+   }
+  },
+  {
+   "id": "li",
+   "iso": "LI",
+   "n3": "438",
+   "continent": "Europe",
+   "name": {
+    "uz": "Lixtenshteyn",
+    "ru": "Лихтенштейн",
+    "en": "Liechtenstein"
+   },
+   "lat": 47.111,
+   "lng": 9.559,
+   "capital": {
+    "name": {
+     "uz": "Vaduz",
+     "ru": "Вадуц",
+     "en": "Vaduz"
+    },
+    "lat": 47.1337,
+    "lng": 9.5167
+   }
+  },
+  {
+   "id": "lk",
+   "iso": "LK",
+   "n3": "144",
+   "continent": "Asia",
+   "name": {
+    "uz": "Shri-Lanka",
+    "ru": "Шри-Ланка",
+    "en": "Sri Lanka"
+   },
+   "lat": 7.581,
+   "lng": 80.705,
+   "capital": {
+    "name": {
+     "uz": "Sri Jayawardenepura Kotte",
+     "ru": "Шри-Джаяварденепура-Котте",
+     "en": "Sri Jayawardenepura Kotte"
+    },
+    "lat": 6.9,
+    "lng": 79.95
+   }
+  },
+  {
+   "id": "lr",
+   "iso": "LR",
+   "n3": "430",
+   "continent": "Africa",
+   "name": {
+    "uz": "Liberiya",
+    "ru": "Либерия",
+    "en": "Liberia"
+   },
+   "lat": 6.447,
+   "lng": -9.46,
+   "capital": {
+    "name": {
+     "uz": "Monroviya",
+     "ru": "Монровия",
+     "en": "Monrovia"
+    },
+    "lat": 6.3146,
+    "lng": -10.7997
+   }
+  },
+  {
+   "id": "ls",
+   "iso": "LS",
+   "n3": "426",
+   "continent": "Africa",
+   "name": {
+    "uz": "Lesoto",
+    "ru": "Лесото",
+    "en": "Lesotho"
+   },
+   "lat": -29.48,
+   "lng": 28.247,
+   "capital": {
+    "name": {
+     "uz": "Maseru",
+     "ru": "Масеру",
+     "en": "Maseru"
+    },
+    "lat": -29.3167,
+    "lng": 27.4833
+   }
+  },
+  {
+   "id": "lt",
+   "iso": "LT",
+   "n3": "440",
+   "continent": "Europe",
+   "name": {
+    "uz": "Litva",
+    "ru": "Литва",
+    "en": "Lithuania"
+   },
+   "lat": 55.104,
+   "lng": 24.09,
+   "capital": {
+    "name": {
+     "uz": "Vilnyus",
+     "ru": "Вильнюс",
+     "en": "Vilnius"
+    },
+    "lat": 54.6834,
+    "lng": 25.3166
+   }
+  },
+  {
+   "id": "lu",
+   "iso": "LU",
+   "n3": "442",
+   "continent": "Europe",
+   "name": {
+    "uz": "Lyuksemburg",
+    "ru": "Люксембург",
+    "en": "Luxembourg"
+   },
+   "lat": 49.734,
+   "lng": 6.078,
+   "capital": {
+    "name": {
+     "uz": "Lyuksemburg (shahar)",
+     "ru": "Люксембург",
+     "en": "Luxembourg"
+    },
+    "lat": 49.6117,
+    "lng": 6.13
+   }
+  },
+  {
+   "id": "lv",
+   "iso": "LV",
+   "n3": "428",
+   "continent": "Europe",
+   "name": {
+    "uz": "Latviya",
+    "ru": "Латвия",
+    "en": "Latvia"
+   },
+   "lat": 57.067,
+   "lng": 25.459,
+   "capital": {
+    "name": {
+     "uz": "Riga",
+     "ru": "Рига",
+     "en": "Riga"
+    },
+    "lat": 56.95,
+    "lng": 24.1
+   }
+  },
+  {
+   "id": "ly",
+   "iso": "LY",
+   "n3": "434",
+   "continent": "Africa",
+   "name": {
+    "uz": "Liviya",
+    "ru": "Ливия",
+    "en": "Libya"
+   },
+   "lat": 26.639,
+   "lng": 18.011,
+   "capital": {
+    "name": {
+     "uz": "Tarobulus al-Gʻarb",
+     "ru": "Триполи",
+     "en": "Tripoli"
+    },
+    "lat": 32.8925,
+    "lng": 13.18
+   }
+  },
+  {
+   "id": "ma",
+   "iso": "MA",
+   "n3": "504",
+   "continent": "Africa",
+   "name": {
+    "uz": "Marokash",
+    "ru": "Марокко",
+    "en": "Morocco"
+   },
+   "lat": 31.651,
+   "lng": -7.187,
+   "capital": {
+    "name": {
+     "uz": "Rabot",
+     "ru": "Рабат",
+     "en": "Rabat"
+    },
+    "lat": 34.0253,
+    "lng": -6.8364
+   }
+  },
+  {
+   "id": "mc",
+   "iso": "MC",
+   "n3": "492",
+   "continent": "Europe",
+   "name": {
+    "uz": "Monako",
+    "ru": "Монако",
+    "en": "Monaco"
+   },
+   "lat": 43.74,
+   "lng": 7.398,
+   "capital": {
+    "name": {
+     "uz": "Monako",
+     "ru": "Монако",
+     "en": "Monaco"
+    },
+    "lat": 43.7396,
+    "lng": 7.4069
+   }
+  },
+  {
+   "id": "md",
+   "iso": "MD",
+   "n3": "498",
+   "continent": "Europe",
+   "name": {
+    "uz": "Moldova",
+    "ru": "Молдавия",
+    "en": "Moldova"
+   },
+   "lat": 47.435,
+   "lng": 28.488,
+   "capital": {
+    "name": {
+     "uz": "Kishinyov",
+     "ru": "Кишинёв",
+     "en": "Chișinău"
+    },
+    "lat": 47.005,
+    "lng": 28.8577
+   }
+  },
+  {
+   "id": "me",
+   "iso": "ME",
+   "n3": "499",
+   "continent": "Europe",
+   "name": {
+    "uz": "Chernogoriya",
+    "ru": "Черногория",
+    "en": "Montenegro"
+   },
+   "lat": 42.803,
+   "lng": 19.144,
+   "capital": {
+    "name": {
+     "uz": "Podgoritsa",
+     "ru": "Подгорица",
+     "en": "Podgorica"
+    },
+    "lat": 42.466,
+    "lng": 19.2663
+   }
+  },
+  {
+   "id": "mg",
+   "iso": "MG",
+   "n3": "450",
+   "continent": "Africa",
+   "name": {
+    "uz": "Madagaskar",
+    "ru": "Мадагаскар",
+    "en": "Madagascar"
+   },
+   "lat": -18.628,
+   "lng": 46.704,
+   "capital": {
+    "name": {
+     "uz": "Antananarivu",
+     "ru": "Антананариву",
+     "en": "Antananarivo"
+    },
+    "lat": -18.9147,
+    "lng": 47.5147
+   }
+  },
+  {
+   "id": "mh",
+   "iso": "MH",
+   "n3": "584",
+   "continent": "Oceania",
+   "name": {
+    "uz": "Marshall Orollari",
+    "ru": "Маршалловы Острова",
+    "en": "Marshall Islands"
+   },
+   "lat": 7.083,
+   "lng": 171.194,
+   "capital": {
+    "name": {
+     "uz": "Majuro",
+     "ru": "Маджуро",
+     "en": "Majuro"
+    },
+    "lat": 7.103,
+    "lng": 171.38
+   }
+  },
+  {
+   "id": "mk",
+   "iso": "MK",
+   "n3": "807",
+   "continent": "Europe",
+   "name": {
+    "uz": "Shimoliy Makedoniya",
+    "ru": "Северная Македония",
+    "en": "North Macedonia"
+   },
+   "lat": 41.558,
+   "lng": 21.556,
+   "capital": {
+    "name": {
+     "uz": "Skopye",
+     "ru": "Скопье",
+     "en": "Skopje"
+    },
+    "lat": 42.0,
+    "lng": 21.4335
+   }
+  },
+  {
+   "id": "ml",
+   "iso": "ML",
+   "n3": "466",
+   "continent": "Africa",
+   "name": {
+    "uz": "Mali",
+    "ru": "Мали",
+    "en": "Mali"
+   },
+   "lat": 18.693,
+   "lng": -2.038,
+   "capital": {
+    "name": {
+     "uz": "Bamako",
+     "ru": "Бамако",
+     "en": "Bamako"
+    },
+    "lat": 12.652,
+    "lng": -8.002
+   }
+  },
+  {
+   "id": "mm",
+   "iso": "MM",
+   "n3": "104",
+   "continent": "Asia",
+   "name": {
+    "uz": "Myanma",
+    "ru": "Мьянма",
+    "en": "Myanmar"
+   },
+   "lat": 21.574,
+   "lng": 95.804,
+   "capital": {
+    "name": {
+     "uz": "Neypido",
+     "ru": "Нейпьидо",
+     "en": "Naypyidaw"
+    },
+    "lat": 19.7685,
+    "lng": 96.1167
+   }
+  },
+  {
+   "id": "mn",
+   "iso": "MN",
+   "n3": "496",
+   "continent": "Asia",
+   "name": {
+    "uz": "Moʻgʻuliston",
+    "ru": "Монголия",
+    "en": "Mongolia"
+   },
+   "lat": 45.997,
+   "lng": 104.15,
+   "capital": {
+    "name": {
+     "uz": "Ulan-Bator",
+     "ru": "Улан-Батор",
+     "en": "Ulaanbaatar"
+    },
+    "lat": 47.9186,
+    "lng": 106.9147
+   }
+  },
+  {
+   "id": "mr",
+   "iso": "MR",
+   "n3": "478",
+   "continent": "Africa",
+   "name": {
+    "uz": "Mavritaniya",
+    "ru": "Мавритания",
+    "en": "Mauritania"
+   },
+   "lat": 19.587,
+   "lng": -9.74,
+   "capital": {
+    "name": {
+     "uz": "Nuakshot",
+     "ru": "Нуакшот",
+     "en": "Nouakchott"
+    },
+    "lat": 18.0864,
+    "lng": -15.9753
+   }
+  },
+  {
+   "id": "mt",
+   "iso": "MT",
+   "n3": "470",
+   "continent": "Europe",
+   "name": {
+    "uz": "Malta",
+    "ru": "Мальта",
+    "en": "Malta"
+   },
+   "lat": 35.893,
+   "lng": 14.433,
+   "capital": {
+    "name": {
+     "uz": "Valletta",
+     "ru": "Валлетта",
+     "en": "Valletta"
+    },
+    "lat": 35.8997,
+    "lng": 14.5147
+   }
+  },
+  {
+   "id": "mu",
+   "iso": "MU",
+   "n3": "480",
+   "continent": "Seven seas (open ocean)",
+   "name": {
+    "uz": "Mavritsiya",
+    "ru": "Маврикий",
+    "en": "Mauritius"
+   },
+   "lat": -20.3,
+   "lng": 57.566,
+   "capital": {
+    "name": {
+     "uz": "Port-Lui",
+     "ru": "Порт-Луи",
+     "en": "Port Louis"
+    },
+    "lat": -20.1666,
+    "lng": 57.5
+   }
+  },
+  {
+   "id": "mv",
+   "iso": "MV",
+   "n3": "462",
+   "continent": "Seven seas (open ocean)",
+   "name": {
+    "uz": "Maldivalar",
+    "ru": "Мальдивы",
+    "en": "Maldives"
+   },
+   "lat": 4.174,
+   "lng": 73.508,
+   "capital": {
+    "name": {
+     "uz": "Male",
+     "ru": "Мале",
+     "en": "Malé"
+    },
+    "lat": 4.1667,
+    "lng": 73.4999
+   }
+  },
+  {
+   "id": "mw",
+   "iso": "MW",
+   "n3": "454",
+   "continent": "Africa",
+   "name": {
+    "uz": "Malavi",
+    "ru": "Малави",
+    "en": "Malawi"
+   },
+   "lat": -13.387,
+   "lng": 33.608,
+   "capital": {
+    "name": {
+     "uz": "Lilongve",
+     "ru": "Лилонгве",
+     "en": "Lilongwe"
+    },
+    "lat": -13.9833,
+    "lng": 33.7833
+   }
+  },
+  {
+   "id": "mx",
+   "iso": "MX",
+   "n3": "484",
+   "continent": "North America",
+   "name": {
+    "uz": "Meksika",
+    "ru": "Мексика",
+    "en": "Mexico"
+   },
+   "lat": 23.92,
+   "lng": -102.289,
+   "capital": {
+    "name": {
+     "uz": "Mexiko shahri",
+     "ru": "Мехико",
+     "en": "Mexico City"
+    },
+    "lat": 19.4444,
+    "lng": -99.1329
+   }
+  },
+  {
+   "id": "my",
+   "iso": "MY",
+   "n3": "458",
+   "continent": "Asia",
+   "name": {
+    "uz": "Malayziya",
+    "ru": "Малайзия",
+    "en": "Malaysia"
+   },
+   "lat": 2.529,
+   "lng": 113.837,
+   "capital": {
+    "name": {
+     "uz": "Kuala Lumpur",
+     "ru": "Куала-Лумпур",
+     "en": "Kuala Lumpur"
+    },
+    "lat": 3.1686,
+    "lng": 101.698
+   }
+  },
+  {
+   "id": "mz",
+   "iso": "MZ",
+   "n3": "508",
+   "continent": "Africa",
+   "name": {
+    "uz": "Mozambik",
+    "ru": "Мозамбик",
+    "en": "Mozambique"
+   },
+   "lat": -13.943,
+   "lng": 37.838,
+   "capital": {
+    "name": {
+     "uz": "Maputu",
+     "ru": "Мапуту",
+     "en": "Maputo"
+    },
+    "lat": -25.9533,
+    "lng": 32.5872
+   }
+  },
+  {
+   "id": "na",
+   "iso": "NA",
+   "n3": "516",
+   "continent": "Africa",
+   "name": {
+    "uz": "Namibiya",
+    "ru": "Намибия",
+    "en": "Namibia"
+   },
+   "lat": -20.575,
+   "lng": 17.108,
+   "capital": {
+    "name": {
+     "uz": "Vindhuk",
+     "ru": "Виндхук",
+     "en": "Windhoek"
+    },
+    "lat": -22.57,
+    "lng": 17.0835
+   }
+  },
+  {
+   "id": "ne",
+   "iso": "NE",
+   "n3": "562",
+   "continent": "Africa",
+   "name": {
+    "uz": "Niger",
+    "ru": "Нигер",
+    "en": "Niger"
+   },
+   "lat": 17.446,
+   "lng": 9.504,
+   "capital": {
+    "name": {
+     "uz": "Niamey",
+     "ru": "Ниамей",
+     "en": "Niamey"
+    },
+    "lat": 13.5187,
+    "lng": 2.1147
+   }
+  },
+  {
+   "id": "ng",
+   "iso": "NG",
+   "n3": "566",
+   "continent": "Africa",
+   "name": {
+    "uz": "Nigeriya",
+    "ru": "Нигерия",
+    "en": "Nigeria"
+   },
+   "lat": 9.44,
+   "lng": 7.503,
+   "capital": {
+    "name": {
+     "uz": "Abuja",
+     "ru": "Абуджа",
+     "en": "Abuja"
+    },
+    "lat": 9.0853,
+    "lng": 7.5314
+   }
+  },
+  {
+   "id": "ni",
+   "iso": "NI",
+   "n3": "558",
+   "continent": "North America",
+   "name": {
+    "uz": "Nikaragua",
+    "ru": "Никарагуа",
+    "en": "Nicaragua"
+   },
+   "lat": 12.671,
+   "lng": -85.069,
+   "capital": {
+    "name": {
+     "uz": "Managua",
+     "ru": "Манагуа",
+     "en": "Managua"
+    },
+    "lat": 12.155,
+    "lng": -86.2704
+   }
+  },
+  {
+   "id": "nl",
+   "iso": "NL",
+   "n3": "528",
+   "continent": "Europe",
+   "name": {
+    "uz": "Niderlandlar",
+    "ru": "Нидерланды",
+    "en": "Netherlands"
+   },
+   "lat": 52.422,
+   "lng": 5.611,
+   "capital": {
+    "name": {
+     "uz": "Amsterdam",
+     "ru": "Амстердам",
+     "en": "Amsterdam"
+    },
+    "lat": 52.3519,
+    "lng": 4.9147
+   }
+  },
+  {
+   "id": "no",
+   "iso": "NO",
+   "n3": "578",
+   "continent": "Europe",
+   "name": {
+    "uz": "Norvegiya",
+    "ru": "Норвегия",
+    "en": "Norway"
+   },
+   "lat": 61.357,
+   "lng": 9.68,
+   "capital": {
+    "name": {
+     "uz": "Oslo",
+     "ru": "Осло",
+     "en": "Oslo"
+    },
+    "lat": 59.9186,
+    "lng": 10.748
+   }
+  },
+  {
+   "id": "np",
+   "iso": "NP",
+   "n3": "524",
+   "continent": "Asia",
+   "name": {
+    "uz": "Nepal",
+    "ru": "Непал",
+    "en": "Nepal"
+   },
+   "lat": 28.298,
+   "lng": 83.64,
+   "capital": {
+    "name": {
+     "uz": "Katmandu",
+     "ru": "Катманду",
+     "en": "Kathmandu"
+    },
+    "lat": 27.7186,
+    "lng": 85.3147
+   }
+  },
+  {
+   "id": "nr",
+   "iso": "NR",
+   "n3": "520",
+   "continent": "Oceania",
+   "name": {
+    "uz": "Nauru",
+    "ru": "Науру",
+    "en": "Nauru"
+   },
+   "lat": -0.52,
+   "lng": 166.933,
+   "capital": {
+    "name": {
+     "uz": "Yaren",
+     "ru": "Ярен",
+     "en": "Yaren"
+    },
+    "lat": -0.5477,
+    "lng": 166.9209
+   }
+  },
+  {
+   "id": "nz",
+   "iso": "NZ",
+   "n3": "554",
+   "continent": "Oceania",
+   "name": {
+    "uz": "Yangi Zelandiya",
+    "ru": "Новая Зеландия",
+    "en": "New Zealand"
+   },
+   "lat": -39.759,
+   "lng": 172.787,
+   "capital": {
+    "name": {
+     "uz": "Vellington",
+     "ru": "Веллингтон",
+     "en": "Wellington"
+    },
+    "lat": -41.3,
+    "lng": 174.7833
+   }
+  },
+  {
+   "id": "om",
+   "iso": "OM",
+   "n3": "512",
+   "continent": "Asia",
+   "name": {
+    "uz": "Oman",
+    "ru": "Оман",
+    "en": "Oman"
+   },
+   "lat": 22.12,
+   "lng": 57.337,
+   "capital": {
+    "name": {
+     "uz": "Maskat",
+     "ru": "Маскат",
+     "en": "Muscat"
+    },
+    "lat": 23.6133,
+    "lng": 58.5933
+   }
+  },
+  {
+   "id": "pa",
+   "iso": "PA",
+   "n3": "591",
+   "continent": "North America",
+   "name": {
+    "uz": "Panama",
+    "ru": "Панама",
+    "en": "Panama"
+   },
+   "lat": 8.722,
+   "lng": -80.352,
+   "capital": {
+    "name": {
+     "uz": "Panama shahri",
+     "ru": "Панама",
+     "en": "Panama City"
+    },
+    "lat": 8.97,
+    "lng": -79.535
+   }
+  },
+  {
+   "id": "pe",
+   "iso": "PE",
+   "n3": "604",
+   "continent": "South America",
+   "name": {
+    "uz": "Peru",
+    "ru": "Перу",
+    "en": "Peru"
+   },
+   "lat": -12.977,
+   "lng": -72.9,
+   "capital": {
+    "name": {
+     "uz": "Lima",
+     "ru": "Лима",
+     "en": "Lima"
+    },
+    "lat": -12.0461,
+    "lng": -77.052
+   }
+  },
+  {
+   "id": "pg",
+   "iso": "PG",
+   "n3": "598",
+   "continent": "Oceania",
+   "name": {
+    "uz": "Papua Yangi Gvineya",
+    "ru": "Папуа — Новая Гвинея",
+    "en": "Papua New Guinea"
+   },
+   "lat": -5.695,
+   "lng": 143.91,
+   "capital": {
+    "name": {
+     "uz": "Port Morsbi",
+     "ru": "Порт-Морсби",
+     "en": "Port Moresby"
+    },
+    "lat": -9.4647,
+    "lng": 147.1925
+   }
+  },
+  {
+   "id": "ph",
+   "iso": "PH",
+   "n3": "608",
+   "continent": "Asia",
+   "name": {
+    "uz": "Filippin",
+    "ru": "Филиппины",
+    "en": "Philippines"
+   },
+   "lat": 11.198,
+   "lng": 122.465,
+   "capital": {
+    "name": {
+     "uz": "Manila",
+     "ru": "Манила",
+     "en": "Manila"
+    },
+    "lat": 14.6061,
+    "lng": 120.9803
+   }
+  },
+  {
+   "id": "pk",
+   "iso": "PK",
+   "n3": "586",
+   "continent": "Asia",
+   "name": {
+    "uz": "Pokiston",
+    "ru": "Пакистан",
+    "en": "Pakistan"
+   },
+   "lat": 29.328,
+   "lng": 68.546,
+   "capital": {
+    "name": {
+     "uz": "Islomobod",
+     "ru": "Исламабад",
+     "en": "Islamabad"
+    },
+    "lat": 33.7019,
+    "lng": 73.1647
+   }
+  },
+  {
+   "id": "pl",
+   "iso": "PL",
+   "n3": "616",
+   "continent": "Europe",
+   "name": {
+    "uz": "Polsha",
+    "ru": "Польша",
+    "en": "Poland"
+   },
+   "lat": 51.99,
+   "lng": 19.49,
+   "capital": {
+    "name": {
+     "uz": "Varshava",
+     "ru": "Варшава",
+     "en": "Warsaw"
+    },
+    "lat": 52.2519,
+    "lng": 20.9981
+   }
+  },
+  {
+   "id": "ps",
+   "iso": "PS",
+   "n3": "275",
+   "continent": "Asia",
+   "name": {
+    "uz": "Falastin",
+    "ru": "Палестина",
+    "en": "Palestine"
+   },
+   "lat": 32.047,
+   "lng": 35.291,
+   "capital": {
+    "name": {
+     "uz": "Ramalla",
+     "ru": "Рамалла",
+     "en": "Ramallah"
+    },
+    "lat": 31.9029,
+    "lng": 35.2062
+   }
+  },
+  {
+   "id": "pt",
+   "iso": "PT",
+   "n3": "620",
+   "continent": "Europe",
+   "name": {
+    "uz": "Portugaliya",
+    "ru": "Португалия",
+    "en": "Portugal"
+   },
+   "lat": 39.607,
+   "lng": -8.272,
+   "capital": {
+    "name": {
+     "uz": "Lissabon",
+     "ru": "Лиссабон",
+     "en": "Lisbon"
+    },
+    "lat": 38.7247,
+    "lng": -9.1468
+   }
+  },
+  {
+   "id": "pw",
+   "iso": "PW",
+   "n3": "585",
+   "continent": "Oceania",
+   "name": {
+    "uz": "Palau",
+    "ru": "Палау",
+    "en": "Palau"
+   },
+   "lat": 7.518,
+   "lng": 134.58,
+   "capital": {
+    "name": {
+     "uz": "Melekeok",
+     "ru": "Мелекеок",
+     "en": "Melekeok"
+    },
+    "lat": 7.4874,
+    "lng": 134.6265
+   }
+  },
+  {
+   "id": "py",
+   "iso": "PY",
+   "n3": "600",
+   "continent": "South America",
+   "name": {
+    "uz": "Paragvay",
+    "ru": "Парагвай",
+    "en": "Paraguay"
+   },
+   "lat": -21.675,
+   "lng": -60.146,
+   "capital": {
+    "name": {
+     "uz": "Asunsyon",
+     "ru": "Асунсьон",
+     "en": "Asunción"
+    },
+    "lat": -25.2945,
+    "lng": -57.6435
+   }
+  },
+  {
+   "id": "qa",
+   "iso": "QA",
+   "n3": "634",
+   "continent": "Asia",
+   "name": {
+    "uz": "Qatar",
+    "ru": "Катар",
+    "en": "Qatar"
+   },
+   "lat": 25.237,
+   "lng": 51.144,
+   "capital": {
+    "name": {
+     "uz": "Doha",
+     "ru": "Доха",
+     "en": "Doha"
+    },
+    "lat": 25.2866,
+    "lng": 51.533
+   }
+  },
+  {
+   "id": "ro",
+   "iso": "RO",
+   "n3": "642",
+   "continent": "Europe",
+   "name": {
+    "uz": "Ruminiya",
+    "ru": "Румыния",
+    "en": "Romania"
+   },
+   "lat": 45.733,
+   "lng": 24.973,
+   "capital": {
+    "name": {
+     "uz": "Buharest",
+     "ru": "Бухарест",
+     "en": "Bucharest"
+    },
+    "lat": 44.4353,
+    "lng": 26.098
+   }
+  },
+  {
+   "id": "rs",
+   "iso": "RS",
+   "n3": "688",
+   "continent": "Europe",
+   "name": {
+    "uz": "Serbiya",
+    "ru": "Сербия",
+    "en": "Serbia"
+   },
+   "lat": 44.19,
+   "lng": 20.788,
+   "capital": {
+    "name": {
+     "uz": "Belgrad",
+     "ru": "Белград",
+     "en": "Belgrade"
+    },
+    "lat": 44.8206,
+    "lng": 20.466
+   }
+  },
+  {
+   "id": "ru",
+   "iso": "RU",
+   "n3": "643",
+   "continent": "Europe",
+   "name": {
+    "uz": "Rossiya",
+    "ru": "Россия",
+    "en": "Russia"
+   },
+   "lat": 58.249,
+   "lng": 44.686,
+   "capital": {
+    "name": {
+     "uz": "Moskva",
+     "ru": "Москва",
+     "en": "Moscow"
+    },
+    "lat": 55.7541,
+    "lng": 37.6136
+   }
+  },
+  {
+   "id": "rw",
+   "iso": "RW",
+   "n3": "646",
+   "continent": "Africa",
+   "name": {
+    "uz": "Ruanda",
+    "ru": "Руанда",
+    "en": "Rwanda"
+   },
+   "lat": -1.897,
+   "lng": 30.104,
+   "capital": {
+    "name": {
+     "uz": "Kigali",
+     "ru": "Кигали",
+     "en": "Kigali"
+    },
+    "lat": -1.9516,
+    "lng": 30.0586
+   }
+  },
+  {
+   "id": "sa",
+   "iso": "SA",
+   "n3": "682",
+   "continent": "Asia",
+   "name": {
+    "uz": "Saudiya Arabistoni",
+    "ru": "Саудовская Аравия",
+    "en": "Saudi Arabia"
+   },
+   "lat": 23.807,
+   "lng": 44.7,
+   "capital": {
+    "name": {
+     "uz": "Ar-Riyod",
+     "ru": "Эр-Рияд",
+     "en": "Riyadh"
+    },
+    "lat": 24.6428,
+    "lng": 46.7708
+   }
+  },
+  {
+   "id": "sb",
+   "iso": "SB",
+   "n3": "090",
+   "continent": "Oceania",
+   "name": {
+    "uz": "Solomon Orollari",
+    "ru": "Соломоновы Острова",
+    "en": "Solomon Islands"
+   },
+   "lat": -8.03,
+   "lng": 159.17,
+   "capital": {
+    "name": {
+     "uz": "Xoniara",
+     "ru": "Хониара",
+     "en": "Honiara"
+    },
+    "lat": -9.438,
+    "lng": 159.9498
+   }
+  },
+  {
+   "id": "sc",
+   "iso": "SC",
+   "n3": "690",
+   "continent": "Seven seas (open ocean)",
+   "name": {
+    "uz": "Seyshell orollari",
+    "ru": "Сейшельские Острова",
+    "en": "Seychelles"
+   },
+   "lat": -4.677,
+   "lng": 55.48,
+   "capital": {
+    "name": {
+     "uz": "Viktoriya",
+     "ru": "Виктория",
+     "en": "Victoria"
+    },
+    "lat": -4.6166,
+    "lng": 55.45
+   }
+  },
+  {
+   "id": "sd",
+   "iso": "SD",
+   "n3": "729",
+   "continent": "Africa",
+   "name": {
+    "uz": "Sudan",
+    "ru": "Судан",
+    "en": "Sudan"
+   },
+   "lat": 16.331,
+   "lng": 29.261,
+   "capital": {
+    "name": {
+     "uz": "Xartum",
+     "ru": "Хартум",
+     "en": "Khartoum"
+    },
+    "lat": 15.59,
+    "lng": 32.5322
+   }
+  },
+  {
+   "id": "se",
+   "iso": "SE",
+   "n3": "752",
+   "continent": "Europe",
+   "name": {
+    "uz": "Shvetsiya",
+    "ru": "Швеция",
+    "en": "Sweden"
+   },
+   "lat": 65.859,
+   "lng": 19.017,
+   "capital": {
+    "name": {
+     "uz": "Stokgolm",
+     "ru": "Стокгольм",
+     "en": "Stockholm"
+    },
+    "lat": 59.3527,
+    "lng": 18.0954
+   }
+  },
+  {
+   "id": "sg",
+   "iso": "SG",
+   "n3": "702",
+   "continent": "Asia",
+   "name": {
+    "uz": "Singapur",
+    "ru": "Сингапур",
+    "en": "Singapore"
+   },
+   "lat": 1.367,
+   "lng": 103.817,
+   "capital": {
+    "name": {
+     "uz": "Singapur",
+     "ru": "Сингапур",
+     "en": "Singapore"
+    },
+    "lat": 1.295,
+    "lng": 103.8539
+   }
+  },
+  {
+   "id": "si",
+   "iso": "SI",
+   "n3": "705",
+   "continent": "Europe",
+   "name": {
+    "uz": "Sloveniya",
+    "ru": "Словения",
+    "en": "Slovenia"
+   },
+   "lat": 46.061,
+   "lng": 14.915,
+   "capital": {
+    "name": {
+     "uz": "Lyublyana",
+     "ru": "Любляна",
+     "en": "Ljubljana"
+    },
+    "lat": 46.0553,
+    "lng": 14.515
+   }
+  },
+  {
+   "id": "sk",
+   "iso": "SK",
+   "n3": "703",
+   "continent": "Europe",
+   "name": {
+    "uz": "Slovakiya",
+    "ru": "Словакия",
+    "en": "Slovakia"
+   },
+   "lat": 48.734,
+   "lng": 19.05,
+   "capital": {
+    "name": {
+     "uz": "Bratislava",
+     "ru": "Братислава",
+     "en": "Bratislava"
+    },
+    "lat": 48.15,
+    "lng": 17.117
+   }
+  },
+  {
+   "id": "sl",
+   "iso": "SL",
+   "n3": "694",
+   "continent": "Africa",
+   "name": {
+    "uz": "Syerra Leone",
+    "ru": "Сьерра-Леоне",
+    "en": "Sierra Leone"
+   },
+   "lat": 8.617,
+   "lng": -11.764,
+   "capital": {
+    "name": {
+     "uz": "Fritaun",
+     "ru": "Фритаун",
+     "en": "Freetown"
+    },
+    "lat": 8.472,
+    "lng": -13.2362
+   }
+  },
+  {
+   "id": "sm",
+   "iso": "SM",
+   "n3": "674",
+   "continent": "Europe",
+   "name": {
+    "uz": "San Marino",
+    "ru": "Сан-Марино",
+    "en": "San Marino"
+   },
+   "lat": 43.934,
+   "lng": 12.441,
+   "capital": {
+    "name": {
+     "uz": "San-Marino",
+     "ru": "Сан-Марино",
+     "en": "San Marino"
+    },
+    "lat": 43.9361,
+    "lng": 12.4418
+   }
+  },
+  {
+   "id": "sn",
+   "iso": "SN",
+   "n3": "686",
+   "continent": "Africa",
+   "name": {
+    "uz": "Senegal",
+    "ru": "Сенегал",
+    "en": "Senegal"
+   },
+   "lat": 15.138,
+   "lng": -14.779,
+   "capital": {
+    "name": {
+     "uz": "Dakar",
+     "ru": "Дакар",
+     "en": "Dakar"
+    },
+    "lat": 14.7178,
+    "lng": -17.4751
+   }
+  },
+  {
+   "id": "so",
+   "iso": "SO",
+   "n3": "706",
+   "continent": "Africa",
+   "name": {
+    "uz": "Somali",
+    "ru": "Сомали",
+    "en": "Somalia"
+   },
+   "lat": 3.569,
+   "lng": 45.192,
+   "capital": {
+    "name": {
+     "uz": "Mogadisho",
+     "ru": "Могадишо",
+     "en": "Mogadishu"
+    },
+    "lat": 2.0686,
+    "lng": 45.3647
+   }
+  },
+  {
+   "id": "sr",
+   "iso": "SR",
+   "n3": "740",
+   "continent": "South America",
+   "name": {
+    "uz": "Surinam",
+    "ru": "Суринам",
+    "en": "Suriname"
+   },
+   "lat": 4.144,
+   "lng": -55.911,
+   "capital": {
+    "name": {
+     "uz": "Paramaribo",
+     "ru": "Парамарибо",
+     "en": "Paramaribo"
+    },
+    "lat": 5.835,
+    "lng": -55.167
+   }
+  },
+  {
+   "id": "ss",
+   "iso": "SS",
+   "n3": "728",
+   "continent": "Africa",
+   "name": {
+    "uz": "Janubiy Sudan",
+    "ru": "Южный Судан",
+    "en": "South Sudan"
+   },
+   "lat": 7.23,
+   "lng": 30.39,
+   "capital": {
+    "name": {
+     "uz": "Juba",
+     "ru": "Джуба",
+     "en": "Juba"
+    },
+    "lat": 4.83,
+    "lng": 31.58
+   }
+  },
+  {
+   "id": "st",
+   "iso": "ST",
+   "n3": "678",
+   "continent": "Africa",
+   "name": {
+    "uz": "San-Tome va Prinsipi",
+    "ru": "Сан-Томе и Принсипи",
+    "en": "São Tomé and Príncipe"
+   },
+   "lat": 0.971,
+   "lng": 7.021,
+   "capital": {
+    "name": {
+     "uz": "San-Tome",
+     "ru": "Сан-Томе",
+     "en": "São Tomé"
+    },
+    "lat": 0.3334,
+    "lng": 6.7333
+   }
+  },
+  {
+   "id": "sv",
+   "iso": "SV",
+   "n3": "222",
+   "continent": "North America",
+   "name": {
+    "uz": "El Salvador",
+    "ru": "Сальвадор",
+    "en": "El Salvador"
+   },
+   "lat": 13.685,
+   "lng": -88.89,
+   "capital": {
+    "name": {
+     "uz": "San-Salvador",
+     "ru": "Сан-Сальвадор",
+     "en": "San Salvador"
+    },
+    "lat": 13.7119,
+    "lng": -89.205
+   }
+  },
+  {
+   "id": "sy",
+   "iso": "SY",
+   "n3": "760",
+   "continent": "Asia",
+   "name": {
+    "uz": "Suriya",
+    "ru": "Сирия",
+    "en": "Syria"
+   },
+   "lat": 35.007,
+   "lng": 38.278,
+   "capital": {
+    "name": {
+     "uz": "Damashq",
+     "ru": "Дамаск",
+     "en": "Damascus"
+    },
+    "lat": 33.502,
+    "lng": 36.2981
+   }
+  },
+  {
+   "id": "sz",
+   "iso": "SZ",
+   "n3": "748",
+   "continent": "Africa",
+   "name": {
+    "uz": "Eswatini",
+    "ru": "Эсватини",
+    "en": "Eswatini"
+   },
+   "lat": -26.534,
+   "lng": 31.467,
+   "capital": {
+    "name": {
+     "uz": "Mbabane",
+     "ru": "Мбабане",
+     "en": "Mbabane"
+    },
+    "lat": -26.3167,
+    "lng": 31.1333
+   }
+  },
+  {
+   "id": "td",
+   "iso": "TD",
+   "n3": "148",
+   "continent": "Africa",
+   "name": {
+    "uz": "Chad",
+    "ru": "Чад",
+    "en": "Chad"
+   },
+   "lat": 15.143,
+   "lng": 18.645,
+   "capital": {
+    "name": {
+     "uz": "Njamena",
+     "ru": "Нджамена",
+     "en": "N'Djamena"
+    },
+    "lat": 12.115,
+    "lng": 15.0472
+   }
+  },
+  {
+   "id": "tg",
+   "iso": "TG",
+   "n3": "768",
+   "continent": "Africa",
+   "name": {
+    "uz": "Togo",
+    "ru": "Того",
+    "en": "Togo"
+   },
+   "lat": 8.807,
+   "lng": 1.058,
+   "capital": {
+    "name": {
+     "uz": "Lome",
+     "ru": "Ломе",
+     "en": "Lomé"
+    },
+    "lat": 6.1339,
+    "lng": 1.2208
+   }
+  },
+  {
+   "id": "th",
+   "iso": "TH",
+   "n3": "764",
+   "continent": "Asia",
+   "name": {
+    "uz": "Tailand",
+    "ru": "Таиланд",
+    "en": "Thailand"
+   },
+   "lat": 15.46,
+   "lng": 101.073,
+   "capital": {
+    "name": {
+     "uz": "Bangkok",
+     "ru": "Бангкок",
+     "en": "Bangkok"
+    },
+    "lat": 13.7519,
+    "lng": 100.5147
+   }
+  },
+  {
+   "id": "tj",
+   "iso": "TJ",
+   "n3": "762",
+   "continent": "Asia",
+   "name": {
+    "uz": "Tojikiston",
+    "ru": "Таджикистан",
+    "en": "Tajikistan"
+   },
+   "lat": 38.2,
+   "lng": 72.587,
+   "capital": {
+    "name": {
+     "uz": "Dushanbe",
+     "ru": "Душанбе",
+     "en": "Dushanbe"
+    },
+    "lat": 38.56,
+    "lng": 68.7739
+   }
+  },
+  {
+   "id": "tl",
+   "iso": "TL",
+   "n3": "626",
+   "continent": "Asia",
+   "name": {
+    "uz": "Sharqiy Timor",
+    "ru": "Восточный Тимор",
+    "en": "East Timor"
+   },
+   "lat": -8.804,
+   "lng": 125.855,
+   "capital": {
+    "name": {
+     "uz": "Dili",
+     "ru": "Дили",
+     "en": "Dili"
+    },
+    "lat": -8.5594,
+    "lng": 125.5795
+   }
+  },
+  {
+   "id": "tm",
+   "iso": "TM",
+   "n3": "795",
+   "continent": "Asia",
+   "name": {
+    "uz": "Turkmaniston",
+    "ru": "Туркмения",
+    "en": "Turkmenistan"
+   },
+   "lat": 39.855,
+   "lng": 58.677,
+   "capital": {
+    "name": {
+     "uz": "Ashxobod",
+     "ru": "Ашхабад",
+     "en": "Ashgabat"
+    },
+    "lat": 37.95,
+    "lng": 58.3833
+   }
+  },
+  {
+   "id": "tn",
+   "iso": "TN",
+   "n3": "788",
+   "continent": "Africa",
+   "name": {
+    "uz": "Tunis",
+    "ru": "Тунис",
+    "en": "Tunisia"
+   },
+   "lat": 33.687,
+   "lng": 9.008,
+   "capital": {
+    "name": {
+     "uz": "Tunis",
+     "ru": "Тунис",
+     "en": "Tunis"
+    },
+    "lat": 36.8028,
+    "lng": 10.1797
+   }
+  },
+  {
+   "id": "to",
+   "iso": "TO",
+   "n3": "776",
+   "continent": "Oceania",
+   "name": {
+    "uz": "Tonga",
+    "ru": "Тонга",
+    "en": "Tonga"
+   },
+   "lat": -21.21,
+   "lng": -175.163,
+   "capital": {
+    "name": {
+     "uz": "Nukualofa",
+     "ru": "Нукуалофа",
+     "en": "Nuku'alofa"
+    },
+    "lat": -21.1385,
+    "lng": -175.2206
+   }
+  },
+  {
+   "id": "tr",
+   "iso": "TR",
+   "n3": "792",
+   "continent": "Asia",
+   "name": {
+    "uz": "Turkiya",
+    "ru": "Турция",
+    "en": "Turkey"
+   },
+   "lat": 39.345,
+   "lng": 34.508,
+   "capital": {
+    "name": {
+     "uz": "Anqara",
+     "ru": "Анкара",
+     "en": "Ankara"
+    },
+    "lat": 39.9292,
+    "lng": 32.8624
+   }
+  },
+  {
+   "id": "tt",
+   "iso": "TT",
+   "n3": "780",
+   "continent": "North America",
+   "name": {
+    "uz": "Trinidad va Tobago",
+    "ru": "Тринидад и Тобаго",
+    "en": "Trinidad and Tobago"
+   },
+   "lat": 10.999,
+   "lng": -60.918,
+   "capital": {
+    "name": {
+     "uz": "Port-of-speyn",
+     "ru": "Порт-оф-Спейн",
+     "en": "Port of Spain"
+    },
+    "lat": 10.652,
+    "lng": -61.517
+   }
+  },
+  {
+   "id": "tv",
+   "iso": "TV",
+   "n3": "798",
+   "continent": "Oceania",
+   "name": {
+    "uz": "Tuvalu",
+    "ru": "Тувалу",
+    "en": "Tuvalu"
+   },
+   "lat": -8.514,
+   "lng": 179.21,
+   "capital": {
+    "name": {
+     "uz": "Funafuti",
+     "ru": "Фунафути",
+     "en": "Funafuti"
+    },
+    "lat": -8.5167,
+    "lng": 179.2166
+   }
+  },
+  {
+   "id": "tz",
+   "iso": "TZ",
+   "n3": "834",
+   "continent": "Africa",
+   "name": {
+    "uz": "Tanzaniya",
+    "ru": "Танзания",
+    "en": "Tanzania"
+   },
+   "lat": -6.052,
+   "lng": 34.959,
+   "capital": {
+    "name": {
+     "uz": "Dodoma",
+     "ru": "Додома",
+     "en": "Dodoma"
+    },
+    "lat": -6.1833,
+    "lng": 35.75
+   }
+  },
+  {
+   "id": "ua",
+   "iso": "UA",
+   "n3": "804",
+   "continent": "Europe",
+   "name": {
+    "uz": "Ukraina",
+    "ru": "Украина",
+    "en": "Ukraine"
+   },
+   "lat": 49.725,
+   "lng": 32.141,
+   "capital": {
+    "name": {
+     "uz": "Kiyev",
+     "ru": "Киев",
+     "en": "Kyiv"
+    },
+    "lat": 50.4353,
+    "lng": 30.5147
+   }
+  },
+  {
+   "id": "ug",
+   "iso": "UG",
+   "n3": "800",
+   "continent": "Africa",
+   "name": {
+    "uz": "Uganda",
+    "ru": "Уганда",
+    "en": "Uganda"
+   },
+   "lat": 1.973,
+   "lng": 32.949,
+   "capital": {
+    "name": {
+     "uz": "Kampala",
+     "ru": "Кампала",
+     "en": "Kampala"
+    },
+    "lat": 0.3186,
+    "lng": 32.5814
+   }
+  },
+  {
+   "id": "us",
+   "iso": "US",
+   "n3": "840",
+   "continent": "North America",
+   "name": {
+    "uz": "Amerika Qoʻshma Shtatlari",
+    "ru": "США",
+    "en": "United States of America"
+   },
+   "lat": 39.538,
+   "lng": -97.483,
+   "capital": {
+    "name": {
+     "uz": "Vashington",
+     "ru": "Вашингтон",
+     "en": "Washington"
+    },
+    "lat": 38.9015,
+    "lng": -77.0114
+   }
+  },
+  {
+   "id": "uy",
+   "iso": "UY",
+   "n3": "858",
+   "continent": "South America",
+   "name": {
+    "uz": "Urugvay",
+    "ru": "Уругвай",
+    "en": "Uruguay"
+   },
+   "lat": -32.961,
+   "lng": -55.967,
+   "capital": {
+    "name": {
+     "uz": "Montevideo",
+     "ru": "Монтевидео",
+     "en": "Montevideo"
+    },
+    "lat": -34.8561,
+    "lng": -56.173
+   }
+  },
+  {
+   "id": "uz",
+   "iso": "UZ",
+   "n3": "860",
+   "continent": "Asia",
+   "name": {
+    "uz": "Oʻzbekiston",
+    "ru": "Узбекистан",
+    "en": "Uzbekistan"
+   },
+   "lat": 41.694,
+   "lng": 64.005,
+   "capital": {
+    "name": {
+     "uz": "Toshkent",
+     "ru": "Ташкент",
+     "en": "Tashkent"
+    },
+    "lat": 41.3136,
+    "lng": 69.293
+   }
+  },
+  {
+   "id": "va",
+   "iso": "VA",
+   "n3": "336",
+   "continent": "Europe",
+   "name": {
+    "uz": "Vatikan shahri",
+    "ru": "Ватикан",
+    "en": "Vatican City"
+   },
+   "lat": 41.903,
+   "lng": 12.453,
+   "capital": {
+    "name": {
+     "uz": "Vatikan shahri",
+     "ru": "Ватикан",
+     "en": "Vatican City"
+    },
+    "lat": 41.9033,
+    "lng": 12.4534
+   }
+  },
+  {
+   "id": "vc",
+   "iso": "VC",
+   "n3": "670",
+   "continent": "North America",
+   "name": {
+    "uz": "Sent Vinsent va Grenadinlar",
+    "ru": "Сент-Винсент и Гренадины",
+    "en": "Saint Vincent and the Grenadines"
+   },
+   "lat": 13.088,
+   "lng": -61.336,
+   "capital": {
+    "name": {
+     "uz": "Kingstaun",
+     "ru": "Кингстаун",
+     "en": "Kingstown"
+    },
+    "lat": 13.1483,
+    "lng": -61.2121
+   }
+  },
+  {
+   "id": "ve",
+   "iso": "VE",
+   "n3": "862",
+   "continent": "South America",
+   "name": {
+    "uz": "Venesuela",
+    "ru": "Венесуэла",
+    "en": "Venezuela"
+   },
+   "lat": 7.182,
+   "lng": -64.599,
+   "capital": {
+    "name": {
+     "uz": "Karakas",
+     "ru": "Каракас",
+     "en": "Caracas"
+    },
+    "lat": 10.5029,
+    "lng": -66.919
+   }
+  },
+  {
+   "id": "vn",
+   "iso": "VN",
+   "n3": "704",
+   "continent": "Asia",
+   "name": {
+    "uz": "Vyetnam",
+    "ru": "Вьетнам",
+    "en": "Vietnam"
+   },
+   "lat": 21.715,
+   "lng": 105.387,
+   "capital": {
+    "name": {
+     "uz": "Xanoy",
+     "ru": "Ханой",
+     "en": "Hanoi"
+    },
+    "lat": 21.0353,
+    "lng": 105.8481
+   }
+  },
+  {
+   "id": "vu",
+   "iso": "VU",
+   "n3": "548",
+   "continent": "Oceania",
+   "name": {
+    "uz": "Vanuatu",
+    "ru": "Вануату",
+    "en": "Vanuatu"
+   },
+   "lat": -15.372,
+   "lng": 166.909,
+   "capital": {
+    "name": {
+     "uz": "Port-vila",
+     "ru": "Порт-Вила",
+     "en": "Port Vila"
+    },
+    "lat": -17.7334,
+    "lng": 168.3166
+   }
+  },
+  {
+   "id": "ws",
+   "iso": "WS",
+   "n3": "882",
+   "continent": "Oceania",
+   "name": {
+    "uz": "Samoa",
+    "ru": "Самоа",
+    "en": "Samoa"
+   },
+   "lat": -13.639,
+   "lng": -172.438,
+   "capital": {
+    "name": {
+     "uz": "Apia",
+     "ru": "Апиа",
+     "en": "Apia"
+    },
+    "lat": -13.8415,
+    "lng": -171.7386
+   }
+  },
+  {
+   "id": "ye",
+   "iso": "YE",
+   "n3": "887",
+   "continent": "Asia",
+   "name": {
+    "uz": "Yaman",
+    "ru": "Йемен",
+    "en": "Yemen"
+   },
+   "lat": 15.328,
+   "lng": 45.874,
+   "capital": {
+    "name": {
+     "uz": "Sanʼo",
+     "ru": "Сана",
+     "en": "Sanaa"
+    },
+    "lat": 15.3567,
+    "lng": 44.2046
+   }
+  },
+  {
+   "id": "za",
+   "iso": "ZA",
+   "n3": "710",
+   "continent": "Africa",
+   "name": {
+    "uz": "Janubiy Afrika Respublikasi",
+    "ru": "ЮАР",
+    "en": "South Africa"
+   },
+   "lat": -29.709,
+   "lng": 23.666,
+   "capital": {
+    "name": {
+     "uz": "Pretoriya",
+     "ru": "Претория",
+     "en": "Pretoria"
+    },
+    "lat": -25.705,
+    "lng": 28.2275
+   }
+  },
+  {
+   "id": "zm",
+   "iso": "ZM",
+   "n3": "894",
+   "continent": "Africa",
+   "name": {
+    "uz": "Zambiya",
+    "ru": "Замбия",
+    "en": "Zambia"
+   },
+   "lat": -14.661,
+   "lng": 26.395,
+   "capital": {
+    "name": {
+     "uz": "Lusaka",
+     "ru": "Лусака",
+     "en": "Lusaka"
+    },
+    "lat": -15.4147,
+    "lng": 28.2814
+   }
+  },
+  {
+   "id": "zw",
+   "iso": "ZW",
+   "n3": "716",
+   "continent": "Africa",
+   "name": {
+    "uz": "Zimbabve",
+    "ru": "Зимбабве",
+    "en": "Zimbabwe"
+   },
+   "lat": -18.912,
+   "lng": 29.925,
+   "capital": {
+    "name": {
+     "uz": "Xarare",
+     "ru": "Хараре",
+     "en": "Harare"
+    },
+    "lat": -17.8158,
+    "lng": 31.0428
+   }
+  }
+ ]
+}
