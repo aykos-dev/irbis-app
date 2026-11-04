@@ -370,5 +370,13 @@
     "endConfirm": "End the game?",
     "over": "Game over",
     "totals": "Words guessed %{g} · Skipped %{s} · Turns %{t}"
+  },
+  "geo": {
+    "globe": {
+      "label": "World globe",
+      "hint": "Drag to spin, pinch to zoom, tap to answer",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out"
+    }
   }
 }

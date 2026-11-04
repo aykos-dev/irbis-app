@@ -152,3 +152,89 @@ export const crocColors = {
   warning: palette.orange,
   track: campColors.line,
 } as const;
+
+/** GeoCore globe (canvas GeoRound / GeoRoundCity / GeoReveal). */
+export const geoColors = {
+  ocean: '#163447',
+  rim: '#2B5670',
+  graticule: '#1D4258',
+  land: '#3B5A50',
+  /** Country borders are drawn in the ocean colour. */
+  border: '#163447',
+  selected: palette.purple,
+  selectedEdge: '#4330B0',
+  onSelected: palette.white,
+  answer: palette.orange,
+  microDot: '#3B5A50',
+  microRing: '#8CC8FF',
+  pinFill: palette.orange,
+  pinStroke: palette.onOrange,
+  pinShadow: '#000000',
+  /** Reveal pin dot border and label chip. */
+  markerEdge: campColors.bg,
+  labelChip: campColors.bg,
+  labelText: campColors.ink,
+} as const;
+
+/** Reveal pin colour per seat (`colorIndex`, cycled). */
+export const geoSeatColors = [
+  palette.orange,
+  palette.teal,
+  '#8CC8FF',
+  '#E04F8A',
+  '#B8A8FF',
+  '#7BE0A2',
+  palette.gold,
+  '#FF8A8A',
+  palette.sky,
+  palette.pine,
+  '#F2802E',
+  '#C98B4E',
+  '#5FD6CE',
+  '#D9733F',
+  palette.purple,
+] as const;
+
+export const geoSizes = {
+  /** Board globe box (358 pt square, radius 172). */
+  board: 358,
+  radiusRatio: 172 / 358,
+  rimOpacity: 0.35,
+  rimStroke: 4,
+  graticuleStroke: 0.5,
+  borderStroke: 0.6,
+  selectedStroke: 1.2,
+  /** Initial view: Central Asia. */
+  initialLng: 60,
+  initialLat: 30,
+  maxLat: 85,
+  minZoom: 1,
+  maxZoom: 8,
+  zoomStep: 1.6,
+  /** While a drag is active the full projection is rebuilt at most this often. */
+  dragFps: 15,
+  /** A tap fails once the finger travels further than this. */
+  tapSlop: 10,
+  focusMs: 600,
+  zoomButton: 44,
+  zoomGlyph: 18,
+  zoomStroke: 3,
+  zoomBorder: 2,
+  zoomEdge: 4,
+  microButton: 44,
+  microDot: 14,
+  microRing: 2,
+  pinWidth: 28,
+  pinHeight: 38,
+  pinStroke: 1.5,
+  pinShadowOpacity: 0.35,
+  markerDot: 18,
+  markerBorder: 3,
+  answerStar: 22,
+  labelOpacity: 0.86,
+  chipRadius: 9,
+  chipEdge: 2,
+  /** The name chip is centred in a row this wide under the country centre. */
+  chipRowWidth: 220,
+  focusFps: 30,
+} as const;
