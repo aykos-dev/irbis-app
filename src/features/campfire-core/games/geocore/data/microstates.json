@@ -1,0 +1,269 @@
+{
+ "minSteradian": 0.000454,
+ "items": [
+  {
+   "iso": "AD",
+   "lat": 42.548,
+   "lng": 1.539,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "AG",
+   "lat": 17.352,
+   "lng": -61.791,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "BB",
+   "lat": 13.164,
+   "lng": -59.569,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "BH",
+   "lat": 26.056,
+   "lng": 50.555,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "BN",
+   "lat": 4.448,
+   "lng": 114.552,
+   "reason": "tiny"
+  },
+  {
+   "iso": "BS",
+   "lat": 26.402,
+   "lng": -77.147,
+   "reason": "tiny"
+  },
+  {
+   "iso": "CV",
+   "lat": 15.075,
+   "lng": -23.639,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "CY",
+   "lat": 34.913,
+   "lng": 33.084,
+   "reason": "tiny"
+  },
+  {
+   "iso": "DM",
+   "lat": 15.459,
+   "lng": -61.345,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "FM",
+   "lat": 6.888,
+   "lng": 158.234,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "GD",
+   "lat": 12.113,
+   "lng": -61.68,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "GM",
+   "lat": 13.642,
+   "lng": -14.998,
+   "reason": "tiny"
+  },
+  {
+   "iso": "JM",
+   "lat": 18.137,
+   "lng": -77.319,
+   "reason": "tiny"
+  },
+  {
+   "iso": "KI",
+   "lat": 1.82,
+   "lng": -157.385,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "KM",
+   "lat": -11.728,
+   "lng": 43.318,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "KN",
+   "lat": 17.337,
+   "lng": -62.758,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "KW",
+   "lat": 29.414,
+   "lng": 47.314,
+   "reason": "tiny"
+  },
+  {
+   "iso": "LB",
+   "lat": 34.133,
+   "lng": 35.993,
+   "reason": "tiny"
+  },
+  {
+   "iso": "LC",
+   "lat": 13.892,
+   "lng": -60.98,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "LI",
+   "lat": 47.111,
+   "lng": 9.559,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "LU",
+   "lat": 49.734,
+   "lng": 6.078,
+   "reason": "tiny"
+  },
+  {
+   "iso": "MC",
+   "lat": 43.74,
+   "lng": 7.398,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "ME",
+   "lat": 42.803,
+   "lng": 19.144,
+   "reason": "tiny"
+  },
+  {
+   "iso": "MH",
+   "lat": 7.083,
+   "lng": 171.194,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "MT",
+   "lat": 35.893,
+   "lng": 14.433,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "MU",
+   "lat": -20.3,
+   "lng": 57.566,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "MV",
+   "lat": 4.174,
+   "lng": 73.508,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "NR",
+   "lat": -0.52,
+   "lng": 166.933,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "PS",
+   "lat": 32.047,
+   "lng": 35.291,
+   "reason": "tiny"
+  },
+  {
+   "iso": "PW",
+   "lat": 7.518,
+   "lng": 134.58,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "QA",
+   "lat": 25.237,
+   "lng": 51.144,
+   "reason": "tiny"
+  },
+  {
+   "iso": "SC",
+   "lat": -4.677,
+   "lng": 55.48,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "SG",
+   "lat": 1.367,
+   "lng": 103.817,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "SM",
+   "lat": 43.934,
+   "lng": 12.441,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "ST",
+   "lat": 0.971,
+   "lng": 7.021,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "SZ",
+   "lat": -26.534,
+   "lng": 31.467,
+   "reason": "tiny"
+  },
+  {
+   "iso": "TL",
+   "lat": -8.804,
+   "lng": 125.855,
+   "reason": "tiny"
+  },
+  {
+   "iso": "TO",
+   "lat": -21.21,
+   "lng": -175.163,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "TT",
+   "lat": 10.999,
+   "lng": -60.918,
+   "reason": "tiny"
+  },
+  {
+   "iso": "TV",
+   "lat": -8.514,
+   "lng": 179.21,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "VA",
+   "lat": 41.903,
+   "lng": 12.453,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "VC",
+   "lat": 13.088,
+   "lng": -61.336,
+   "reason": "not in 110m"
+  },
+  {
+   "iso": "VU",
+   "lat": -15.372,
+   "lng": 166.909,
+   "reason": "tiny"
+  },
+  {
+   "iso": "WS",
+   "lat": -13.639,
+   "lng": -172.438,
+   "reason": "not in 110m"
+  }
+ ]
+}

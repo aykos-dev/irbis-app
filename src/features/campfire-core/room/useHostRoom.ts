@@ -8,6 +8,7 @@ import {
   type GameSettings,
   type HostGame,
 } from '../games/gameReducer';
+import type { GeoMode } from '../games/geocore/scoring';
 import type { MafiaSettings } from '../games/mafia/roles';
 import type { PartyGame } from '../games/packs';
 import { campNet } from '../native/campNet';
@@ -15,6 +16,7 @@ import { hostsWithGuide } from '../native/hostPlatform';
 import { initialProfile, readProfile } from '../playerProfile';
 import {
   CAMP_PORT,
+  type GeoPoint,
   type MafiaWinner,
   type RosterPlayer,
   type WyrPick,
@@ -105,6 +107,10 @@ export const hostGame = {
   crocNext: (): void => hostGameServer?.crocNext(),
   crocEnd: (): void => hostGameServer?.crocEnd(),
   crocPlayAgain: (): void => hostGameServer?.crocPlayAgain(),
+  geoGuess: (point: GeoPoint): void =>
+    hostGameServer?.geoGuess(HOST_SEAT_ID, point),
+  geoNext: (): void => hostGameServer?.geoNext(),
+  geoPlayAgain: (): void => hostGameServer?.geoPlayAgain(),
 };
 
 /** Random 4-digit room code, 1000–9999. */
@@ -216,7 +222,8 @@ export function useHostRoom(resume: boolean) {
       const network = opened.network;
       const saved = resume ? loadHostRoom() : null;
       const loadedGame = saved ? loadHostGame() : null;
-      // A game saved mid-turn picks up without its timers (Crocodile: running → ready, result → pick).
+      // A game saved mid-turn picks up without its timers (Crocodile: running → ready, result → pick);
+      // Geocore keeps its phase and the server re-arms its timer from the saved deadline.
       const savedGame = loadedGame
         ? gameReducer(loadedGame, { type: 'resumed' })
         : null;
@@ -327,6 +334,10 @@ export function useHostRoom(resume: boolean) {
     live.current?.server.startCroc(settings);
   }, []);
 
+  const startGeo = useCallback((mode: GeoMode) => {
+    live.current?.server.startGeo(mode);
+  }, []);
+
   /** Broadcasts `closed`, stops server, hotspot and zeroconf, forgets the saved room. */
   const close = useCallback(() => {
     const current = live.current;
@@ -340,5 +351,15 @@ export function useHostRoom(resume: boolean) {
     qaLog('camp_room_closed', { seats: current.room.seats.length });
   }, []);
 
-  return { state, retry, remove, close, startGame, startMafia, startXo, startCroc };
+  return {
+    state,
+    retry,
+    remove,
+    close,
+    startGame,
+    startMafia,
+    startXo,
+    startCroc,
+    startGeo,
+  };
 }

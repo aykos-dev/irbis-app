@@ -7,13 +7,20 @@ import { palette } from '../../../shared/constants/colors';
 import { borders, radii, sizes, spacing } from '../../../shared/constants/spacing';
 import { createThemedStyles } from '../../../shared/contexts/theme';
 import { t } from '../../../shared/i18n';
-import { campSizes, gameColors, type GameId } from '../campTheme';
+import {
+  campSizes,
+  gameColors,
+  geocoreColors,
+  geocoreSizes,
+  type GameId,
+} from '../campTheme';
 import { CrocGlyph } from '../games/croc/CrocGlyph';
+import { GeocoreGlyph } from '../games/geocore/GeoGlyphs';
 import { XoGlyph } from '../games/xo/XoGlyph';
 
 const VIEWBOX = '0 0 24 24';
 
-/** Simple white glyph per game: mask, hat, question mark, split arrows, an X and an O, croc jaw. */
+/** Simple white glyph per game: mask, hat, question mark, split arrows, an X and an O, croc jaw, globe. */
 function GameGlyph({ game }: { game: GameId }) {
   const stroke = {
     stroke: palette.white,
@@ -58,6 +65,8 @@ function GameGlyph({ game }: { game: GameId }) {
       return <XoGlyph size={size} />;
     case 'croc':
       return <CrocGlyph size={size} />;
+    case 'geocore':
+      return <GeocoreGlyph size={size} />;
   }
 }
 
@@ -70,6 +79,9 @@ type Props = {
 export function GameTile({ game, onPress }: Props) {
   const styles = useStyles();
   const name = t(`camp.games.${game}`);
+  if (game === 'geocore') {
+    return <GeocoreTile name={name} onPress={onPress} />;
+  }
   const meta = t(`camp.games.${game}Meta`);
   return (
     <Pressable
@@ -83,6 +95,29 @@ export function GameTile({ game, onPress }: Props) {
       </View>
       <AppText variant="h3">{name}</AppText>
       <AppText variant="small">{meta}</AppText>
+    </Pressable>
+  );
+}
+
+/** Geocore: one wide blue card across both columns, bigger globe (canvas GeoHubSheet). */
+function GeocoreTile({ name, onPress }: { name: string; onPress: () => void }) {
+  const meta = t('camp.geo.meta');
+  return (
+    <Pressable
+      testID="camp.hub.game.geocore"
+      accessibilityLabel={`${name}, ${meta}`}
+      onPress={onPress}
+      style={[layout.tile, layout.wide]}
+    >
+      <View style={[layout.icon, layout.wideIcon]}>
+        <GeocoreGlyph size={geocoreSizes.tileGlyph} />
+      </View>
+      <View style={layout.wideText}>
+        <AppText variant="h2">{name}</AppText>
+        <AppText variant="small" style={layout.wideMeta}>
+          {meta}
+        </AppText>
+      </View>
     </Pressable>
   );
 }
@@ -104,6 +139,22 @@ const layout = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: spacing[4],
   },
+  wide: {
+    flexBasis: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[14],
+    backgroundColor: geocoreColors.card,
+    borderColor: geocoreColors.brand,
+  },
+  wideIcon: {
+    width: geocoreSizes.tileIcon,
+    height: geocoreSizes.tileIcon,
+    backgroundColor: geocoreColors.brand,
+    marginBottom: 0,
+  },
+  wideText: { flex: 1, gap: spacing[4] },
+  wideMeta: { color: geocoreColors.meta },
 });
 
 const useStyles = createThemedStyles(c => ({

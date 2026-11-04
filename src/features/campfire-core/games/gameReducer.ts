@@ -34,6 +34,13 @@ import {
   mafiaCountsSchema,
   type MafiaSettings,
 } from './mafia/roles';
+import {
+  geoReducer,
+  geoStateSchema,
+  startGeo,
+  type GeoAction,
+  type GeoState,
+} from './geocore/geoGame';
 import { dealtRoles } from './mafia/winCheck';
 import type { PackGame, PartyGame } from './packs';
 import { shuffle, type Rng } from './usedStore';
@@ -141,12 +148,15 @@ export const crocStateSchema = crocSettingsSchema.extend({
 });
 export type CrocState = z.infer<typeof crocStateSchema>;
 
-/** The host's running game: party, Mafia, X and O or Crocodile (saved with the room for resume). */
+export type { GeoState };
+
+/** The host's running game: party, Mafia, X and O, Crocodile or Geocore (saved with the room for resume). */
 export const hostGameSchema = z.discriminatedUnion('game', [
   gameStateSchema,
   mafiaStateSchema,
   xoStateSchema,
   crocStateSchema,
+  geoStateSchema,
 ]);
 export type HostGame = z.infer<typeof hostGameSchema>;
 
@@ -245,7 +255,8 @@ export type CrocAction =
   /** The host app restarted with this game saved. */
   | { type: 'resumed' };
 
-export type HostAction = GameAction | MafiaAction | XoAction | CrocAction;
+export type HostAction =
+  GameAction | MafiaAction | XoAction | CrocAction | GeoAction;
 
 /** Players in a round: the seats connected when it starts, host included. */
 export function roundSeats(seats: GameSeat[]): string[] {
@@ -386,6 +397,11 @@ export function gameReducer(
   if (action.type === 'startCroc') {
     return startCroc(action.settings, action.seats) ?? state;
   }
+  if (action.type === 'startGeo') {
+    return (
+      startGeo(action.mode, action.seats, action.now, action.promptIds) ?? state
+    );
+  }
   if (!state) {
     return state;
   }
@@ -397,6 +413,9 @@ export function gameReducer(
   }
   if (state.game === 'croc') {
     return crocReducer(state, action);
+  }
+  if (state.game === 'geo') {
+    return geoBranch(state, action);
   }
   switch (action.type) {
     case 'xoMove':
@@ -412,6 +431,11 @@ export function gameReducer(
     case 'crocLeft':
     case 'crocNext':
     case 'crocEnd':
+    case 'geoGuess':
+    case 'geoTimeUp':
+    case 'geoSeatsChanged':
+    case 'geoNext':
+    case 'geoPlayAgain':
     case 'resumed':
     case 'mafReady':
     case 'mafPhaseNext':
@@ -933,6 +957,25 @@ function crocReducer(state: CrocState, action: HostAction): CrocState | null {
         return { ...rest, phase: 'ready' };
       }
       return state.phase === 'result' ? toPick(state) : state;
+    default:
+      return state;
+  }
+}
+
+/**
+ * Geocore: `end` goes back to the lobby; joins, leaves and resume keep the state (dealt seats and
+ * totals are kept; the host server re-arms its timers from the saved deadlines).
+ */
+function geoBranch(state: GeoState, action: HostAction): GeoState | null {
+  switch (action.type) {
+    case 'end':
+      return null;
+    case 'geoGuess':
+    case 'geoTimeUp':
+    case 'geoSeatsChanged':
+    case 'geoNext':
+    case 'geoPlayAgain':
+      return geoReducer(state, action);
     default:
       return state;
   }

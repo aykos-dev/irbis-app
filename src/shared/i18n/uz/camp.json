@@ -28,7 +28,8 @@
     "xo": "X va O",
     "xoMeta": "2 · 1–5 daq",
     "croc": "Timsoh",
-    "crocMeta": "3–15 · pantomima"
+    "crocMeta": "3–15 · pantomima",
+    "geocore": "Geokor"
   },
   "comingSoon": "Tez orada",
   "comingSoonToast": "Keyingi yangilanishda chiqadi",
@@ -374,5 +375,78 @@
     "endConfirm": "O'yinni tugatasizmi?",
     "over": "O'yin tugadi",
     "totals": "Topildi %{g} · O'tkazildi %{s} · Navbatlar %{t}"
+  },
+  "geo": {
+    "globe": {
+      "label": "Globus",
+      "hint": "Aylantiring, yaqinlashtiring, javob uchun bosing",
+      "zoomIn": "Yaqinlashtirish",
+      "zoomOut": "Uzoqlashtirish"
+    },
+    "meta": "4 ta geografiya o'yini · 1–15",
+    "sheetLine": "10 raund · har biri 20 s · ochko to'plang",
+    "mode": {
+      "findCountry": "Davlatni toping",
+      "capitalToCountry": "Poytaxt → Davlat",
+      "countryToCapital": "Davlat → Poytaxt",
+      "cityDistance": "Shahargacha masofa"
+    },
+    "line": {
+      "findCountry": "Nomini ko'ring, globusda toping",
+      "capitalToCountry": "Poytaxtni ko'ring, davlatini toping",
+      "countryToCapital": "Davlatni ko'ring, poytaxtini belgilang",
+      "cityDistance": "Shaharni ko'ring, belgi qo'ying, qanchalik uzoqligini biling"
+    },
+    "rounds": "Raundlar",
+    "timePerRound": "Raund vaqti",
+    "seconds": "%{n} s",
+    "points": {
+      "label": "Ochkolar",
+      "country": "Davlat ichida 1000 · yaqin xatolar km bo'yicha",
+      "capital": "1000 gacha, poytaxtgacha km bo'yicha",
+      "city": "5000 gacha, shahargacha km bo'yicha"
+    },
+    "start": "Boshlash: %{game}",
+    "solo": "Siz ham o'ynaysiz. Yolg'iz ham bo'ladi.",
+    "roundOf": "%{mode} · %{n} / %{of} raund",
+    "youTotal": "Siz %{total} · %{count} tadan %{place}",
+    "ask": {
+      "findCountry": "Shu davlatni toping",
+      "capitalToCountry": "Qaysi davlatning poytaxti?",
+      "countryToCapital": "Poytaxtini belgilang",
+      "cityDistance": "Belgi qo'ying"
+    },
+    "lockCountry": "Tanlash: %{country}",
+    "lockPin": "Belgini tasdiqlash",
+    "pickFirst": "Avval globusga bosing",
+    "waitingOthers": "Javob qabul qilindi · boshqalarni kutamiz",
+    "answered": "%{total} tadan %{n} kishi javob berdi",
+    "secondsLeft": "%{n} soniya qoldi",
+    "reveal": {
+      "country": "Bu %{country} edi",
+      "capitalIn": "%{capital} — %{country} poytaxti",
+      "capitalOf": "%{country} poytaxti — %{capital}",
+      "cityIn": "%{city}, %{country}"
+    },
+    "yourResult": "+%{points}",
+    "kmOff": "%{km} km xato",
+    "inside": "Aynan to'g'ri",
+    "noAnswer": "Javob yo'q",
+    "you": "Siz",
+    "km": "%{km} km",
+    "standingsAfter": "%{n}-raunddan keyingi hisob",
+    "thisRound": "shu raund",
+    "nextRound": "Keyingi raund",
+    "nextIn": "Keyingi raund %{s} s dan keyin",
+    "seeResults": "Natijalar",
+    "waitingHost": "Boshlovchini kutamiz",
+    "wins": "%{name} g'olib!",
+    "youWin": "Siz g'olibsiz!",
+    "tieWin": "%{names} g'alabani bo'lishdi!",
+    "finalLine": "%{mode} · %{of} raund",
+    "tie": "durang",
+    "everyoneTotal": "Hammaning natijasi",
+    "playAgain": "Yana o'ynash",
+    "lobby": "Lobbi"
   }
 }

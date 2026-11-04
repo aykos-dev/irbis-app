@@ -28,7 +28,8 @@
     "xo": "Крестики-нолики",
     "xoMeta": "2 · 1–5 мин",
     "croc": "Крокодил",
-    "crocMeta": "3–15 · пантомима"
+    "crocMeta": "3–15 · пантомима",
+    "geocore": "Геокор"
   },
   "comingSoon": "Скоро",
   "comingSoonToast": "Появится в следующем обновлении",
@@ -380,5 +381,78 @@
     "endConfirm": "Завершить игру?",
     "over": "Игра окончена",
     "totals": "Угадано %{g} · Пропущено %{s} · Ходов %{t}"
+  },
+  "geo": {
+    "globe": {
+      "label": "Глобус",
+      "hint": "Вращайте, приближайте, нажмите, чтобы ответить",
+      "zoomIn": "Приблизить",
+      "zoomOut": "Отдалить"
+    },
+    "meta": "4 игры по географии · 1–15",
+    "sheetLine": "10 раундов · по 20 с · набирайте очки",
+    "mode": {
+      "findCountry": "Найди страну",
+      "capitalToCountry": "Столица → Страна",
+      "countryToCapital": "Страна → Столица",
+      "cityDistance": "Расстояние до города"
+    },
+    "line": {
+      "findCountry": "Увидел название — найди на глобусе",
+      "capitalToCountry": "Увидел столицу — найди страну",
+      "countryToCapital": "Увидел страну — отметь столицу",
+      "cityDistance": "Увидел город — поставь метку и узнай, насколько ошибся"
+    },
+    "rounds": "Раунды",
+    "timePerRound": "Время на раунд",
+    "seconds": "%{n} с",
+    "points": {
+      "label": "Очки",
+      "country": "В стране — 1000 · промахи по расстоянию",
+      "capital": "До 1000, по расстоянию до столицы",
+      "city": "До 5000, по расстоянию до города"
+    },
+    "start": "Начать: %{game}",
+    "solo": "Вы тоже играете. Можно и одному.",
+    "roundOf": "%{mode} · Раунд %{n} / %{of}",
+    "youTotal": "Вы %{total} · %{place} из %{count}",
+    "ask": {
+      "findCountry": "Найдите страну",
+      "capitalToCountry": "Столица какой страны?",
+      "countryToCapital": "Отметьте столицу",
+      "cityDistance": "Поставьте метку"
+    },
+    "lockCountry": "Выбрать: %{country}",
+    "lockPin": "Подтвердить метку",
+    "pickFirst": "Сначала нажмите на глобус",
+    "waitingOthers": "Ответ принят · ждём остальных",
+    "answered": "Ответили %{n} из %{total}",
+    "secondsLeft": "Осталось %{n} с",
+    "reveal": {
+      "country": "Это %{country}",
+      "capitalIn": "%{capital} — в стране %{country}",
+      "capitalOf": "Столица %{country} — %{capital}",
+      "cityIn": "%{city}, %{country}"
+    },
+    "yourResult": "+%{points}",
+    "kmOff": "Ошибка %{km} км",
+    "inside": "В точку",
+    "noAnswer": "Нет ответа",
+    "you": "Вы",
+    "km": "%{km} км",
+    "standingsAfter": "Счёт после раунда %{n}",
+    "thisRound": "за раунд",
+    "nextRound": "Следующий раунд",
+    "nextIn": "Следующий раунд через %{s} с",
+    "seeResults": "Итоги",
+    "waitingHost": "Ждём ведущего",
+    "wins": "%{name} побеждает!",
+    "youWin": "Вы победили!",
+    "tieWin": "%{names} делят победу!",
+    "finalLine": "%{mode} · %{of} раундов",
+    "tie": "ничья",
+    "everyoneTotal": "Итог у всех",
+    "playAgain": "Ещё раз",
+    "lobby": "Лобби"
   }
 }

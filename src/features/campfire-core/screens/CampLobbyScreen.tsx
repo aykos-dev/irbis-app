@@ -42,6 +42,8 @@ import {
   type GameSettings,
 } from '../games/gameReducer';
 import { CrocSetup } from '../games/croc/CrocSetup';
+import { GeoSetup } from '../games/geocore/GeoSetup';
+import type { GeoMode } from '../games/geocore/scoring';
 import { MafiaSetup } from '../games/mafia/MafiaSetup';
 import {
   localized,
@@ -58,7 +60,15 @@ import type { RosterPlayer } from '../protocol/codec';
 import { reconnectingCount, toRoster } from '../room/roomReducer';
 import { useHostRoom, type HostNetwork } from '../room/useHostRoom';
 
-const lobbyGames: GameId[] = ['imposter', 'mafia', 'whoami', 'rather', 'xo', 'croc'];
+const lobbyGames: GameId[] = [
+  'imposter',
+  'mafia',
+  'whoami',
+  'rather',
+  'xo',
+  'croc',
+  'geocore',
+];
 
 function isPartyGame(game: GameId): game is PartyGame {
   return partyGames.some(party => party === game);
@@ -127,12 +137,23 @@ export function CampLobbyScreen(props: RootStackScreenProps<'CampLobby'>) {
  */
 function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
   useLocale();
-  const { state, retry, remove, close, startGame, startMafia, startXo, startCroc } =
-    useHostRoom(
-    route.params?.resume === true,
-  );
+  const {
+    state,
+    retry,
+    remove,
+    close,
+    startGame,
+    startMafia,
+    startXo,
+    startCroc,
+    startGeo,
+  } = useHostRoom(route.params?.resume === true);
   const [game, setGame] = useState<GameId>(
     route.params?.game ?? 'imposter',
+  );
+  // Lobby `geocore` is the running game `geo` with this mode (startGeo below is the one mapping).
+  const [geoMode, setGeoMode] = useState<GeoMode>(
+    route.params?.geoMode ?? 'findCountry',
   );
   const [packIds, setPackIds] = useState(firstPacks);
   const [imposters, setImposters] = useState(1);
@@ -349,6 +370,13 @@ function HostLobby({ navigation, route }: RootStackScreenProps<'CampLobby'>) {
               />
             ) : game === 'croc' ? (
               <CrocSetup players={connected} onStart={startCroc} />
+            ) : game === 'geocore' ? (
+              <GeoSetup
+                players={connected}
+                mode={geoMode}
+                onMode={setGeoMode}
+                onStart={startGeo}
+              />
             ) : (
               <MafiaSetup
                 players={Math.max(0, connected - 1)}

@@ -11,6 +11,8 @@ import {
   type CrocPublic,
   type CrocSecret,
   type GamePhase,
+  type GeoPoint,
+  type GeoPublic,
   type HostMessage,
   type MafiaPhase,
   type MafiaPublic,
@@ -43,7 +45,8 @@ export type PlayerGame =
   | { game: PartyGame; round: number; phase: GamePhase; public: PublicGame }
   | { game: 'mafia'; round: number; phase: MafiaPhase; public: MafiaPublic }
   | { game: 'xo'; round: number; public: XoPublic }
-  | { game: 'croc'; round: number; phase: CrocPhase; public: CrocPublic };
+  | { game: 'croc'; round: number; phase: CrocPhase; public: CrocPublic }
+  | { game: 'geo'; round: number; public: GeoPublic };
 
 /** This seat's secret for one round (`deal` message); Mafia: our role. */
 export type PlayerDeal =
@@ -86,6 +89,8 @@ export type PlayerClient = {
   crocSkip: () => void;
   crocStart: () => void;
   crocGuessed: () => void;
+  /** Geocore: our answer for the current question (the host keeps the first one only). */
+  geoGuess: (point: GeoPoint) => void;
   getSnapshot: () => PlayerSnapshot;
   subscribe: (listener: () => void) => () => void;
 };
@@ -237,6 +242,13 @@ export function createPlayerClient({
         if (message.game === 'xo') {
           update({
             game: { game: 'xo', round: message.round, public: message.public },
+            deal: null,
+          });
+          return;
+        }
+        if (message.game === 'geo') {
+          update({
+            game: { game: 'geo', round: message.round, public: message.public },
             deal: null,
           });
           return;
@@ -435,6 +447,17 @@ export function createPlayerClient({
       const { game } = snapshot;
       if (game?.game === 'croc') {
         send({ type: 'crocGuessed', round: game.round, turnNo: game.public.turnNo });
+      }
+    },
+    geoGuess: point => {
+      const { game } = snapshot;
+      if (game?.game === 'geo' && game.public.phase === 'question') {
+        send({
+          type: 'geoGuess',
+          round: game.round,
+          roundNo: game.public.roundNo,
+          ...point,
+        });
       }
     },
     stop: () => {

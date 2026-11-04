@@ -7,10 +7,10 @@ import { animals } from '../playerProfile';
  * Local Campfire protocol (spec § Local protocol): newline-delimited JSON over TCP, `v: 5`
  * (v2 added the party games: `deal`, `game`, `lobby`, `wyrVote`, `showMine`; v3 added Mafia:
  * its `deal` / `game` shapes and `mafReady`; v4 added X and O: its `game` shape, `xoMove` and
- * `xoNext`; v5 adds Crocodile: its `deal` / `game` shapes and `crocStart`, `crocSkip`,
- * `crocGuessed`).
+ * `xoNext`; v5 added Crocodile: its `deal` / `game` shapes and `crocStart`, `crocSkip`,
+ * `crocGuessed`; v6 adds Geocore: its `game` shape and `geoGuess`).
  */
-export const PROTOCOL_VERSION = 5;
+export const PROTOCOL_VERSION = 6;
 export const CAMP_PORT = 47821;
 export const MAX_SEATS = 15;
 /** Clients ping this often; the host answers `pong`. */
@@ -244,6 +244,70 @@ export const crocPublicSchema = z.object({
 });
 export type CrocPublic = z.infer<typeof crocPublicSchema>;
 
+/** Geocore: the four games (spec AC1). */
+export const geoModes = [
+  'findCountry',
+  'capitalToCountry',
+  'countryToCapital',
+  'cityDistance',
+] as const;
+export const geoModeSchema = z.enum(geoModes);
+
+/** Geocore rounds per game and the round number bounds on the wire. */
+export const GEO_ROUNDS = 10;
+const geoRoundNo = z.number().int().min(1).max(GEO_ROUNDS);
+const geoLat = z.number().min(-90).max(90);
+const geoLng = z.number().min(-180).max(180);
+const geoIso = z.string().regex(/^[A-Z]{2}$/);
+
+/** A tap on the globe: the point, plus the country under it when there is one. */
+export const geoPointSchema = z.object({
+  lat: geoLat,
+  lng: geoLng,
+  iso: geoIso.optional(),
+});
+export type GeoPoint = z.infer<typeof geoPointSchema>;
+
+/** One seat's scored round; no point when the seat did not answer (0 points, no km). */
+export const geoResultSchema = z.object({
+  seatId,
+  lat: geoLat.optional(),
+  lng: geoLng.optional(),
+  iso: geoIso.optional(),
+  km: z.number().min(0).nullable(),
+  points: z.number().int().min(0),
+});
+export type GeoResult = z.infer<typeof geoResultSchema>;
+
+/** A closed round: the answer and every dealt seat's result. */
+export const geoRevealSchema = z.object({
+  roundNo: geoRoundNo,
+  answer: geoPointSchema,
+  results: z.array(geoResultSchema),
+});
+export type GeoReveal = z.infer<typeof geoRevealSchema>;
+
+export const geoPhaseSchema = z.enum(['question', 'reveal', 'final']);
+export type GeoPhase = z.infer<typeof geoPhaseSchema>;
+
+/** What every phone may see about the Geocore game: who answered, never another seat's guess before the reveal. */
+export const geoPublicSchema = z.object({
+  mode: geoModeSchema,
+  roundNo: geoRoundNo,
+  of: z.number().int().min(1),
+  phase: geoPhaseSchema,
+  promptId: z.string().min(1),
+  /** The current phase's deadline on the host's clock (question or reveal); absent in final. */
+  endsAt: z.number().optional(),
+  /** Time left when the host sent this (each phone counts down from it, no clock sync). */
+  remainingMs: z.number().int().min(0).optional(),
+  answered: z.array(seatId),
+  totals: z.record(seatId, z.number().int().min(0)),
+  /** Reveal and final only. */
+  reveal: geoRevealSchema.nullable(),
+});
+export type GeoPublic = z.infer<typeof geoPublicSchema>;
+
 /** Host → one seat: that seat's secret for the round (no deal in Would you rather; none for the Mafia host). */
 const dealMessageSchema = z.discriminatedUnion('game', [
   z.object({
@@ -302,6 +366,13 @@ const gameMessageSchema = z.discriminatedUnion('game', [
     phase: crocPhaseSchema,
     public: crocPublicSchema,
   }),
+  z.object({
+    v: version,
+    type: z.literal('game'),
+    game: z.literal('geo'),
+    round,
+    public: geoPublicSchema,
+  }),
 ]);
 
 export const clientMessageSchema = z.discriminatedUnion('type', [
@@ -339,6 +410,16 @@ export const clientMessageSchema = z.discriminatedUnion('type', [
   z.object({ v: version, type: z.literal('crocStart'), round, turnNo }),
   z.object({ v: version, type: z.literal('crocSkip'), round, turnNo }),
   z.object({ v: version, type: z.literal('crocGuessed'), round, turnNo }),
+  /** Geocore: this seat's answer for round `roundNo`; the host keeps the first one only. */
+  z.object({
+    v: version,
+    type: z.literal('geoGuess'),
+    round,
+    roundNo: geoRoundNo,
+    lat: geoLat,
+    lng: geoLng,
+    iso: geoIso.optional(),
+  }),
 ]);
 export type ClientMessage = z.infer<typeof clientMessageSchema>;
 

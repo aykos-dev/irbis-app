@@ -29,6 +29,13 @@ import {
   teamCounts,
   type MafiaSettings,
 } from '../games/mafia/roles';
+import {
+  geoRange,
+  toGeoPublic,
+  type GeoState,
+} from '../games/geocore/geoGame';
+import { drawPrompts } from '../games/geocore/prompts';
+import type { GeoMode } from '../games/geocore/scoring';
 import { findCrocPack, findPack, type PartyGame } from '../games/packs';
 import { drawIds, type Rng } from '../games/usedStore';
 import {
@@ -39,6 +46,7 @@ import {
   PING_INTERVAL_MS,
   SILENCE_TIMEOUT_MS,
   type CrocResult,
+  type GeoPoint,
   type MafiaWinner,
   type OutgoingHostMessage,
   type WyrPick,
@@ -130,6 +138,14 @@ export type HostServer = {
   crocEnd: () => void;
   /** Crocodile, after game over: totals back to 0, same settings, "who shows next?". */
   crocPlayAgain: () => void;
+  /** Geocore: 10 rounds of `mode` over the 1–15 connected seats (host included). */
+  startGeo: (mode: GeoMode, rng?: Rng) => void;
+  /** Geocore: a seat's answer (the host's own tap included); the first one per round counts. */
+  geoGuess: (seatId: string, point: GeoPoint) => void;
+  /** Geocore, host: leave the reveal before its 8 s are up. */
+  geoNext: () => void;
+  /** Geocore, after the final: same mode, new prompts, totals 0, the seats connected now. */
+  geoPlayAgain: (rng?: Rng) => void;
 };
 
 type Options = {
@@ -157,6 +173,9 @@ export function createHostServer({
   /** Crocodile: the turn timer (running) or the result timer; only the host ends a turn. */
   let crocTimer: ReturnType<typeof setTimeout> | null = null;
   let crocTimerKey = '';
+  /** Geocore: the question timer (→ time up) or the reveal timer (→ next round). */
+  let geoTimer: ReturnType<typeof setTimeout> | null = null;
+  let geoTimerKey = '';
   const conns = new Map<string, Conn>();
   /** Seat tokens the host has freed: a retry with one gets `removed`, never a new seat (CORE-3). */
   const removedTokens = new Set<string>();
@@ -224,6 +243,15 @@ export function createHostServer({
       });
       return;
     }
+    if (game.game === 'geo') {
+      send(conn, {
+        type: 'game',
+        game: 'geo',
+        round: game.round,
+        public: toGeoPublic(game, now()),
+      });
+      return;
+    }
     if (game.game === 'mafia') {
       const secret = seatId ? game.deals[seatId] : undefined;
       if (withDeal && secret) {
@@ -275,6 +303,7 @@ export function createHostServer({
     }
     game = next;
     armCroc();
+    armGeo();
     onChange(state, game);
     return true;
   };
@@ -329,6 +358,78 @@ export function createHostServer({
         crocNext();
       }, CROC_RESULT_MS);
     }
+  }
+
+  const clearGeoTimer = () => {
+    if (geoTimer) {
+      clearTimeout(geoTimer);
+      geoTimer = null;
+    }
+  };
+
+  /** Geocore QA events for a game state change: a new question, a reveal (with each scored guess), the final. */
+  const logGeo = (before: GeoState, after: HostGame | null) => {
+    if (after?.game !== 'geo') {
+      return;
+    }
+    const { mode, roundNo } = after;
+    if (after.phase === 'question' && before.phase === 'reveal') {
+      qaLog('geo_round', { mode, roundNo });
+    }
+    if (after.phase === 'reveal' && before.phase === 'question' && after.lastReveal) {
+      const answered = after.lastReveal.results.filter(
+        result => result.lat !== undefined,
+      );
+      answered.forEach(({ km, points }) =>
+        qaLog('geo_guess', { roundNo, km, points }),
+      );
+      qaLog('geo_reveal', {
+        roundNo,
+        answered: answered.length,
+        of: after.seats.length,
+      });
+    }
+    if (after.phase === 'final' && before.phase !== 'final') {
+      qaLog('camp_game_ended', { game: 'geo', mode, rounds: after.of });
+    }
+  };
+
+  /** Applies a Geocore action, broadcasts the new public state and logs its QA events. */
+  const applyGeo = (action: HostAction): boolean => {
+    const before = game;
+    if (before?.game !== 'geo' || !applyGame(action)) {
+      return false;
+    }
+    broadcastGame(false);
+    logGeo(before, current());
+    return true;
+  };
+
+  /** (Re)arms the Geocore timer per phase and round: question → time up at `endsAt`, reveal → next at `revealEndsAt`. */
+  function armGeo() {
+    const geo = game?.game === 'geo' ? game : null;
+    const key = geo ? `${geo.round}.${geo.roundNo}.${geo.phase}` : '';
+    if (key === geoTimerKey) {
+      return;
+    }
+    geoTimerKey = key;
+    clearGeoTimer();
+    if (!geo || geo.phase === 'final') {
+      return;
+    }
+    const { roundNo } = geo;
+    const deadline = geo.phase === 'question' ? geo.endsAt : geo.revealEndsAt;
+    geoTimer = setTimeout(
+      () => {
+        geoTimer = null;
+        applyGeo(
+          geo.phase === 'question'
+            ? { type: 'geoTimeUp', roundNo, now: now() }
+            : { type: 'geoNext', roundNo, now: now() },
+        );
+      },
+      Math.max(0, (deadline ?? now()) - now()),
+    );
   }
 
   /** The game now (read after `applyGame`, which replaces it). */
@@ -392,6 +493,33 @@ export function createHostServer({
 
   const nameOf = (seatId: string) =>
     state.seats.find(seat => seat.seatId === seatId)?.nickname ?? '';
+
+  /** Geocore: a seat's answer; once every connected dealt seat answered, the round closes early. */
+  const geoGuess = (
+    seatId: string,
+    round: number,
+    roundNo: number,
+    point: GeoPoint,
+  ) => {
+    applyGeo({
+      type: 'geoGuess',
+      seatId,
+      round,
+      roundNo,
+      lat: point.lat,
+      lng: point.lng,
+      ...(point.iso ? { iso: point.iso } : {}),
+      now: now(),
+      connected: roundSeats(gameSeats()),
+    });
+  };
+
+  /** Geocore: a seat dropped or left mid-question; the round closes early if everyone still here answered. */
+  const geoSeatsChanged = () => {
+    if (game?.game === 'geo') {
+      applyGeo({ type: 'geoSeatsChanged', now: now(), connected: roundSeats(gameSeats()) });
+    }
+  };
 
   /** Crocodile: the describer dropped or was removed during ready / running — the word does not count. */
   const describerLeft = (seatId: string, name: string) =>
@@ -562,6 +690,7 @@ export function createHostServer({
     const name = seatId ? nameOf(seatId) : '';
     apply({ type: 'disconnect', connId: conn.id });
     revealIfAllVoted();
+    geoSeatsChanged();
     if (seatId) {
       describerLeft(seatId, name);
     }
@@ -601,6 +730,7 @@ export function createHostServer({
         }
         if (seatId) {
           describerLeft(seatId, name);
+          geoSeatsChanged();
         }
         return;
       }
@@ -665,6 +795,13 @@ export function createHostServer({
         const seatId = seatOf(conn);
         if (seatId) {
           crocGuessed(seatId, message.round, message.turnNo);
+        }
+        return;
+      }
+      case 'geoGuess': {
+        const seatId = seatOf(conn);
+        if (seatId) {
+          geoGuess(seatId, message.round, message.roundNo, message);
         }
         return;
       }
@@ -753,6 +890,7 @@ export function createHostServer({
 
   const stop = () => {
     clearCrocTimer();
+    clearGeoTimer();
     if (ticker) {
       clearInterval(ticker);
       ticker = null;
@@ -785,6 +923,16 @@ export function createHostServer({
       }
       return;
     }
+    if (ended.game === 'geo') {
+      if (ended.phase !== 'final') {
+        qaLog('camp_game_ended', {
+          game: 'geo',
+          mode: ended.mode,
+          rounds: ended.lastReveal?.roundNo ?? 0,
+        });
+      }
+      return;
+    }
     const over =
       ended.game === 'mafia'
         ? ended.ended !== undefined
@@ -803,6 +951,8 @@ export function createHostServer({
         listening.listen({ port: CAMP_PORT, host: '0.0.0.0' }, () => {
           ticker = setInterval(checkSilence, PING_INTERVAL_MS);
           syncXoPresence();
+          // A resumed Geocore game picks up its question / reveal timer from the saved deadline.
+          armGeo();
           zeroconf.publishService(
             SERVICE_TYPE,
             'tcp',
@@ -836,6 +986,7 @@ export function createHostServer({
           }
         }
         describerLeft(seatId, name);
+        geoSeatsChanged();
       }
     },
     startGame: (kind, settings, rng = Math.random) => {
@@ -943,7 +1094,13 @@ export function createHostServer({
       }
     },
     newRound: (rng = Math.random) => {
-      if (!game || game.game === 'mafia' || game.game === 'xo' || game.game === 'croc') {
+      if (
+        !game ||
+        game.game === 'mafia' ||
+        game.game === 'xo' ||
+        game.game === 'croc' ||
+        game.game === 'geo'
+      ) {
         return;
       }
       const ids = draw(game.game, game.settings.packId, rng);
@@ -1026,6 +1183,55 @@ export function createHostServer({
       }
       broadcastGame(false);
     },
+    startGeo: (mode, rng = Math.random) => {
+      const seats = roundSeats(gameSeats());
+      if (game || seats.length < geoRange.min || seats.length > geoRange.max) {
+        return;
+      }
+      const action: HostAction = {
+        type: 'startGeo',
+        mode,
+        seats,
+        now: now(),
+        promptIds: drawPrompts(mode, 10, rng),
+      };
+      if (!applyGame(action)) {
+        return;
+      }
+      broadcastGame(false);
+      qaLog('camp_game_started', { game: 'geo', mode, players: seats.length });
+      qaLog('geo_round', { mode, roundNo: 1 });
+    },
+    geoGuess: (seatId, point) => {
+      if (game?.game === 'geo') {
+        geoGuess(seatId, game.round, game.roundNo, point);
+      }
+    },
+    geoNext: () => {
+      if (game?.game === 'geo') {
+        applyGeo({ type: 'geoNext', roundNo: game.roundNo, now: now() });
+      }
+    },
+    geoPlayAgain: (rng = Math.random) => {
+      if (game?.game !== 'geo' || game.phase !== 'final') {
+        return;
+      }
+      const { mode } = game;
+      const seats = roundSeats(gameSeats());
+      if (
+        !applyGame({
+          type: 'geoPlayAgain',
+          now: now(),
+          promptIds: drawPrompts(mode, 10, rng),
+          seats,
+        })
+      ) {
+        return;
+      }
+      broadcastGame(false);
+      qaLog('camp_game_started', { game: 'geo', mode, players: seats.length });
+      qaLog('geo_round', { mode, roundNo: 1 });
+    },
     mafPlayAgain: (rng = Math.random) => {
       if (game?.game !== 'mafia' || !game.ended) {
         return;
@@ -1098,7 +1304,8 @@ export function createHostServer({
         !applyGame({ type: 'reveal' }) ||
         game.game === 'mafia' ||
         game.game === 'xo' ||
-        game.game === 'croc'
+        game.game === 'croc' ||
+        game.game === 'geo'
       ) {
         return;
       }
