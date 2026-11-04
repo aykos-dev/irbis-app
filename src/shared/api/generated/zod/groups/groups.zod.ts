@@ -32,10 +32,12 @@ export const GroupsListResponse = zod.object({
   "avatarUrl": zod.string().nullable(),
   "color": zod.string(),
   "memberCount": zod.int(),
+  "unreadCount": zod.int(),
   "viewerMembership": zod.object({
   "status": zod.enum(['invited', 'pending', 'active']),
   "role": zod.enum(['owner', 'admin', 'member']),
-  "joinedAt": zod.string().nullable()
+  "joinedAt": zod.string().nullable(),
+  "notificationsMuted": zod.boolean()
 }).nullable()
 })),
   "discover": zod.array(zod.object({
@@ -47,10 +49,12 @@ export const GroupsListResponse = zod.object({
   "avatarUrl": zod.string().nullable(),
   "color": zod.string(),
   "memberCount": zod.int(),
+  "unreadCount": zod.int(),
   "viewerMembership": zod.object({
   "status": zod.enum(['invited', 'pending', 'active']),
   "role": zod.enum(['owner', 'admin', 'member']),
-  "joinedAt": zod.string().nullable()
+  "joinedAt": zod.string().nullable(),
+  "notificationsMuted": zod.boolean()
 }).nullable()
 })),
   "invitations": zod.array(zod.object({
@@ -62,10 +66,12 @@ export const GroupsListResponse = zod.object({
   "avatarUrl": zod.string().nullable(),
   "color": zod.string(),
   "memberCount": zod.int(),
+  "unreadCount": zod.int(),
   "viewerMembership": zod.object({
   "status": zod.enum(['invited', 'pending', 'active']),
   "role": zod.enum(['owner', 'admin', 'member']),
-  "joinedAt": zod.string().nullable()
+  "joinedAt": zod.string().nullable(),
+  "notificationsMuted": zod.boolean()
 }).nullable()
 }))
 })
@@ -96,10 +102,12 @@ export const GroupsCreateResponse = zod.object({
   "avatarUrl": zod.string().nullable(),
   "color": zod.string(),
   "memberCount": zod.int(),
+  "unreadCount": zod.int(),
   "viewerMembership": zod.object({
   "status": zod.enum(['invited', 'pending', 'active']),
   "role": zod.enum(['owner', 'admin', 'member']),
-  "joinedAt": zod.string().nullable()
+  "joinedAt": zod.string().nullable(),
+  "notificationsMuted": zod.boolean()
 }).nullable(),
   "members": zod.array(zod.object({
   "userId": zod.uuid(),
@@ -141,10 +149,12 @@ export const GroupsGetResponse = zod.object({
   "avatarUrl": zod.string().nullable(),
   "color": zod.string(),
   "memberCount": zod.int(),
+  "unreadCount": zod.int(),
   "viewerMembership": zod.object({
   "status": zod.enum(['invited', 'pending', 'active']),
   "role": zod.enum(['owner', 'admin', 'member']),
-  "joinedAt": zod.string().nullable()
+  "joinedAt": zod.string().nullable(),
+  "notificationsMuted": zod.boolean()
 }).nullable(),
   "members": zod.array(zod.object({
   "userId": zod.uuid(),
@@ -200,10 +210,12 @@ export const GroupsUpdateResponse = zod.object({
   "avatarUrl": zod.string().nullable(),
   "color": zod.string(),
   "memberCount": zod.int(),
+  "unreadCount": zod.int(),
   "viewerMembership": zod.object({
   "status": zod.enum(['invited', 'pending', 'active']),
   "role": zod.enum(['owner', 'admin', 'member']),
-  "joinedAt": zod.string().nullable()
+  "joinedAt": zod.string().nullable(),
+  "notificationsMuted": zod.boolean()
 }).nullable(),
   "members": zod.array(zod.object({
   "userId": zod.uuid(),

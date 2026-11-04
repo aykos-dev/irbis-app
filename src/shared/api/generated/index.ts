@@ -4,6 +4,7 @@ export * from './auth/auth.ts';
 export * from './badges/badges.ts';
 export * from './check-ins/check-ins.ts';
 export * from './conditions/conditions.ts';
+export * from './group-chat/group-chat.ts';
 export * from './groups/groups.ts';
 export * from './health/health.ts';
 export * from './lessons/lessons.ts';

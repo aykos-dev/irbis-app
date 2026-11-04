@@ -35,6 +35,7 @@
   "admin": "Admin",
   "leader": "Verified leader",
   "joined": "Joined",
+  "openChat": "Open group chat",
   "created": "Group created",
   "updated": "Group updated",
   "inviteSent": "Invitation sent",

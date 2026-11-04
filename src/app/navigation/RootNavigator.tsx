@@ -24,6 +24,7 @@ import { SettingsScreen } from '../../features/profile/screens/SettingsScreen';
 import { SearchScreen } from '../../features/search/screens/SearchScreen';
 import { GroupDetailsScreen } from '../../features/groups/screens/GroupDetailsScreen';
 import { GroupFormScreen } from '../../features/groups/screens/GroupFormScreen';
+import { GroupChatScreen } from '../../features/groups/screens/GroupChatScreen';
 import { OnboardingNavigator } from '../../features/onboarding/OnboardingNavigator';
 import {
   isOnboardingDone,
@@ -117,6 +118,7 @@ export function RootNavigator() {
       <Stack.Screen name="GroupDetails" component={GroupDetailsScreen} />
       <Stack.Screen name="CreateGroup" component={GroupFormScreen} />
       <Stack.Screen name="EditGroup" component={GroupFormScreen} />
+      <Stack.Screen name="GroupChat" component={GroupChatScreen} />
       <Stack.Screen name="Companions" component={CompanionsScreen} />
       <Stack.Screen
         name="Quiz"

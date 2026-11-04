@@ -19,6 +19,7 @@ export interface GroupDetailsDto {
   avatarUrl: string | null;
   color: string;
   memberCount: number;
+  unreadCount: number;
   /** @nullable */
   viewerMembership: GroupViewerMembershipDto | null;
   members: GroupMemberDto[];

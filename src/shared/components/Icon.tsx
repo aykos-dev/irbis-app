@@ -24,6 +24,10 @@ export type IconName =
   | 'person'
   | 'phone'
   | 'chevron'
+  | 'plus'
+  | 'close'
+  | 'arrowUp'
+  | 'bell'
   | 'lock'
   /** Level requirement rows (canvas Level): XP and safety lessons. */
   | 'bolt'
@@ -111,6 +115,14 @@ function draw(name: IconName, color: string, accent: string) {
       return <Path d="M15 5l-7 7 7 7" fill="none" stroke={color} strokeWidth={3} {...STROKE} />;
     case 'chevron':
       return <Path d="M9 5l7 7-7 7" fill="none" stroke={color} strokeWidth={3} {...STROKE} />;
+    case 'plus':
+      return <Path d="M12 5v14M5 12h14" fill="none" stroke={color} strokeWidth={3} {...STROKE} />;
+    case 'close':
+      return <Path d="M6 6l12 12M18 6L6 18" fill="none" stroke={color} strokeWidth={2.7} {...STROKE} />;
+    case 'arrowUp':
+      return <Path d="M12 19V5M6.5 10.5L12 5l5.5 5.5" fill="none" stroke={color} strokeWidth={2.7} {...STROKE} />;
+    case 'bell':
+      return <Path d="M5 17h14l-1.6-2.3V10a5.4 5.4 0 0 0-10.8 0v4.7zM10 20h4" fill="none" stroke={color} strokeWidth={2.2} {...STROKE} />;
     case 'eye':
       return (
         <>

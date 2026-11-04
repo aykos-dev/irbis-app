@@ -111,6 +111,7 @@ export const linking: LinkingOptions<RootStackParamList> = {
       PublicProfile: 'profile/:username',
       Notifs: 'notifications',
       Search: 'search',
+      GroupChat: 'groups/:id/chat',
       Place: 'place/:id',
       ...debugScreens,
     },

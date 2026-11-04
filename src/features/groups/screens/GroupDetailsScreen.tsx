@@ -107,6 +107,9 @@ export function GroupDetailsScreen({ navigation, route }: RootStackScreenProps<'
           <AppButton testID="group-details.join" label={data.visibility === 'public' ? t('groups.join') : t('groups.request')} onPress={() => void joinNow()} loading={join.isPending || session.loading} />
         )
       ) : null}
+      {active ? (
+        <AppButton testID="group-details.chat" label={t('groups.openChat')} onPress={() => navigation.navigate('GroupChat', { id: data.id })} />
+      ) : null}
 
       {admin ? (
         <View style={[layout.panel, styles.panel]}>

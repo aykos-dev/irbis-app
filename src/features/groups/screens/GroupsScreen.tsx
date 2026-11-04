@@ -107,6 +107,11 @@ function GroupCard({ group, onOpen, children }: { group: GroupSummaryDto; onOpen
         <AppText variant="small" tone="muted" numberOfLines={2}>{group.description}</AppText>
         <AppText variant="caption" tone="muted">{t('groups.members', { count: group.memberCount })}</AppText>
       </View>
+      {group.unreadCount > 0 ? (
+        <View testID={`groups.unread-${group.id}`} style={[layout.unread, styles.unread]}>
+          <AppText variant="chip" tone="white">{group.unreadCount > 99 ? '99+' : group.unreadCount}</AppText>
+        </View>
+      ) : null}
       {children}
     </Pressable>
   );
@@ -131,10 +136,12 @@ const layout = StyleSheet.create({
   copy: { flex: 1, gap: spacing[4] },
   actions: { gap: spacing[6] },
   smallAction: { minHeight: 40, paddingHorizontal: spacing[10], borderRadius: radii.input, alignItems: 'center', justifyContent: 'center' },
+  unread: { minWidth: 26, height: 26, paddingHorizontal: spacing[6], borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center' },
 });
 
 const useStyles = createThemedStyles(c => ({
   card: { backgroundColor: c.card, borderColor: c.line },
   action: { backgroundColor: c.soft },
+  unread: { backgroundColor: c.red700 },
 }));
 

@@ -18,6 +18,7 @@ export interface GroupSummaryDto {
   avatarUrl: string | null;
   color: string;
   memberCount: number;
+  unreadCount: number;
   /** @nullable */
   viewerMembership: GroupViewerMembershipDto | null;
 }

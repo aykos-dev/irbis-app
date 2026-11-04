@@ -116,6 +116,7 @@ export type RootStackParamList = {
   GroupDetails: { id: string };
   CreateGroup: undefined;
   EditGroup: { id: string };
+  GroupChat: { id: string };
   /** All seven companions (levels AC6). */
   Companions: undefined;
   /** Full-screen level-up celebration for one pending level-up (levels AC7). */

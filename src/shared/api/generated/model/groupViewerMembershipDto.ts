@@ -13,4 +13,5 @@ export interface GroupViewerMembershipDto {
   role: GroupViewerMembershipDtoRole;
   /** @nullable */
   joinedAt: string | null;
+  notificationsMuted: boolean;
 }

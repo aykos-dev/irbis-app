@@ -13,6 +13,7 @@ import enDebug from './en/debug.json';
 import enErrors from './en/errors.json';
 import enHealth from './en/health.json';
 import enGroups from './en/groups.json';
+import enGroupChat from './en/groupChat.json';
 import enLessons from './en/lessons.json';
 import enLevels from './en/levels.json';
 import enNav from './en/nav.json';
@@ -31,6 +32,7 @@ import ruDebug from './ru/debug.json';
 import ruErrors from './ru/errors.json';
 import ruHealth from './ru/health.json';
 import ruGroups from './ru/groups.json';
+import ruGroupChat from './ru/groupChat.json';
 import ruLessons from './ru/lessons.json';
 import ruLevels from './ru/levels.json';
 import ruNav from './ru/nav.json';
@@ -49,6 +51,7 @@ import uzDebug from './uz/debug.json';
 import uzErrors from './uz/errors.json';
 import uzHealth from './uz/health.json';
 import uzGroups from './uz/groups.json';
+import uzGroupChat from './uz/groupChat.json';
 import uzLessons from './uz/lessons.json';
 import uzLevels from './uz/levels.json';
 import uzNav from './uz/nav.json';
@@ -87,6 +90,7 @@ export const i18n = new I18n({
     errors: enErrors,
     health: enHealth,
     groups: enGroups,
+    groupChat: enGroupChat,
     lessons: enLessons,
     levels: enLevels,
     onboarding: enOnboarding,
@@ -107,6 +111,7 @@ export const i18n = new I18n({
     errors: ruErrors,
     health: ruHealth,
     groups: ruGroups,
+    groupChat: ruGroupChat,
     lessons: ruLessons,
     levels: ruLevels,
     onboarding: ruOnboarding,
@@ -127,6 +132,7 @@ export const i18n = new I18n({
     errors: uzErrors,
     health: uzHealth,
     groups: uzGroups,
+    groupChat: uzGroupChat,
     lessons: uzLessons,
     levels: uzLevels,
     onboarding: uzOnboarding,
