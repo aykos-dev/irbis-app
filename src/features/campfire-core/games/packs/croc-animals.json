@@ -8,40 +8,16 @@
   },
   "items": [
     {
-      "id": "snow-leopard",
-      "uz": "Qor qoploni",
-      "ru": "Снежный барс",
-      "en": "Snow leopard"
-    },
-    {
       "id": "camel",
       "uz": "Tuya",
       "ru": "Верблюд",
       "en": "Camel"
     },
     {
-      "id": "saiga",
-      "uz": "Saygʻoq",
-      "ru": "Сайгак",
-      "en": "Saiga"
-    },
-    {
       "id": "golden-eagle",
       "uz": "Burgut",
       "ru": "Беркут",
       "en": "Golden eagle"
-    },
-    {
-      "id": "marmot",
-      "uz": "Sugʻur",
-      "ru": "Сурок",
-      "en": "Marmot"
-    },
-    {
-      "id": "jerboa",
-      "uz": "Qoʻshoyoq",
-      "ru": "Тушканчик",
-      "en": "Jerboa"
     },
     {
       "id": "mountain-goat",
@@ -218,34 +194,10 @@
       "en": "Squirrel"
     },
     {
-      "id": "owl",
-      "uz": "Boyqush",
-      "ru": "Сова",
-      "en": "Owl"
-    },
-    {
-      "id": "peacock",
-      "uz": "Tovus",
-      "ru": "Павлин",
-      "en": "Peacock"
-    },
-    {
       "id": "parrot",
       "uz": "Toʻtiqush",
       "ru": "Попугай",
       "en": "Parrot"
-    },
-    {
-      "id": "flamingo",
-      "uz": "Flamingo",
-      "ru": "Фламинго",
-      "en": "Flamingo"
-    },
-    {
-      "id": "bat",
-      "uz": "Koʻrshapalak",
-      "ru": "Летучая мышь",
-      "en": "Bat"
     },
     {
       "id": "mouse",
@@ -314,12 +266,6 @@
       "en": "Scorpion"
     },
     {
-      "id": "deer",
-      "uz": "Bugʻu",
-      "ru": "Олень",
-      "en": "Deer"
-    },
-    {
       "id": "zebra",
       "uz": "Zebra",
       "ru": "Зебра",
@@ -342,30 +288,6 @@
       "uz": "Koala",
       "ru": "Коала",
       "en": "Koala"
-    },
-    {
-      "id": "woodpecker",
-      "uz": "Qizilishton",
-      "ru": "Дятел",
-      "en": "Woodpecker"
-    },
-    {
-      "id": "stork",
-      "uz": "Laylak",
-      "ru": "Аист",
-      "en": "Stork"
-    },
-    {
-      "id": "lizard",
-      "uz": "Kaltakesak",
-      "ru": "Ящерица",
-      "en": "Lizard"
-    },
-    {
-      "id": "swan",
-      "uz": "Oqqush",
-      "ru": "Лебедь",
-      "en": "Swan"
     }
   ]
 }

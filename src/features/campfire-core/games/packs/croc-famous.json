@@ -8,124 +8,16 @@
   },
   "items": [
     {
-      "id": "amir-temur",
-      "uz": "Amir Temur",
-      "ru": "Амир Темур",
-      "en": "Amir Timur"
-    },
-    {
-      "id": "ulugh-beg",
-      "uz": "Mirzo Ulugʻbek",
-      "ru": "Мирзо Улугбек",
-      "en": "Ulugh Beg"
-    },
-    {
       "id": "alisher-navoi",
       "uz": "Alisher Navoiy",
       "ru": "Алишер Навои",
       "en": "Alisher Navoi"
     },
     {
-      "id": "ibn-sina",
-      "uz": "Ibn Sino",
-      "ru": "Ибн Сина (Авиценна)",
-      "en": "Ibn Sina (Avicenna)"
-    },
-    {
-      "id": "al-khwarizmi",
-      "uz": "Al-Xorazmiy",
-      "ru": "Аль-Хорезми",
-      "en": "Al-Khwarizmi"
-    },
-    {
-      "id": "al-biruni",
-      "uz": "Abu Rayhon Beruniy",
-      "ru": "Абу Рейхан Бируни",
-      "en": "Al-Biruni"
-    },
-    {
-      "id": "babur",
-      "uz": "Zahiriddin Muhammad Bobur",
-      "ru": "Захириддин Мухаммад Бабур",
-      "en": "Babur"
-    },
-    {
-      "id": "al-farabi",
-      "uz": "Abu Nasr Forobiy",
-      "ru": "Аль-Фараби",
-      "en": "Al-Farabi"
-    },
-    {
-      "id": "jaloliddin",
-      "uz": "Jaloliddin Manguberdi",
-      "ru": "Джалолиддин Мангуберды",
-      "en": "Jalal ad-Din Mingburnu"
-    },
-    {
-      "id": "tomyris",
-      "uz": "Toʻmaris",
-      "ru": "Томирис",
-      "en": "Tomyris"
-    },
-    {
-      "id": "genghis-khan",
-      "uz": "Chingizxon",
-      "ru": "Чингисхан",
-      "en": "Genghis Khan"
-    },
-    {
-      "id": "abdulla-qodiriy",
-      "uz": "Abdulla Qodiriy",
-      "ru": "Абдулла Кадыри",
-      "en": "Abdulla Qodiriy"
-    },
-    {
-      "id": "abai",
-      "uz": "Abay Qoʻnonboyev",
-      "ru": "Абай Кунанбаев",
-      "en": "Abai Kunanbaev"
-    },
-    {
-      "id": "chinghiz-aitmatov",
-      "uz": "Chingiz Aytmatov",
-      "ru": "Чингиз Айтматов",
-      "en": "Chinghiz Aitmatov"
-    },
-    {
-      "id": "gennady-golovkin",
-      "uz": "Gennadiy Golovkin",
-      "ru": "Геннадий Головкин",
-      "en": "Gennady Golovkin"
-    },
-    {
-      "id": "bakhodir-jalolov",
-      "uz": "Bahodir Jalolov",
-      "ru": "Баходир Джалолов",
-      "en": "Bakhodir Jalolov"
-    },
-    {
-      "id": "oksana-chusovitina",
-      "uz": "Oksana Chusovitina",
-      "ru": "Оксана Чусовитина",
-      "en": "Oksana Chusovitina"
-    },
-    {
       "id": "yulduz-usmonova",
       "uz": "Yulduz Usmonova",
       "ru": "Юлдуз Усмонова",
       "en": "Yulduz Usmonova"
-    },
-    {
-      "id": "sevara-nazarkhan",
-      "uz": "Sevara Nazarxon",
-      "ru": "Севара Назархан",
-      "en": "Sevara Nazarkhan"
-    },
-    {
-      "id": "dimash",
-      "uz": "Dimash Qudaybergen",
-      "ru": "Димаш Кудайберген",
-      "en": "Dimash Kudaibergen"
     },
     {
       "id": "einstein",
@@ -164,18 +56,6 @@
       "en": "Charlie Chaplin"
     },
     {
-      "id": "yuri-gagarin",
-      "uz": "Yuriy Gagarin",
-      "ru": "Юрий Гагарин",
-      "en": "Yuri Gagarin"
-    },
-    {
-      "id": "isaac-newton",
-      "uz": "Isaak Nyuton",
-      "ru": "Исаак Ньютон",
-      "en": "Isaac Newton"
-    },
-    {
       "id": "mozart",
       "uz": "Volfgang Amadey Motsart",
       "ru": "Вольфганг Амадей Моцарт",
@@ -186,96 +66,6 @@
       "uz": "Lyudvig van Betxoven",
       "ru": "Людвиг ван Бетховен",
       "en": "Ludwig van Beethoven"
-    },
-    {
-      "id": "shakespeare",
-      "uz": "Uilyam Shekspir",
-      "ru": "Уильям Шекспир",
-      "en": "William Shakespeare"
-    },
-    {
-      "id": "pushkin",
-      "uz": "Aleksandr Pushkin",
-      "ru": "Александр Пушкин",
-      "en": "Alexander Pushkin"
-    },
-    {
-      "id": "leo-tolstoy",
-      "uz": "Lev Tolstoy",
-      "ru": "Лев Толстой",
-      "en": "Leo Tolstoy"
-    },
-    {
-      "id": "picasso",
-      "uz": "Pablo Pikasso",
-      "ru": "Пабло Пикассо",
-      "en": "Pablo Picasso"
-    },
-    {
-      "id": "van-gogh",
-      "uz": "Vinsent van Gog",
-      "ru": "Винсент ван Гог",
-      "en": "Vincent van Gogh"
-    },
-    {
-      "id": "columbus",
-      "uz": "Xristofor Kolumb",
-      "ru": "Христофор Колумб",
-      "en": "Christopher Columbus"
-    },
-    {
-      "id": "napoleon",
-      "uz": "Napoleon Bonapart",
-      "ru": "Наполеон Бонапарт",
-      "en": "Napoleon Bonaparte"
-    },
-    {
-      "id": "cleopatra",
-      "uz": "Kleopatra",
-      "ru": "Клеопатра",
-      "en": "Cleopatra"
-    },
-    {
-      "id": "marie-curie",
-      "uz": "Mariya Kyuri",
-      "ru": "Мария Кюри",
-      "en": "Marie Curie"
-    },
-    {
-      "id": "nikola-tesla",
-      "uz": "Nikola Tesla",
-      "ru": "Никола Тесла",
-      "en": "Nikola Tesla"
-    },
-    {
-      "id": "thomas-edison",
-      "uz": "Tomas Edison",
-      "ru": "Томас Эдисон",
-      "en": "Thomas Edison"
-    },
-    {
-      "id": "charles-darwin",
-      "uz": "Charlz Darvin",
-      "ru": "Чарльз Дарвин",
-      "en": "Charles Darwin"
-    },
-    {
-      "id": "mendeleev",
-      "uz": "Dmitriy Mendeleyev",
-      "ru": "Дмитрий Менделеев",
-      "en": "Dmitri Mendeleev"
-    },
-    {
-      "id": "neil-armstrong",
-      "uz": "Nil Armstrong",
-      "ru": "Нил Армстронг",
-      "en": "Neil Armstrong"
-    },
-    {
-      "id": "marco-polo",
-      "uz": "Marko Polo",
-      "ru": "Марко Поло",
-      "en": "Marco Polo"
     },
     {
       "id": "muhammad-ali",
@@ -296,24 +86,6 @@
       "en": "Jackie Chan"
     },
     {
-      "id": "usain-bolt",
-      "uz": "Useyn Bolt",
-      "ru": "Усэйн Болт",
-      "en": "Usain Bolt"
-    },
-    {
-      "id": "pele",
-      "uz": "Pele",
-      "ru": "Пеле",
-      "en": "Pelé"
-    },
-    {
-      "id": "maradona",
-      "uz": "Diyego Maradona",
-      "ru": "Диего Марадона",
-      "en": "Diego Maradona"
-    },
-    {
       "id": "mike-tyson",
       "uz": "Mayk Tayson",
       "ru": "Майк Тайсон",
@@ -326,46 +98,130 @@
       "en": "Michael Jordan"
     },
     {
-      "id": "elvis-presley",
-      "uz": "Elvis Presli",
-      "ru": "Элвис Пресли",
-      "en": "Elvis Presley"
-    },
-    {
-      "id": "freddie-mercury",
-      "uz": "Freddi Merkyuri",
-      "ru": "Фредди Меркьюри",
-      "en": "Freddie Mercury"
-    },
-    {
       "id": "arnold-schwarzenegger",
       "uz": "Arnold Shvartsenegger",
       "ru": "Арнольд Шварценеггер",
       "en": "Arnold Schwarzenegger"
     },
     {
-      "id": "steve-jobs",
-      "uz": "Stiv Jobs",
-      "ru": "Стив Джобс",
-      "en": "Steve Jobs"
+      "id": "elon-musk",
+      "uz": "Ilon Mask",
+      "ru": "Илон Маск",
+      "en": "Elon Musk"
     },
     {
-      "id": "bill-gates",
-      "uz": "Bill Geyts",
-      "ru": "Билл Гейтс",
-      "en": "Bill Gates"
+      "id": "shah-rukh-khan",
+      "uz": "Shohruhxon",
+      "ru": "Шахрух Хан",
+      "en": "Shah Rukh Khan"
     },
     {
-      "id": "walt-disney",
-      "uz": "Uolt Disney",
-      "ru": "Уолт Дисней",
-      "en": "Walt Disney"
+      "id": "donald-trump",
+      "uz": "Donald Tramp",
+      "ru": "Дональд Трамп",
+      "en": "Donald Trump"
     },
     {
-      "id": "harry-houdini",
-      "uz": "Garri Gudini",
-      "ru": "Гарри Гудини",
-      "en": "Harry Houdini"
+      "id": "amitabh-bachchan",
+      "uz": "Amitabh Bachchan",
+      "ru": "Амитабх Баччан",
+      "en": "Amitabh Bachchan"
+    },
+    {
+      "id": "alisher-uzoqov",
+      "uz": "Alisher Uzoqov",
+      "ru": "Алишер Узоков",
+      "en": "Alisher Uzoqov"
+    },
+    {
+      "id": "dwayne-johnson",
+      "uz": "Dueyn Jonson",
+      "ru": "Дуэйн Джонсон",
+      "en": "Dwayne Johnson"
+    },
+    {
+      "id": "leonardo-dicaprio",
+      "uz": "Leonardo Di Kaprio",
+      "ru": "Леонардо Ди Каприо",
+      "en": "Leonardo DiCaprio"
+    },
+    {
+      "id": "mrbeast",
+      "uz": "MrBeast",
+      "ru": "Мистер Бист",
+      "en": "MrBeast"
+    },
+    {
+      "id": "vladimir-putin",
+      "uz": "Vladimir Putin",
+      "ru": "Владимир Путин",
+      "en": "Vladimir Putin"
+    },
+    {
+      "id": "adolf-hitler",
+      "uz": "Adolf Gitler",
+      "ru": "Адольф Гитлер",
+      "en": "Adolf Hitler"
+    },
+    {
+      "id": "shakira",
+      "uz": "Shakira",
+      "ru": "Шакира",
+      "en": "Shakira"
+    },
+    {
+      "id": "mitti-me",
+      "uz": "Mitti.me",
+      "ru": "Митти.ми",
+      "en": "Mitti.me"
+    },
+    {
+      "id": "ishowspeed",
+      "uz": "IShowSpeed",
+      "ru": "АйШоуСпид",
+      "en": "IShowSpeed"
+    },
+    {
+      "id": "khaby-lame",
+      "uz": "Xabi Leym",
+      "ru": "Хаби Лейм",
+      "en": "Khaby Lame"
+    },
+    {
+      "id": "conor-mcgregor",
+      "uz": "Konor Makgregor",
+      "ru": "Конор Макгрегор",
+      "en": "Conor McGregor"
+    },
+    {
+      "id": "khabib-nurmagomedov",
+      "uz": "Habib Nurmagomedov",
+      "ru": "Хабиб Нурмагомедов",
+      "en": "Khabib Nurmagomedov"
+    },
+    {
+      "id": "julius-caesar",
+      "uz": "Yuliy Sezar",
+      "ru": "Юлий Цезарь",
+      "en": "Julius Caesar"
+    },
+    {
+      "id": "andrew-tate",
+      "uz": "Endryu Teyt",
+      "ru": "Эндрю Тейт",
+      "en": "Andrew Tate"
+    },
+    {
+      "id": "eminem",
+      "uz": "Eminem",
+      "ru": "Эминем",
+      "en": "Eminem"
+    },
+    {
+      "id": "ozodbek-nazarbekov",
+      "uz": "Ozodbek Nazarbekov",
+      "ru": "Озодбек Назарбеков",
+      "en": "Ozodbek Nazarbekov"
     }
   ]
 }
