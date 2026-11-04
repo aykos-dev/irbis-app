@@ -14,7 +14,7 @@ Full detail only if the brief points you there: `docs/architecture.md`, `docs/en
 
 ## Every screen (the Quick gate, short form)
 Tokens only (`StyleSheet.create`, no raw hex / magic numbers) · light + dark · safe areas via `Screen` ·
-keyboard-controller around inputs · loading skeleton / empty / error + retry / offline · toast + haptic on mutations ·
+keyboard: inputs on screens inside `Screen`, inputs in sheets only as shared `TextField` in shared `Sheet` (never raw `TextInput`, never `KeyboardAvoidingView` in a sheet — gorhom only lifts for its focus-target input) · loading skeleton / empty / error + retry / offline · toast + haptic on mutations ·
 press states · every string via i18n in uz, ru AND en · a11y labels · `testID` on everything a test touches
 (names from the brief) · QA events from the brief via `qaLog`. XP/levels/badges never optimistic.
 

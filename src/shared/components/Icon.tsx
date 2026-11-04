@@ -24,13 +24,22 @@ export type IconName =
   | 'person'
   | 'phone'
   | 'chevron'
+  | 'plus'
+  | 'close'
+  | 'arrowUp'
+  | 'bell'
   | 'lock'
   /** Level requirement rows (canvas Level): XP and safety lessons. */
   | 'bolt'
   | 'cross'
   /** Place-type glyphs — placeholders (owner Q8) until the owner supplies final icons. */
   | 'waterfall'
-  | 'canyon';
+  | 'canyon'
+  /** Active trip: share the live link. */
+  | 'share'
+  /** Streaks: daily flame and weekly explorer boot (boot geometry from `assets/svg/boot.ts`). */
+  | 'flame'
+  | 'boot';
 
 type Props = {
   name: IconName;
@@ -106,6 +115,14 @@ function draw(name: IconName, color: string, accent: string) {
       return <Path d="M15 5l-7 7 7 7" fill="none" stroke={color} strokeWidth={3} {...STROKE} />;
     case 'chevron':
       return <Path d="M9 5l7 7-7 7" fill="none" stroke={color} strokeWidth={3} {...STROKE} />;
+    case 'plus':
+      return <Path d="M12 5v14M5 12h14" fill="none" stroke={color} strokeWidth={3} {...STROKE} />;
+    case 'close':
+      return <Path d="M6 6l12 12M18 6L6 18" fill="none" stroke={color} strokeWidth={2.7} {...STROKE} />;
+    case 'arrowUp':
+      return <Path d="M12 19V5M6.5 10.5L12 5l5.5 5.5" fill="none" stroke={color} strokeWidth={2.7} {...STROKE} />;
+    case 'bell':
+      return <Path d="M5 17h14l-1.6-2.3V10a5.4 5.4 0 0 0-10.8 0v4.7zM10 20h4" fill="none" stroke={color} strokeWidth={2.2} {...STROKE} />;
     case 'eye':
       return (
         <>
@@ -167,6 +184,20 @@ function draw(name: IconName, color: string, accent: string) {
           />
         </>
       );
+    case 'flame':
+      return (
+        <Path
+          d="M12 1.8c.9 3.4 5.6 5.6 5.6 11.2a5.6 5.6 0 0 1-11.2 0c0-2.4 1.1-4.2 2.6-5.5.2 1.8 1 2.9 2.1 3.4C10.6 8 10.9 4.8 12 1.8z"
+          fill={color}
+        />
+      );
+    case 'boot':
+      return (
+        <Path
+          d="M5 2.5h7.5v7.2l5.7 2.6A3.2 3.2 0 0 1 20 15.2V18H5zM5.3 19.2h13.9a1.3 1.3 0 0 1 0 2.6H5.3a1.3 1.3 0 0 1 0-2.6z"
+          fill={color}
+        />
+      );
     case 'shield':
       return <Path d="M12 2l8 3v6.2c0 5-3.4 9-8 10.8-4.6-1.8-8-5.8-8-10.8V5z" fill={color} />;
     case 'star':
@@ -199,6 +230,15 @@ function draw(name: IconName, color: string, accent: string) {
       );
     case 'canyon':
       return <Path d="M1.5 4H8l2 6 2 10H1.5zM22.5 4H16l-2 6-2 10h10.5z" fill={color} />;
+    case 'share':
+      return (
+        <>
+          <Path d="M8.6 10.7l6.8-3.9M8.6 13.3l6.8 3.9" fill="none" stroke={color} strokeWidth={2.2} {...STROKE} />
+          <Circle cx={6} cy={12} r={2.6} fill={color} />
+          <Circle cx={18} cy={5.5} r={2.6} fill={color} />
+          <Circle cx={18} cy={18.5} r={2.6} fill={color} />
+        </>
+      );
     case 'phone':
       return (
         <Path

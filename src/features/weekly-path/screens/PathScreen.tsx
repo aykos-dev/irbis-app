@@ -29,7 +29,7 @@ const SKELETON_TRAIL = 420;
 type Props = MainTabScreenProps<'Path'> & PathDeps;
 
 /** Path tab (AC1, AC2, AC6–AC8): this month's three places, the weekend weather and the chest. */
-export function PathScreen({ navigation, readInterests, placeType }: Props) {
+export function PathScreen({ navigation, readInterests, placeType, tripCard, streakChips }: Props) {
   const locale = useLocale();
   const { colors } = useTheme();
   const { status } = useAuth();
@@ -131,10 +131,12 @@ export function PathScreen({ navigation, readInterests, placeType }: Props) {
         xp={xp}
         month={data?.month ?? tashkentMonth()}
         locale={locale}
+        streaks={streakChips}
         onInfo={() => setSheet('open')}
       >
         {data ? <WeatherStrip days={data.weather.days} /> : null}
       </PathHeader>
+      {tripCard}
       {body}
       {sheet ? (
         <HowBuiltSheet

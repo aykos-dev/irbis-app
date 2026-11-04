@@ -35,6 +35,8 @@ export interface MeResponseDto {
   experience: Experience | null;
   interests: Interest[];
   role: Role;
+  /** Demo account (ADR-006): auto username, no password; secure it with POST /v1/me/secure. */
+  isDemo: boolean;
   /** A verified recovery phone exists. */
   hasRecoveryPhone: boolean;
   /** A recovery phone was added and its code is waiting to be verified. */

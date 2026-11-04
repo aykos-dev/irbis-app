@@ -1,8 +1,12 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { RootStackScreenProps } from '../../../app/navigation/types';
-import type { PlaceConditionDto, PlaceDetailDto } from '../../../shared/api/generated/model';
+import type {
+  PlaceConditionDto,
+  PlaceDetailDto,
+} from '../../../shared/api/generated/model';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
 import { ConditionCard } from '../../../shared/components/conditions/ConditionCard';
@@ -15,16 +19,28 @@ import { Pressable } from '../../../shared/components/Pressable';
 import { Screen } from '../../../shared/components/Screen';
 import { Skeleton } from '../../../shared/components/Skeleton';
 import { StatusChip } from '../../../shared/components/StatusChip';
-import { borders, radii, sizes, spacing } from '../../../shared/constants/spacing';
+import {
+  borders,
+  radii,
+  screenPadding,
+  sizes,
+  spacing,
+} from '../../../shared/constants/spacing';
 import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
 import { useLocale } from '../../../shared/hooks/useLocale';
 import { useNetworkStatus } from '../../../shared/hooks/useNetworkStatus';
+import { useRequireAccount } from '../../../shared/hooks/useRequireAccount';
 import { t, type Locale } from '../../../shared/i18n';
 import { DifficultyBoots } from '../components/DifficultyBoots';
 import { LevelCard } from '../components/LevelCard';
 import { PlaceHero } from '../components/PlaceHero';
 import { SeasonBar } from '../components/SeasonBar';
 import { TypePill } from '../components/TypePill';
+import {
+  formatDistance as formatUnitDistance,
+  formatElevation,
+  getStoredUnits,
+} from '../../../shared/utils/units';
 import { formatDistance } from '../formatDistance';
 import { usePlace } from '../hooks/usePlace';
 import { usePlaceCondition } from '../hooks/usePlaceCondition';
@@ -33,6 +49,12 @@ const SKELETON_HERO = 200;
 const SKELETON_TITLE = 32;
 const SKELETON_TILE = 72;
 const SKELETON_CARD = 120;
+
+/** Statuses that hide "Start adventure" (trip-plan AC1, product rule). */
+const NO_TRIP_STATUSES: ReadonlySet<string> = new Set([
+  'not_now',
+  'seasonal_lock',
+]);
 
 /** Localised text with the Uzbek original as fallback (AC7). */
 export function localized<T extends string | null>(
@@ -46,18 +68,34 @@ export function localized<T extends string | null>(
  * Place screen (AC7, AC8): one place's facts, required level, weekend condition and weather,
  * season and hazards. The condition loads alongside the place; its failure never hides the place.
  */
-export function PlaceScreen({ navigation, route }: RootStackScreenProps<'Place'>) {
+type Props = RootStackScreenProps<'Place'> & {
+  /** Check in (check-in AC4), wired by the app layer; rendered under the place once it loads. */
+  renderCheckIn?: (place: PlaceDetailDto, name: string) => ReactNode;
+};
+
+export function PlaceScreen({ navigation, route, renderCheckIn }: Props) {
   const { id, lat, lng } = route.params;
-  const coords = lat !== undefined && lng !== undefined ? { lat, lng } : undefined;
+  const coords =
+    lat !== undefined && lng !== undefined ? { lat, lng } : undefined;
   const locale = useLocale();
   const { isOnline } = useNetworkStatus();
   const { data, error, isNotFound, refetch } = usePlace(id, coords);
   const condition = usePlaceCondition(id, data?.slug);
+  const requireAccount = useRequireAccount('trip');
+  const conditionStatus = condition.data?.status ?? null;
+  // Hidden until the condition settles, so a Not now place never flashes the button.
+  const showTripCta =
+    data !== undefined &&
+    !condition.isPending &&
+    (conditionStatus === null || !NO_TRIP_STATUSES.has(conditionStatus));
   // A cold deep link leaves Place alone in the stack: fall back to the Explore tab (D2).
   const goBack = () =>
     navigation.canGoBack()
       ? navigation.goBack()
-      : navigation.reset({ index: 0, routes: [{ name: 'MainTabs', params: { screen: 'Explore' } }] });
+      : navigation.reset({
+          index: 0,
+          routes: [{ name: 'MainTabs', params: { screen: 'Explore' } }],
+        });
 
   let body;
   if (data) {
@@ -84,7 +122,13 @@ export function PlaceScreen({ navigation, route }: RootStackScreenProps<'Place'>
         mascot="worried"
         mascotLabel={t('places.notFound')}
         title={t('places.notFound')}
-        action={<AppButton testID="place.not-found-back" label={t('places.back')} onPress={goBack} />}
+        action={
+          <AppButton
+            testID="place.not-found-back"
+            label={t('places.back')}
+            onPress={goBack}
+          />
+        }
       />
     );
   } else if (error) {
@@ -107,10 +151,50 @@ export function PlaceScreen({ navigation, route }: RootStackScreenProps<'Place'>
   }
 
   return (
-    <Screen testID="place.screen" scroll>
-      <BackButton onPress={goBack} />
-      {body}
-    </Screen>
+    <View style={layout.fill}>
+      <Screen testID="place.screen" scroll bottomInset={!showTripCta}>
+        <BackButton onPress={goBack} />
+        {body}
+        {data && renderCheckIn ? (
+          <View style={layout.checkIn}>
+            {renderCheckIn(data, localized(data.name, locale))}
+          </View>
+        ) : null}
+      </Screen>
+      {showTripCta ? (
+        <StartAdventureBar
+          onPress={() =>
+            requireAccount(() =>
+              navigation.navigate('TripPlan', { placeId: id }),
+            )
+          }
+        />
+      ) : null}
+    </View>
+  );
+}
+
+/** Sticky "Start adventure" (trip-plan AC1); guests go through the account gate first. */
+function StartAdventureBar({ onPress }: { onPress: () => void }) {
+  const insets = useSafeAreaInsets();
+  const styles = useStyles();
+  return (
+    <View
+      style={[
+        styles.ctaBar,
+        {
+          paddingBottom: insets.bottom || spacing[20],
+          paddingStart: screenPadding + insets.left,
+          paddingEnd: screenPadding + insets.right,
+        },
+      ]}
+    >
+      <AppButton
+        testID="place.start-adventure"
+        label={t('trip.place.startAdventure')}
+        onPress={onPress}
+      />
+    </View>
   );
 }
 
@@ -159,12 +243,25 @@ type BodyProps = {
 function PlaceBody({ place, locale, condition, conditionData }: BodyProps) {
   const styles = useStyles();
   const description = localized(place.description, locale);
-  const paragraphs = description ? description.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean) : [];
-  const distanceLabel = place.origin === 'device' ? t('places.fromYou') : t('places.fromTashkent');
-  const distance = t('places.distanceKm', { d: formatDistance(place.distanceM, locale) });
-  const elevation = t('places.elevationValue', {
-    n: new Intl.NumberFormat(locale).format(place.elevationM),
-  });
+  const paragraphs = description
+    ? description
+        .split(/\n\s*\n/)
+        .map(p => p.trim())
+        .filter(Boolean)
+    : [];
+  const distanceLabel =
+    place.origin === 'device' ? t('places.fromYou') : t('places.fromTashkent');
+  const units = getStoredUnits();
+  const distance =
+    units === 'imperial'
+      ? formatUnitDistance(place.distanceM, units, locale)
+      : t('places.distanceKm', { d: formatDistance(place.distanceM, locale) });
+  const elevation =
+    units === 'imperial'
+      ? formatElevation(place.elevationM, units, locale)
+      : t('places.elevationValue', {
+          n: new Intl.NumberFormat(locale).format(place.elevationM),
+        });
 
   return (
     <>
@@ -174,20 +271,35 @@ function PlaceBody({ place, locale, condition, conditionData }: BodyProps) {
         <AppText testID="place.name" variant="h1" accessibilityRole="header">
           {localized(place.name, locale)}
         </AppText>
-        {place.region ? <AppText variant="body" tone="muted">{place.region}</AppText> : null}
+        {place.region ? (
+          <AppText variant="body" tone="muted">
+            {place.region}
+          </AppText>
+        ) : null}
       </View>
       <View style={layout.tiles}>
-        <View testID="place.elevation" style={[layout.tile, styles.tile]} accessible>
+        <View
+          testID="place.elevation"
+          style={[layout.tile, styles.tile]}
+          accessible
+        >
           <AppText variant="caption">{t('places.elevation')}</AppText>
           <AppText variant="h2">{elevation}</AppText>
         </View>
-        <View testID="place.distance" style={[layout.tile, styles.tile]} accessible>
+        <View
+          testID="place.distance"
+          style={[layout.tile, styles.tile]}
+          accessible
+        >
           <AppText variant="caption">{distanceLabel}</AppText>
           <AppText variant="h2">{distance}</AppText>
         </View>
       </View>
       <DifficultyBoots difficulty={place.difficulty} />
-      <LevelCard requiredLevel={place.requiredLevel} qualifies={place.viewer.qualifies} />
+      <LevelCard
+        requiredLevel={place.requiredLevel}
+        qualifies={place.viewer.qualifies}
+      />
       {condition}
       {conditionData ? <WeatherCard weekend={conditionData.weekend} /> : null}
       {paragraphs.length > 0 ? (
@@ -244,14 +356,22 @@ function PlaceHazards({ hazards }: { hazards: PlaceDetailDto['hazards'] }) {
 }
 
 const layout = StyleSheet.create({
+  fill: { flex: 1 },
   head: { gap: spacing[8] },
   section: { gap: spacing[12] },
+  checkIn: { marginTop: spacing[16] },
   tiles: { flexDirection: 'row', gap: spacing[12] },
   tile: { flex: 1, gap: spacing[4] },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[8] },
 });
 
 const useStyles = createThemedStyles(c => ({
+  ctaBar: {
+    paddingTop: spacing[12],
+    borderTopWidth: borders.card,
+    borderTopColor: c.line,
+    backgroundColor: c.bg,
+  },
   back: {
     width: sizes.touchTarget,
     height: sizes.touchTarget,

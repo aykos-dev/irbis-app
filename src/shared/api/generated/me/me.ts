@@ -27,12 +27,16 @@ import type {
 import type {
   CodeSentResponseDto,
   DeleteAccountDto,
+  EmergencyContactDto,
   ErrorResponseDto,
   GuestMergeDto,
   GuestMergeResponseDto,
   MeResponseDto,
   MeUploadAvatarBody,
+  ProfileStatsDto,
+  PutEmergencyContactDto,
   RecoveryPhoneDto,
+  SecureAccountDto,
   UpdateMeDto,
   VerifyRecoveryPhoneDto
 } from '../model';
@@ -287,6 +291,73 @@ export const useMeDelete = <TError = ErrorType<ErrorResponseDto>,
       return useMutation(getMeDeleteMutationOptions(options), queryClient);
     }
     /**
+ * @summary Turn a demo account into a normal one: set username and password; keeps this session
+ */
+export const meSecure = (
+    secureAccountDto: BodyType<SecureAccountDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<MeResponseDto>(
+      {url: `/v1/me/secure`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: secureAccountDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getMeSecureMutationKey = () => ['meSecure'] as const;
+
+export const getMeSecureMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meSecure>>, TError,MeSecureMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof meSecure>>, TError,MeSecureMutationVariables, TContext> => {
+
+const mutationKey = getMeSecureMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof meSecure>>, MeSecureMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  meSecure(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MeSecureMutationResult = NonNullable<Awaited<ReturnType<typeof meSecure>>>
+    export type MeSecureMutationBody = BodyType<SecureAccountDto>
+    export type MeSecureMutationError = ErrorType<ErrorResponseDto>
+    export type MeSecureMutationVariables = {data: BodyType<SecureAccountDto>}
+
+    /**
+ * @summary Turn a demo account into a normal one: set username and password; keeps this session
+ */
+export const useMeSecure = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meSecure>>, TError,MeSecureMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof meSecure>>,
+        TError,
+        MeSecureMutationVariables,
+        TContext
+      > => {
+      return useMutation(getMeSecureMutationOptions(options), queryClient);
+    }
+    /**
  * @summary Add or change the recovery phone; sends a code
  */
 export const meSetRecoveryPhone = (
@@ -488,6 +559,98 @@ export const useMeGuestMerge = <TError = ErrorType<ErrorResponseDto>,
       return useMutation(getMeGuestMergeMutationOptions(options), queryClient);
     }
     /**
+ * @summary The signed-in user's all-time profile stats
+ */
+export const meStats = (
+
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<ProfileStatsDto>(
+      {url: `/v1/me/stats`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getMeStatsQueryKey = () => {
+    return [
+    `/v1/me/stats`
+    ] as const;
+    }
+
+
+export const getMeStatsQueryOptions = <TData = Awaited<ReturnType<typeof meStats>>, TError = ErrorType<ErrorResponseDto>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof meStats>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getMeStatsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof meStats>>> = ({ signal }) => meStats(requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof meStats>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type MeStatsQueryResult = NonNullable<Awaited<ReturnType<typeof meStats>>>
+export type MeStatsQueryError = ErrorType<ErrorResponseDto>
+
+
+export function useMeStats<TData = Awaited<ReturnType<typeof meStats>>, TError = ErrorType<ErrorResponseDto>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof meStats>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof meStats>>,
+          TError,
+          Awaited<ReturnType<typeof meStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useMeStats<TData = Awaited<ReturnType<typeof meStats>>, TError = ErrorType<ErrorResponseDto>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof meStats>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof meStats>>,
+          TError,
+          Awaited<ReturnType<typeof meStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useMeStats<TData = Awaited<ReturnType<typeof meStats>>, TError = ErrorType<ErrorResponseDto>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof meStats>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary The signed-in user's all-time profile stats
+ */
+
+export function useMeStats<TData = Awaited<ReturnType<typeof meStats>>, TError = ErrorType<ErrorResponseDto>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof meStats>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getMeStatsQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
  * @summary Upload an avatar (JPEG/PNG/WebP, ≤ 2 MB); stored as a 512×512 JPEG without metadata
  */
 export const meUploadAvatar = (
@@ -620,4 +783,163 @@ export const useMeDeleteAvatar = <TError = ErrorType<ErrorResponseDto>,
         TContext
       > => {
       return useMutation(getMeDeleteAvatarMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary The saved emergency contact (phone masked); 204 when none
+ */
+export const getEmergencyContact = (
+
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<EmergencyContactDto | void>(
+      {url: `/v1/me/emergency-contact`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getGetEmergencyContactQueryKey = () => {
+    return [
+    `/v1/me/emergency-contact`
+    ] as const;
+    }
+
+
+export const getGetEmergencyContactQueryOptions = <TData = Awaited<ReturnType<typeof getEmergencyContact>>, TError = ErrorType<ErrorResponseDto>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEmergencyContact>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetEmergencyContactQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getEmergencyContact>>> = ({ signal }) => getEmergencyContact(requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getEmergencyContact>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetEmergencyContactQueryResult = NonNullable<Awaited<ReturnType<typeof getEmergencyContact>>>
+export type GetEmergencyContactQueryError = ErrorType<ErrorResponseDto>
+
+
+export function useGetEmergencyContact<TData = Awaited<ReturnType<typeof getEmergencyContact>>, TError = ErrorType<ErrorResponseDto>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEmergencyContact>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEmergencyContact>>,
+          TError,
+          Awaited<ReturnType<typeof getEmergencyContact>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetEmergencyContact<TData = Awaited<ReturnType<typeof getEmergencyContact>>, TError = ErrorType<ErrorResponseDto>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEmergencyContact>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEmergencyContact>>,
+          TError,
+          Awaited<ReturnType<typeof getEmergencyContact>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetEmergencyContact<TData = Awaited<ReturnType<typeof getEmergencyContact>>, TError = ErrorType<ErrorResponseDto>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEmergencyContact>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary The saved emergency contact (phone masked); 204 when none
+ */
+
+export function useGetEmergencyContact<TData = Awaited<ReturnType<typeof getEmergencyContact>>, TError = ErrorType<ErrorResponseDto>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEmergencyContact>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetEmergencyContactQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary Save or replace the emergency contact (phone stored encrypted)
+ */
+export const putEmergencyContact = (
+    putEmergencyContactDto: BodyType<PutEmergencyContactDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<EmergencyContactDto>(
+      {url: `/v1/me/emergency-contact`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: putEmergencyContactDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getPutEmergencyContactMutationKey = () => ['putEmergencyContact'] as const;
+
+export const getPutEmergencyContactMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putEmergencyContact>>, TError,PutEmergencyContactMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof putEmergencyContact>>, TError,PutEmergencyContactMutationVariables, TContext> => {
+
+const mutationKey = getPutEmergencyContactMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putEmergencyContact>>, PutEmergencyContactMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  putEmergencyContact(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutEmergencyContactMutationResult = NonNullable<Awaited<ReturnType<typeof putEmergencyContact>>>
+    export type PutEmergencyContactMutationBody = BodyType<PutEmergencyContactDto>
+    export type PutEmergencyContactMutationError = ErrorType<ErrorResponseDto>
+    export type PutEmergencyContactMutationVariables = {data: BodyType<PutEmergencyContactDto>}
+
+    /**
+ * @summary Save or replace the emergency contact (phone stored encrypted)
+ */
+export const usePutEmergencyContact = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putEmergencyContact>>, TError,PutEmergencyContactMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof putEmergencyContact>>,
+        TError,
+        PutEmergencyContactMutationVariables,
+        TContext
+      > => {
+      return useMutation(getPutEmergencyContactMutationOptions(options), queryClient);
     }

@@ -5,6 +5,7 @@
  * Backend for the Irbis app and admin web. This document is the contract (ADR-003).
  * OpenAPI spec version: 0.0.1
  */
+import type { ErrorResponseDtoDetails } from './errorResponseDtoDetails.ts';
 import type { ErrorResponseDtoFieldErrors } from './errorResponseDtoFieldErrors.ts';
 
 export interface ErrorResponseDto {
@@ -18,5 +19,7 @@ export interface ErrorResponseDto {
   reasonCode?: string;
   /** ACCOUNT_LOCKED, RATE_LIMITED: seconds until the client may retry. */
   retryAfterSec?: number;
+  /** Code-specific numbers: WAYPOINT_TOO_CLOSE remainingM, WAYPOINT_TOO_SOON remainingMin, SOS_TOO_SOON retryInSec. */
+  details?: ErrorResponseDtoDetails;
   requestId: string;
 }

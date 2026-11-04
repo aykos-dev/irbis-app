@@ -20,12 +20,14 @@ type Props = {
   xp: number | null;
   month: string;
   locale: Locale;
+  /** Streak chips from the app layer (streaks AC6), left of the XP stat. */
+  streaks?: ReactNode;
   onInfo: () => void;
   children?: ReactNode;
 };
 
 /** Header (AC6): companion + XP, then the intro card with title, subtitle, info and weather. */
-export function PathHeader({ level, xp, month, locale, onInfo, children }: Props) {
+export function PathHeader({ level, xp, month, locale, streaks, onInfo, children }: Props) {
   const styles = useStyles();
   const { colors } = useTheme();
   const meta = levelMeta(level);
@@ -47,14 +49,17 @@ export function PathHeader({ level, xp, month, locale, onInfo, children }: Props
             <CompanionArt level={meta.level} size={headerSize.avatar} accessibilityLabel={levelName} />
           </View>
         </View>
-        {xp !== null ? (
-          <View testID="path.xp" style={layout.xp} accessible accessibilityLabel={`${xp} XP`}>
-            <Svg width={headerSize.bolt} height={headerSize.bolt} viewBox="0 0 24 24">
-              <Path d="M13.5 1.5L4 14h7l-1.5 8.5L20 9.5h-7z" fill={pathColors.bolt} />
-            </Svg>
-            <AppText variant="h3">{new Intl.NumberFormat(locale).format(xp)}</AppText>
-          </View>
-        ) : null}
+        <View style={layout.stats}>
+          {streaks}
+          {xp !== null ? (
+            <View testID="path.xp" style={layout.xp} accessible accessibilityLabel={`${xp} XP`}>
+              <Svg width={headerSize.bolt} height={headerSize.bolt} viewBox="0 0 24 24">
+                <Path d="M13.5 1.5L4 14h7l-1.5 8.5L20 9.5h-7z" fill={pathColors.bolt} />
+              </Svg>
+              <AppText variant="h3">{new Intl.NumberFormat(locale).format(xp)}</AppText>
+            </View>
+          ) : null}
+        </View>
       </View>
       <View style={styles.card}>
         <View style={layout.titleRow}>
@@ -86,6 +91,7 @@ const layout = StyleSheet.create({
     alignItems: 'center',
   },
   art: { marginTop: headerSize.avatarArtOffset },
+  stats: { flexDirection: 'row', alignItems: 'center', gap: spacing[12] },
   xp: { flexDirection: 'row', alignItems: 'center', gap: spacing[4] },
   titleRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: spacing[12] },
   titles: { flex: 1, gap: spacing[4] },

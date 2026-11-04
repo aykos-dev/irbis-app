@@ -20,6 +20,8 @@
   "dependencies": {
     "@gorhom/bottom-sheet": "5.2.14",
     "@maplibre/maplibre-react-native": "11.5.0",
+    "@react-native-community/datetimepicker": "9.2.1",
+    "@react-native-community/geolocation": "^3.4.0",
     "@react-native-community/netinfo": "12.0.1",
     "@react-navigation/bottom-tabs": "7.21.0",
     "@react-navigation/native": "7.5.1",
@@ -36,6 +38,7 @@
     "react-native-device-info": "15.0.2",
     "react-native-gesture-handler": "3.4.0",
     "react-native-haptic-feedback": "3.0.0",
+    "react-native-image-picker": "^8.3.0",
     "react-native-keyboard-controller": "1.22.7",
     "react-native-keychain": "10.0.0",
     "react-native-localize": "3.7.2",

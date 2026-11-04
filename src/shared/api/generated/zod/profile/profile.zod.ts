@@ -34,3 +34,33 @@ export const UsersGetProfileResponse = zod.object({
   "showStats": zod.boolean().describe('The owner allows stats on the public profile.')
 })
 
+/**
+ * @summary A public profile's all-time stats (zeros when hidden)
+ */
+export const UsersGetStatsParams = zod.object({
+  "username": zod.string()
+})
+
+export const usersGetStatsResponsePeaksMin = 0;
+
+export const usersGetStatsResponseLakesMin = 0;
+
+export const usersGetStatsResponseCavesMin = 0;
+
+export const usersGetStatsResponseWalkedMMin = 0;
+
+export const usersGetStatsResponseClimbedMMin = 0;
+
+export const usersGetStatsResponseSpotsMin = 0;
+
+
+
+export const UsersGetStatsResponse = zod.object({
+  "peaks": zod.int().min(usersGetStatsResponsePeaksMin).describe('Distinct peaks visited.'),
+  "lakes": zod.int().min(usersGetStatsResponseLakesMin).describe('Distinct lakes visited.'),
+  "caves": zod.int().min(usersGetStatsResponseCavesMin).describe('Distinct caves visited.'),
+  "walkedM": zod.int().min(usersGetStatsResponseWalkedMMin).describe('Metres walked on checked-out trips.'),
+  "climbedM": zod.int().min(usersGetStatsResponseClimbedMMin).describe('Metres climbed on checked-out trips.'),
+  "spots": zod.int().min(usersGetStatsResponseSpotsMin).describe('Verified spots added.')
+})
+

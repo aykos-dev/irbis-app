@@ -135,3 +135,18 @@ jest.mock('react-native-audio-api', () => {
     __started: started,
   };
 });
+
+/*
+ * @react-native-community/geolocation (trip start location): permission refused and no fix by
+ * default; trip tests grant it per test.
+ */
+jest.mock('@react-native-community/geolocation', () => ({
+  __esModule: true,
+  default: {
+    requestAuthorization: jest.fn((_success, error) => error && error({ code: 1, message: 'denied' })),
+    getCurrentPosition: jest.fn((_success, error) => error && error({ code: 2, message: 'unavailable' })),
+    watchPosition: jest.fn(() => 0),
+    clearWatch: jest.fn(),
+    setRNConfiguration: jest.fn(),
+  },
+}));

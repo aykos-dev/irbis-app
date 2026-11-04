@@ -3,45 +3,63 @@ import { findBestLanguageTag } from 'react-native-localize';
 
 import { storage } from '../storage';
 
+import enActive from './en/active.json';
 import enAuth from './en/auth.json';
 import enCamp from './en/camp.json';
+import enCheckin from './en/checkin.json';
 import enCommon from './en/common.json';
 import enConditions from './en/conditions.json';
 import enDebug from './en/debug.json';
 import enErrors from './en/errors.json';
 import enHealth from './en/health.json';
+import enGroups from './en/groups.json';
+import enGroupChat from './en/groupChat.json';
 import enLessons from './en/lessons.json';
 import enLevels from './en/levels.json';
 import enNav from './en/nav.json';
 import enOnboarding from './en/onboarding.json';
 import enPath from './en/path.json';
 import enPlaces from './en/places.json';
+import enStreaks from './en/streaks.json';
+import enTrip from './en/trip.json';
+import ruActive from './ru/active.json';
 import ruAuth from './ru/auth.json';
 import ruCamp from './ru/camp.json';
+import ruCheckin from './ru/checkin.json';
 import ruCommon from './ru/common.json';
 import ruConditions from './ru/conditions.json';
 import ruDebug from './ru/debug.json';
 import ruErrors from './ru/errors.json';
 import ruHealth from './ru/health.json';
+import ruGroups from './ru/groups.json';
+import ruGroupChat from './ru/groupChat.json';
 import ruLessons from './ru/lessons.json';
 import ruLevels from './ru/levels.json';
 import ruNav from './ru/nav.json';
 import ruOnboarding from './ru/onboarding.json';
 import ruPath from './ru/path.json';
 import ruPlaces from './ru/places.json';
+import ruStreaks from './ru/streaks.json';
+import ruTrip from './ru/trip.json';
+import uzActive from './uz/active.json';
 import uzAuth from './uz/auth.json';
 import uzCamp from './uz/camp.json';
+import uzCheckin from './uz/checkin.json';
 import uzCommon from './uz/common.json';
 import uzConditions from './uz/conditions.json';
 import uzDebug from './uz/debug.json';
 import uzErrors from './uz/errors.json';
 import uzHealth from './uz/health.json';
+import uzGroups from './uz/groups.json';
+import uzGroupChat from './uz/groupChat.json';
 import uzLessons from './uz/lessons.json';
 import uzLevels from './uz/levels.json';
 import uzNav from './uz/nav.json';
 import uzOnboarding from './uz/onboarding.json';
 import uzPath from './uz/path.json';
 import uzPlaces from './uz/places.json';
+import uzStreaks from './uz/streaks.json';
+import uzTrip from './uz/trip.json';
 
 /**
  * i18n setup. Translations live in `<locale>/<namespace>.json`; keys are `<namespace>.<key>`
@@ -61,49 +79,67 @@ const fallbackLocale: Locale = 'en';
 
 export const i18n = new I18n({
   en: {
+    active: enActive,
     auth: enAuth,
     camp: enCamp,
+    checkin: enCheckin,
     common: enCommon,
     conditions: enConditions,
     debug: enDebug,
     nav: enNav,
     errors: enErrors,
     health: enHealth,
+    groups: enGroups,
+    groupChat: enGroupChat,
     lessons: enLessons,
     levels: enLevels,
     onboarding: enOnboarding,
     path: enPath,
     places: enPlaces,
+    streaks: enStreaks,
+    trip: enTrip,
   },
   ru: {
+    active: ruActive,
     auth: ruAuth,
     camp: ruCamp,
+    checkin: ruCheckin,
     common: ruCommon,
     conditions: ruConditions,
     debug: ruDebug,
     nav: ruNav,
     errors: ruErrors,
     health: ruHealth,
+    groups: ruGroups,
+    groupChat: ruGroupChat,
     lessons: ruLessons,
     levels: ruLevels,
     onboarding: ruOnboarding,
     path: ruPath,
     places: ruPlaces,
+    streaks: ruStreaks,
+    trip: ruTrip,
   },
   uz: {
+    active: uzActive,
     auth: uzAuth,
     camp: uzCamp,
+    checkin: uzCheckin,
     common: uzCommon,
     conditions: uzConditions,
     debug: uzDebug,
     nav: uzNav,
     errors: uzErrors,
     health: uzHealth,
+    groups: uzGroups,
+    groupChat: uzGroupChat,
     lessons: uzLessons,
     levels: uzLevels,
     onboarding: uzOnboarding,
     path: uzPath,
     places: uzPlaces,
+    streaks: uzStreaks,
+    trip: uzTrip,
   },
 });
 

@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 
 import { useTheme } from '../shared/contexts/theme';
 import { AuthGateHost } from './AuthGateHost';
+import { CheckInSyncHost } from './CheckInSyncHost';
 import { LessonSyncHost } from './LessonSyncHost';
 import { LevelUpHost } from './LevelUpHost';
 import { linking } from './navigation/linking';
@@ -35,6 +36,7 @@ export function AppNavigation() {
       <AuthGateHost />
       <LevelUpHost />
       <LessonSyncHost />
+      <CheckInSyncHost />
     </NavigationContainer>
   );
 }

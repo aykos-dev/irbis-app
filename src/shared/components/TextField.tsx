@@ -1,4 +1,5 @@
-import { useState, type ComponentRef, type Ref } from 'react';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { useContext, useState, type ComponentRef, type Ref } from 'react';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -16,6 +17,7 @@ import { t } from '../i18n';
 import { AppText } from './AppText';
 import { Icon } from './Icon';
 import { Pressable } from './Pressable';
+import { InSheetContext } from './Sheet';
 
 /** What a ref to the field's input holds (`.focus()`, `.blur()`). */
 export type TextInputHandle = ComponentRef<typeof TextInput>;
@@ -57,6 +59,22 @@ type Props = Pick<
   statusTestID?: string;
 };
 
+/**
+ * gorhom types its input ref as gesture-handler's component type; at runtime it is the native TextInput
+ * (`focus` / `blur`). Narrow it and forward it to the caller's ref.
+ */
+function isInputHandle(node: unknown): node is TextInputHandle {
+  return typeof node === 'object' && node !== null && 'focus' in node && 'blur' in node;
+}
+
+function assignRef(ref: Ref<TextInputHandle> | undefined, node: TextInputHandle | null) {
+  if (typeof ref === 'function') {
+    ref(node);
+  } else if (ref) {
+    ref.current = node;
+  }
+}
+
 const fade = FadeIn.duration(motion.enter).easing(Easing.out(Easing.cubic));
 
 /** Labelled input with the four visible states, hint line, password toggle and prefix. */
@@ -78,6 +96,8 @@ export function TextField({
   const styles = useStyles();
   const [focused, setFocused] = useState(false);
   const [revealed, setRevealed] = useState(false);
+  // Inside a Sheet the bottom-sheet input is required, else the keyboard covers the field (Android).
+  const inSheet = useContext(InSheetContext);
 
   const state: FieldStatus = error ? 'error' : status;
   const borderTarget =
@@ -100,6 +120,22 @@ export function TextField({
   );
 
   const showTrailingSpinner = state === 'validating';
+  const inputProps: TextInputProps = {
+    ...input,
+    testID,
+    accessibilityLabel: label,
+    accessibilityState: { disabled: false },
+    secureTextEntry: password && !revealed,
+    autoCorrect: false,
+    autoCapitalize: input.autoCapitalize ?? 'none',
+    placeholderTextColor: colors.muted,
+    onFocus: () => setFocused(true),
+    onBlur: event => {
+      setFocused(false);
+      input.onBlur?.(event);
+    },
+    style: [layout.input, styles.input, password || showTrailingSpinner ? layout.inputWithTrailing : null],
+  };
 
   return (
     <View style={layout.field}>
@@ -124,23 +160,11 @@ export function TextField({
         <Animated.View
           style={[layout.inputFrame, styles.inputFrame, prefix ? layout.inputFrameAfterPrefix : null, borderStyle]}
         >
-          <TextInput
-            {...input}
-            ref={inputRef}
-            testID={testID}
-            accessibilityLabel={label}
-            accessibilityState={{ disabled: false }}
-            secureTextEntry={password && !revealed}
-            autoCorrect={false}
-            autoCapitalize={input.autoCapitalize ?? 'none'}
-            placeholderTextColor={colors.muted}
-            onFocus={() => setFocused(true)}
-            onBlur={event => {
-              setFocused(false);
-              input.onBlur?.(event);
-            }}
-            style={[layout.input, styles.input, password || showTrailingSpinner ? layout.inputWithTrailing : null]}
-          />
+          {inSheet ? (
+            <BottomSheetTextInput {...inputProps} ref={(node: unknown) => assignRef(inputRef, isInputHandle(node) ? node : null)} />
+          ) : (
+            <TextInput {...inputProps} ref={inputRef} />
+          )}
           {password ? (
             <Pressable
               testID={`${testID}-toggle`}

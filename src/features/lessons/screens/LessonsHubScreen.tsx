@@ -1,5 +1,5 @@
 import { useIsFocused } from '@react-navigation/native';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import type { MainTabScreenProps } from '../../../app/navigation/types';
@@ -57,8 +57,13 @@ function startLessonId(catalog: LessonCatalog, done: ReadonlySet<string>): strin
   return undefined;
 }
 
+type Props = MainTabScreenProps<'Lessons'> & {
+  /** "One more lesson keeps your streak" line from the app layer (streaks AC7). */
+  streakLine?: ReactNode;
+};
+
 /** Lessons tab (AC4): hearts, daily goal and every tier with its lessons. */
-export function LessonsHubScreen({ navigation }: MainTabScreenProps<'Lessons'>) {
+export function LessonsHubScreen({ navigation, streakLine }: Props) {
   const locale = useLocale();
   const { status } = useAuth();
   const { isOnline } = useNetworkStatus();
@@ -117,6 +122,7 @@ export function LessonsHubScreen({ navigation }: MainTabScreenProps<'Lessons'>) 
         </AppText>
         <HeartsCount hearts={hearts} />
       </View>
+      {streakLine}
       {body}
       {sheet ? (
         <OutOfHeartsSheet

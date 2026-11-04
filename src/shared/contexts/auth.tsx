@@ -11,15 +11,30 @@ import {
 } from 'react';
 
 import { useAuthRefresh, useAuthSignOut } from '../api/generated/auth/auth';
-import { getMeGetQueryKey, useMeGet, useMeGuestMerge } from '../api/generated/me/me';
-import type { AuthSessionResponseDto, MeResponseDto } from '../api/generated/model';
+import {
+  getMeGetQueryKey,
+  useMeGet,
+  useMeGuestMerge,
+} from '../api/generated/me/me';
+import type {
+  AuthSessionResponseDto,
+  MeResponseDto,
+} from '../api/generated/model';
 import { apiErrorCodes, isApiError } from '../api/errors';
 import { staleTimes } from '../api/query';
 import { tokenManager } from '../api/tokenManager';
 import { toast } from '../components/toastBus';
-import { collectGuestData, guestMergeDone, markGuestMergeDone, notifySignInSettled } from '../guest/guestStore';
+import {
+  collectGuestData,
+  guestMergeDone,
+  markGuestMergeDone,
+  notifySignInSettled,
+} from '../guest/guestStore';
 import { getLocale, setLocale, t } from '../i18n';
+import { storage } from '../storage';
+import { setStoredUnits } from '../utils/units';
 import { qaLog } from '../utils/qaLog';
+import { useTheme } from './theme';
 
 /**
  * Session state (guest-first, ADR-001): guest until a sign-up / log-in / reset succeeds, then
@@ -45,7 +60,10 @@ type AuthState = {
    * Store the tokens from a sign-up / log-in / reset response and move to signed in. After a
    * log-in (`applyAccountLocale`) the account language replaces the device one (AC8).
    */
-  startSession: (session: AuthSessionResponseDto, options?: StartSessionOptions) => Promise<void>;
+  startSession: (
+    session: AuthSessionResponseDto,
+    options?: StartSessionOptions,
+  ) => Promise<void>;
   /** Replace the cached user (after the recovery phone was verified). */
   setUser: (me: MeResponseDto) => void;
   signOut: () => Promise<void>;
@@ -69,14 +87,32 @@ function isRefusal(error: unknown): boolean {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const { setAppearance } = useTheme();
   const queryClient = useQueryClient();
   const [status, setStatus] = useState<SessionStatus>('loading');
-  const [blockedNotice, setBlockedNotice] = useState<BlockedNotice | null>(null);
+  const [blockedNotice, setBlockedNotice] = useState<BlockedNotice | null>(
+    null,
+  );
 
-  const { mutateAsync: refreshAsync } = useAuthRefresh({ mutation: { meta: { silentError: true } } });
-  const { mutateAsync: signOutAsync } = useAuthSignOut({ mutation: { meta: { silentError: true } } });
-  const { mutateAsync: mergeAsync } = useMeGuestMerge({ mutation: { meta: { silentError: true } } });
-  const me = useMeGet({ query: { enabled: status === 'signedIn', staleTime: staleTimes.profile } });
+  const { mutateAsync: refreshAsync } = useAuthRefresh({
+    mutation: { meta: { silentError: true } },
+  });
+  const { mutateAsync: signOutAsync } = useAuthSignOut({
+    mutation: { meta: { silentError: true } },
+  });
+  const { mutateAsync: mergeAsync } = useMeGuestMerge({
+    mutation: { meta: { silentError: true } },
+  });
+  const me = useMeGet({
+    query: { enabled: status === 'signedIn', staleTime: staleTimes.profile },
+  });
+
+  useEffect(() => {
+    if (me.data?.preferences) {
+      setAppearance(me.data.preferences.appearance);
+      setStoredUnits(me.data.preferences.units);
+    }
+  }, [me.data, setAppearance]);
 
   const refreshRef = useRef(refreshAsync);
   refreshRef.current = refreshAsync;
@@ -129,7 +165,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     } catch (error) {
       // Not marked done: the next sign-in on this device retries. The guest data stays on the phone.
-      qaLog('guest_merge_failed', { code: isApiError(error) ? error.code : 'unknown' });
+      qaLog('guest_merge_failed', {
+        code: isApiError(error) ? error.code : 'unknown',
+      });
     }
   }, [mergeAsync]);
 
@@ -148,8 +186,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLocale(session.me.locale);
         qaLog('locale_applied', { locale: session.me.locale });
       }
+      if (session.me.preferences) {
+        setAppearance(session.me.preferences.appearance);
+        setStoredUnits(session.me.preferences.units);
+      }
     },
-    [queryClient, mergeGuestData],
+    [queryClient, mergeGuestData, setAppearance],
   );
 
   const setUser = useCallback(
@@ -169,8 +211,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Signing out always works locally, even offline; the server revokes the family on expiry.
     }
     qaLog('signed_out');
+    storage.remove('prefs.colorScheme');
+    storage.remove('prefs.units');
+    setAppearance('auto');
     await tokenManager.clear({ reason: 'user' });
-  }, [signOutAsync]);
+  }, [signOutAsync, setAppearance]);
 
   const showBlocked = useCallback((reasonCode?: string) => {
     setBlockedNotice({ reasonCode: reasonCode ?? null });
@@ -197,7 +242,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       showBlocked,
       clearBlocked,
     }),
-    [status, user, userError, reloadUser, blockedNotice, startSession, setUser, signOut, showBlocked, clearBlocked],
+    [
+      status,
+      user,
+      userError,
+      reloadUser,
+      blockedNotice,
+      startSession,
+      setUser,
+      signOut,
+      showBlocked,
+      clearBlocked,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

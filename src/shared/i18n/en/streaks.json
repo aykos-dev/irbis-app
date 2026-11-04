@@ -1,0 +1,29 @@
+{
+  "flameA11y": "%{count}-day streak",
+  "bootA11y": "%{count}-week explorer streak",
+  "bootShieldedA11y": "%{count}-week explorer streak, protected by weather shield",
+  "sheet": {
+    "title": "Your streaks",
+    "mascot": "Irbis",
+    "flame": {
+      "one": "%{count} day in a row",
+      "other": "%{count} days in a row"
+    },
+    "boot": {
+      "one": "%{count} week of exploring",
+      "other": "%{count} weeks of exploring"
+    },
+    "todayDone": "Today: done",
+    "todayNotYet": "Today: not yet",
+    "weekDone": "This week: checked in",
+    "weekNotYet": "This week: not yet",
+    "freezes": "%{left} of %{perMonth} freezes left this month",
+    "shield": "Bad-weather weekends never break your explorer streak."
+  },
+  "summit": "%{count} Week streak",
+  "lessonsLine": "One more 3-minute lesson keeps your %{count}-day streak.",
+  "profile": {
+    "label": "Streaks",
+    "value": "%{flame} days · %{boot} weeks"
+  }
+}

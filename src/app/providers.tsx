@@ -38,13 +38,13 @@ export function Providers({ children, queryClient, initialMetrics }: Props) {
       <SafeAreaProvider initialMetrics={initialMetrics}>
         <KeyboardProvider>
           <QueryClientProvider client={client}>
-            <AuthProvider>
-              <ThemeProvider>
+            <ThemeProvider>
+              <AuthProvider>
                 <BottomSheetModalProvider>
                   <ToastProvider>{children}</ToastProvider>
                 </BottomSheetModalProvider>
-              </ThemeProvider>
-            </AuthProvider>
+              </AuthProvider>
+            </ThemeProvider>
           </QueryClientProvider>
         </KeyboardProvider>
       </SafeAreaProvider>

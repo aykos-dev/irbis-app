@@ -1,10 +1,13 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 
+import { TripSummaryScreen } from '../../features/active-trip/screens/TripSummaryScreen';
+import { BadgesScreen } from '../../features/badges/screens/BadgesScreen';
 import { GameWaiting } from '../../features/campfire-core/games/GameWaiting';
 import { CampJoinScreen } from '../../features/campfire-core/screens/CampJoinScreen';
 import { CampLobbyScreen } from '../../features/campfire-core/screens/CampLobbyScreen';
 import { RecoveryPhoneScreen } from '../../features/auth/screens/RecoveryPhoneScreen';
+import { SecureAccountScreen } from '../../features/auth/screens/SecureAccountScreen';
 import { DebugScreen } from '../../features/debug/screens/DebugScreen';
 import { StatusScreen } from '../../features/health/screens/StatusScreen';
 import { LessonCompleteScreen } from '../../features/lessons/screens/LessonCompleteScreen';
@@ -12,13 +15,27 @@ import { QuizScreen } from '../../features/lessons/screens/QuizScreen';
 import { CompanionsScreen } from '../../features/levels/screens/CompanionsScreen';
 import { LevelUpScreen } from '../../features/levels/screens/LevelUpScreen';
 import { LevelScreen } from '../../features/levels/screens/LevelScreen';
-import { PlaceScreen } from '../../features/places/screens/PlaceScreen';
+import { DeleteAccountScreen } from '../../features/profile/screens/DeleteAccountScreen';
+import { EditProfileScreen } from '../../features/profile/screens/EditProfileScreen';
+import { HelpScreen } from '../../features/profile/screens/HelpScreen';
+import { NotifsScreen } from '../../features/profile/screens/NotifsScreen';
+import { PublicProfileScreen } from '../../features/profile/screens/PublicProfileScreen';
+import { SettingsScreen } from '../../features/profile/screens/SettingsScreen';
+import { SearchScreen } from '../../features/search/screens/SearchScreen';
+import { GroupDetailsScreen } from '../../features/groups/screens/GroupDetailsScreen';
+import { GroupFormScreen } from '../../features/groups/screens/GroupFormScreen';
+import { GroupChatScreen } from '../../features/groups/screens/GroupChatScreen';
 import { OnboardingNavigator } from '../../features/onboarding/OnboardingNavigator';
-import { isOnboardingDone, markOnboardingDone } from '../../features/onboarding/onboardingStore';
+import {
+  isOnboardingDone,
+  markOnboardingDone,
+} from '../../features/onboarding/onboardingStore';
 import { SafetyScreen } from '../../features/auth/screens/SafetyScreen';
+import { TripPlanScreen } from '../../features/trip-plan/screens/TripPlanScreen';
 import { appConfig } from '../../shared/constants/config';
 import { useAuth } from '../../shared/contexts/auth';
 import { AuthNavigator } from './AuthNavigator';
+import { ActiveTripRoute, PlaceRoute, SummitRoute } from './checkInRoutes';
 import { TabNavigator } from './TabNavigator';
 import type { RootStackParamList } from './types';
 
@@ -59,20 +76,55 @@ export function RootNavigator() {
     return null;
   }
   return (
-    <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      initialRouteName={initialRoute}
+      screenOptions={{ headerShown: false }}
+    >
       <Stack.Screen name="Onboarding" component={OnboardingNavigator} />
       <Stack.Screen name="MainTabs" component={TabNavigator} />
       <Stack.Screen
         name="Auth"
         component={AuthNavigator}
-        options={{ presentation: 'fullScreenModal', animation: 'slide_from_bottom' }}
+        options={{
+          presentation: 'fullScreenModal',
+          animation: 'slide_from_bottom',
+        }}
       />
       <Stack.Screen name="RecoveryPhone" component={RecoveryPhoneScreen} />
+      <Stack.Screen name="SecureAccount" component={SecureAccountScreen} />
       <Stack.Screen name="Safety" component={SafetyScreen} />
-      <Stack.Screen name="Place" component={PlaceScreen} />
+      <Stack.Screen name="Place" component={PlaceRoute} />
+      <Stack.Screen name="TripPlan" component={TripPlanScreen} />
+      <Stack.Screen name="ActiveTrip" component={ActiveTripRoute} />
+      <Stack.Screen
+        name="TripSummary"
+        component={TripSummaryScreen}
+        options={{ animation: 'fade', gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name="Summit"
+        component={SummitRoute}
+        options={{ animation: 'fade', gestureEnabled: false }}
+      />
       <Stack.Screen name="Level" component={LevelScreen} />
+      <Stack.Screen name="Badges" component={BadgesScreen} />
+      <Stack.Screen name="PublicProfile" component={PublicProfileScreen} />
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} />
+      <Stack.Screen name="Help" component={HelpScreen} />
+      <Stack.Screen name="Notifs" component={NotifsScreen} />
+      <Stack.Screen name="Search" component={SearchScreen} />
+      <Stack.Screen name="GroupDetails" component={GroupDetailsScreen} />
+      <Stack.Screen name="CreateGroup" component={GroupFormScreen} />
+      <Stack.Screen name="EditGroup" component={GroupFormScreen} />
+      <Stack.Screen name="GroupChat" component={GroupChatScreen} />
       <Stack.Screen name="Companions" component={CompanionsScreen} />
-      <Stack.Screen name="Quiz" component={QuizScreen} options={{ gestureEnabled: false }} />
+      <Stack.Screen
+        name="Quiz"
+        component={QuizScreen}
+        options={{ gestureEnabled: false }}
+      />
       <Stack.Screen
         name="LessonComplete"
         component={LessonCompleteScreen}
@@ -81,11 +133,23 @@ export function RootNavigator() {
       <Stack.Screen
         name="LevelUp"
         component={LevelUpScreen}
-        options={{ presentation: 'fullScreenModal', animation: 'fade', gestureEnabled: false }}
+        options={{
+          presentation: 'fullScreenModal',
+          animation: 'fade',
+          gestureEnabled: false,
+        }}
       />
-      <Stack.Screen name="CampLobby" component={CampLobbyScreen} options={{ gestureEnabled: false }} />
+      <Stack.Screen
+        name="CampLobby"
+        component={CampLobbyScreen}
+        options={{ gestureEnabled: false }}
+      />
       <Stack.Screen name="CampJoin" component={CampJoinScreen} />
-      <Stack.Screen name="CampGame" component={GameWaiting} options={{ gestureEnabled: false }} />
+      <Stack.Screen
+        name="CampGame"
+        component={GameWaiting}
+        options={{ gestureEnabled: false }}
+      />
       {appConfig.isQaEnabled ? (
         <>
           <Stack.Screen name="Debug" component={DebugScreen} />

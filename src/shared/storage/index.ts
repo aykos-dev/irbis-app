@@ -10,6 +10,7 @@ const mmkv = createMMKV({ id: 'irbis' });
 type StorageSchema = {
   'prefs.locale': string;
   'prefs.colorScheme': string;
+  'prefs.units': string;
   /** '1' once the device's guest data went into an account (`/v1/me/guest-merge`, once per device). */
   'guest.merged': string;
   /** '1' once onboarding ended (finished, closed or logged in) or the app opened signed in. */
@@ -42,6 +43,16 @@ type StorageSchema = {
   'lessons.muted': string;
   /** Smart swaps the user kept the plan for: JSON `{ month: 'YYYY-MM', keys: ['<month>:<position>'] }`. */
   'path.swapDismissed': string;
+  /** The active trip's recorded track (device only): JSON Track (active-trip trackStore), one trip at a time. */
+  'active.track': string;
+  /** XP the server granted per waypoint check-in of the active trip (summary total): JSON `{ tripId, xp }`. */
+  'active.waypointXp': string;
+  /** Offline waypoint check-ins of the active trip, sent in order on reconnect: JSON `{ tripId, items }`. */
+  'active.waypointQueue': string;
+  /** The active trip's SOS SMS target and rescue number: JSON `{ tripId, phone, sosCallNumber }`; cleared at check-out. */
+  'active.sosContact': string;
+  /** Check-ins waiting to be sent, oldest first (max 20): JSON array of CreateCheckInDto (check-in AC5). */
+  'checkIn.queue': string;
 } & {
   /** Campfire seat token per room code, so a player gets the same seat back (rejoin, restart). */
   [key: `camp.seats.${string}`]: string;
@@ -49,6 +60,8 @@ type StorageSchema = {
   [key: `camp.used.${string}`]: string;
   /** The last loaded monthly path per Tashkent month `YYYY-MM`, for offline opens: JSON PathDto (no personal data). */
   [key: `path.cache.${string}`]: string;
+  /** Trip-plan gear ticks per draft id (new plan) or trip id: JSON array of gear keys (device only). */
+  [key: `trip.gear.${string}`]: string;
 };
 
 export type StorageKey = keyof StorageSchema;

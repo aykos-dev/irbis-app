@@ -28,6 +28,7 @@ import type {
   AuthSessionResponseDto,
   AuthUsernameAvailableParams,
   CodeSentResponseDto,
+  CreateDemoDto,
   ErrorResponseDto,
   ForgotPasswordDto,
   LogInDto,
@@ -127,6 +128,73 @@ export const useAuthSignUp = <TError = ErrorType<ErrorResponseDto>,
         TContext
       > => {
       return useMutation(getAuthSignUpMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Create a demo account (auto username, no password) and log in (ADR-006)
+ */
+export const authCreateDemo = (
+    createDemoDto: BodyType<CreateDemoDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<AuthSessionResponseDto>(
+      {url: `/v1/auth/demo`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createDemoDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getAuthCreateDemoMutationKey = () => ['authCreateDemo'] as const;
+
+export const getAuthCreateDemoMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authCreateDemo>>, TError,AuthCreateDemoMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof authCreateDemo>>, TError,AuthCreateDemoMutationVariables, TContext> => {
+
+const mutationKey = getAuthCreateDemoMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof authCreateDemo>>, AuthCreateDemoMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  authCreateDemo(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AuthCreateDemoMutationResult = NonNullable<Awaited<ReturnType<typeof authCreateDemo>>>
+    export type AuthCreateDemoMutationBody = BodyType<CreateDemoDto>
+    export type AuthCreateDemoMutationError = ErrorType<ErrorResponseDto>
+    export type AuthCreateDemoMutationVariables = {data: BodyType<CreateDemoDto>}
+
+    /**
+ * @summary Create a demo account (auto username, no password) and log in (ADR-006)
+ */
+export const useAuthCreateDemo = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authCreateDemo>>, TError,AuthCreateDemoMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof authCreateDemo>>,
+        TError,
+        AuthCreateDemoMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAuthCreateDemoMutationOptions(options), queryClient);
     }
     /**
  * @summary Live username check while typing

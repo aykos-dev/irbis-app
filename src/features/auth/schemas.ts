@@ -7,6 +7,7 @@ import {
   AuthSignUpBody,
 } from '../../shared/api/generated/zod/auth/auth.zod';
 import {
+  MeSecureBody,
   MeSetRecoveryPhoneBody,
   MeVerifyRecoveryPhoneBody,
 } from '../../shared/api/generated/zod/me/me.zod';
@@ -67,6 +68,24 @@ export const SignUpFormSchema = z
     message: 'auth.errors.passwordSameAsUsername',
   });
 export type SignUpForm = z.infer<typeof SignUpFormSchema>;
+
+/** Secure your account (check-in AC8): the sign-up rules plus a matching confirmation. */
+export const SecureFormSchema = z
+  .object({
+    username: MeSecureBody.shape.username.pipe(usernameSchema),
+    password: MeSecureBody.shape.password.pipe(passwordSchema),
+    confirm: z.string(),
+    acceptTerms: MeSecureBody.shape.acceptTerms.refine(accepted => accepted, 'auth.errors.termsRequired'),
+  })
+  .refine(form => form.password.toLowerCase() !== form.username.toLowerCase(), {
+    path: ['password'],
+    message: 'auth.errors.passwordSameAsUsername',
+  })
+  .refine(form => form.confirm === form.password, {
+    path: ['confirm'],
+    message: 'auth.errors.passwordMismatch',
+  });
+export type SecureForm = z.infer<typeof SecureFormSchema>;
 
 export const LogInFormSchema = z.object({
   username: AuthLogInBody.shape.username.min(1, 'auth.errors.required'),

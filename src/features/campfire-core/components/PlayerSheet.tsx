@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
@@ -73,7 +72,7 @@ function PlayerForm({ role, onContinue }: Pick<Props, 'role' | 'onContinue'>) {
   };
 
   return (
-    <KeyboardAvoidingView behavior="padding" style={layout.form}>
+    <View style={layout.form}>
       <AppText variant="h2" accessibilityRole="header">
         {t('camp.player.title')}
       </AppText>
@@ -123,7 +122,7 @@ function PlayerForm({ role, onContinue }: Pick<Props, 'role' | 'onContinue'>) {
         disabled={!valid}
         onPress={submit}
       />
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 

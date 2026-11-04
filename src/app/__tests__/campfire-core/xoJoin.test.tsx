@@ -89,6 +89,8 @@ describe('campfire-xo — Back on the player board (XO-1)', () => {
     await act(() => {
       navigationRef.goBack();
     });
+    // Back asks "Leave the game?" (owner brief 1022); Stay keeps the player in the game.
+    await fireEvent.press(screen.getByTestId('camp.game.leave-stay'));
 
     // XO-1: the running board stays; Back must not drop the joiner into the lobby.
     expect(screen.getByTestId('xo.board')).toBeOnTheScreen();
@@ -103,5 +105,31 @@ describe('campfire-xo — Back on the player board (XO-1)', () => {
     // The final score reaches the joiner instead of "waiting for the host".
     expect(await screen.findByTestId('xo.final')).toBeOnTheScreen();
     expect(screen.queryByTestId('camp.lobby.wait')).not.toBeOnTheScreen();
+  });
+
+  it('player Back during a game asks "Leave the game?"; Stay keeps the board, Leave frees the seat → hub', async () => {
+    const server = await hostRoom();
+    await joinByQr();
+    await act(() => server.startXo());
+    expect(await screen.findByTestId('xo.board')).toBeOnTheScreen();
+
+    await act(() => {
+      navigationRef.goBack();
+    });
+    expect(screen.getByTestId('camp.game.leave-sheet')).toBeOnTheScreen();
+    expect(screen.getByText('Leave the game?')).toBeOnTheScreen();
+    expect(screen.getByText("You'll leave the room. The others keep playing.")).toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByTestId('camp.game.leave-stay'));
+    expect(screen.queryByTestId('camp.game.leave-sheet')).not.toBeOnTheScreen();
+    expect(screen.getByTestId('xo.board')).toBeOnTheScreen();
+
+    await act(() => {
+      navigationRef.goBack();
+    });
+    await fireEvent.press(screen.getByTestId('camp.game.leave-confirm'));
+    await advance(10);
+    expect(await screen.findByTestId('camp.hub.screen')).toBeOnTheScreen();
+    expect(storage.getString('camp.seats.4821')).toBeUndefined();
   });
 });

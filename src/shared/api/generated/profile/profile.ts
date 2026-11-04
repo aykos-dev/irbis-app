@@ -22,6 +22,7 @@ import type {
 
 import type {
   ErrorResponseDto,
+  ProfileStatsDto,
   PublicProfileResponseDto
 } from '../model';
 
@@ -129,6 +130,98 @@ export function useUsersGetProfile<TData = Awaited<ReturnType<typeof usersGetPro
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getUsersGetProfileQueryOptions(username,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary A public profile's all-time stats (zeros when hidden)
+ */
+export const usersGetStats = (
+    username: string,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<ProfileStatsDto>(
+      {url: `/v1/users/${username}/stats`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getUsersGetStatsQueryKey = (username: string,) => {
+    return [
+    `/v1/users/${username}/stats`
+    ] as const;
+    }
+
+
+export const getUsersGetStatsQueryOptions = <TData = Awaited<ReturnType<typeof usersGetStats>>, TError = ErrorType<ErrorResponseDto>>(username: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersGetStats>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getUsersGetStatsQueryKey(username);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof usersGetStats>>> = ({ signal }) => usersGetStats(username, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: username !== null && username !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof usersGetStats>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type UsersGetStatsQueryResult = NonNullable<Awaited<ReturnType<typeof usersGetStats>>>
+export type UsersGetStatsQueryError = ErrorType<ErrorResponseDto>
+
+
+export function useUsersGetStats<TData = Awaited<ReturnType<typeof usersGetStats>>, TError = ErrorType<ErrorResponseDto>>(
+ username: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersGetStats>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof usersGetStats>>,
+          TError,
+          Awaited<ReturnType<typeof usersGetStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useUsersGetStats<TData = Awaited<ReturnType<typeof usersGetStats>>, TError = ErrorType<ErrorResponseDto>>(
+ username: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersGetStats>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof usersGetStats>>,
+          TError,
+          Awaited<ReturnType<typeof usersGetStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useUsersGetStats<TData = Awaited<ReturnType<typeof usersGetStats>>, TError = ErrorType<ErrorResponseDto>>(
+ username: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersGetStats>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary A public profile's all-time stats (zeros when hidden)
+ */
+
+export function useUsersGetStats<TData = Awaited<ReturnType<typeof usersGetStats>>, TError = ErrorType<ErrorResponseDto>>(
+ username: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersGetStats>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getUsersGetStatsQueryOptions(username,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
