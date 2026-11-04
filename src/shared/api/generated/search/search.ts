@@ -50,7 +50,7 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
 };
 
 /**
- * @summary Search places and people; groups and tours are empty for now
+ * @summary Search places, public people and public groups; tours are empty for now
  */
 export const searchQuery = (
     params?: SearchQueryParams,
@@ -122,7 +122,7 @@ export function useSearchQuery<TData = Awaited<ReturnType<typeof searchQuery>>, 
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Search places and people; groups and tours are empty for now
+ * @summary Search places, public people and public groups; tours are empty for now
  */
 
 export function useSearchQuery<TData = Awaited<ReturnType<typeof searchQuery>>, TError = ErrorType<ErrorResponseDto>>(

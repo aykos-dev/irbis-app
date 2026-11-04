@@ -5,8 +5,10 @@ import { Image, StyleSheet, View } from 'react-native';
 
 import type { RootStackParamList } from '../../../app/navigation/types';
 import { useSearchQuery } from '../../../shared/api/generated/search/search';
+import { useGroupsJoin } from '../../../shared/api/generated/groups/groups';
 import type { SearchScope } from '../../../shared/api/generated/model';
 import { AppText } from '../../../shared/components/AppText';
+import { AppButton } from '../../../shared/components/AppButton';
 import { EmptyState } from '../../../shared/components/EmptyState';
 import { ErrorState } from '../../../shared/components/ErrorState';
 import { Icon } from '../../../shared/components/Icon';
@@ -18,6 +20,9 @@ import { radii, spacing } from '../../../shared/constants/spacing';
 import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
 import { getLocale } from '../../../shared/i18n';
 import { formatDistance, formatElevation } from '../../../shared/utils/units';
+import { useGuestSession } from '../../../shared/auth/useGuestSession';
+import { toast } from '../../../shared/components/toastBus';
+import { t } from '../../../shared/i18n';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type Tab = 'all' | SearchScope;
@@ -36,6 +41,8 @@ export function SearchScreen() {
   const [input, setInput] = useState('');
   const [q, setQ] = useState('');
   const [tab, setTab] = useState<Tab>('all');
+  const guest = useGuestSession('group_join');
+  const join = useGroupsJoin();
   useEffect(() => {
     const timer = setTimeout(() => setQ(input.trim()), 250);
     return () => clearTimeout(timer);
@@ -47,7 +54,8 @@ export function SearchScreen() {
   );
   const showPlaces = tab === 'all' || tab === 'places';
   const showPeople = tab === 'all' || tab === 'people';
-  const comingSoon = tab === 'groups' || tab === 'tours';
+  const showGroups = tab === 'all' || tab === 'groups';
+  const comingSoon = tab === 'tours';
   return (
     <Screen testID="search.screen" scroll keyboardAware>
       <View style={layout.header}>
@@ -88,7 +96,7 @@ export function SearchScreen() {
           testID={`search.${tab}-empty`}
           mascot="proud"
           mascotLabel="Irbis"
-          title={`${tab === 'groups' ? 'Groups' : 'Tours'} are coming soon`}
+          title="Tours are coming soon"
           body="This search tab is ready for the next community release."
         />
       ) : q.length < 2 ? (
@@ -196,6 +204,35 @@ export function SearchScreen() {
               )}
             </View>
           ) : null}
+          {showGroups ? (
+            <View testID="search.groups" style={layout.section}>
+              <AppText variant="h2">Groups</AppText>
+              {query.data.groups.length ? query.data.groups.map(group => (
+                <View key={group.id} style={[layout.result, styles.result]}>
+                  <Pressable
+                    testID={`search.group-${group.id}`}
+                    accessibilityLabel={group.name}
+                    onPress={() => navigation.navigate('GroupDetails', { id: group.id })}
+                    style={layout.copy}
+                  >
+                    <AppText variant="body">{group.name}</AppText>
+                    <AppText variant="small" tone="muted">{group.memberCount} members · {group.description}</AppText>
+                  </Pressable>
+                  <View style={layout.join}>
+                    <AppButton
+                      testID={`search.group-join-${group.id}`}
+                      label={t('groups.join')}
+                      loading={join.isPending || guest.loading}
+                      onPress={() => void guest.ensure()
+                        .then(() => join.mutateAsync({ id: group.id }))
+                        .then(() => { toast.show({ variant: 'success', message: t('groups.joined') }); navigation.navigate('GroupDetails', { id: group.id }); })
+                        .catch(() => toast.show({ variant: 'error', message: t('groups.failed') }))}
+                    />
+                  </View>
+                </View>
+              )) : <AppText variant="small" tone="muted">No public groups found.</AppText>}
+            </View>
+          ) : null}
         </>
       )}
     </Screen>
@@ -220,6 +257,7 @@ const layout = StyleSheet.create({
     borderRadius: radii.tile,
   },
   copy: { flex: 1, gap: spacing[4] },
+  join: { width: 96 },
   avatar: { width: 48, height: 48, borderRadius: 24 },
   initials: { alignItems: 'center', justifyContent: 'center' },
 });

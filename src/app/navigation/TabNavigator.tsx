@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { clearTripDevice } from '../../features/active-trip/tripDevice';
 import { ProfileScreen } from '../../features/auth/screens/ProfileScreen';
-import { CommunityScreen } from '../../features/campfire-core/screens/CommunityScreen';
+import { CommunityScreen } from '../screens/CommunityScreen';
 import { LessonsHubScreen } from '../../features/lessons/screens/LessonsHubScreen';
 import { getInterests } from '../../features/onboarding/onboardingStore';
 import { placeTypes } from '../../features/places/placeTypes';

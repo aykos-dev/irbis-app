@@ -4,6 +4,7 @@ export * from './auth/auth.zod.ts';
 export * from './badges/badges.zod.ts';
 export * from './check-ins/check-ins.zod.ts';
 export * from './conditions/conditions.zod.ts';
+export * from './groups/groups.zod.ts';
 export * from './health/health.zod.ts';
 export * from './lessons/lessons.zod.ts';
 export * from './levels/levels.zod.ts';

@@ -9,7 +9,7 @@ import * as zod from 'zod';
 
 
 /**
- * @summary Search places and people; groups and tours are empty for now
+ * @summary Search places, public people and public groups; tours are empty for now
  */
 export const searchQueryQueryQMin = 2;
 export const searchQueryQueryQMax = 60;
@@ -63,7 +63,15 @@ export const SearchQueryResponse = zod.object({
   "avatarUrl": zod.string().nullable().describe('Null when no avatar is set or storage is unavailable.'),
   "level": zod.int().min(1).max(searchQueryResponsePeopleItemLevelMax)
 })),
-  "groups": zod.array(zod.string()).describe('Always empty until groups ship.'),
+  "groups": zod.array(zod.object({
+  "id": zod.uuid(),
+  "slug": zod.string(),
+  "name": zod.string(),
+  "description": zod.string(),
+  "avatarUrl": zod.string().nullable(),
+  "color": zod.string(),
+  "memberCount": zod.int()
+})),
   "tours": zod.array(zod.string()).describe('Always empty until tours ship.')
 })
 
