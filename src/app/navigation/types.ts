@@ -92,13 +92,26 @@ export type RootStackParamList = {
   /**
    * Campfire lobby (campfire-core AC4, AC6, AC7): the host's by default, `resume` reopens the saved
    * room; `player` shows the seated player's lobby (the live session is in `playerSession`);
-   * `game` preselects a game (CampHub tile, campfire-party AC1, campfire-mafia AC1).
+   * `game` preselects a game (CampHub tile, campfire-party AC1, campfire-mafia AC1); `geoMode` the
+   * Geocore game picked in the hub sheet (campfire-geocore AC1).
    */
   CampLobby:
     | {
         resume?: boolean;
         player?: boolean;
-        game?: 'imposter' | 'mafia' | 'whoami' | 'rather' | 'xo' | 'croc';
+        game?:
+          | 'imposter'
+          | 'mafia'
+          | 'whoami'
+          | 'rather'
+          | 'xo'
+          | 'croc'
+          | 'geocore';
+        geoMode?:
+          | 'findCountry'
+          | 'capitalToCountry'
+          | 'countryToCapital'
+          | 'cityDistance';
       }
     | undefined;
   /** A party game round over the lobby (campfire-party AC2): the host's, or the player's with `player`. */

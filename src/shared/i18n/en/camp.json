@@ -28,7 +28,8 @@
     "xo": "X and O",
     "xoMeta": "2 · 1–5 min",
     "croc": "Crocodile",
-    "crocMeta": "3–15 · mime"
+    "crocMeta": "3–15 · mime",
+    "geocore": "Geocore"
   },
   "comingSoon": "Coming soon",
   "comingSoonToast": "Coming in the next update",
@@ -377,6 +378,31 @@
       "hint": "Drag to spin, pinch to zoom, tap to answer",
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out"
-    }
+    },
+    "meta": "4 geography games · 1–15",
+    "sheetLine": "10 rounds · 20 s each · score points",
+    "mode": {
+      "findCountry": "Find the country",
+      "capitalToCountry": "Capital → Country",
+      "countryToCapital": "Country → Capital",
+      "cityDistance": "City distance"
+    },
+    "line": {
+      "findCountry": "See a name, tap it on the globe",
+      "capitalToCountry": "See a capital, tap its country",
+      "countryToCapital": "See a country, pin its capital",
+      "cityDistance": "See a city, drop a pin, see how far off"
+    },
+    "rounds": "Rounds",
+    "timePerRound": "Time per round",
+    "seconds": "%{n} s",
+    "points": {
+      "label": "Points",
+      "country": "In the country 1000 · near misses score by km",
+      "capital": "Up to 1000, by km to the capital",
+      "city": "Up to 5000, by km to the city"
+    },
+    "start": "Start %{game}",
+    "solo": "You play too. Solo works: start with just you."
   }
 }

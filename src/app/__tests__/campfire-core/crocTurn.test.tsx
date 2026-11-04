@@ -65,7 +65,7 @@ async function advance(ms: number) {
 /** Lets `ms` pass while both players keep pinging (the host drops a silent seat after 10 s). */
 async function play(ms: number, players: FakeSocket[]) {
   for (let left = ms; left > 0; left -= 6000) {
-    players.forEach(socket => socket.send({ v: 5, type: 'ping' }));
+    players.forEach(socket => socket.send({ v: 6, type: 'ping' }));
     await advance(Math.min(6000, left));
   }
 }
@@ -74,7 +74,7 @@ async function join(nickname: string): Promise<FakeSocket> {
   const code = String(screen.getByTestId('camp.lobby.code').props.children);
   const client = fakeNet.server().connect();
   await act(() => {
-    client.send({ v: 5, type: 'hello', code, nickname, avatar: 'bear' });
+    client.send({ v: 6, type: 'hello', code, nickname, avatar: 'bear' });
   });
   return client;
 }
@@ -91,7 +91,7 @@ async function runningTurn(): Promise<[FakeSocket, FakeSocket]> {
   await fireEvent.press(screen.getByTestId('camp.lobby.start'));
   await screen.findByTestId('croc.pick');
   await fireEvent.press(screen.getByTestId('croc.pick.p1'));
-  await act(() => players[0].send({ v: 5, type: 'crocStart', round: 1, turnNo: 1 }));
+  await act(() => players[0].send({ v: 6, type: 'crocStart', round: 1, turnNo: 1 }));
   return players;
 }
 
@@ -127,12 +127,12 @@ describe('campfire-crocodile — timer and turn end (AC4, AC5)', () => {
 
   it('AC5: Guessed! from the describer counts once; a stale or late one is ignored; the timer no longer ends the turn', async () => {
     const [first, second] = await runningTurn();
-    await act(() => second.send({ v: 5, type: 'crocGuessed', round: 1, turnNo: 1 }));
-    await act(() => first.send({ v: 5, type: 'crocGuessed', round: 1, turnNo: 0 }));
+    await act(() => second.send({ v: 6, type: 'crocGuessed', round: 1, turnNo: 1 }));
+    await act(() => first.send({ v: 6, type: 'crocGuessed', round: 1, turnNo: 0 }));
     expect(saved().phase).toBe('running');
 
-    await act(() => first.send({ v: 5, type: 'crocGuessed', round: 1, turnNo: 1 }));
-    await act(() => first.send({ v: 5, type: 'crocGuessed', round: 1, turnNo: 1 }));
+    await act(() => first.send({ v: 6, type: 'crocGuessed', round: 1, turnNo: 1 }));
+    await act(() => first.send({ v: 6, type: 'crocGuessed', round: 1, turnNo: 1 }));
     expect(saved()).toMatchObject({ phase: 'result', totals: { guessed: 1, turns: 1 } });
     expect(screen.getByTestId('croc.result')).toHaveTextContent(/^Guessed!The word: /);
     expect(qaEvents()).toContainEqual({ event: 'croc_turn_end', turnNo: 1, kind: 'guessed' });
@@ -164,7 +164,7 @@ describe('campfire-crocodile — describer leaves (AC6)', () => {
     const back = fakeNet.server().connect();
     await act(() =>
       back.send({
-        v: 5,
+        v: 6,
         type: 'hello',
         code: welcome?.room.code,
         nickname: 'guest_1',
@@ -180,7 +180,7 @@ describe('campfire-crocodile — describer leaves (AC6)', () => {
 describe('campfire-crocodile — end and summary (AC7)', () => {
   it('AC7: the host ends after confirming; every phone shows the totals; Play again starts over', async () => {
     const [first] = await runningTurn();
-    await act(() => first.send({ v: 5, type: 'crocGuessed', round: 1, turnNo: 1 }));
+    await act(() => first.send({ v: 6, type: 'crocGuessed', round: 1, turnNo: 1 }));
 
     await fireEvent.press(screen.getByTestId('croc.end'));
     expect(screen.getByText('End the game?')).toBeOnTheScreen();

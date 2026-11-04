@@ -8,7 +8,21 @@ export const campScheme: ColorScheme = 'dark';
 
 export const campColors = themeColors[campScheme];
 
-export type GameId = 'imposter' | 'mafia' | 'whoami' | 'rather' | 'xo' | 'croc';
+export type GameId =
+  | 'imposter'
+  | 'mafia'
+  | 'whoami'
+  | 'rather'
+  | 'xo'
+  | 'croc'
+  | 'geocore';
+
+/** Geocore blue, its wide hub card and the card's meta line (canvas GeoHubSheet). */
+export const geocoreColors = {
+  brand: '#1F74C7',
+  card: '#173452',
+  meta: '#B8D4F0',
+} as const;
 
 /** Game icon tile colours (canvas CampHub). */
 export const gameColors: Record<GameId, string> = {
@@ -18,7 +32,31 @@ export const gameColors: Record<GameId, string> = {
   rather: palette.orange,
   xo: palette.sky,
   croc: palette.pine,
+  geocore: geocoreColors.brand,
 };
+
+/** Geocore game tiles (canvas GeoHubSheet / GeoLobby): background and glyph colour per mode. */
+export const geoModeColors = {
+  findCountry: { bg: geocoreColors.brand, ink: palette.white },
+  capitalToCountry: { bg: palette.purple, ink: palette.white },
+  countryToCapital: { bg: palette.teal, ink: palette.white },
+  cityDistance: { bg: palette.orange, ink: palette.onOrange },
+} as const;
+
+/** Geocore hub tile, sheet rows and lobby sub-pills (canvas GeoHubSheet / GeoLobby). */
+export const geocoreSizes = {
+  tileIcon: 64,
+  tileGlyph: 38,
+  sheetIcon: 48,
+  sheetHeadGlyph: 28,
+  rowGlyph: 26,
+  rowMinHeight: 76,
+  chevron: 22,
+  subIcon: 30,
+  subGlyph: 18,
+  /** Board glyph stroke (`.st`, 24-unit viewBox). */
+  glyphStroke: 2.2,
+} as const;
 
 /** CampHub sizes from the canvas. */
 export const campSizes = {

@@ -164,6 +164,8 @@ export function GameWaiting({
     roster: RosterPlayer[];
   } | null = null;
   let croc: CrocView | null = null;
+  // Geocore has no game screen yet (slice 4): every phone shows the waiting view while it runs.
+  const geo = hosted?.game === 'geo' || player?.game?.game === 'geo';
   if (hosted?.game === 'xo') {
     xo = {
       info: toXoPublic(hosted),
@@ -205,7 +207,7 @@ export function GameWaiting({
             selfSeatId: player.seatId,
           }
         : { kind: 'waiting', info: player.game.public };
-  } else if (hosted) {
+  } else if (hosted && hosted.game !== 'geo') {
     view = {
       game: hosted.game,
       packId: hosted.settings.packId,
@@ -217,7 +219,7 @@ export function GameWaiting({
       selfSeatId: HOST_SEAT_ID,
       roster: hostRoster,
     };
-  } else if (player?.game) {
+  } else if (player?.game && player.game.game !== 'geo') {
     const { deal } = player;
     view = {
       game: player.game.game,
@@ -236,7 +238,8 @@ export function GameWaiting({
       roster: player.players,
     };
   }
-  const active = view !== null || mafia !== null || xo !== null || croc !== null;
+  const active =
+    view !== null || mafia !== null || xo !== null || croc !== null || geo;
   const mafiaHost = mafia?.kind === 'host' ? mafia.game : null;
   const xoHost = hosted?.game === 'xo' ? hosted : null;
   const crocOver = croc?.phase === 'ended';
@@ -301,7 +304,7 @@ export function GameWaiting({
   // Mafia End game: a matching winner asks "<team> wins?", else "End without a winner?" (AC6).
   const endWinner = mafiaHost && confirmEnd ? mafiaWinner(mafiaHost) : null;
 
-  if (!view && !mafia && !xo && !croc) {
+  if (!view && !mafia && !xo && !croc && !geo) {
     return null;
   }
   return (
@@ -370,6 +373,21 @@ export function GameWaiting({
           </AppText>
         ) : null}
         {xoWatcher ? (
+          <AppText
+            testID="camp.game.in-progress"
+            variant="body"
+            tone="muted"
+            style={layout.center}
+          >
+            {t('camp.maf.inProgress')}
+          </AppText>
+        ) : null}
+        {geo ? (
+          <AppText variant="h1" accessibilityRole="header" style={layout.center}>
+            {t('camp.games.geocore')}
+          </AppText>
+        ) : null}
+        {geo ? (
           <AppText
             testID="camp.game.in-progress"
             variant="body"

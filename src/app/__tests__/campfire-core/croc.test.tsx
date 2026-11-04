@@ -54,7 +54,7 @@ async function join(nickname: string): Promise<FakeSocket> {
   const code = String(screen.getByTestId('camp.lobby.code').props.children);
   const client = fakeNet.server().connect();
   await act(() => {
-    client.send({ v: 5, type: 'hello', code, nickname, avatar: 'bear' });
+    client.send({ v: 6, type: 'hello', code, nickname, avatar: 'bear' });
   });
   return client;
 }
@@ -139,19 +139,19 @@ describe('campfire-crocodile — pick and secret word (AC2, AC3)', () => {
     await fireEvent.press(screen.getByTestId('croc.pick.p1'));
     const before = saved().word;
 
-    await act(() => first.send({ v: 5, type: 'crocSkip', round: 1, turnNo: 0 }));
-    await act(() => second.send({ v: 5, type: 'crocSkip', round: 1, turnNo: 1 }));
-    await act(() => second.send({ v: 5, type: 'crocStart', round: 1, turnNo: 1 }));
+    await act(() => first.send({ v: 6, type: 'crocSkip', round: 1, turnNo: 0 }));
+    await act(() => second.send({ v: 6, type: 'crocSkip', round: 1, turnNo: 1 }));
+    await act(() => second.send({ v: 6, type: 'crocStart', round: 1, turnNo: 1 }));
     expect(saved()).toMatchObject({ phase: 'ready', word: before, totals: { skipped: 0 } });
 
-    await act(() => first.send({ v: 5, type: 'crocSkip', round: 1, turnNo: 1 }));
+    await act(() => first.send({ v: 6, type: 'crocSkip', round: 1, turnNo: 1 }));
     const after = saved();
     expect(after.totals.skipped).toBe(1);
     expect(after.word).not.toEqual(before);
     expect(ofType(first, 'deal').at(-1)).toMatchObject({ secret: { word: after.word?.id, turnNo: 1 } });
     expect(qaEvents()).toContainEqual({ event: 'croc_skip', turnNo: 1, pack: before?.pack });
 
-    await act(() => first.send({ v: 5, type: 'crocStart', round: 1, turnNo: 1 }));
+    await act(() => first.send({ v: 6, type: 'crocStart', round: 1, turnNo: 1 }));
     expect(saved().phase).toBe('running');
     expect(ofType(second, 'game').at(-1)).toMatchObject({ phase: 'running' });
   });

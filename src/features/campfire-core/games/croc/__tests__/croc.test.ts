@@ -90,10 +90,10 @@ describe('campfire-crocodile — packs and protocol (AC1, AC8)', () => {
     expect(parsePack(broken)).toBeNull();
   });
 
-  it('AC1: protocol 5 carries the Crocodile messages and rejects a v3 phone', () => {
-    expect(decodeClient('{"v":5,"type":"crocSkip","round":1,"turnNo":2}')).toEqual({
+  it('AC1: protocol 6 carries the Crocodile messages and rejects a v3 phone', () => {
+    expect(decodeClient('{"v":6,"type":"crocSkip","round":1,"turnNo":2}')).toEqual({
       ok: true,
-      message: { v: 5, type: 'crocSkip', round: 1, turnNo: 2 },
+      message: { v: 6, type: 'crocSkip', round: 1, turnNo: 2 },
     });
     expect(decodeClient('{"v":3,"type":"ping"}')).toEqual({ ok: false, reason: 'version' });
   });

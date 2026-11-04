@@ -20,10 +20,12 @@ import { ComingSoonTag } from '../components/ComingSoonTag';
 import { GameTile } from '../components/GameTile';
 import { IosHotspotGuide } from '../components/IosHotspotGuide';
 import { PlayerSheet, type CampRole } from '../components/PlayerSheet';
+import { GeoModeSheet } from '../games/geocore/GeoModeSheet';
+import type { GeoMode } from '../games/geocore/scoring';
 import { hostsWithGuide } from '../native/hostPlatform';
 import { loadHostRoom } from '../room/hostRoomStore';
 
-const games: GameId[] = ['imposter', 'mafia', 'whoami', 'rather', 'xo', 'croc'];
+const games: GameId[] = ['imposter', 'mafia', 'whoami', 'rather', 'xo', 'croc', 'geocore'];
 
 /**
  * CampHub (AC2), the Campfire segment of Community: works offline and as a guest, no network.
@@ -38,6 +40,14 @@ export function CampHubScreen() {
   const [savedCode, setSavedCode] = useState<string | null>(null);
   /** A game tile starts the Host flow with that game preselected (campfire-party / campfire-mafia AC1). */
   const [hostGame, setHostGame] = useState<GameId | undefined>(undefined);
+  /** Geocore: the tile opens the mode sheet first; the picked mode rides along to the lobby (AC1). */
+  const [geoSheet, setGeoSheet] = useState(false);
+  const [geoMode, setGeoMode] = useState<GeoMode | undefined>(undefined);
+
+  const lobbyParams = () =>
+    hostGame
+      ? { game: hostGame, ...(hostGame === 'geocore' && geoMode ? { geoMode } : {}) }
+      : undefined;
 
   // A room hosted in the last 12 h can be resumed (AC7); re-read whenever the hub is back in view.
   useFocusEffect(
@@ -59,7 +69,7 @@ export function CampHubScreen() {
       return;
     }
     if (role === 'host') {
-      navigation.navigate('CampLobby', hostGame ? { game: hostGame } : undefined);
+      navigation.navigate('CampLobby', lobbyParams());
     } else {
       navigation.navigate('CampJoin');
     }
@@ -67,7 +77,7 @@ export function CampHubScreen() {
 
   const onHotspotReady = () => {
     setGuide(false);
-    navigation.navigate('CampLobby', hostGame ? { game: hostGame } : undefined);
+    navigation.navigate('CampLobby', lobbyParams());
   };
 
   const openSheet = (role: CampRole, game?: GameId) => {
@@ -77,7 +87,17 @@ export function CampHubScreen() {
 
   const onGame = (game: GameId) => {
     haptics.tap();
+    if (game === 'geocore') {
+      setGeoSheet(true);
+      return;
+    }
     openSheet('host', game);
+  };
+
+  const onGeoMode = (mode: GeoMode) => {
+    setGeoSheet(false);
+    setGeoMode(mode);
+    openSheet('host', 'geocore');
   };
 
   return (
@@ -134,6 +154,7 @@ export function CampHubScreen() {
       <TaggedCard testID="camp.hub.trip-group" label={t('camp.hub.tripGroup')} onPress={comingSoon} />
       <TaggedCard testID="camp.hub.badges" label={t('camp.hub.badges')} onPress={comingSoon} />
 
+      {geoSheet ? <GeoModeSheet onPick={onGeoMode} onDismiss={() => setGeoSheet(false)} /> : null}
       {sheet ? <PlayerSheet role={sheet} onContinue={onContinue} onDismiss={() => setSheet(null)} /> : null}
       {guide ? <IosHotspotGuide onReady={onHotspotReady} onDismiss={() => setGuide(false)} /> : null}
     </View>

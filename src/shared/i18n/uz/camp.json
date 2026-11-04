@@ -28,7 +28,8 @@
     "xo": "X va O",
     "xoMeta": "2 · 1–5 daq",
     "croc": "Timsoh",
-    "crocMeta": "3–15 · pantomima"
+    "crocMeta": "3–15 · pantomima",
+    "geocore": "Geokor"
   },
   "comingSoon": "Tez orada",
   "comingSoonToast": "Keyingi yangilanishda chiqadi",
@@ -377,6 +378,31 @@
       "hint": "Aylantiring, yaqinlashtiring, javob uchun bosing",
       "zoomIn": "Yaqinlashtirish",
       "zoomOut": "Uzoqlashtirish"
-    }
+    },
+    "meta": "4 ta geografiya o'yini · 1–15",
+    "sheetLine": "10 raund · har biri 20 s · ochko to'plang",
+    "mode": {
+      "findCountry": "Davlatni toping",
+      "capitalToCountry": "Poytaxt → Davlat",
+      "countryToCapital": "Davlat → Poytaxt",
+      "cityDistance": "Shahargacha masofa"
+    },
+    "line": {
+      "findCountry": "Nomini ko'ring, globusda toping",
+      "capitalToCountry": "Poytaxtni ko'ring, davlatini toping",
+      "countryToCapital": "Davlatni ko'ring, poytaxtini belgilang",
+      "cityDistance": "Shaharni ko'ring, belgi qo'ying, qanchalik uzoqligini biling"
+    },
+    "rounds": "Raundlar",
+    "timePerRound": "Raund vaqti",
+    "seconds": "%{n} s",
+    "points": {
+      "label": "Ochkolar",
+      "country": "Davlat ichida 1000 · yaqin xatolar km bo'yicha",
+      "capital": "1000 gacha, poytaxtgacha km bo'yicha",
+      "city": "5000 gacha, shahargacha km bo'yicha"
+    },
+    "start": "Boshlash: %{game}",
+    "solo": "Siz ham o'ynaysiz. Yolg'iz ham bo'ladi."
   }
 }
