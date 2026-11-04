@@ -70,6 +70,8 @@ export type GeoAction =
       now: number;
       connected: string[];
     }
+  /** A seat dropped or left during the question: closes the round if every seat still connected answered. */
+  | { type: 'geoSeatsChanged'; now: number; connected: string[] }
   /** The host's question timer ran out for round `roundNo`. */
   | { type: 'geoTimeUp'; roundNo: number; now: number }
   /** The host's Next tap or the reveal timer: the next question, or the final after round 10. */
@@ -146,6 +148,14 @@ function closeRound(state: GeoState, now: number): GeoState {
   };
 }
 
+/** The same early close as the last guess: every dealt seat still connected has answered. */
+function closeIfAllIn(state: GeoState, connected: string[], now: number): GeoState {
+  const allIn = state.seats
+    .filter(seatId => connected.includes(seatId))
+    .every(seatId => state.guesses[seatId]);
+  return allIn ? closeRound(state, now) : state;
+}
+
 /** Geocore: question (20 s) → reveal (8 s) → … ×10 → final; Play again starts over. */
 export function geoReducer(state: GeoState, action: GeoAction): GeoState {
   switch (action.type) {
@@ -169,11 +179,12 @@ export function geoReducer(state: GeoState, action: GeoAction): GeoState {
         ...state,
         guesses: { ...state.guesses, [action.seatId]: guess },
       };
-      const allIn = next.seats
-        .filter(seatId => action.connected.includes(seatId))
-        .every(seatId => next.guesses[seatId]);
-      return allIn ? closeRound(next, action.now) : next;
+      return closeIfAllIn(next, action.connected, action.now);
     }
+    case 'geoSeatsChanged':
+      return state.phase === 'question'
+        ? closeIfAllIn(state, action.connected, action.now)
+        : state;
     case 'geoTimeUp':
       return state.phase === 'question' && action.roundNo === state.roundNo
         ? closeRound(state, action.now)

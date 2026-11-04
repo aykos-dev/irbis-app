@@ -409,6 +409,46 @@
       "city": "До 5000, по расстоянию до города"
     },
     "start": "Начать: %{game}",
-    "solo": "Вы тоже играете. Можно и одному."
+    "solo": "Вы тоже играете. Можно и одному.",
+    "roundOf": "%{mode} · Раунд %{n} / %{of}",
+    "youTotal": "Вы %{total} · %{place} из %{count}",
+    "ask": {
+      "findCountry": "Найдите страну",
+      "capitalToCountry": "Столица какой страны?",
+      "countryToCapital": "Отметьте столицу",
+      "cityDistance": "Поставьте метку"
+    },
+    "lockCountry": "Выбрать: %{country}",
+    "lockPin": "Подтвердить метку",
+    "pickFirst": "Сначала нажмите на глобус",
+    "waitingOthers": "Ответ принят · ждём остальных",
+    "answered": "Ответили %{n} из %{total}",
+    "secondsLeft": "Осталось %{n} с",
+    "reveal": {
+      "country": "Это %{country}",
+      "capitalIn": "%{capital} — в стране %{country}",
+      "capitalOf": "Столица %{country} — %{capital}",
+      "cityIn": "%{city}, %{country}"
+    },
+    "yourResult": "+%{points}",
+    "kmOff": "Ошибка %{km} км",
+    "inside": "В точку",
+    "noAnswer": "Нет ответа",
+    "you": "Вы",
+    "km": "%{km} км",
+    "standingsAfter": "Счёт после раунда %{n}",
+    "thisRound": "за раунд",
+    "nextRound": "Следующий раунд",
+    "nextIn": "Следующий раунд через %{s} с",
+    "seeResults": "Итоги",
+    "waitingHost": "Ждём ведущего",
+    "wins": "%{name} побеждает!",
+    "youWin": "Вы победили!",
+    "tieWin": "%{names} делят победу!",
+    "finalLine": "%{mode} · %{of} раундов",
+    "tie": "ничья",
+    "everyoneTotal": "Итог у всех",
+    "playAgain": "Ещё раз",
+    "lobby": "Лобби"
   }
 }

@@ -18,6 +18,7 @@ import type {
   CrocPublic,
   CrocSecret,
   GamePhase,
+  GeoPublic,
   ImposterSecret,
   MafiaPublic,
   MafiaSecret,
@@ -39,6 +40,8 @@ import {
   toXoPublic,
   type MafiaState,
 } from './gameReducer';
+import { toGeoPublic } from './geocore/geoGame';
+import { GeoScreen, type GeoHostControls } from './geocore/GeoScreen';
 import { ImposterScreen } from './imposter/ImposterScreen';
 import { GameOver } from './mafia/GameOver';
 import { MafiaScreen, mafiaWinner } from './mafia/MafiaScreen';
@@ -118,6 +121,20 @@ const crocHostControls: CrocHostControls = {
   onLobby: () => hostGame.end(),
 };
 
+const geoHostControls: GeoHostControls = {
+  onNext: () => hostGame.geoNext(),
+  onPlayAgain: () => hostGame.geoPlayAgain(),
+  onLobby: () => hostGame.end(),
+};
+
+/** Geocore on this phone: `selfSeatId` only when this seat is dealt in (a mid-game joiner waits). */
+type GeoView = {
+  key: string;
+  info: GeoPublic;
+  selfSeatId: string | null;
+  roster: RosterPlayer[];
+};
+
 const ratherHostControls = {
   onReveal: () => hostGame.revealVotes(),
   onNext: () => hostGame.nextQuestion(),
@@ -155,6 +172,10 @@ export function GameWaiting({
       hosted?.game === 'croc' ? toCrocPublic(hosted, Date.now()) : null,
     [hosted],
   );
+  const hostGeo = useMemo(
+    () => (hosted?.game === 'geo' ? toGeoPublic(hosted, Date.now()) : null),
+    [hosted],
+  );
 
   let mafia: MafiaView | null = null;
   let view: GameView | null = null;
@@ -164,8 +185,28 @@ export function GameWaiting({
     roster: RosterPlayer[];
   } | null = null;
   let croc: CrocView | null = null;
-  // Geocore has no game screen yet (slice 4): every phone shows the waiting view while it runs.
-  const geo = hosted?.game === 'geo' || player?.game?.game === 'geo';
+  let geoView: GeoView | null = null;
+  if (hosted?.game === 'geo' && hostGeo) {
+    geoView = {
+      key: `${hosted.round}.${hostGeo.roundNo}.${hostGeo.phase}`,
+      info: hostGeo,
+      selfSeatId: HOST_SEAT_ID,
+      roster: hostRoster,
+    };
+  } else if (player?.game?.game === 'geo') {
+    const info = player.game.public;
+    geoView = {
+      key: `${player.game.round}.${info.roundNo}.${info.phase}`,
+      info,
+      selfSeatId: player.seatId,
+      roster: player.players,
+    };
+  }
+  const geo = geoView !== null;
+  const geoSeat =
+    geoView?.selfSeatId && geoView.selfSeatId in geoView.info.totals
+      ? geoView.selfSeatId
+      : null;
   if (hosted?.game === 'xo') {
     xo = {
       info: toXoPublic(hosted),
@@ -247,7 +288,8 @@ export function GameWaiting({
   const hostGameOver =
     mafiaHost?.ended !== undefined ||
     xoHost?.ended !== undefined ||
-    crocOver;
+    crocOver ||
+    (hosted?.game === 'geo' && hosted.phase === 'final');
   // X and O: a third phone (neither X nor O) waits for the next game.
   const xoWatcher =
     xo !== null &&
@@ -382,12 +424,24 @@ export function GameWaiting({
             {t('camp.maf.inProgress')}
           </AppText>
         ) : null}
-        {geo ? (
+        {geoView && geoSeat ? (
+          <GeoScreen
+            key={geoView.key}
+            info={geoView.info}
+            selfSeatId={geoSeat}
+            roster={geoView.roster}
+            onGuess={point =>
+              isPlayer ? client?.geoGuess(point) : hostGame.geoGuess(point)
+            }
+            host={isPlayer ? undefined : geoHostControls}
+          />
+        ) : null}
+        {geo && !geoSeat ? (
           <AppText variant="h1" accessibilityRole="header" style={layout.center}>
             {t('camp.games.geocore')}
           </AppText>
         ) : null}
-        {geo ? (
+        {geo && !geoSeat ? (
           <AppText
             testID="camp.game.in-progress"
             variant="body"

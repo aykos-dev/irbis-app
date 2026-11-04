@@ -433,6 +433,7 @@ export function gameReducer(
     case 'crocEnd':
     case 'geoGuess':
     case 'geoTimeUp':
+    case 'geoSeatsChanged':
     case 'geoNext':
     case 'geoPlayAgain':
     case 'resumed':
@@ -971,6 +972,7 @@ function geoBranch(state: GeoState, action: HostAction): GeoState | null {
       return null;
     case 'geoGuess':
     case 'geoTimeUp':
+    case 'geoSeatsChanged':
     case 'geoNext':
     case 'geoPlayAgain':
       return geoReducer(state, action);

@@ -276,3 +276,37 @@ export const geoSizes = {
   chipRowWidth: 220,
   focusFps: 30,
 } as const;
+
+/** Geocore round, reveal and final screens (canvas GeoRound / GeoRoundCity / GeoReveal / GeoFinal). */
+export const geoScreenColors = {
+  /** Prompt card: blue for the country modes, orange for City distance. */
+  prompt: { bg: geocoreColors.brand, ink: palette.white },
+  promptCity: { bg: palette.orange, ink: palette.onOrange },
+  ring: geocoreColors.brand,
+  warning: palette.orange,
+  track: campColors.line,
+  /** My standings / final row. */
+  mine: geocoreColors.card,
+  mineEdge: geocoreColors.brand,
+  gain: palette.pine,
+  /** Podium steps by place. */
+  step: { 1: palette.gold, 2: palette.stone, 3: '#C98B4E' },
+  onStep: { 1: palette.onGold, 2: palette.white, 3: palette.white },
+} as const;
+
+export const geoScreenSizes = {
+  ring: 56,
+  ringStroke: 5,
+  /** The ring and seconds turn the warning colour from here. */
+  warnFromSec: 5,
+  tickMs: 250,
+  rowAvatar: 36,
+  seatRing: 3,
+  podiumAvatar: 48,
+  /** Tied seats on a step overlap by this much. */
+  podiumOverlap: 16,
+  step: { 1: 104, 2: 80, 3: 60 },
+  /** Reveal zoom on the answer: country modes, point modes. */
+  zoomCountry: 4,
+  zoomPoint: 2,
+} as const;

@@ -514,6 +514,13 @@ export function createHostServer({
     });
   };
 
+  /** Geocore: a seat dropped or left mid-question; the round closes early if everyone still here answered. */
+  const geoSeatsChanged = () => {
+    if (game?.game === 'geo') {
+      applyGeo({ type: 'geoSeatsChanged', now: now(), connected: roundSeats(gameSeats()) });
+    }
+  };
+
   /** Crocodile: the describer dropped or was removed during ready / running — the word does not count. */
   const describerLeft = (seatId: string, name: string) =>
     turnEnded({ type: 'crocLeft', seatId, name }, 'cancelled');
@@ -683,6 +690,7 @@ export function createHostServer({
     const name = seatId ? nameOf(seatId) : '';
     apply({ type: 'disconnect', connId: conn.id });
     revealIfAllVoted();
+    geoSeatsChanged();
     if (seatId) {
       describerLeft(seatId, name);
     }
@@ -722,6 +730,7 @@ export function createHostServer({
         }
         if (seatId) {
           describerLeft(seatId, name);
+          geoSeatsChanged();
         }
         return;
       }
@@ -977,6 +986,7 @@ export function createHostServer({
           }
         }
         describerLeft(seatId, name);
+        geoSeatsChanged();
       }
     },
     startGame: (kind, settings, rng = Math.random) => {
