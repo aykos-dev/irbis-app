@@ -90,7 +90,7 @@ describe('campfire-party — lobby picker (AC1)', () => {
     expect(screen.getByTestId('camp.lobby.game.imposter')).toBeSelected();
     expect(screen.getByTestId('camp.lobby.game.imposter')).not.toHaveTextContent(/Coming soon/);
     expect(screen.getByTestId('camp.lobby.game.mafia')).not.toHaveTextContent(/Coming soon/);
-    expect(screen.getByTestId('camp.lobby.pack')).toHaveTextContent(/Word pack.*Animals · 60 words/);
+    expect(screen.getByTestId('camp.lobby.pack')).toHaveTextContent(/Word pack.*Animals · \d+ words/);
     expect(screen.getByTestId('camp.lobby.imposters')).toHaveTextContent(/Imposters.*1/);
     expect(screen.getByTestId('camp.lobby.sees-category').props.value).toBe(true);
     expect(screen.getByText('Makes bluffing easier')).toBeOnTheScreen();

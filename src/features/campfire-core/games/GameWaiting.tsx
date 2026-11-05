@@ -1,11 +1,13 @@
 import { usePreventRemove } from '@react-navigation/native';
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
-import { StyleSheet } from 'react-native';
+import { useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 import type { RootStackScreenProps } from '../../../app/navigation/types';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
 import { Screen } from '../../../shared/components/Screen';
+import { spacing } from '../../../shared/constants/spacing';
 import { ThemeProvider } from '../../../shared/contexts/theme';
 import { useLocale } from '../../../shared/hooks/useLocale';
 import { t } from '../../../shared/i18n';
@@ -42,6 +44,7 @@ import {
 } from './gameReducer';
 import { toGeoPublic } from './geocore/geoGame';
 import { GeoScreen, type GeoHostControls } from './geocore/GeoScreen';
+import { GlobeScrollContext } from './geocore/Globe';
 import { ImposterScreen } from './imposter/ImposterScreen';
 import { GameOver } from './mafia/GameOver';
 import { MafiaScreen, mafiaWinner } from './mafia/MafiaScreen';
@@ -361,7 +364,8 @@ export function GameWaiting({
   }
   return (
     <ThemeProvider scheme={campScheme}>
-      <Screen testID="camp.game.waiting" scroll>
+      <Screen testID="camp.game.waiting" scroll={!geo}>
+        <GamePage globe={geo}>
         {mafia?.kind === 'host' ? (
           <MafiaScreen
             kind="host"
@@ -580,11 +584,39 @@ export function GameWaiting({
             onDismiss={() => setConfirmLeave(false)}
           />
         ) : null}
+        </GamePage>
       </Screen>
     </ThemeProvider>
   );
 }
 
+/**
+ * Geocore pages scroll inside a native gesture the globe blocks while it is dragged or pinched, so
+ * a vertical drag on the globe turns it instead of scrolling the page (elsewhere the page scrolls).
+ */
+function GamePage({ globe, children }: { globe: boolean; children: ReactNode }) {
+  const scroll = useMemo(() => Gesture.Native(), []);
+  if (!globe) {
+    return children;
+  }
+  return (
+    <GlobeScrollContext.Provider value={scroll}>
+      <GestureDetector gesture={scroll}>
+        <ScrollView
+          testID="camp.game.waiting-scroll"
+          style={layout.fill}
+          contentContainerStyle={layout.page}
+          keyboardShouldPersistTaps="handled"
+        >
+          {children}
+        </ScrollView>
+      </GestureDetector>
+    </GlobeScrollContext.Provider>
+  );
+}
+
 const layout = StyleSheet.create({
   center: { textAlign: 'center' },
+  fill: { flex: 1 },
+  page: { flexGrow: 1, gap: spacing[16] },
 });

@@ -1,15 +1,34 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { StyleSheet, View, type LayoutChangeEvent } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import {
+  Gesture,
+  GestureDetector,
+  type GestureType,
+} from 'react-native-gesture-handler';
 import Animated, {
+  cancelAnimation,
   Easing,
-  useAnimatedReaction,
-  useAnimatedStyle,
+  useDerivedValue,
   useReducedMotion,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Path as SvgPath } from 'react-native-svg';
+import {
+  Canvas,
+  Circle,
+  Path,
+  Skia,
+  type SkPath,
+} from '@shopify/react-native-skia';
 import { scheduleOnRN } from 'react-native-worklets';
 
 import { Pressable } from '../../../../shared/components/Pressable';
@@ -20,18 +39,27 @@ import { haptics } from '../../../../shared/utils/haptics';
 import { campColors, geoColors, geoSizes } from '../../campTheme';
 import { countryByIso, microstates } from './geoData';
 import {
-  buildPaths,
+  fillRings,
+  invertScreen,
+  makeFrame,
+  strokeLines,
+  type Frame,
+  type SphereLines,
+} from './globeFrame';
+import {
+  borderLines,
+  graticuleLines,
+  landLines,
+  ringsOf,
+  type RingRange,
+} from './globeGeometry';
+import {
+  baseRadius,
   clampLat,
   clampZoom,
   countryAt,
-  countryPath,
   initialView,
-  invertPoint,
-  projectPoint,
-  rotateBy,
   wrapLng,
-  type GlobeView,
-  type ScreenPoint,
 } from './globeProjection';
 import {
   AnswerMark,
@@ -39,6 +67,7 @@ import {
   MyPin,
   SeatPin,
   SelectedChip,
+  type GlobeState,
 } from './GlobeMarkers';
 
 export type GlobePin = {
@@ -69,28 +98,57 @@ export type GlobeProps = {
   testID?: string;
 };
 
+/**
+ * The page's scroll gesture (`Gesture.Native()` around its ScrollView). Globe drags block it, so a
+ * vertical drag on the globe rotates the globe and never scrolls the page.
+ */
+export const GlobeScrollContext = createContext<GestureType | null>(null);
+
 const countryName = (iso: string) =>
   countryByIso(iso)?.name[getLocale()] ?? iso;
 
-const viewFor = (focus: LatLng, zoom: number | undefined): GlobeView => ({
-  lng: wrapLng(focus.lng),
-  lat: clampLat(focus.lat),
-  zoom: clampZoom(zoom ?? geoSizes.minZoom),
-});
+const { pathMinStep } = geoSizes;
 
-/** Frame limiter: at most `fps` updates per second, the last one always lands. */
-function useThrottle(fps: number) {
-  const last = useRef(0);
-  return useCallback(
-    (run: () => void, force = false) => {
-      const now = Date.now();
-      if (force || now - last.current >= 1000 / fps) {
-        last.current = now;
-        run();
-      }
-    },
-    [fps],
+/** The frame for the current shared values (UI thread). */
+function frameOf(globe: GlobeState): Frame {
+  'worklet';
+  const box = globe.size.value;
+  return makeFrame(
+    globe.lambda.value,
+    globe.phi.value,
+    baseRadius(box) * globe.zoom.value,
+    box,
   );
+}
+
+/** A path rebuilt on the UI thread whenever the rotation, zoom or size changes. */
+function useFillPath(globe: GlobeState, lines: SphereLines, rings: RingRange) {
+  const { from, to } = rings;
+  return useDerivedValue<SkPath>(() => {
+    const builder = Skia.PathBuilder.Make();
+    fillRings(builder, lines, from, to, frameOf(globe), pathMinStep);
+    return builder.detach();
+  });
+}
+
+function useStrokePath(globe: GlobeState, lines: SphereLines) {
+  return useDerivedValue<SkPath>(() => {
+    const builder = Skia.PathBuilder.Make();
+    strokeLines(builder, lines, frameOf(globe), pathMinStep);
+    return builder.detach();
+  });
+}
+
+const allLand: RingRange = { from: 0, to: landLines.starts.length - 1 };
+
+function startView(focus: LatLng | null | undefined, focusZoom?: number) {
+  return focus
+    ? {
+        lng: wrapLng(focus.lng),
+        lat: clampLat(focus.lat),
+        zoom: clampZoom(focusZoom ?? geoSizes.minZoom),
+      }
+    : initialView;
 }
 
 export function Globe({
@@ -107,57 +165,32 @@ export function Globe({
   testID = 'geo.globe',
 }: GlobeProps) {
   const reducedMotion = useReducedMotion();
-  const [size, setSize] = useState<number>(geoSizes.board);
-  const [view, setView] = useState<GlobeView>(() =>
-    focus ? viewFor(focus, focusZoom) : initialView,
+  const scrollGesture = useContext(GlobeScrollContext);
+  const [start] = useState(() => startView(focus, focusZoom));
+  /* Shown to screen readers; updated when a zoom ends, never during a gesture. */
+  const [zoomLabel, setZoomLabel] = useState(start.zoom);
+
+  const lambda = useSharedValue(start.lng);
+  const phi = useSharedValue(start.lat);
+  const zoom = useSharedValue(start.zoom);
+  const size = useSharedValue<number>(geoSizes.board);
+  const pinchFrom = useSharedValue(start.zoom);
+  const globe = useMemo<GlobeState>(
+    () => ({ lambda, phi, zoom, size }),
+    [lambda, phi, zoom, size],
   );
-  /** The live view during gestures and the focus animation; `view` follows it, throttled. */
-  const live = useRef(view);
-  const commit = useCallback((next: GlobeView) => {
-    live.current = next;
-    setView(next);
-  }, []);
-  const dragFrame = useThrottle(geoSizes.dragFps);
-  const focusFrame = useThrottle(geoSizes.focusFps);
 
-  const onLayout = useCallback((event: LayoutChangeEvent) => {
-    const { width } = event.nativeEvent.layout;
-    if (width > 0) {
-      setSize(width);
-    }
-  }, []);
-
-  /* Pinch: a cheap scale on the wrapper while active; the real zoom is rebuilt on end. */
-  const pinchScale = useSharedValue(1);
-  const pinchStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pinchScale.value }],
-  }));
-
-  /* Focus: Reanimated drives the progress, the projection follows on the JS thread. */
-  const focusFrom = useRef(view);
-  const focusTo = useRef(view);
-  const progress = useSharedValue(1);
-  const applyFocus = useCallback(
-    (p: number) => {
-      const from = focusFrom.current;
-      const to = focusTo.current;
-      const next = {
-        lng: wrapLng(from.lng + wrapLng(to.lng - from.lng) * p),
-        lat: clampLat(from.lat + (to.lat - from.lat) * p),
-        zoom: clampZoom(from.zoom + (to.zoom - from.zoom) * p),
-      };
-      focusFrame(() => commit(next), p >= 1);
-    },
-    [commit, focusFrame],
-  );
-  useAnimatedReaction(
-    () => progress.value,
-    (p, previous) => {
-      if (previous !== null && p !== previous) {
-        scheduleOnRN(applyFocus, p);
+  const onLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const { width } = event.nativeEvent.layout;
+      if (width > 0) {
+        size.value = width;
       }
     },
+    [size],
   );
+
+  /* Focus: the shared values animate on the UI thread, the shorter way round in longitude. */
   const focusLat = focus?.lat;
   const focusLng = focus?.lng;
   const mounted = useRef(false);
@@ -169,21 +202,28 @@ export function Globe({
     if (focusLat === undefined || focusLng === undefined) {
       return;
     }
-    focusFrom.current = live.current;
-    focusTo.current = viewFor({ lat: focusLat, lng: focusLng }, focusZoom);
-    progress.value = 0;
-    progress.value = withTiming(1, {
+    const to = startView({ lat: focusLat, lng: focusLng }, focusZoom);
+    const timing = {
       duration: reducedMotion ? 0 : geoSizes.focusMs,
       easing: Easing.inOut(Easing.cubic),
-    });
-  }, [focusLat, focusLng, focusZoom, progress, reducedMotion]);
+    };
+    lambda.value = withTiming(
+      lambda.value + wrapLng(to.lng - lambda.value),
+      timing,
+    );
+    phi.value = withTiming(to.lat, timing);
+    zoom.value = withTiming(to.zoom, timing);
+    setZoomLabel(to.zoom);
+  }, [focusLat, focusLng, focusZoom, lambda, phi, zoom, reducedMotion]);
 
   const zoomBy = useCallback(
     (factor: number) => {
-      const current = live.current;
-      commit({ ...current, zoom: clampZoom(current.zoom * factor) });
+      cancelAnimation(zoom);
+      const next = clampZoom(zoom.value * factor);
+      zoom.value = next;
+      setZoomLabel(next);
     },
-    [commit],
+    [zoom],
   );
 
   const choose = useCallback(
@@ -202,87 +242,88 @@ export function Globe({
     [disabled, mode, onDropPin, onSelectCountry],
   );
 
-  const onTap = useCallback(
-    (touch: ScreenPoint) => {
+  const onTapAt = useCallback(
+    (lat: number, lng: number) => {
       if (disabled) {
         return;
       }
-      const at = invertPoint(size, live.current, touch);
-      if (at) {
-        choose(mode === 'country' ? countryAt(at) : null, at);
-      }
+      const at = { lat, lng };
+      choose(mode === 'country' ? countryAt(at) : null, at);
     },
-    [choose, disabled, mode, size],
+    [choose, disabled, mode],
   );
 
   const gesture = useMemo(() => {
+    const stop = () => {
+      'worklet';
+      cancelAnimation(lambda);
+      cancelAnimation(phi);
+      cancelAnimation(zoom);
+    };
+    /* Worklets on the UI thread: a drag writes the shared values only, no React render. */
     const pan = Gesture.Pan()
-      .runOnJS(true)
+      .onBegin(stop)
       .onChange(event => {
-        live.current = rotateBy(
-          live.current,
-          event.changeX,
-          event.changeY,
-          size,
-        );
-        dragFrame(() => setView(live.current));
+        const k = 180 / (Math.PI * baseRadius(size.value) * zoom.value);
+        lambda.value -= event.changeX * k;
+        phi.value = clampLat(phi.value + event.changeY * k);
       })
-      .onFinalize(() => setView(live.current))
       .withTestId(`${testID}.pan`);
     const pinch = Gesture.Pinch()
-      .runOnJS(true)
-      .onUpdate(event => {
-        const zoom = live.current.zoom;
-        pinchScale.value = clampZoom(zoom * event.scale) / zoom;
+      .onBegin(stop)
+      .onStart(() => {
+        pinchFrom.value = zoom.value;
       })
-      .onFinalize(() => {
-        const current = live.current;
-        const scale = pinchScale.value;
-        pinchScale.value = 1;
-        commit({ ...current, zoom: clampZoom(current.zoom * scale) });
+      .onUpdate(event => {
+        zoom.value = clampZoom(pinchFrom.value * event.scale);
+      })
+      .onEnd(() => {
+        scheduleOnRN(setZoomLabel, zoom.value);
       })
       .withTestId(`${testID}.pinch`);
+    if (scrollGesture) {
+      pan.blocksExternalGesture(scrollGesture);
+      pinch.blocksExternalGesture(scrollGesture);
+    }
     const tap = Gesture.Tap()
-      .runOnJS(true)
       .maxDistance(geoSizes.tapSlop)
       .onEnd((event, success) => {
-        if (success) {
-          onTap({ x: event.x, y: event.y });
+        if (!success) {
+          return;
+        }
+        const at = invertScreen(frameOf(globe), event.x, event.y);
+        if (at) {
+          scheduleOnRN(onTapAt, at.lat, at.lng);
         }
       })
       .withTestId(`${testID}.tap`);
     return Gesture.Race(Gesture.Simultaneous(pan, pinch), tap);
-  }, [commit, dragFrame, onTap, pinchScale, size, testID]);
+  }, [
+    globe,
+    lambda,
+    onTapAt,
+    phi,
+    pinchFrom,
+    scrollGesture,
+    size,
+    testID,
+    zoom,
+  ]);
 
-  /* Paths are rebuilt per (rotation, zoom, size) only; highlights are one path each. */
-  const paths = useMemo(() => buildPaths(size, view), [size, view]);
-  const selectedPath = useMemo(
-    () =>
-      mode === 'country' && selectedIso
-        ? countryPath(size, view, selectedIso)
-        : '',
-    [mode, selectedIso, size, view],
+  const radius = useDerivedValue(() => baseRadius(size.value) * zoom.value);
+  const centre = useDerivedValue(() => size.value / 2);
+  const graticule = useStrokePath(globe, graticuleLines);
+  const land = useFillPath(globe, landLines, allLand);
+  const borders = useStrokePath(globe, borderLines);
+  const selected = useFillPath(
+    globe,
+    landLines,
+    ringsOf(mode === 'country' ? selectedIso : null),
   );
-  const answerPath = useMemo(
-    () => (answer?.iso ? countryPath(size, view, answer.iso) : ''),
-    [answer?.iso, size, view],
-  );
+  const answerShape = useFillPath(globe, landLines, ringsOf(answer?.iso));
 
-  const project = (point: LatLng) => {
-    const xy = projectPoint(size, view, point);
-    return xy && xy.x >= 0 && xy.y >= 0 && xy.x <= size && xy.y <= size
-      ? xy
-      : null;
-  };
   const selectedCountry =
     mode === 'country' && selectedIso ? countryByIso(selectedIso) : undefined;
-  const selectedAt = selectedCountry ? project(selectedCountry) : null;
-  const myPinAt = mode === 'point' && myPin ? project(myPin) : null;
-  const answerAt = answer?.point ? project(answer.point) : null;
-  const micro = microstates.flatMap(item => {
-    const at = project(item);
-    return at ? [{ item, at }] : [];
-  });
 
   return (
     <View style={styles.box} onLayout={onLayout}>
@@ -295,83 +336,87 @@ export function Globe({
           accessibilityValue={{
             min: geoSizes.minZoom,
             max: geoSizes.maxZoom,
-            now: Math.round(view.zoom * 10) / 10,
+            now: Math.round(zoomLabel * 10) / 10,
           }}
-          style={[styles.fill, pinchStyle]}
+          style={styles.fill}
         >
-          <Svg width={size} height={size}>
-            <Path d={paths.sphere} fill={geoColors.ocean} />
+          <Canvas style={StyleSheet.absoluteFill}>
+            <Circle
+              cx={centre}
+              cy={centre}
+              r={radius}
+              color={geoColors.ocean}
+            />
             <Path
-              d={paths.graticule}
-              fill="none"
-              stroke={geoColors.graticule}
+              path={graticule}
+              style="stroke"
               strokeWidth={geoSizes.graticuleStroke}
+              color={geoColors.graticule}
             />
+            <Path path={land} color={geoColors.land} />
             <Path
-              d={paths.countries.map(country => country.d).join('')}
-              fill={geoColors.land}
-              stroke={geoColors.border}
+              path={borders}
+              style="stroke"
               strokeWidth={geoSizes.borderStroke}
+              color={geoColors.border}
             />
-            {answerPath ? (
-              <Path
-                d={answerPath}
-                fill={geoColors.answer}
-                stroke={geoColors.border}
-                strokeWidth={geoSizes.borderStroke}
-              />
-            ) : null}
-            {selectedPath ? (
-              <Path
-                d={selectedPath}
-                fill={geoColors.selected}
-                stroke={geoColors.onSelected}
-                strokeWidth={geoSizes.selectedStroke}
-              />
-            ) : null}
+            <Path path={answerShape} color={geoColors.answer} />
+            <Path path={selected} color={geoColors.selected} />
             <Path
-              d={paths.sphere}
-              fill="none"
-              stroke={geoColors.rim}
-              strokeOpacity={geoSizes.rimOpacity}
-              strokeWidth={geoSizes.rimStroke}
+              path={selected}
+              style="stroke"
+              strokeWidth={geoSizes.selectedStroke}
+              color={geoColors.onSelected}
             />
-          </Svg>
-          {selectedAt && selectedIso ? (
-            <SelectedChip point={selectedAt} name={countryName(selectedIso)} />
+            <Circle
+              cx={centre}
+              cy={centre}
+              r={radius}
+              style="stroke"
+              strokeWidth={geoSizes.rimStroke}
+              color={geoColors.rim}
+              opacity={geoSizes.rimOpacity}
+            />
+          </Canvas>
+          {selectedCountry && selectedIso ? (
+            <SelectedChip
+              globe={globe}
+              point={selectedCountry}
+              name={countryName(selectedIso)}
+            />
           ) : null}
-          {answerAt ? <AnswerMark point={answerAt} /> : null}
-          {(pins ?? []).map(pin => {
-            const at = project(pin.point);
-            return at ? (
-              <SeatPin
-                key={pin.seatId}
-                seatId={pin.seatId}
-                point={at}
-                label={pin.label}
-                colorIndex={pin.colorIndex}
-              />
-            ) : null;
-          })}
-          {myPinAt ? <MyPin point={myPinAt} /> : null}
+          {answer?.point ? (
+            <AnswerMark globe={globe} point={answer.point} />
+          ) : null}
+          {(pins ?? []).map(pin => (
+            <SeatPin
+              key={pin.seatId}
+              globe={globe}
+              seatId={pin.seatId}
+              point={pin.point}
+              label={pin.label}
+              colorIndex={pin.colorIndex}
+            />
+          ))}
+          {mode === 'point' && myPin ? (
+            <MyPin globe={globe} point={myPin} />
+          ) : null}
         </Animated.View>
       </GestureDetector>
       {/* Outside the detector so a dot press never also lands as a globe tap. */}
-      <Animated.View
-        style={[StyleSheet.absoluteFill, pinchStyle]}
-        pointerEvents="box-none"
-      >
-        {micro.map(({ item, at }) => (
+      <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
+        {microstates.map(item => (
           <MicroButton
             key={item.iso}
+            globe={globe}
+            point={item}
             iso={item.iso}
             name={countryName(item.iso)}
-            point={at}
             disabled={disabled}
             onPress={() => choose(item.iso, { lat: item.lat, lng: item.lng })}
           />
         ))}
-      </Animated.View>
+      </View>
       <View style={styles.zoom}>
         <ZoomButton
           testID="geo.zoom-in"
@@ -413,7 +458,7 @@ function ZoomButton({
         width={geoSizes.zoomGlyph}
         height={geoSizes.zoomGlyph}
       >
-        <Path
+        <SvgPath
           d={glyph}
           fill="none"
           stroke={campColors.ink}

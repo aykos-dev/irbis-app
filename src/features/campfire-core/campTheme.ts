@@ -249,8 +249,6 @@ export const geoSizes = {
   minZoom: 1,
   maxZoom: 8,
   zoomStep: 1.6,
-  /** While a drag is active the full projection is rebuilt at most this often. */
-  dragFps: 15,
   /** A tap fails once the finger travels further than this. */
   tapSlop: 10,
   focusMs: 600,
@@ -274,7 +272,12 @@ export const geoSizes = {
   chipEdge: 2,
   /** The name chip is centred in a row this wide under the country centre. */
   chipRowWidth: 220,
-  focusFps: 30,
+  /** Graticule: a line every 10°, sampled every 2°, meridians up to ±80° (±90° every 90°). */
+  graticuleStep: 10,
+  graticuleSample: 2,
+  graticuleMaxLat: 80,
+  /** Path vertices closer than this (pt, Manhattan) to the last drawn one are skipped. */
+  pathMinStep: 0.5,
 } as const;
 
 /** Geocore round, reveal and final screens (canvas GeoRound / GeoRoundCity / GeoReveal / GeoFinal). */

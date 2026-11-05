@@ -1,4 +1,9 @@
+import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  type SharedValue,
+} from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
 
 import { AppText } from '../../../../shared/components/AppText';
@@ -6,18 +11,76 @@ import { Icon } from '../../../../shared/components/Icon';
 import { Pressable } from '../../../../shared/components/Pressable';
 import { radii, spacing } from '../../../../shared/constants/spacing';
 import { geoColors, geoSeatColors, geoSizes } from '../../campTheme';
-import type { ScreenPoint } from './globeProjection';
+import type { LatLng } from '../../../../shared/utils/geo';
+import { makeFrame, projectVector, toVector } from './globeFrame';
+import { baseRadius } from './globeProjection';
 
 /** Teardrop artwork (canvas GeoRoundCity), tip at (12, 31) in a 24 × 32 box. */
 const TEARDROP =
   'M12 1C6 1 1.5 5.4 1.5 11.2 1.5 19 12 31 12 31s10.5-12 10.5-19.8C22.5 5.4 18 1 12 1z';
 
-const at = ({ x, y }: ScreenPoint) => ({ left: x, top: y });
+/** The live view on the UI thread: centre (lambda, phi) in degrees, zoom, box size in pt. */
+export type GlobeState = {
+  lambda: SharedValue<number>;
+  phi: SharedValue<number>;
+  zoom: SharedValue<number>;
+  size: SharedValue<number>;
+};
+
+type MarkerPlace = { globe: GlobeState; point: LatLng };
+
+/**
+ * Pins a marker to a point on the globe without React renders: a worklet projects it every frame;
+ * on the far side or outside the box it is not displayed (hidden from touch and screen readers).
+ */
+function Projected({
+  globe,
+  point,
+  touchable = false,
+  children,
+}: MarkerPlace & { touchable?: boolean; children: ReactNode }) {
+  const { lambda, phi, zoom, size } = globe;
+  const [x0, y0, z0] = toVector(point.lat, point.lng);
+  const place = () => {
+    'worklet';
+    const box = size.value;
+    const frame = makeFrame(
+      lambda.value,
+      phi.value,
+      baseRadius(box) * zoom.value,
+      box,
+    );
+    return projectVector(frame, x0, y0, z0);
+  };
+  const shown = useAnimatedStyle(() => {
+    const p = place();
+    const box = size.value;
+    const inside = p.z >= 0 && p.x >= 0 && p.y >= 0 && p.x <= box && p.y <= box;
+    return { display: inside ? 'flex' : 'none' };
+  });
+  const moved = useAnimatedStyle(() => {
+    const p = place();
+    return { transform: [{ translateX: p.x }, { translateY: p.y }] };
+  });
+  return (
+    <Animated.View
+      style={[styles.anchor, shown]}
+      pointerEvents={touchable ? 'box-none' : 'none'}
+    >
+      <Animated.View
+        style={[styles.anchor, moved]}
+        pointerEvents={touchable ? 'box-none' : 'none'}
+      >
+        {children}
+      </Animated.View>
+    </Animated.View>
+  );
+}
 
 /** The player's own pin; its tip sits on the point. */
-export function MyPin({ point }: { point: ScreenPoint }) {
+export function MyPin(place: MarkerPlace) {
   return (
-    <View style={[styles.anchor, at(point)]} pointerEvents="none">
+    <Projected {...place}>
       <View testID="geo.my-pin" style={styles.teardrop}>
         <Svg viewBox="0 0 24 32" width="100%" height="100%">
           <Path
@@ -29,19 +92,18 @@ export function MyPin({ point }: { point: ScreenPoint }) {
         </Svg>
       </View>
       <View style={styles.pinShadow} />
-    </View>
+    </Projected>
   );
 }
 
 /** A reveal pin: seat-coloured dot with a dark label chip ("145 km", "You"). */
 export function SeatPin({
   seatId,
-  point,
   label,
   colorIndex,
-}: {
+  ...place
+}: MarkerPlace & {
   seatId: string;
-  point: ScreenPoint;
   label: string;
   colorIndex: number;
 }) {
@@ -51,42 +113,37 @@ export function SeatPin({
         geoSeatColors.length
     ];
   return (
-    <View
-      testID={`geo.pin.${seatId}`}
-      style={[styles.anchor, at(point)]}
-      pointerEvents="none"
-    >
-      <View style={[styles.seatDot, { backgroundColor: color }]} />
-      <View style={styles.label}>
-        <AppText variant="caption" style={styles.labelText} numberOfLines={1}>
-          {label}
-        </AppText>
+    <Projected {...place}>
+      <View testID={`geo.pin.${seatId}`} style={styles.anchor}>
+        <View style={[styles.seatDot, { backgroundColor: color }]} />
+        <View style={styles.label}>
+          <AppText variant="caption" style={styles.labelText} numberOfLines={1}>
+            {label}
+          </AppText>
+        </View>
       </View>
-    </View>
+    </Projected>
   );
 }
 
 /** The correct point at reveal. */
-export function AnswerMark({ point }: { point: ScreenPoint }) {
+export function AnswerMark(place: MarkerPlace) {
   return (
-    <View style={[styles.anchor, at(point)]} pointerEvents="none">
+    <Projected {...place}>
       <View testID="geo.answer" style={styles.answer}>
         <Icon name="star" color={geoColors.answer} size={geoSizes.answerStar} />
       </View>
-    </View>
+    </Projected>
   );
 }
 
 /** The selected country's name, under its centre. */
 export function SelectedChip({
-  point,
   name,
-}: {
-  point: ScreenPoint;
-  name: string;
-}) {
+  ...place
+}: MarkerPlace & { name: string }) {
   return (
-    <View style={[styles.anchor, at(point)]} pointerEvents="none">
+    <Projected {...place}>
       <View style={styles.chipRow}>
         <View testID="geo.selected" style={styles.selectedChip}>
           <AppText variant="chip" style={styles.selectedText} numberOfLines={1}>
@@ -94,7 +151,7 @@ export function SelectedChip({
           </AppText>
         </View>
       </View>
-    </View>
+    </Projected>
   );
 }
 
@@ -102,18 +159,17 @@ export function SelectedChip({
 export function MicroButton({
   iso,
   name,
-  point,
   disabled,
   onPress,
-}: {
+  ...place
+}: MarkerPlace & {
   iso: string;
   name: string;
-  point: ScreenPoint;
   disabled: boolean;
   onPress: () => void;
 }) {
   return (
-    <View style={[styles.anchor, at(point)]}>
+    <Projected {...place} touchable>
       <Pressable
         testID={`geo.micro.${iso}`}
         accessibilityLabel={name}
@@ -123,7 +179,7 @@ export function MicroButton({
       >
         <View style={styles.microDot} />
       </Pressable>
-    </View>
+    </Projected>
   );
 }
 

@@ -1,15 +1,14 @@
 import {
   geoContains,
   geoDistance,
-  geoGraticule10,
   geoOrthographic,
-  geoPath,
   type GeoProjection,
 } from 'd3-geo';
 
 import type { LatLng } from '../../../../shared/utils/geo';
 import { geoSizes } from '../../campTheme';
-import { countries, countryByIso, countryFeatures } from './geoData';
+import { countries, countryFeatures } from './geoData';
+import { clampValue, wrapDegrees } from './globeFrame';
 
 /** What the globe shows: the point at its centre and the zoom (1×–8×). */
 export type GlobeView = { lng: number; lat: number; zoom: number };
@@ -22,25 +21,28 @@ export const initialView: GlobeView = {
   zoom: geoSizes.minZoom,
 };
 
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(max, Math.max(min, value));
+const { maxLat, minZoom, maxZoom, radiusRatio } = geoSizes;
 
 /** Longitude folded into [-180, 180). */
 export function wrapLng(lng: number): number {
-  return ((((lng + 180) % 360) + 360) % 360) - 180;
+  'worklet';
+  return wrapDegrees(lng);
 }
 
 export function clampLat(lat: number): number {
-  return clamp(lat, -geoSizes.maxLat, geoSizes.maxLat);
+  'worklet';
+  return clampValue(lat, -maxLat, maxLat);
 }
 
 export function clampZoom(zoom: number): number {
-  return clamp(zoom, geoSizes.minZoom, geoSizes.maxZoom);
+  'worklet';
+  return clampValue(zoom, minZoom, maxZoom);
 }
 
 /** Globe radius at zoom 1 for a square box of `size` pt (board: 358 → 172). */
 export function baseRadius(size: number): number {
-  return size * geoSizes.radiusRatio;
+  'worklet';
+  return size * radiusRatio;
 }
 
 /** Orthographic projection centred on `view`, clipped to the visible hemisphere. */
@@ -116,35 +118,4 @@ export function countryAt(point: LatLng): string | null {
     }
   }
   return null;
-}
-
-export type GlobePaths = {
-  sphere: string;
-  graticule: string;
-  countries: { iso: string; d: string }[];
-};
-
-/** Every path string for one view. Callers memoise this per (rotation, zoom). */
-export function buildPaths(size: number, view: GlobeView): GlobePaths {
-  const path = geoPath(createProjection(size, view));
-  return {
-    sphere: path({ type: 'Sphere' }) ?? '',
-    graticule: path(geoGraticule10()) ?? '',
-    countries: countries.flatMap(country => {
-      const outline = countryFeatures.get(country.n3);
-      const d = outline ? path(outline) : null;
-      return d ? [{ iso: country.iso, d }] : [];
-    }),
-  };
-}
-
-/** One country's outline for the highlight layer ('' when it has none or is out of view). */
-export function countryPath(
-  size: number,
-  view: GlobeView,
-  iso: string,
-): string {
-  const country = countryByIso(iso);
-  const outline = country ? countryFeatures.get(country.n3) : undefined;
-  return outline ? (geoPath(createProjection(size, view))(outline) ?? '') : '';
 }

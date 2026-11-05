@@ -1,4 +1,4 @@
-import { feature } from 'topojson-client';
+import { feature, mesh } from 'topojson-client';
 import type { GeometryCollection, Topology } from 'topojson-specification';
 import { z } from 'zod';
 
@@ -126,13 +126,20 @@ export type CountryFeature = GeoJSON.Feature<
   GeoJSON.Polygon | GeoJSON.MultiPolygon
 >;
 
+type ParsedTopology = Topology<{ countries: GeometryCollection }>;
+
+const topology: ParsedTopology | null = load(
+  topologySchema,
+  rawTopology,
+  'world-110m',
+  null,
+);
+
 function buildFeatures(): Map<string, CountryFeature> {
-  const parsed = load(topologySchema, rawTopology, 'world-110m', null);
   const byN3 = new Map<string, CountryFeature>();
-  if (!parsed) {
+  if (!topology) {
     return byN3;
   }
-  const topology: Topology<{ countries: GeometryCollection }> = parsed;
   for (const item of feature(topology, topology.objects.countries).features) {
     const { geometry } = item;
     if (
@@ -148,6 +155,25 @@ function buildFeatures(): Map<string, CountryFeature> {
 /** Country outlines from the 110m topology, by ISO numeric code (`n3`). */
 export const countryFeatures: ReadonlyMap<string, CountryFeature> =
   buildFeatures();
+
+/**
+ * Borders and coasts of the playable countries, each shared arc once (`topojson.mesh`), so a
+ * border between two countries is stroked a single time.
+ */
+function buildBorders(): GeoJSON.MultiLineString {
+  if (!topology) {
+    return { type: 'MultiLineString', coordinates: [] };
+  }
+  const playable = new Set(countries.map(country => country.n3));
+  return mesh(topology, {
+    type: 'GeometryCollection',
+    geometries: topology.objects.countries.geometries.filter(
+      geometry => typeof geometry.id === 'string' && playable.has(geometry.id),
+    ),
+  });
+}
+
+export const countryBorders: GeoJSON.MultiLineString = buildBorders();
 
 export function countryByIso(code: string): GeoCountry | undefined {
   const upper = code.toUpperCase();
