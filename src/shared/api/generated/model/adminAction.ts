@@ -15,4 +15,5 @@ export const AdminAction = {
   set_password: 'set_password',
   set_recovery_phone: 'set_recovery_phone',
   change_role: 'change_role',
+  cancel_group_trip: 'cancel_group_trip',
 } as const;

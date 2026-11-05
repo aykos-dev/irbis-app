@@ -3,8 +3,9 @@ import { storage } from '../../shared/storage';
 
 const gearKeys: readonly string[] = Object.values(GearKey);
 
-function isGearKey(value: unknown): value is GearKey {
-  return typeof value === 'string' && gearKeys.includes(value);
+/** A known GearKey, or a group trip's `custom-<n>` item. */
+function isTickKey(value: unknown): value is string {
+  return typeof value === 'string' && (gearKeys.includes(value) || value.startsWith('custom-'));
 }
 
 /** Ticks for a new plan of one place, before it has a trip id (AC5). */
@@ -13,14 +14,14 @@ export function draftTicksId(placeId: string): string {
 }
 
 /** Packed gear on this device only (spec Q5), keyed by a draft id or a trip id. */
-export function readTicks(id: string): GearKey[] {
+export function readTicks(id: string): string[] {
   const raw = storage.getString(`trip.gear.${id}`);
   if (!raw) {
     return [];
   }
   try {
     const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.filter(isGearKey) : [];
+    return Array.isArray(parsed) ? parsed.filter(isTickKey) : [];
   } catch {
     // A corrupt entry is dropped: ticks are a convenience and never block a trip.
     storage.remove(`trip.gear.${id}`);
@@ -28,7 +29,7 @@ export function readTicks(id: string): GearKey[] {
   }
 }
 
-export function writeTicks(id: string, keys: GearKey[]): void {
+export function writeTicks(id: string, keys: string[]): void {
   storage.setString(`trip.gear.${id}`, JSON.stringify(keys));
 }
 

@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import type { GearItemDto, GearKey } from '../../../shared/api/generated/model';
+import type { GearItemDto } from '../../../shared/api/generated/model';
 import { AppText } from '../../../shared/components/AppText';
 import { Checkbox } from '../../../shared/components/Checkbox';
 import { spacing } from '../../../shared/constants/spacing';
@@ -9,12 +9,15 @@ import { formatClock } from '../tripTimes';
 
 type Props = {
   items: GearItemDto[];
-  ticks: GearKey[];
+  ticks: string[];
   locale: string;
-  onToggle: (key: GearKey, checked: boolean) => void;
+  onToggle: (key: string, checked: boolean) => void;
 };
 
 function gearLabel(item: GearItemDto, locale: string): string {
+  if (item.custom) {
+    return item.label ?? item.key;
+  }
   const label = t(`trip.gear.${item.key}`, { litres: item.litres ?? 0 });
   if (!item.note) {
     return label;

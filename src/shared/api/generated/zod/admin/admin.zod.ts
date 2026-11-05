@@ -279,7 +279,7 @@ export const AdminUserAuditResponse = zod.object({
   "id": zod.uuid(),
   "username": zod.string()
 }),
-  "action": zod.enum(['block', 'unblock', 'set_password', 'set_recovery_phone', 'change_role']),
+  "action": zod.enum(['block', 'unblock', 'set_password', 'set_recovery_phone', 'change_role', 'cancel_group_trip']),
   "reasonCode": zod.union([zod.enum(['spam', 'harassment', 'unsafe', 'fake_content', 'other']),zod.null()]),
   "note": zod.string(),
   "detail": zod.string().nullable(),
@@ -1128,5 +1128,107 @@ export const AdminUploadLessonImageResponse = zod.object({
   "url": zod.string(),
   "width": zod.int(),
   "height": zod.int()
+})
+
+/**
+ * @summary Group trips, newest start first
+ */
+export const AdminListGroupTripsQueryParams = zod.object({
+  "status": zod.enum(['open', 'cancelled']).optional(),
+  "cursor": zod.string().optional().describe('nextCursor from the previous page.')
+})
+
+export const AdminListGroupTripsResponse = zod.object({
+  "items": zod.array(zod.object({
+  "id": zod.uuid(),
+  "placeName": zod.string(),
+  "leaderUsername": zod.string(),
+  "startAt": zod.iso.datetime({"offset":true}),
+  "status": zod.enum(['open', 'cancelled']),
+  "approvedCount": zod.int(),
+  "maxPeople": zod.int().nullable()
+})),
+  "nextCursor": zod.string().nullable()
+})
+
+/**
+ * @summary Cancel a group trip (audited)
+ */
+export const AdminCancelGroupTripParams = zod.object({
+  "id": zod.string()
+})
+
+export const adminCancelGroupTripBodyNoteMax = 500;
+
+
+
+export const AdminCancelGroupTripBody = zod.object({
+  "note": zod.string().max(adminCancelGroupTripBodyNoteMax)
+})
+
+export const AdminCancelGroupTripResponse = zod.object({
+  "id": zod.uuid(),
+  "place": zod.object({
+  "id": zod.uuid(),
+  "slug": zod.string(),
+  "names": zod.object({
+  "uz": zod.string(),
+  "ru": zod.string().describe('Falls back to uz.'),
+  "en": zod.string().describe('Falls back to uz.')
+}),
+  "type": zod.enum(['peak', 'lake', 'cave', 'camping', 'trail', 'waterfall', 'canyon']),
+  "difficulty": zod.int(),
+  "requiredLevel": zod.int()
+}),
+  "visibility": zod.enum(['public', 'private']),
+  "status": zod.enum(['open', 'cancelled']),
+  "startAt": zod.iso.datetime({"offset":true}),
+  "backBy": zod.iso.datetime({"offset":true}),
+  "meeting": zod.object({
+  "text": zod.string(),
+  "lat": zod.number().nullable(),
+  "lng": zod.number().nullable()
+}),
+  "carpool": zod.object({
+  "from": zod.string(),
+  "seats": zod.int()
+}).nullable(),
+  "maxPeople": zod.int().nullable(),
+  "minLevel": zod.int().nullable(),
+  "gear": zod.object({
+  "keys": zod.array(zod.enum(['water', 'warmLayer', 'firstAid', 'offlineMap', 'sun', 'headlamp', 'waterFilter'])),
+  "custom": zod.array(zod.string())
+}),
+  "description": zod.string(),
+  "leader": zod.object({
+  "id": zod.uuid(),
+  "username": zod.string(),
+  "displayName": zod.string().nullable(),
+  "level": zod.int(),
+  "verifiedLeader": zod.boolean().describe('Level 5 or higher.')
+}),
+  "groups": zod.array(zod.object({
+  "id": zod.uuid(),
+  "name": zod.string()
+})),
+  "approvedCount": zod.int().describe('Approved people, leader included.'),
+  "spotsLeft": zod.int().nullable().describe('Null when there is no cap.'),
+  "me": zod.object({
+  "role": zod.enum(['leader', 'member']),
+  "status": zod.enum(['pending', 'approved', 'rejected', 'left'])
+}).nullable(),
+  "participants": zod.array(zod.object({
+  "id": zod.uuid(),
+  "username": zod.string(),
+  "displayName": zod.string().nullable(),
+  "level": zod.int()
+})).describe('Approved people.'),
+  "requests": zod.array(zod.object({
+  "userId": zod.uuid(),
+  "username": zod.string(),
+  "level": zod.int(),
+  "note": zod.string().nullable(),
+  "createdAt": zod.iso.datetime({"offset":true})
+})).describe('Pending requests; leader only, else empty.')
 })
 

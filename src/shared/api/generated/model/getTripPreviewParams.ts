@@ -12,4 +12,8 @@ startAt: string;
  * After startAt.
  */
 backBy: string;
+/**
+ * Merge this group trip's gear (it must be at this place).
+ */
+groupTripId?: string;
 };

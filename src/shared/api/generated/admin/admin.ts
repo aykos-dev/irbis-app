@@ -26,10 +26,13 @@ import type {
 
 import type {
   AdminAuditListResponseDto,
+  AdminCancelGroupTripDto,
   AdminConditionListResponseDto,
+  AdminGroupTripsPageDto,
   AdminLessonDto,
   AdminLessonSummaryListDto,
   AdminListConditionsParams,
+  AdminListGroupTripsParams,
   AdminListUsersParams,
   AdminTierDto,
   AdminTierListDto,
@@ -45,6 +48,7 @@ import type {
   CreateOverrideDto,
   CreateTierDto,
   ErrorResponseDto,
+  GroupTripDto,
   LessonImageUploadDto,
   OverrideDto,
   RecomputeStartedDto,
@@ -2323,4 +2327,165 @@ export const useAdminUploadLessonImage = <TError = ErrorType<ErrorResponseDto>,
         TContext
       > => {
       return useMutation(getAdminUploadLessonImageMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Group trips, newest start first
+ */
+export const adminListGroupTrips = (
+    params?: AdminListGroupTripsParams,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<AdminGroupTripsPageDto>(
+      {url: `/v1/admin/group-trips`, method: 'GET',
+        params, signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminListGroupTripsQueryKey = (params?: AdminListGroupTripsParams,) => {
+    return [
+    `/v1/admin/group-trips`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getAdminListGroupTripsQueryOptions = <TData = Awaited<ReturnType<typeof adminListGroupTrips>>, TError = ErrorType<ErrorResponseDto>>(params?: AdminListGroupTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListGroupTrips>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAdminListGroupTripsQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminListGroupTrips>>> = ({ signal }) => adminListGroupTrips(params, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminListGroupTrips>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AdminListGroupTripsQueryResult = NonNullable<Awaited<ReturnType<typeof adminListGroupTrips>>>
+export type AdminListGroupTripsQueryError = ErrorType<ErrorResponseDto>
+
+
+export function useAdminListGroupTrips<TData = Awaited<ReturnType<typeof adminListGroupTrips>>, TError = ErrorType<ErrorResponseDto>>(
+ params: undefined |  AdminListGroupTripsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListGroupTrips>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminListGroupTrips>>,
+          TError,
+          Awaited<ReturnType<typeof adminListGroupTrips>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAdminListGroupTrips<TData = Awaited<ReturnType<typeof adminListGroupTrips>>, TError = ErrorType<ErrorResponseDto>>(
+ params?: AdminListGroupTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListGroupTrips>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof adminListGroupTrips>>,
+          TError,
+          Awaited<ReturnType<typeof adminListGroupTrips>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAdminListGroupTrips<TData = Awaited<ReturnType<typeof adminListGroupTrips>>, TError = ErrorType<ErrorResponseDto>>(
+ params?: AdminListGroupTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListGroupTrips>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Group trips, newest start first
+ */
+
+export function useAdminListGroupTrips<TData = Awaited<ReturnType<typeof adminListGroupTrips>>, TError = ErrorType<ErrorResponseDto>>(
+ params?: AdminListGroupTripsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListGroupTrips>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getAdminListGroupTripsQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary Cancel a group trip (audited)
+ */
+export const adminCancelGroupTrip = (
+    id: string,
+    adminCancelGroupTripDto: BodyType<AdminCancelGroupTripDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<GroupTripDto>(
+      {url: `/v1/admin/group-trips/${id}/cancel`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: adminCancelGroupTripDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getAdminCancelGroupTripMutationKey = () => ['adminCancelGroupTrip'] as const;
+
+export const getAdminCancelGroupTripMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminCancelGroupTrip>>, TError,AdminCancelGroupTripMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminCancelGroupTrip>>, TError,AdminCancelGroupTripMutationVariables, TContext> => {
+
+const mutationKey = getAdminCancelGroupTripMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminCancelGroupTrip>>, AdminCancelGroupTripMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  adminCancelGroupTrip(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminCancelGroupTripMutationResult = NonNullable<Awaited<ReturnType<typeof adminCancelGroupTrip>>>
+    export type AdminCancelGroupTripMutationBody = BodyType<AdminCancelGroupTripDto>
+    export type AdminCancelGroupTripMutationError = ErrorType<ErrorResponseDto>
+    export type AdminCancelGroupTripMutationVariables = {id: string;data: BodyType<AdminCancelGroupTripDto>}
+
+    /**
+ * @summary Cancel a group trip (audited)
+ */
+export const useAdminCancelGroupTrip = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminCancelGroupTrip>>, TError,AdminCancelGroupTripMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof adminCancelGroupTrip>>,
+        TError,
+        AdminCancelGroupTripMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminCancelGroupTripMutationOptions(options), queryClient);
     }

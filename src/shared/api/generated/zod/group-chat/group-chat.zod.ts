@@ -58,7 +58,8 @@ export const GroupChatListResponse = zod.object({
   "mentionedUserIds": zod.array(zod.string()),
   "readByCount": zod.int(),
   "trip": zod.object({
-  "title": zod.string(),
+  "groupTripId": zod.uuid().nullable().describe('Set for live group-trip cards; null for seeded cards.'),
+  "title": zod.string().describe('Place name in the viewer locale.'),
   "startsAt": zod.string(),
   "meetingTime": zod.string(),
   "difficulty": zod.int(),
@@ -130,7 +131,8 @@ export const GroupChatSendResponse = zod.object({
   "mentionedUserIds": zod.array(zod.string()),
   "readByCount": zod.int(),
   "trip": zod.object({
-  "title": zod.string(),
+  "groupTripId": zod.uuid().nullable().describe('Set for live group-trip cards; null for seeded cards.'),
+  "title": zod.string().describe('Place name in the viewer locale.'),
   "startsAt": zod.string(),
   "meetingTime": zod.string(),
   "difficulty": zod.int(),
@@ -193,7 +195,8 @@ export const GroupChatEditResponse = zod.object({
   "mentionedUserIds": zod.array(zod.string()),
   "readByCount": zod.int(),
   "trip": zod.object({
-  "title": zod.string(),
+  "groupTripId": zod.uuid().nullable().describe('Set for live group-trip cards; null for seeded cards.'),
+  "title": zod.string().describe('Place name in the viewer locale.'),
   "startsAt": zod.string(),
   "meetingTime": zod.string(),
   "difficulty": zod.int(),
@@ -248,7 +251,8 @@ export const GroupChatDeleteResponse = zod.object({
   "mentionedUserIds": zod.array(zod.string()),
   "readByCount": zod.int(),
   "trip": zod.object({
-  "title": zod.string(),
+  "groupTripId": zod.uuid().nullable().describe('Set for live group-trip cards; null for seeded cards.'),
+  "title": zod.string().describe('Place name in the viewer locale.'),
   "startsAt": zod.string(),
   "meetingTime": zod.string(),
   "difficulty": zod.int(),
@@ -348,3 +352,4 @@ export const GroupChatUploadPhotoResponse = zod.object({
   "imageKey": zod.string(),
   "imageUrl": zod.string()
 })
+

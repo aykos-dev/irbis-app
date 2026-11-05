@@ -5,6 +5,7 @@ export * from './badges/badges.zod.ts';
 export * from './check-ins/check-ins.zod.ts';
 export * from './conditions/conditions.zod.ts';
 export * from './group-chat/group-chat.zod.ts';
+export * from './group-trips/group-trips.zod.ts';
 export * from './groups/groups.zod.ts';
 export * from './health/health.zod.ts';
 export * from './lessons/lessons.zod.ts';

@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { EmergencyContactDto } from './emergencyContactDto.ts';
+import type { TripGroupGearDto } from './tripGroupGearDto.ts';
 import type { TripPlaceDto } from './tripPlaceDto.ts';
 import type { TripStatus } from './tripStatus.ts';
 import type { TripWaypointDto } from './tripWaypointDto.ts';
@@ -36,6 +37,16 @@ export interface TripDto {
   distanceM: number;
   climbM: number;
   waypoints: TripWaypointDto[];
+  /**
+     * The group trip this plan belongs to.
+     * @nullable
+     */
+  groupTripId: string | null;
+  /**
+     * The group trip's gear; null for a personal plan.
+     * @nullable
+     */
+  groupGear: TripGroupGearDto | null;
   /** trip.active pingEveryMin: how often the app sends a location. */
   pingEveryMin: number;
 }
