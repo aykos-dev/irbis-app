@@ -33,6 +33,7 @@ import {
 import { SafetyScreen } from '../../features/auth/screens/SafetyScreen';
 import { CreateTripScreen } from '../../features/trip-events/screens/CreateTripScreen';
 import { GroupTripScreen } from '../../features/trip-events/screens/GroupTripScreen';
+import { GroupTripsScreen } from '../../features/trip-events/screens/GroupTripsScreen';
 import { TripPlanScreen } from '../../features/trip-plan/screens/TripPlanScreen';
 import { appConfig } from '../../shared/constants/config';
 import { useAuth } from '../../shared/contexts/auth';
@@ -100,6 +101,7 @@ export function RootNavigator() {
       <Stack.Screen name="ActiveTrip" component={ActiveTripRoute} />
       <Stack.Screen name="CreateTrip" component={CreateTripScreen} />
       <Stack.Screen name="GroupTrip" component={GroupTripScreen} />
+      <Stack.Screen name="GroupTrips" component={GroupTripsScreen} />
       <Stack.Screen
         name="TripSummary"
         component={TripSummaryScreen}

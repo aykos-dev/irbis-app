@@ -136,5 +136,28 @@
     "EMERGENCY_CONTACT_REQUIRED": "Add an emergency contact first.",
     "PLACE_NOT_FOUND": "This place isn't available.",
     "GROUP_TRIP_INVALID": "Check the trip details."
+  },
+  "discover": {
+    "groupsTitle": "Upcoming group trips",
+    "seeAll": "See all",
+    "allTitle": "Upcoming group trips",
+    "empty": "No upcoming trips yet.",
+    "placeTitle": "Upcoming trips here",
+    "loadMore": "Load more",
+    "spotsLeft": {
+      "one": "%{count} spot left",
+      "other": "%{count} spots left"
+    },
+    "full": "Full",
+    "going": "%{count} going",
+    "cardSpots": {
+      "one": "%{joined}/%{capacity} · %{count} spot left",
+      "other": "%{joined}/%{capacity} · %{count} spots left"
+    },
+    "open": "Open",
+    "groupTag": "Group trip",
+    "searchTab": "Trips",
+    "searchTitle": "Trips",
+    "searchEmpty": "No upcoming trips found."
   }
 }

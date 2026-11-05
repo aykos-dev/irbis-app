@@ -81,6 +81,8 @@ export type RootStackParamList = {
   CreateTrip: { placeId: string; groupTripId?: string };
   /** One group trip's page (trip-events AC3–AC5), also `irbis://trips/<id>`. */
   GroupTrip: { id: string };
+  /** Every upcoming group trip the viewer can see (trip-events AC8, Groups "See all"). */
+  GroupTrips: undefined;
   /** The running trip (active-trip AC1–AC4, AC8). */
   ActiveTrip: { tripId: string };
   /** After check-out (active-trip AC8): the checked-out trip's counts. */

@@ -136,5 +136,32 @@
     "EMERGENCY_CONTACT_REQUIRED": "Сначала добавьте экстренный контакт.",
     "PLACE_NOT_FOUND": "Это место недоступно.",
     "GROUP_TRIP_INVALID": "Проверьте данные поездки."
+  },
+  "discover": {
+    "groupsTitle": "Ближайшие групповые походы",
+    "seeAll": "Все",
+    "allTitle": "Ближайшие групповые походы",
+    "empty": "Пока нет ближайших походов.",
+    "placeTitle": "Ближайшие походы сюда",
+    "loadMore": "Показать ещё",
+    "spotsLeft": {
+      "one": "Осталось %{count} место",
+      "few": "Осталось %{count} места",
+      "many": "Осталось %{count} мест",
+      "other": "Осталось %{count} мест"
+    },
+    "full": "Мест нет",
+    "going": "Идут: %{count}",
+    "cardSpots": {
+      "one": "%{joined}/%{capacity} · осталось %{count} место",
+      "few": "%{joined}/%{capacity} · осталось %{count} места",
+      "many": "%{joined}/%{capacity} · осталось %{count} мест",
+      "other": "%{joined}/%{capacity} · осталось %{count} мест"
+    },
+    "open": "Открыть",
+    "groupTag": "Групповой поход",
+    "searchTab": "Походы",
+    "searchTitle": "Походы",
+    "searchEmpty": "Ближайших походов не найдено."
   }
 }

@@ -38,6 +38,7 @@ import { LevelCard } from '../components/LevelCard';
 import { PlaceHero } from '../components/PlaceHero';
 import { SeasonBar } from '../components/SeasonBar';
 import { TypePill } from '../components/TypePill';
+import { UpcomingTrips } from '../components/UpcomingTrips';
 import {
   formatDistance as formatUnitDistance,
   formatElevation,
@@ -165,6 +166,9 @@ export function PlaceScreen({ navigation, route, renderCheckIn }: Props) {
       <Screen testID="place.screen" scroll bottomInset={!showTripCta}>
         <BackButton onPress={goBack} />
         {body}
+        {data ? (
+          <UpcomingTrips placeId={id} locale={locale} onOpen={tripId => navigation.navigate('GroupTrip', { id: tripId })} />
+        ) : null}
         {data && leadsGroup && status === 'signedIn' ? (
           <AppButton
             testID="place.create-trip"

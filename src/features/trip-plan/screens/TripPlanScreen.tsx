@@ -164,7 +164,7 @@ function TripPlanForm({ place, trip, onDone }: FormProps) {
   const backByIso = backBy.toISOString();
   const inlineError = timesError(plan, openedAt);
   const timesMessage = inlineError ? t(`trip.${inlineError}`) : timesRejected ? t('trip.timesInvalid') : null;
-  const preview = useTripPreview(place.id, startIso, backByIso, inlineError === null);
+  const preview = useTripPreview(place.id, startIso, backByIso, inlineError === null, trip?.groupTripId ?? null);
 
   const changeWindow = (next: TripWindow) => {
     clearTimesRejected();

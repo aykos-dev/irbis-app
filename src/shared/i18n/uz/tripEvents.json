@@ -136,5 +136,28 @@
     "EMERGENCY_CONTACT_REQUIRED": "Avval favqulodda aloqani qoʻshing.",
     "PLACE_NOT_FOUND": "Bu joy mavjud emas.",
     "GROUP_TRIP_INVALID": "Sayohat maʼlumotlarini tekshiring."
+  },
+  "discover": {
+    "groupsTitle": "Yaqin guruh sayohatlari",
+    "seeAll": "Hammasi",
+    "allTitle": "Yaqin guruh sayohatlari",
+    "empty": "Hozircha yaqin sayohatlar yo‘q.",
+    "placeTitle": "Bu yerga yaqin sayohatlar",
+    "loadMore": "Yana ko‘rsatish",
+    "spotsLeft": {
+      "one": "%{count} ta joy qoldi",
+      "other": "%{count} ta joy qoldi"
+    },
+    "full": "Joy qolmadi",
+    "going": "%{count} kishi boradi",
+    "cardSpots": {
+      "one": "%{joined}/%{capacity} · %{count} ta joy qoldi",
+      "other": "%{joined}/%{capacity} · %{count} ta joy qoldi"
+    },
+    "open": "Ochish",
+    "groupTag": "Guruh sayohati",
+    "searchTab": "Sayohatlar",
+    "searchTitle": "Sayohatlar",
+    "searchEmpty": "Yaqin sayohatlar topilmadi."
   }
 }

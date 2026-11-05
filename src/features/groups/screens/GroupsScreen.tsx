@@ -19,6 +19,7 @@ import { createThemedStyles } from '../../../shared/contexts/theme';
 import { t } from '../../../shared/i18n';
 import { toast } from '../../../shared/components/toastBus';
 import { useGuestSession } from '../../../shared/auth/useGuestSession';
+import { UpcomingTrips } from '../components/UpcomingTrips';
 
 export function GroupsScreen() {
   const navigation = useNavigation();
@@ -72,6 +73,8 @@ export function GroupsScreen() {
           <GroupCard key={group.id} group={group} onOpen={() => navigation.navigate('GroupDetails', { id: group.id })} />
         )) : <AppText tone="muted">{t('groups.emptyYours')}</AppText>}
       </Section>
+
+      <UpcomingTrips />
 
       <Section title={t('groups.discover')}>
         {data?.discover.length ? data.discover.map(group => (
