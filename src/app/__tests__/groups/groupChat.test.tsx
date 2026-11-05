@@ -105,3 +105,19 @@ it('renders the leader shield, replies and sends a message', async () => {
     ).toHaveLength(1),
   );
 });
+
+it('keeps the composer pinned below the scrolling messages, not inside them', async () => {
+  await renderApp();
+  navigationRef.navigate('GroupChat', { id: groupId });
+  const messages = await screen.findByTestId('group-chat.messages');
+  await screen.findByTestId(`group-chat.message-${first.id}`);
+  // The page itself no longer scrolls; only the message list does.
+  expect(screen.queryByTestId('group-chat.screen-scroll')).toBeNull();
+  expect(screen.getByTestId(`group-chat.message-${first.id}`)).toBeOnTheScreen();
+  const input = screen.getByTestId('group-chat.input');
+  let node = input.parent;
+  while (node) {
+    expect(node).not.toBe(messages);
+    node = node.parent;
+  }
+});
