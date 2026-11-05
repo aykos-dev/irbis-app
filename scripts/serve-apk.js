@@ -13,6 +13,8 @@ const qrcode = require('qrcode-terminal');
 const ROOT = path.resolve(__dirname, '..');
 const ANDROID_DIR = path.join(ROOT, 'android');
 const DEFAULT_PORT = 8787;
+/** Committed public env for the shared APK; react-native-config resolves ENVFILE from the repo root. */
+const APK_ENVFILE = 'env/apk.env';
 const PORT_ATTEMPTS = 10;
 
 function fail(message) {
@@ -44,11 +46,25 @@ function parseArgs(argv) {
   return opts;
 }
 
+function readApiUrl() {
+  const env = fs.readFileSync(path.join(ROOT, APK_ENVFILE), 'utf8');
+  const match = env.match(/^\s*API_URL\s*=\s*(\S+)\s*$/m);
+  if (!match) {
+    fail(`API_URL missing in ${APK_ENVFILE}`);
+  }
+  return match[1];
+}
+
 function build(type) {
   const task = type === 'release' ? 'assembleDevRelease' : 'assembleDevDebug';
-  console.log(`> ./gradlew ${task}`);
+  console.log(`> ENVFILE=${APK_ENVFILE} ./gradlew ${task}`);
+  console.log(`API: ${readApiUrl()}`);
   return new Promise(resolve => {
-    const child = spawn('./gradlew', [task], { cwd: ANDROID_DIR, stdio: 'inherit' });
+    const child = spawn('./gradlew', [task], {
+      cwd: ANDROID_DIR,
+      stdio: 'inherit',
+      env: { ...process.env, ENVFILE: APK_ENVFILE },
+    });
     child.on('error', err => {
       console.error(err.message);
       resolve(1);
@@ -195,7 +211,7 @@ async function main() {
   const server = createServer({ apk, type: opts.type, versionName: readVersionName() });
   const port = await listen(server, opts.port).catch(err => fail(`Cannot start server: ${err.message}`));
   const url = `http://${host}:${port}/`;
-  console.log(`\nServing ${path.relative(ROOT, apk.file)}\n${url}\n`);
+  console.log(`\nServing ${path.relative(ROOT, apk.file)}\nAPI: ${readApiUrl()}\n${url}\n`);
   qrcode.generate(url, { small: true });
   console.log('Scan on the same Wi-Fi · Ctrl+C to stop');
 }
