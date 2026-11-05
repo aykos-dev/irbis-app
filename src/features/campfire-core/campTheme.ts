@@ -200,7 +200,6 @@ export const geoColors = {
   /** Country borders are drawn in the ocean colour. */
   border: '#163447',
   selected: palette.purple,
-  selectedEdge: '#4330B0',
   onSelected: palette.white,
   answer: palette.orange,
   microDot: '#3B5A50',
@@ -257,9 +256,14 @@ export const geoSizes = {
   zoomStroke: 3,
   zoomBorder: 2,
   zoomEdge: 4,
-  microButton: 44,
+  /** Microstate dots (drawn in Skia): a dot is hidden when its centre is closer than `microGap` to a dot
+   * already placed; a tap within `microHit` of a shown dot picks it. */
   microDot: 14,
   microRing: 2,
+  microGap: 18,
+  microHit: 22,
+  /** The screen-reader-only microstate buttons are clipped to this (pt). */
+  a11yClip: 1,
   pinWidth: 28,
   pinHeight: 38,
   pinStroke: 1.5,
@@ -269,9 +273,6 @@ export const geoSizes = {
   answerStar: 22,
   labelOpacity: 0.86,
   chipRadius: 9,
-  chipEdge: 2,
-  /** The name chip is centred in a row this wide under the country centre. */
-  chipRowWidth: 220,
   /** Graticule: a line every 10°, sampled every 2°, meridians up to ±80° (±90° every 90°). */
   graticuleStep: 10,
   graticuleSample: 2,
@@ -292,6 +293,10 @@ export const geoScreenColors = {
   mine: geocoreColors.card,
   mineEdge: geocoreColors.brand,
   gain: palette.pine,
+  /** Negative round points (drop-a-pin games). */
+  loss: palette.red700,
+  /** Round points of exactly 0. */
+  even: campColors.muted,
   /** Podium steps by place. */
   step: { 1: palette.gold, 2: palette.stone, 3: '#C98B4E' },
   onStep: { 1: palette.onGold, 2: palette.white, 3: palette.white },

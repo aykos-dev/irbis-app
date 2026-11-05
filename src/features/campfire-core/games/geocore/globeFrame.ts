@@ -259,3 +259,61 @@ export function strokeLines(
     }
   }
 }
+
+/** A microstate dot placed on screen this frame: its index in the pack and centre in pt. */
+export type PlacedDot = { index: number; x: number; y: number };
+
+/**
+ * Microstate dots that fit this frame: greedy in pack order, a dot on the far side or outside the
+ * box is skipped, and so is one whose centre is within `minGap` pt of a dot already placed.
+ * Zooming in spreads the dots, so more of them fit.
+ */
+export function placeDots(
+  f: Frame,
+  box: number,
+  dots: Float32Array,
+  minGap: number,
+): PlacedDot[] {
+  'worklet';
+  const placed: PlacedDot[] = [];
+  const count = Math.floor(dots.length / 3);
+  for (let index = 0; index < count; index++) {
+    const i = index * 3;
+    const p = projectVector(f, dots[i] ?? 0, dots[i + 1] ?? 0, dots[i + 2] ?? 0);
+    if (p.z < 0 || p.x < 0 || p.y < 0 || p.x > box || p.y > box) {
+      continue;
+    }
+    let free = true;
+    for (let k = 0; k < placed.length && free; k++) {
+      const other = placed[k];
+      free = !other || Math.hypot(other.x - p.x, other.y - p.y) >= minGap;
+    }
+    if (free) {
+      placed.push({ index, x: p.x, y: p.y });
+    }
+  }
+  return placed;
+}
+
+/** The placed dot nearest to (x, y) within `reach` pt, or -1. */
+export function nearestDot(
+  placed: PlacedDot[],
+  x: number,
+  y: number,
+  reach: number,
+): number {
+  'worklet';
+  let best = -1;
+  let bestDistance = reach;
+  for (let k = 0; k < placed.length; k++) {
+    const dot = placed[k];
+    if (dot) {
+      const distance = Math.hypot(dot.x - x, dot.y - y);
+      if (distance <= bestDistance) {
+        best = dot.index;
+        bestDistance = distance;
+      }
+    }
+  }
+  return best;
+}

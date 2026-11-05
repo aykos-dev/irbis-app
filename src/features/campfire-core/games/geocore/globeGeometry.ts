@@ -3,7 +3,7 @@
  * border mesh and the graticule. The frame loop (globeFrame.ts) only rotates and projects these.
  */
 import { geoSizes } from '../../campTheme';
-import { countries, countryBorders, countryFeatures } from './geoData';
+import { countries, countryBorders, countryFeatures, microstates } from './geoData';
 import type { SphereLines } from './globeFrame';
 
 const RAD = Math.PI / 180;
@@ -87,6 +87,11 @@ export const landLines: SphereLines = built.land;
 export const borderLines: SphereLines = pack(countryBorders.coordinates);
 /** 10° graticule sampled every 2° (stroke). */
 export const graticuleLines: SphereLines = buildGraticule();
+
+/** Microstate centres as unit vectors (x, y, z each), in pack order — the dots' placement order. */
+export const microDots: Float32Array = pack(
+  microstates.map(item => [[item.lng, item.lat]]),
+).xyz;
 
 const noRings: RingRange = { from: 0, to: 0 };
 

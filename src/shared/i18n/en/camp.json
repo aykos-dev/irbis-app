@@ -381,7 +381,8 @@
       "label": "World globe",
       "hint": "Drag to spin, pinch to zoom, tap to answer",
       "zoomIn": "Zoom in",
-      "zoomOut": "Zoom out"
+      "zoomOut": "Zoom out",
+      "selected": "Country selected"
     },
     "meta": "4 geography games · 1–15",
     "sheetLine": "10 rounds · 20 s each · score points",
@@ -403,8 +404,7 @@
     "points": {
       "label": "Points",
       "country": "In the country 1000 · near misses score by km",
-      "capital": "Up to 1000, by km to the capital",
-      "city": "Up to 5000, by km to the city"
+      "pin": "Within 50 km +1000 · 1,000 km 0 · far −1000"
     },
     "start": "Start %{game}",
     "solo": "You play too. Solo works: start with just you.",
@@ -416,7 +416,7 @@
       "countryToCapital": "Pin the capital of",
       "cityDistance": "Drop a pin on"
     },
-    "lockCountry": "Lock in %{country}",
+    "lockAnswer": "Lock in",
     "lockPin": "Lock in pin",
     "pickFirst": "Tap the globe first",
     "waitingOthers": "Locked in · waiting for others",
@@ -429,6 +429,7 @@
       "cityIn": "%{city}, %{country}"
     },
     "yourResult": "+%{points}",
+    "lossResult": "−%{points}",
     "kmOff": "%{km} km off",
     "inside": "Spot on",
     "noAnswer": "No answer",

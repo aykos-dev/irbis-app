@@ -381,7 +381,8 @@
       "label": "Globus",
       "hint": "Aylantiring, yaqinlashtiring, javob uchun bosing",
       "zoomIn": "Yaqinlashtirish",
-      "zoomOut": "Uzoqlashtirish"
+      "zoomOut": "Uzoqlashtirish",
+      "selected": "Davlat tanlandi"
     },
     "meta": "4 ta geografiya o'yini · 1–15",
     "sheetLine": "10 raund · har biri 20 s · ochko to'plang",
@@ -403,8 +404,7 @@
     "points": {
       "label": "Ochkolar",
       "country": "Davlat ichida 1000 · yaqin xatolar km bo'yicha",
-      "capital": "1000 gacha, poytaxtgacha km bo'yicha",
-      "city": "5000 gacha, shahargacha km bo'yicha"
+      "pin": "50 km gacha +1000 · 1000 km 0 · uzoq −1000"
     },
     "start": "Boshlash: %{game}",
     "solo": "Siz ham o'ynaysiz. Yolg'iz ham bo'ladi.",
@@ -416,7 +416,7 @@
       "countryToCapital": "Poytaxtini belgilang",
       "cityDistance": "Belgi qo'ying"
     },
-    "lockCountry": "Tanlash: %{country}",
+    "lockAnswer": "Tasdiqlash",
     "lockPin": "Belgini tasdiqlash",
     "pickFirst": "Avval globusga bosing",
     "waitingOthers": "Javob qabul qilindi · boshqalarni kutamiz",
@@ -429,6 +429,7 @@
       "cityIn": "%{city}, %{country}"
     },
     "yourResult": "+%{points}",
+    "lossResult": "−%{points}",
     "kmOff": "%{km} km xato",
     "inside": "Aynan to'g'ri",
     "noAnswer": "Javob yo'q",

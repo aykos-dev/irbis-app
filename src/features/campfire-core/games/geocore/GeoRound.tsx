@@ -9,8 +9,6 @@ import { MuteButton } from '../../../../shared/sounds/MuteButton';
 import type { LatLng } from '../../../../shared/utils/geo';
 import { geoScreenColors } from '../../campTheme';
 import type { GeoPoint, GeoPublic } from '../../protocol/codec';
-import { localized } from '../packs';
-import { countryByIso } from './geoData';
 import { GEO_QUESTION_MS, geoRanks } from './geoGame';
 import { isCountryMode, modeName, num, promptText } from './geoText';
 import { GeoTimerRing } from './GeoTimerRing';
@@ -66,15 +64,12 @@ export function GeoRound({ info, selfSeatId, onGuess }: Props) {
   const city = info.mode === 'cityDistance';
   const card = city ? geoScreenColors.promptCity : geoScreenColors.prompt;
   const ink = { color: card.ink };
-  const picked = countryByIso(iso ?? '');
   const ready = countryMode ? iso !== null && pin !== null : pin !== null;
 
   const lockLabel = !ready
     ? t('camp.geo.pickFirst')
     : countryMode
-      ? t('camp.geo.lockCountry', {
-          country: picked ? localized(picked.name) : iso ?? '',
-        })
+      ? t('camp.geo.lockAnswer')
       : t('camp.geo.lockPin');
 
   const lockIn = () => {

@@ -7,7 +7,12 @@ import {
   useRef,
   useState,
 } from 'react';
-import { StyleSheet, View, type LayoutChangeEvent } from 'react-native';
+import {
+  AccessibilityInfo,
+  StyleSheet,
+  View,
+  type LayoutChangeEvent,
+} from 'react-native';
 import {
   Gesture,
   GestureDetector,
@@ -20,6 +25,7 @@ import Animated, {
   useReducedMotion,
   useSharedValue,
   withTiming,
+  type SharedValue,
 } from 'react-native-reanimated';
 import Svg, { Path as SvgPath } from 'react-native-svg';
 import {
@@ -42,6 +48,8 @@ import {
   fillRings,
   invertScreen,
   makeFrame,
+  nearestDot,
+  placeDots,
   strokeLines,
   type Frame,
   type SphereLines,
@@ -50,6 +58,7 @@ import {
   borderLines,
   graticuleLines,
   landLines,
+  microDots,
   ringsOf,
   type RingRange,
 } from './globeGeometry';
@@ -61,14 +70,7 @@ import {
   initialView,
   wrapLng,
 } from './globeProjection';
-import {
-  AnswerMark,
-  MicroButton,
-  MyPin,
-  SeatPin,
-  SelectedChip,
-  type GlobeState,
-} from './GlobeMarkers';
+import { AnswerMark, MyPin, SeatPin, type GlobeState } from './GlobeMarkers';
 
 export type GlobePin = {
   seatId: string;
@@ -80,7 +82,7 @@ export type GlobePin = {
 export type GlobeProps = {
   /** Tap selects a country, or drops a point. */
   mode: 'country' | 'point';
-  /** Country mode: highlighted purple with a name chip. */
+  /** Country mode: highlighted purple (never named: the player must know it). */
   selectedIso?: string | null;
   /** Point mode: the player's pin. */
   myPin?: LatLng | null;
@@ -107,7 +109,7 @@ export const GlobeScrollContext = createContext<GestureType | null>(null);
 const countryName = (iso: string) =>
   countryByIso(iso)?.name[getLocale()] ?? iso;
 
-const { pathMinStep } = geoSizes;
+const { pathMinStep, microGap, microHit } = geoSizes;
 
 /** The frame for the current shared values (UI thread). */
 function frameOf(globe: GlobeState): Frame {
@@ -121,20 +123,20 @@ function frameOf(globe: GlobeState): Frame {
   );
 }
 
-/** A path rebuilt on the UI thread whenever the rotation, zoom or size changes. */
-function useFillPath(globe: GlobeState, lines: SphereLines, rings: RingRange) {
+/** A path rebuilt on the UI thread whenever the frame (rotation, zoom or size) changes. */
+function useFillPath(frame: SharedValue<Frame>, lines: SphereLines, rings: RingRange) {
   const { from, to } = rings;
   return useDerivedValue<SkPath>(() => {
     const builder = Skia.PathBuilder.Make();
-    fillRings(builder, lines, from, to, frameOf(globe), pathMinStep);
+    fillRings(builder, lines, from, to, frame.value, pathMinStep);
     return builder.detach();
   });
 }
 
-function useStrokePath(globe: GlobeState, lines: SphereLines) {
+function useStrokePath(frame: SharedValue<Frame>, lines: SphereLines) {
   return useDerivedValue<SkPath>(() => {
     const builder = Skia.PathBuilder.Make();
-    strokeLines(builder, lines, frameOf(globe), pathMinStep);
+    strokeLines(builder, lines, frame.value, pathMinStep);
     return builder.detach();
   });
 }
@@ -242,6 +244,16 @@ export function Globe({
     [disabled, mode, onDropPin, onSelectCountry],
   );
 
+  const onMicroAt = useCallback(
+    (index: number) => {
+      const item = microstates[index];
+      if (item) {
+        choose(item.iso, { lat: item.lat, lng: item.lng });
+      }
+    },
+    [choose],
+  );
+
   const onTapAt = useCallback(
     (lat: number, lng: number) => {
       if (disabled) {
@@ -252,6 +264,9 @@ export function Globe({
     },
     [choose, disabled, mode],
   );
+
+  /* Microstate dots are country answers: drawn and tappable in the country games only. */
+  const dotsShown = mode === 'country';
 
   const gesture = useMemo(() => {
     const stop = () => {
@@ -291,7 +306,21 @@ export function Globe({
         if (!success) {
           return;
         }
-        const at = invertScreen(frameOf(globe), event.x, event.y);
+        const f = frameOf(globe);
+        /* A visible microstate dot within reach wins over the country under the finger. */
+        if (dotsShown) {
+          const hit = nearestDot(
+            placeDots(f, size.value, microDots, microGap),
+            event.x,
+            event.y,
+            microHit,
+          );
+          if (hit >= 0) {
+            scheduleOnRN(onMicroAt, hit);
+            return;
+          }
+        }
+        const at = invertScreen(f, event.x, event.y);
         if (at) {
           scheduleOnRN(onTapAt, at.lat, at.lng);
         }
@@ -299,8 +328,10 @@ export function Globe({
       .withTestId(`${testID}.tap`);
     return Gesture.Race(Gesture.Simultaneous(pan, pinch), tap);
   }, [
+    dotsShown,
     globe,
     lambda,
+    onMicroAt,
     onTapAt,
     phi,
     pinchFrom,
@@ -310,20 +341,40 @@ export function Globe({
     zoom,
   ]);
 
-  const radius = useDerivedValue(() => baseRadius(size.value) * zoom.value);
-  const centre = useDerivedValue(() => size.value / 2);
-  const graticule = useStrokePath(globe, graticuleLines);
-  const land = useFillPath(globe, landLines, allLand);
-  const borders = useStrokePath(globe, borderLines);
+  /* The one frame per UI frame: every path, dot and marker is projected from it. */
+  const frame = useDerivedValue(() => frameOf(globe));
+  const radius = useDerivedValue(() => frame.value.r);
+  const centre = useDerivedValue(() => frame.value.cx);
+  const graticule = useStrokePath(frame, graticuleLines);
+  const land = useFillPath(frame, landLines, allLand);
+  const borders = useStrokePath(frame, borderLines);
+  const selectedShown = mode === 'country' && Boolean(selectedIso);
   const selected = useFillPath(
-    globe,
+    frame,
     landLines,
-    ringsOf(mode === 'country' ? selectedIso : null),
+    ringsOf(selectedShown ? selectedIso : null),
   );
-  const answerShape = useFillPath(globe, landLines, ringsOf(answer?.iso));
+  const answerShape = useFillPath(frame, landLines, ringsOf(answer?.iso));
+  const dots = useDerivedValue<SkPath>(() => {
+    const builder = Skia.PathBuilder.Make();
+    if (dotsShown) {
+      const placed = placeDots(frame.value, size.value, microDots, microGap);
+      for (let k = 0; k < placed.length; k++) {
+        const dot = placed[k];
+        if (dot) {
+          builder.addCircle(dot.x, dot.y, geoSizes.microDot / 2);
+        }
+      }
+    }
+    return builder.detach();
+  });
 
-  const selectedCountry =
-    mode === 'country' && selectedIso ? countryByIso(selectedIso) : undefined;
+  /* Screen readers hear that a country is selected, never which one. */
+  useEffect(() => {
+    if (selectedShown) {
+      AccessibilityInfo.announceForAccessibility(t('camp.geo.globe.selected'));
+    }
+  }, [selectedShown, selectedIso]);
 
   return (
     <View style={styles.box} onLayout={onLayout}>
@@ -337,6 +388,7 @@ export function Globe({
             min: geoSizes.minZoom,
             max: geoSizes.maxZoom,
             now: Math.round(zoomLabel * 10) / 10,
+            ...(selectedShown ? { text: t('camp.geo.globe.selected') } : {}),
           }}
           style={styles.fill}
         >
@@ -368,6 +420,13 @@ export function Globe({
               strokeWidth={geoSizes.selectedStroke}
               color={geoColors.onSelected}
             />
+            <Path path={dots} color={geoColors.microDot} />
+            <Path
+              path={dots}
+              style="stroke"
+              strokeWidth={geoSizes.microRing}
+              color={geoColors.microRing}
+            />
             <Circle
               cx={centre}
               cy={centre}
@@ -378,20 +437,14 @@ export function Globe({
               opacity={geoSizes.rimOpacity}
             />
           </Canvas>
-          {selectedCountry && selectedIso ? (
-            <SelectedChip
-              globe={globe}
-              point={selectedCountry}
-              name={countryName(selectedIso)}
-            />
-          ) : null}
           {answer?.point ? (
-            <AnswerMark globe={globe} point={answer.point} />
+            <AnswerMark frame={frame} size={size} point={answer.point} />
           ) : null}
           {(pins ?? []).map(pin => (
             <SeatPin
               key={pin.seatId}
-              globe={globe}
+              frame={frame}
+              size={size}
               seatId={pin.seatId}
               point={pin.point}
               label={pin.label}
@@ -399,24 +452,28 @@ export function Globe({
             />
           ))}
           {mode === 'point' && myPin ? (
-            <MyPin globe={globe} point={myPin} />
+            <MyPin frame={frame} size={size} point={myPin} />
           ) : null}
         </Animated.View>
       </GestureDetector>
-      {/* Outside the detector so a dot press never also lands as a globe tap. */}
-      <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
-        {microstates.map(item => (
-          <MicroButton
-            key={item.iso}
-            globe={globe}
-            point={item}
-            iso={item.iso}
-            name={countryName(item.iso)}
-            disabled={disabled}
-            onPress={() => choose(item.iso, { lat: item.lat, lng: item.lng })}
-          />
-        ))}
-      </View>
+      {dotsShown ? (
+        /*
+         * The dots are drawn and hit-tested in Skia; these buttons only give screen readers (and
+         * tests) a way to pick a microstate. Clipped to 1 pt: invisible and untouchable by eye.
+         */
+        <View style={styles.a11yList}>
+          {microstates.map(item => (
+            <Pressable
+              key={item.iso}
+              testID={`geo.micro.${item.iso}`}
+              accessibilityLabel={countryName(item.iso)}
+              disabled={disabled}
+              onPress={() => choose(item.iso, { lat: item.lat, lng: item.lng })}
+              style={styles.a11yButton}
+            />
+          ))}
+        </View>
+      ) : null}
       <View style={styles.zoom}>
         <ZoomButton
           testID="geo.zoom-in"
@@ -479,6 +536,15 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   fill: { flex: 1 },
+  a11yList: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: geoSizes.a11yClip,
+    height: geoSizes.a11yClip,
+    overflow: 'hidden',
+  },
+  a11yButton: { width: geoSizes.microHit, height: geoSizes.microHit },
   zoom: {
     position: 'absolute',
     right: 0,

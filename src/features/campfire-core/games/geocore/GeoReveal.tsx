@@ -11,17 +11,29 @@ import { geoScreenColors, geoScreenSizes, geoSeatColors } from '../../campTheme'
 import type { GeoPublic, RosterPlayer } from '../../protocol/codec';
 import { SeatAvatar } from '../components/SeatAvatar';
 import { geoRanks } from './geoGame';
-import { answerText, isCountryMode, kmLabel, kmLine, nameIn, num } from './geoText';
+import {
+  answerText,
+  isCountryMode,
+  kmLabel,
+  kmLine,
+  nameIn,
+  num,
+  pointsText,
+} from './geoText';
 import { GeoHeader } from './GeoRound';
 import { useSecondsLeft } from './GeoTimerRing';
 import { Globe, type GlobePin } from './Globe';
 import type { GeoMode } from './scoring';
 
-/** A round this good plays the `correct` clip, else `wrong` (points per round: 1,000, or 5,000 in City distance). */
-export const GEO_GOOD_POINTS = { country: 900, city: 4_500 } as const;
+/** A round this good plays the `correct` clip, else `wrong` (country games up to 1,000; pin games −1,000…+1,000). */
+export const GEO_GOOD_POINTS = { country: 900, pin: 500 } as const;
 
 export const goodRound = (mode: GeoMode, points: number) =>
-  points >= (mode === 'cityDistance' ? GEO_GOOD_POINTS.city : GEO_GOOD_POINTS.country);
+  points >= (isCountryMode(mode) ? GEO_GOOD_POINTS.country : GEO_GOOD_POINTS.pin);
+
+/** Green for a gain, red for a loss, muted for 0. */
+const pointsTone = (points: number) =>
+  points > 0 ? layout.gain : points < 0 ? layout.loss : layout.zero;
 
 export type GeoHostControls = {
   onNext: () => void;
@@ -113,8 +125,8 @@ export function GeoReveal({ info, selfSeatId, roster, host }: Props) {
       </AppText>
       <View testID="geo.result" accessible style={layout.result}>
         {answered ? (
-          <AppText variant="h2" style={layout.gain}>
-            {t('camp.geo.yourResult', { points: num(points) })}
+          <AppText testID="geo.result.points" variant="h2" style={pointsTone(points)}>
+            {pointsText(points)}
           </AppText>
         ) : null}
         <AppText variant="body" tone="muted">
@@ -166,8 +178,8 @@ export function GeoReveal({ info, selfSeatId, roster, host }: Props) {
                   {kmLine(info.mode, scored ? (result?.km ?? 0) : null)}
                 </AppText>
               </View>
-              <AppText variant="small" style={layout.gain}>
-                {t('camp.geo.yourResult', { points: num(result?.points ?? 0) })}
+              <AppText variant="small" style={pointsTone(result?.points ?? 0)}>
+                {pointsText(result?.points ?? 0)}
               </AppText>
               <AppText variant="h3">{num(rank.total)}</AppText>
             </View>
@@ -202,6 +214,8 @@ const layout = StyleSheet.create({
   center: { textAlign: 'center' },
   result: { alignItems: 'center', gap: spacing[4] },
   gain: { color: geoScreenColors.gain },
+  loss: { color: geoScreenColors.loss },
+  zero: { color: geoScreenColors.even },
   list: { gap: spacing[8] },
   listHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
   row: {

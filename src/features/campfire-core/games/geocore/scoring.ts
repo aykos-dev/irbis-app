@@ -120,8 +120,30 @@ export function kmToCountry(point: LatLng, iso: string): number | null {
 export const countryPoints = (km: number) =>
   Math.round(1000 * Math.exp(-km / 1500));
 
-export const cityPoints = (km: number) =>
-  Math.round(5000 * Math.exp(-km / 2000));
+/** Drop-a-pin anchors, nearest first: [km, points]. Linear in log(km) between them, flat outside. */
+const PIN_ANCHORS = [
+  [50, 1000],
+  [500, 500],
+  [1000, 0],
+  [2000, -500],
+  [4000, -1000],
+] as const;
+
+/** Country → Capital and City distance: +1000 within 50 km, 0 at 1,000 km, −1000 from 4,000 km. */
+export function pinPoints(km: number): number {
+  let [fromKm, fromPoints]: readonly [number, number] = PIN_ANCHORS[0];
+  if (km <= fromKm) {
+    return fromPoints;
+  }
+  for (const [toKm, toPoints] of PIN_ANCHORS) {
+    if (km <= toKm) {
+      const t = Math.log(km / fromKm) / Math.log(toKm / fromKm);
+      return Math.round(fromPoints + (toPoints - fromPoints) * t);
+    }
+    [fromKm, fromPoints] = [toKm, toPoints];
+  }
+  return fromPoints;
+}
 
 const noScore: GuessScore = { km: null, points: 0 };
 
@@ -140,15 +162,16 @@ export function scoreGuess(
       return noScore;
     }
     const km = kmBetween(guess, city);
-    return { km, points: cityPoints(km) };
+    return { km, points: pinPoints(km) };
   }
   const country = countries.find(item => item.id === promptId);
   if (!country) {
     return noScore;
   }
-  const km =
-    mode === 'countryToCapital'
-      ? kmBetween(guess, country.capital)
-      : kmToCountry(guess, country.iso);
+  if (mode === 'countryToCapital') {
+    const km = kmBetween(guess, country.capital);
+    return { km, points: pinPoints(km) };
+  }
+  const km = kmToCountry(guess, country.iso);
   return km === null ? noScore : { km, points: countryPoints(km) };
 }

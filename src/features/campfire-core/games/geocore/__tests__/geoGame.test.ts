@@ -101,6 +101,15 @@ describe('campfire-geocore — round engine', () => {
       ['c', 5],
     ]);
   });
+
+  it('ranks negative totals (pin games can lose points) below 0', () => {
+    expect(geoRanks({ a: -350, b: 0, c: 650, d: -1200 }).map(rank => [rank.seatId, rank.place])).toEqual([
+      ['c', 1],
+      ['b', 2],
+      ['a', 3],
+      ['d', 4],
+    ]);
+  });
 });
 
 describe('campfire-geocore — protocol v6', () => {

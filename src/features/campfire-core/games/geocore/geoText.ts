@@ -84,5 +84,16 @@ export function kmLine(mode: GeoMode, km: number | null): string {
     : t('camp.geo.kmOff', { km: num(Math.round(km)) });
 }
 
-/** "{{km}} km" for a pin label. */
+/** Round points with their sign: "+650", "−350" (U+2212 minus), "0". */
+export function pointsText(points: number): string {
+  if (points > 0) {
+    return t('camp.geo.yourResult', { points: num(points) });
+  }
+  if (points < 0) {
+    return t('camp.geo.lossResult', { points: num(-points) });
+  }
+  return num(0);
+}
+
+/** "%{km} km" for a pin label. */
 export const kmLabel = (km: number) => t('camp.geo.km', { km: num(Math.round(km)) });

@@ -69,6 +69,15 @@ export function ThemeProvider({
   );
 }
 
+/**
+ * Re-provides an outer theme below a portal. Gorhom's sheet portal renders its children at the app
+ * root, outside any `<ThemeProvider scheme>` subtree (Campfire's dark), so they would read the root
+ * scheme while the sheet itself is drawn with the subtree's.
+ */
+export function ThemeRelay({ theme, children }: { theme: Theme; children: ReactNode }) {
+  return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>;
+}
+
 export function useTheme(): Theme {
   const theme = useContext(ThemeContext);
   if (!theme) {
