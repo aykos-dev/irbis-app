@@ -78,7 +78,7 @@ describe('campfire-geocore — hub and lobby (AC1, AC2)', () => {
     expect(navigationRef.getCurrentRoute()?.params).toEqual({ game: 'geocore', geoMode: 'cityDistance' });
     expect(screen.getByTestId('camp.lobby.game.geocore')).toBeSelected();
     expect(screen.getByTestId('camp.lobby.geo.cityDistance')).toBeSelected();
-    expect(screen.getByTestId('geo.settings')).toHaveTextContent(/Up to 5000, by km to the city/);
+    expect(screen.getByTestId('geo.settings')).toHaveTextContent(/Within 50 km \+1000 · 1,000 km 0 · far −1000/);
   });
 
   it('AC2: Find the country by default; Start works with only the host and starts that mode', async () => {

@@ -8,9 +8,18 @@ import {
 
 import { ThemeProvider } from '../../../../../shared/contexts/theme';
 import { campScheme, geoSizes } from '../../../campTheme';
-import { countryByIso } from '../geoData';
+import { countryByIso, microstates } from '../geoData';
 import { Globe } from '../Globe';
 import {
+  fillRings,
+  makeFrame,
+  placeDots,
+  projectLatLng,
+  type PathSink,
+} from '../globeFrame';
+import { landLines, microDots, ringsOf } from '../globeGeometry';
+import {
+  baseRadius,
   clampZoom,
   countryAt,
   initialView,
@@ -78,7 +87,7 @@ describe('Globe, country mode', () => {
     );
   });
 
-  it('selects Vatican City from its microstate button and shows the chip', async () => {
+  it('selects Vatican City from its screen-reader button; the selection is never named', async () => {
     const onSelectCountry = jest.fn();
     await renderGlobe(
       <Globe
@@ -97,7 +106,11 @@ describe('Globe, country mode', () => {
         <Globe mode="country" focus={{ lat: 42, lng: 12 }} selectedIso="IT" />,
       ),
     );
-    expect(screen.getByTestId('geo.selected')).toHaveTextContent('Italy');
+    expect(screen.queryByTestId('geo.selected')).toBeNull();
+    expect(screen.queryByText('Italy')).toBeNull();
+    expect(screen.getByTestId('geo.globe').props.accessibilityValue.text).toBe(
+      'Country selected',
+    );
   });
 
   it('ignores taps and microstate presses when disabled', async () => {
@@ -200,5 +213,91 @@ describe('Globe drag', () => {
     const centre = onDropPin.mock.calls[0][0];
     expect(centre.lng).toBeLessThan(initialView.lng - 10);
     expect(centre.lat).toBeGreaterThan(initialView.lat + 2);
+  });
+});
+
+/** Bounds of every vertex a fill writes (the drawn Skia path). */
+const boundsOf = (draw: (sink: PathSink) => void) => {
+  const box = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+  const add = (x: number, y: number) => {
+    box.minX = Math.min(box.minX, x);
+    box.minY = Math.min(box.minY, y);
+    box.maxX = Math.max(box.maxX, x);
+    box.maxY = Math.max(box.maxY, y);
+  };
+  draw({ moveTo: add, lineTo: add, close: () => undefined });
+  return box;
+};
+
+/** The translate of the marker holding `testID` (its projected screen point). */
+const markerAt = (testID: string) => {
+  const anchor = screen.getByTestId(testID).parent;
+  const styles: { transform?: { translateX?: number; translateY?: number }[] }[] = [
+    anchor?.props.style,
+  ].flat(2);
+  const transform = styles.find(style => style?.transform)?.transform ?? [];
+  return {
+    x: transform.find(step => step.translateX !== undefined)?.translateX ?? NaN,
+    y: transform.find(step => step.translateY !== undefined)?.translateY ?? NaN,
+  };
+};
+
+describe('Globe markers share the land projection (bug: star off Nicaragua)', () => {
+  it('at zoom 4 on Nicaragua the answer star sits inside the drawn Nicaragua, on its centroid', async () => {
+    const nicaragua = countryByIso('NI')!;
+    await renderGlobe(
+      <Globe
+        mode="country"
+        disabled
+        focus={nicaragua}
+        focusZoom={4}
+        answer={{ iso: 'NI', point: nicaragua }}
+      />,
+    );
+    const frame = makeFrame(nicaragua.lng, nicaragua.lat, baseRadius(SIZE) * 4, SIZE);
+    const { from, to } = ringsOf('NI');
+    const shape = boundsOf(sink => fillRings(sink, landLines, from, to, frame, 0));
+    const star = markerAt('geo.answer');
+    expect(star.x).toBeGreaterThan(shape.minX);
+    expect(star.x).toBeLessThan(shape.maxX);
+    expect(star.y).toBeGreaterThan(shape.minY);
+    expect(star.y).toBeLessThan(shape.maxY);
+    const centroid = projectLatLng(frame, nicaragua.lat, nicaragua.lng);
+    expect(Math.hypot(star.x - centroid.x, star.y - centroid.y)).toBeLessThanOrEqual(2);
+  });
+});
+
+describe('Microstate dots (Skia)', () => {
+  const minGap = geoSizes.microGap;
+
+  it('at the initial view no two shown dots are closer than 18 pt; zooming in shows more', () => {
+    const frameAt = (zoom: number) =>
+      makeFrame(initialView.lng, initialView.lat, baseRadius(SIZE) * zoom, SIZE);
+    const shown = placeDots(frameAt(1), SIZE, microDots, minGap);
+    expect(shown.length).toBeGreaterThan(0);
+    shown.forEach((dot, i) =>
+      shown.slice(i + 1).forEach(other => {
+        expect(Math.hypot(dot.x - other.x, dot.y - other.y)).toBeGreaterThanOrEqual(minGap);
+      }),
+    );
+    const european = new Set(['AD', 'LI', 'LU', 'MC', 'ME', 'MT', 'SM', 'VA']);
+    const europeShown = (zoom: number) =>
+      placeDots(makeFrame(12, 45, baseRadius(SIZE) * zoom, SIZE), SIZE, microDots, minGap).filter(
+        dot => european.has(microstates[dot.index]?.iso ?? ''),
+      ).length;
+    expect(europeShown(1)).toBeLessThan(european.size);
+    expect(europeShown(4)).toBe(european.size);
+  });
+
+  it("a tap within 22 pt of Vatican's dot (Europe, zoom 6) selects VA, not Italy", async () => {
+    const onSelectCountry = jest.fn();
+    const europe = { lat: 42, lng: 12 };
+    await renderGlobe(
+      <Globe mode="country" focus={europe} focusZoom={6} onSelectCountry={onSelectCountry} />,
+    );
+    const frame = makeFrame(europe.lng, europe.lat, baseRadius(SIZE) * 6, SIZE);
+    const vatican = projectLatLng(frame, 41.903, 12.453);
+    await tapAt(vatican.x + 12, vatican.y + 12);
+    expect(onSelectCountry).toHaveBeenCalledWith('VA', { lat: 41.903, lng: 12.453 });
   });
 });

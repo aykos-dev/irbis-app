@@ -9,7 +9,7 @@ import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { radii, screenPadding, spacing } from '../constants/spacing';
-import { createThemedStyles } from '../contexts/theme';
+import { createThemedStyles, ThemeRelay, useTheme } from '../contexts/theme';
 import { haptics } from '../utils/haptics';
 
 type Props = {
@@ -38,6 +38,7 @@ export function Sheet({ testID, accessibilityLabel, children, closing = false, o
   const ref = useRef<BottomSheetModal>(null);
   const insets = useSafeAreaInsets();
   const styles = useStyles();
+  const theme = useTheme();
 
   useEffect(() => {
     haptics.tap();
@@ -83,7 +84,10 @@ export function Sheet({ testID, accessibilityLabel, children, closing = false, o
           accessibilityViewIsModal
           style={[layout.content, { paddingBottom: insets.bottom || spacing[20] }]}
         >
-          <InSheetContext.Provider value>{children}</InSheetContext.Provider>
+          {/* The modal renders in a root portal: carry the caller's theme (Campfire is always dark). */}
+          <ThemeRelay theme={theme}>
+            <InSheetContext.Provider value>{children}</InSheetContext.Provider>
+          </ThemeRelay>
         </View>
       </BottomSheetView>
     </BottomSheetModal>

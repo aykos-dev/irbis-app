@@ -16,8 +16,8 @@ import type { GeoMode } from './scoring';
 const pointsKey: Record<GeoMode, string> = {
   findCountry: 'camp.geo.points.country',
   capitalToCountry: 'camp.geo.points.country',
-  countryToCapital: 'camp.geo.points.capital',
-  cityDistance: 'camp.geo.points.city',
+  countryToCapital: 'camp.geo.points.pin',
+  cityDistance: 'camp.geo.points.pin',
 };
 
 type Props = {

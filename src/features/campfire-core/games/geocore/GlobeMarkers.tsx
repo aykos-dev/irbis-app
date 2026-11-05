@@ -8,12 +8,10 @@ import Svg, { Path } from 'react-native-svg';
 
 import { AppText } from '../../../../shared/components/AppText';
 import { Icon } from '../../../../shared/components/Icon';
-import { Pressable } from '../../../../shared/components/Pressable';
 import { radii, spacing } from '../../../../shared/constants/spacing';
 import { geoColors, geoSeatColors, geoSizes } from '../../campTheme';
 import type { LatLng } from '../../../../shared/utils/geo';
-import { makeFrame, projectVector, toVector } from './globeFrame';
-import { baseRadius } from './globeProjection';
+import { projectVector, toVector, type Frame } from './globeFrame';
 
 /** Teardrop artwork (canvas GeoRoundCity), tip at (12, 31) in a 24 × 32 box. */
 const TEARDROP =
@@ -27,52 +25,36 @@ export type GlobeState = {
   size: SharedValue<number>;
 };
 
-type MarkerPlace = { globe: GlobeState; point: LatLng };
+/**
+ * Where a marker goes: `frame` is the one derived frame the Skia paths are drawn with, so a marker
+ * and the land under it are projected from the same values in the same UI frame.
+ */
+type MarkerPlace = { frame: SharedValue<Frame>; size: SharedValue<number>; point: LatLng };
 
 /**
- * Pins a marker to a point on the globe without React renders: a worklet projects it every frame;
- * on the far side or outside the box it is not displayed (hidden from touch and screen readers).
+ * Pins a marker to a point on the globe without React renders: one animated style carries both the
+ * position and whether it is shown (far side or outside the box: not displayed, so hidden from touch
+ * and screen readers). A single view, so the position can never lag behind a late show.
  */
 function Projected({
-  globe,
+  frame,
+  size,
   point,
-  touchable = false,
   children,
-}: MarkerPlace & { touchable?: boolean; children: ReactNode }) {
-  const { lambda, phi, zoom, size } = globe;
+}: MarkerPlace & { children: ReactNode }) {
   const [x0, y0, z0] = toVector(point.lat, point.lng);
-  const place = () => {
-    'worklet';
-    const box = size.value;
-    const frame = makeFrame(
-      lambda.value,
-      phi.value,
-      baseRadius(box) * zoom.value,
-      box,
-    );
-    return projectVector(frame, x0, y0, z0);
-  };
-  const shown = useAnimatedStyle(() => {
-    const p = place();
+  const placed = useAnimatedStyle(() => {
+    const p = projectVector(frame.value, x0, y0, z0);
     const box = size.value;
     const inside = p.z >= 0 && p.x >= 0 && p.y >= 0 && p.x <= box && p.y <= box;
-    return { display: inside ? 'flex' : 'none' };
-  });
-  const moved = useAnimatedStyle(() => {
-    const p = place();
-    return { transform: [{ translateX: p.x }, { translateY: p.y }] };
+    return {
+      display: inside ? 'flex' : 'none',
+      transform: [{ translateX: p.x }, { translateY: p.y }],
+    };
   });
   return (
-    <Animated.View
-      style={[styles.anchor, shown]}
-      pointerEvents={touchable ? 'box-none' : 'none'}
-    >
-      <Animated.View
-        style={[styles.anchor, moved]}
-        pointerEvents={touchable ? 'box-none' : 'none'}
-      >
-        {children}
-      </Animated.View>
+    <Animated.View style={[styles.anchor, placed]} pointerEvents="none">
+      {children}
     </Animated.View>
   );
 }
@@ -137,56 +119,11 @@ export function AnswerMark(place: MarkerPlace) {
   );
 }
 
-/** The selected country's name, under its centre. */
-export function SelectedChip({
-  name,
-  ...place
-}: MarkerPlace & { name: string }) {
-  return (
-    <Projected {...place}>
-      <View style={styles.chipRow}>
-        <View testID="geo.selected" style={styles.selectedChip}>
-          <AppText variant="chip" style={styles.selectedText} numberOfLines={1}>
-            {name}
-          </AppText>
-        </View>
-      </View>
-    </Projected>
-  );
-}
-
-/** A country too small to tap: a 44 pt button with a 14 pt dot. */
-export function MicroButton({
-  iso,
-  name,
-  disabled,
-  onPress,
-  ...place
-}: MarkerPlace & {
-  iso: string;
-  name: string;
-  disabled: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <Projected {...place} touchable>
-      <Pressable
-        testID={`geo.micro.${iso}`}
-        accessibilityLabel={name}
-        disabled={disabled}
-        onPress={onPress}
-        style={styles.micro}
-      >
-        <View style={styles.microDot} />
-      </Pressable>
-    </Projected>
-  );
-}
-
 const half = (value: number) => value / 2;
 
 const styles = StyleSheet.create({
-  anchor: { position: 'absolute', width: 0, height: 0 },
+  /* Explicit insets: the marker origin is the globe's top-left, never a flex static position. */
+  anchor: { position: 'absolute', left: 0, top: 0, width: 0, height: 0 },
   teardrop: {
     position: 'absolute',
     left: -half(geoSizes.pinWidth),
@@ -228,38 +165,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: -half(geoSizes.answerStar),
     top: -half(geoSizes.answerStar),
-  },
-  chipRow: {
-    position: 'absolute',
-    left: -half(geoSizes.chipRowWidth),
-    top: spacing[4],
-    width: geoSizes.chipRowWidth,
-    alignItems: 'center',
-  },
-  selectedChip: {
-    paddingVertical: spacing[4],
-    paddingHorizontal: spacing[8],
-    borderRadius: geoSizes.chipRadius,
-    backgroundColor: geoColors.selected,
-    borderBottomWidth: geoSizes.chipEdge,
-    borderBottomColor: geoColors.selectedEdge,
-  },
-  selectedText: { color: geoColors.onSelected },
-  micro: {
-    position: 'absolute',
-    left: -half(geoSizes.microButton),
-    top: -half(geoSizes.microButton),
-    width: geoSizes.microButton,
-    height: geoSizes.microButton,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  microDot: {
-    width: geoSizes.microDot,
-    height: geoSizes.microDot,
-    borderRadius: radii.pill,
-    backgroundColor: geoColors.microDot,
-    borderWidth: geoSizes.microRing,
-    borderColor: geoColors.microRing,
   },
 });

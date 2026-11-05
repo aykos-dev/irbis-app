@@ -9,9 +9,9 @@ import {
 } from '../geoData';
 import { drawPrompts } from '../prompts';
 import {
-  cityPoints,
   countryPoints,
   kmToCountry,
+  pinPoints,
   scoreGuess,
 } from '../scoring';
 
@@ -55,10 +55,23 @@ describe('campfire-geocore — packs', () => {
 });
 
 describe('campfire-geocore — scoring (AC5)', () => {
-  it('AC5: country and city curves', () => {
+  it('AC5: country curve unchanged', () => {
     const kms = [0, 100, 500, 1500, 5000];
     expect(kms.map(countryPoints)).toEqual([1000, 936, 717, 368, 36]);
-    expect(kms.map(cityPoints)).toEqual([5000, 4756, 3894, 2362, 410]);
+  });
+
+  it('pin curve: +1000 … −1000, linear in log(km) between the anchors', () => {
+    expect([50, 500, 1000, 2000, 4000].map(pinPoints)).toEqual([1000, 500, 0, -500, -1000]);
+    expect(pinPoints(0)).toBe(1000);
+    expect(pinPoints(10)).toBe(1000);
+    expect(pinPoints(9000)).toBe(-1000);
+    expect(Math.abs(pinPoints(250) - 650)).toBeLessThanOrEqual(5);
+    expect([137, 777, 1500, 3100].map(km => Number.isInteger(pinPoints(km)))).toEqual([
+      true,
+      true,
+      true,
+      true,
+    ]);
   });
 
   it('AC5: kmToCountry — inside, nearby, microstate, antimeridian', () => {
@@ -82,14 +95,16 @@ describe('campfire-geocore — scoring (AC5)', () => {
     const toCapital = scoreGuess('countryToCapital', 'uz', { lat: 39.65, lng: 66.96 });
     expect(toCapital.km).toBeGreaterThan(250);
     expect(toCapital.km).toBeLessThan(290);
-    expect(toCapital.points).toBe(countryPoints(toCapital.km ?? 0));
+    expect(toCapital.points).toBe(pinPoints(toCapital.km ?? 0));
+    expect(scoreGuess('countryToCapital', 'uz', { lat: -33.9, lng: 18.4 }).points).toBe(-1000);
 
     const city = scoreGuess('cityDistance', 'city-tashkent', { lat: 39.65, lng: 66.96 });
     expect(Number.isInteger(city.km)).toBe(true);
-    expect(city.points).toBe(cityPoints(city.km ?? 0));
+    expect(city.points).toBe(pinPoints(city.km ?? 0));
 
     expect(scoreGuess('findCountry', 'ke', null)).toEqual({ km: null, points: 0 });
     expect(scoreGuess('cityDistance', 'city-tashkent', null)).toEqual({ km: null, points: 0 });
+    expect(scoreGuess('countryToCapital', 'uz', null)).toEqual({ km: null, points: 0 });
   });
 });
 

@@ -8,10 +8,10 @@ import {
 
 import { ThemeProvider } from '../../../../../shared/contexts/theme';
 import { sounds } from '../../../../../shared/sounds/sounds';
-import { campScheme, geoSizes } from '../../../campTheme';
+import { campScheme, geoScreenColors, geoSizes } from '../../../campTheme';
 import type { GeoPublic, RosterPlayer } from '../../../protocol/codec';
 import { GeoScreen } from '../GeoScreen';
-import { countryAt, initialView, invertPoint } from '../globeProjection';
+import { countryAt, initialView, invertPoint, projectPoint } from '../globeProjection';
 
 jest.mock('../../../../../shared/sounds/sounds', () => ({
   sounds: {
@@ -200,7 +200,7 @@ describe('GeoReveal (AC6)', () => {
     expect(screen.getByTestId('geo.next')).toHaveTextContent('See results');
   });
 
-  it('plays correct from 900 points (4,500 in City distance), else wrong', async () => {
+  it('plays correct from 900 points (500 in the pin games), else wrong', async () => {
     await show(reveal());
     await act(async () => undefined);
     expect(played).toHaveBeenLastCalledWith('correct', 'geo_');
@@ -211,13 +211,63 @@ describe('GeoReveal (AC6)', () => {
       reveal: {
         roundNo: 4,
         answer: { lat: 41.3, lng: 69.3 },
-        results: [{ seatId: 'host', lat: 41, lng: 69, km: 40, points: 4400 }],
+        results: [{ seatId: 'host', lat: 41, lng: 69, km: 260, points: 450 }],
       },
     });
     await show(city);
     await act(async () => undefined);
     expect(played).toHaveBeenLastCalledWith('wrong', 'geo_');
     expect(played).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('Pin-game points (−1000 … +1000)', () => {
+  it('own result and "this round": −350 in red, +650 in green, 0 plain', async () => {
+    await show(
+      reveal({
+        mode: 'cityDistance',
+        promptId: 'city-tashkent',
+        totals: { host: -350, p1: 650, p2: 0 },
+        reveal: {
+          roundNo: 4,
+          answer: { lat: 41.3, lng: 69.3 },
+          results: [
+            { seatId: 'host', lat: 50, lng: 80, km: 1300, points: -350 },
+            { seatId: 'p1', lat: 41, lng: 70, km: 250, points: 650 },
+            { seatId: 'p2', km: null, points: 0 },
+          ],
+        },
+      }),
+    );
+    const mine = screen.getByTestId('geo.result.points');
+    expect(mine).toHaveTextContent('\u2212350');
+    expect(mine).toHaveStyle({ color: geoScreenColors.loss });
+    expect(screen.getByTestId('geo.standings.p1')).toHaveTextContent(/\+650/);
+    expect(screen.getByText('+650')).toHaveStyle({ color: geoScreenColors.gain });
+    expect(screen.getByTestId('geo.standings.p2')).toHaveTextContent(/No answer0/);
+    const rows = screen.getAllByTestId(/^geo\.standings\./).map(row => row.props.testID);
+    expect(rows).toEqual(['geo.standings.p1', 'geo.standings.p2', 'geo.standings.host']);
+  });
+});
+
+describe('Country games never name the tapped country', () => {
+  it('after selecting Kenya in Find the country no "Kenya" is on screen and Lock in is generic', async () => {
+    const onGuess = jest.fn();
+    await show(question({ promptId: 'uz' }), { onGuess });
+    const at = projectPoint(geoSizes.board, initialView, { lat: 0.5, lng: 37.9 });
+    await act(async () => {
+      fireGestureHandler(getByGestureTestId('geo.globe.tap'), [
+        { x: at?.x ?? 0, y: at?.y ?? 0 },
+        { x: at?.x ?? 0, y: at?.y ?? 0 },
+      ]);
+    });
+    expect(screen.getByTestId('geo.lock')).toBeEnabled();
+    expect(screen.getByTestId('geo.lock')).toHaveTextContent('Lock in');
+    expect(screen.queryByText(/Kenya|Keniya/)).toBeNull();
+    expect(screen.queryByTestId('geo.selected')).toBeNull();
+    expect(screen.getByTestId('geo.globe').props.accessibilityValue.text).toBe('Country selected');
+    await fireEvent.press(screen.getByTestId('geo.lock'));
+    expect(onGuess).toHaveBeenCalledWith(expect.objectContaining({ iso: 'KE' }));
   });
 });
 
