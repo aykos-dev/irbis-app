@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { TripSummaryScreen } from '../../features/active-trip/screens/TripSummaryScreen';
 import { BadgesScreen } from '../../features/badges/screens/BadgesScreen';
+import { BuddiesScreen } from '../../features/buddies/screens/BuddiesScreen';
 import { GameWaiting } from '../../features/campfire-core/games/GameWaiting';
 import { CampJoinScreen } from '../../features/campfire-core/screens/CampJoinScreen';
 import { CampLobbyScreen } from '../../features/campfire-core/screens/CampLobbyScreen';
@@ -102,6 +103,7 @@ export function RootNavigator() {
       <Stack.Screen name="CreateTrip" component={CreateTripScreen} />
       <Stack.Screen name="GroupTrip" component={GroupTripScreen} />
       <Stack.Screen name="GroupTrips" component={GroupTripsScreen} />
+      <Stack.Screen name="Buddies" component={BuddiesScreen} />
       <Stack.Screen
         name="TripSummary"
         component={TripSummaryScreen}

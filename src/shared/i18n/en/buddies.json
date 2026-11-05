@@ -1,0 +1,94 @@
+{
+  "title": "Buddies",
+  "back": "Back",
+  "segments": { "find": "Find", "mine": "Mine", "incoming": { "one": "%{count} request", "other": "%{count} requests" } },
+  "find": {
+    "title": "Find buddies",
+    "free": "I'm free this weekend",
+    "sat": "Sat",
+    "sun": "Sun",
+    "level": "Level",
+    "any": "Any",
+    "near": "L%{lo}–L%{hi}",
+    "mentors": "Mentors (L5+)",
+    "weekend": "This weekend",
+    "match": { "one": "%{count} explorer matches", "other": "%{count} explorers match" },
+    "empty": "No explorers match — try fewer filters",
+    "saved": "Weekend plans saved"
+  },
+  "card": {
+    "rating": "★ %{rating}",
+    "together": { "one": "%{count} trip together", "other": "%{count} trips together" },
+    "leader": "Verified leader",
+    "freeSat": "Free Sat",
+    "freeSun": "Free Sun",
+    "freeBoth": "Free Sat–Sun",
+    "level": "Level %{n}",
+    "add": "Add buddy",
+    "requested": "Requested"
+  },
+  "mine": {
+    "incoming": "Requests",
+    "buddies": "My buddies",
+    "sent": "Sent",
+    "going": "Buddies are going",
+    "goingWith": "with %{names}",
+    "accept": "Accept",
+    "decline": "Decline",
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "empty": "No buddies yet",
+    "emptyBody": "Find explorers at your level and add them as buddies."
+  },
+  "remove": {
+    "title": "Remove buddy?",
+    "body": "%{name} will no longer be your buddy.",
+    "confirm": "Remove",
+    "keep": "Keep"
+  },
+  "toast": {
+    "requested": "Buddy request sent",
+    "accepted": "You're buddies now",
+    "declined": "Request declined",
+    "cancelled": "Request cancelled",
+    "removed": "Buddy removed"
+  },
+  "guest": {
+    "title": "Find hiking buddies",
+    "body": "Make a free account to find explorers and add buddies.",
+    "action": "Log in"
+  },
+  "errors": {
+    "BUDDY_EXISTS": "You're already linked with this explorer.",
+    "BUDDY_USER_NOT_FOUND": "This explorer isn't available any more.",
+    "SECURED_ACCOUNT_REQUIRED": "Secure your account to add buddies."
+  },
+  "groupsCard": {
+    "title": "Find buddies",
+    "body": "Explorers at your level, free this weekend"
+  },
+  "profile": {
+    "row": "Buddies",
+    "count": { "one": "%{count} buddy", "other": "%{count} buddies" },
+    "add": "Add buddy",
+    "requested": "Requested",
+    "linked": "Buddies"
+  },
+  "regions": {
+    "tashkent_city": "Tashkent",
+    "tashkent_region": "Tashkent region",
+    "andijan": "Andijan",
+    "bukhara": "Bukhara",
+    "fergana": "Fergana",
+    "jizzakh": "Jizzakh",
+    "karakalpakstan": "Karakalpakstan",
+    "khorezm": "Khorezm",
+    "namangan": "Namangan",
+    "navoiy": "Navoiy",
+    "kashkadarya": "Kashkadarya",
+    "samarkand": "Samarkand",
+    "syrdarya": "Syrdarya",
+    "surkhandarya": "Surkhandarya",
+    "other": "Other region"
+  }
+}

@@ -31,6 +31,8 @@ import type {
   GroupTripsListParams,
   GroupTripsPageDto,
   JoinGroupTripDto,
+  TripRatingInputDto,
+  TripRatingsPendingDto,
   UpdateGroupTripDto
 } from '../model';
 
@@ -706,4 +708,165 @@ export const useGroupTripsLeave = <TError = ErrorType<ErrorResponseDto>,
         TContext
       > => {
       return useMutation(getGroupTripsLeaveMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Other attendees of this trip with my own scores so far
+ */
+export const groupTripsPendingRatings = (
+    id: string,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<TripRatingsPendingDto>(
+      {url: `/v1/group-trips/${id}/ratings/pending`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getGroupTripsPendingRatingsQueryKey = (id: string,) => {
+    return [
+    `/v1/group-trips/${id}/ratings/pending`
+    ] as const;
+    }
+
+
+export const getGroupTripsPendingRatingsQueryOptions = <TData = Awaited<ReturnType<typeof groupTripsPendingRatings>>, TError = ErrorType<ErrorResponseDto>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof groupTripsPendingRatings>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGroupTripsPendingRatingsQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof groupTripsPendingRatings>>> = ({ signal }) => groupTripsPendingRatings(id, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof groupTripsPendingRatings>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GroupTripsPendingRatingsQueryResult = NonNullable<Awaited<ReturnType<typeof groupTripsPendingRatings>>>
+export type GroupTripsPendingRatingsQueryError = ErrorType<ErrorResponseDto>
+
+
+export function useGroupTripsPendingRatings<TData = Awaited<ReturnType<typeof groupTripsPendingRatings>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof groupTripsPendingRatings>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof groupTripsPendingRatings>>,
+          TError,
+          Awaited<ReturnType<typeof groupTripsPendingRatings>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGroupTripsPendingRatings<TData = Awaited<ReturnType<typeof groupTripsPendingRatings>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof groupTripsPendingRatings>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof groupTripsPendingRatings>>,
+          TError,
+          Awaited<ReturnType<typeof groupTripsPendingRatings>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGroupTripsPendingRatings<TData = Awaited<ReturnType<typeof groupTripsPendingRatings>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof groupTripsPendingRatings>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Other attendees of this trip with my own scores so far
+ */
+
+export function useGroupTripsPendingRatings<TData = Awaited<ReturnType<typeof groupTripsPendingRatings>>, TError = ErrorType<ErrorResponseDto>>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof groupTripsPendingRatings>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGroupTripsPendingRatingsQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary Rate another attendee 1-5 per trait (until 7 days after backBy)
+ */
+export const groupTripsRate = (
+    id: string,
+    userId: string,
+    tripRatingInputDto: BodyType<TripRatingInputDto>,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<void>(
+      {url: `/v1/group-trips/${id}/ratings/${userId}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: tripRatingInputDto, signal
+    },
+      options);
+    }
+
+
+
+
+export const getGroupTripsRateMutationKey = () => ['groupTripsRate'] as const;
+
+export const getGroupTripsRateMutationOptions = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof groupTripsRate>>, TError,GroupTripsRateMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof groupTripsRate>>, TError,GroupTripsRateMutationVariables, TContext> => {
+
+const mutationKey = getGroupTripsRateMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof groupTripsRate>>, GroupTripsRateMutationVariables> = (props) => {
+          const {id,userId,data} = props ?? {};
+
+          return  groupTripsRate(id,userId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GroupTripsRateMutationResult = NonNullable<Awaited<ReturnType<typeof groupTripsRate>>>
+    export type GroupTripsRateMutationBody = BodyType<TripRatingInputDto>
+    export type GroupTripsRateMutationError = ErrorType<ErrorResponseDto>
+    export type GroupTripsRateMutationVariables = {id: string;userId: string;data: BodyType<TripRatingInputDto>}
+
+    /**
+ * @summary Rate another attendee 1-5 per trait (until 7 days after backBy)
+ */
+export const useGroupTripsRate = <TError = ErrorType<ErrorResponseDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof groupTripsRate>>, TError,GroupTripsRateMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof groupTripsRate>>,
+        TError,
+        GroupTripsRateMutationVariables,
+        TContext
+      > => {
+      return useMutation(getGroupTripsRateMutationOptions(options), queryClient);
     }

@@ -769,3 +769,61 @@ export const GroupTripsLeaveResponse = zod.object({
 })).describe('Pending requests; leader only, else empty.')
 })
 
+/**
+ * @summary Other attendees of this trip with my own scores so far
+ */
+export const GroupTripsPendingRatingsParams = zod.object({
+  "id": zod.string()
+})
+
+export const groupTripsPendingRatingsResponseAttendeesItemLevelMax = 7;
+
+export const groupTripsPendingRatingsResponseAttendeesItemMyScoresOneReliableMax = 5;
+
+export const groupTripsPendingRatingsResponseAttendeesItemMyScoresOneSafetyMax = 5;
+
+export const groupTripsPendingRatingsResponseAttendeesItemMyScoresOneCompanyMax = 5;
+
+
+
+export const GroupTripsPendingRatingsResponse = zod.object({
+  "groupTripId": zod.uuid(),
+  "closesAt": zod.iso.datetime({"offset":true}).describe('backBy + 7 days.'),
+  "attendees": zod.array(zod.object({
+  "userId": zod.uuid(),
+  "username": zod.string(),
+  "displayName": zod.string().nullable(),
+  "avatarUrl": zod.string().nullable().describe('Null when no avatar is set or storage is unavailable.'),
+  "level": zod.int().min(1).max(groupTripsPendingRatingsResponseAttendeesItemLevelMax),
+  "myScores": zod.object({
+  "reliable": zod.int().min(1).max(groupTripsPendingRatingsResponseAttendeesItemMyScoresOneReliableMax),
+  "safety": zod.int().min(1).max(groupTripsPendingRatingsResponseAttendeesItemMyScoresOneSafetyMax),
+  "company": zod.int().min(1).max(groupTripsPendingRatingsResponseAttendeesItemMyScoresOneCompanyMax)
+}).nullable().describe('Your scores for this person, or null when not rated yet.')
+}))
+})
+
+/**
+ * @summary Rate another attendee 1-5 per trait (until 7 days after backBy)
+ */
+export const GroupTripsRateParams = zod.object({
+  "id": zod.string(),
+  "userId": zod.string()
+})
+
+export const groupTripsRateBodyReliableMax = 5;
+
+export const groupTripsRateBodySafetyMax = 5;
+
+export const groupTripsRateBodyCompanyMax = 5;
+
+
+
+export const GroupTripsRateBody = zod.object({
+  "reliable": zod.int().min(1).max(groupTripsRateBodyReliableMax),
+  "safety": zod.int().min(1).max(groupTripsRateBodySafetyMax),
+  "company": zod.int().min(1).max(groupTripsRateBodyCompanyMax)
+})
+
+export const GroupTripsRateResponse = zod.void()
+

@@ -9,6 +9,7 @@ import type {
 } from '../../../app/navigation/types';
 import { useMeLevelGet } from '../../../shared/api/generated';
 import { useBadgesList } from '../../../shared/api/generated/badges/badges';
+import { useMeBuddySummary } from '../../../shared/api/generated/buddies/buddies';
 import { useMeStats } from '../../../shared/api/generated/me/me';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
@@ -272,6 +273,7 @@ function AccountProfile({ streaksCard }: { streaksCard?: ReactNode }) {
   const [confirmClosing, setConfirmClosing] = useState(false);
   const statsQuery = useMeStats();
   const badgesQuery = useBadgesList();
+  const buddySummary = useMeBuddySummary();
 
   if (!user) {
     return (
@@ -511,6 +513,20 @@ function AccountProfile({ streaksCard }: { streaksCard?: ReactNode }) {
       </View>
       <ListCard>
         {languageRow}
+        <ListRow
+          testID="profile.buddies"
+          label={t('buddies.profile.row')}
+          value={
+            buddySummary.data
+              ? t('buddies.profile.count', { count: buddySummary.data.buddyCount })
+              : undefined
+          }
+          icon={<Icon name="person" color={colors.muted} size={ROW_ICON} />}
+          trailing={
+            <Icon name="chevron" color={colors.stone} size={spacing[18]} />
+          }
+          onPress={() => navigation.navigate('Buddies', { tab: 'mine' })}
+        />
         <ListRow
           testID="profile.recovery-phone"
           label={t('auth.profile.recoveryPhone')}

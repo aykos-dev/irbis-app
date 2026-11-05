@@ -2,6 +2,7 @@ export * from './admin/admin.ts';
 export * from './admin-auth/admin-auth.ts';
 export * from './auth/auth.ts';
 export * from './badges/badges.ts';
+export * from './buddies/buddies.ts';
 export * from './check-ins/check-ins.ts';
 export * from './conditions/conditions.ts';
 export * from './group-chat/group-chat.ts';

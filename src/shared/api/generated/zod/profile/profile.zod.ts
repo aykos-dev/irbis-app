@@ -64,3 +64,21 @@ export const UsersGetStatsResponse = zod.object({
   "spots": zod.int().min(usersGetStatsResponseSpotsMin).describe('Verified spots added.')
 })
 
+/**
+ * @summary A public profile's buddy count and trip-buddy ratings
+ */
+export const UsersGetBuddySummaryParams = zod.object({
+  "username": zod.string()
+})
+
+export const UsersGetBuddySummaryResponse = zod.object({
+  "buddyCount": zod.int().describe('Accepted buddies.'),
+  "ratings": zod.object({
+  "reliable": zod.number().describe('Mean, 1 decimal.'),
+  "safety": zod.number().describe('Mean, 1 decimal.'),
+  "company": zod.number().describe('Mean, 1 decimal.'),
+  "raters": zod.int().describe('Distinct raters.'),
+  "trips": zod.int().describe('Distinct trips rated.')
+}).nullable().describe('Null below 3 distinct raters.')
+})
+

@@ -4,14 +4,24 @@ import {
   type RouteProp,
 } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
 import type { RootStackParamList } from '../../../app/navigation/types';
 import { useUsersGetBadges } from '../../../shared/api/generated/badges/badges';
 import {
+  getBuddiesListQueryKey,
+  useBuddiesList,
+  useBuddiesRequest,
+} from '../../../shared/api/generated/buddies/buddies';
+import {
+  useUsersGetBuddySummary,
   useUsersGetProfile,
   useUsersGetStats,
 } from '../../../shared/api/generated/profile/profile';
+import { errorMessageKey, isApiError } from '../../../shared/api/errors';
+import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
 import { ErrorState } from '../../../shared/components/ErrorState';
 import { Icon } from '../../../shared/components/Icon';
@@ -19,8 +29,13 @@ import { Pressable } from '../../../shared/components/Pressable';
 import { Screen } from '../../../shared/components/Screen';
 import { Skeleton } from '../../../shared/components/Skeleton';
 import { spacing } from '../../../shared/constants/spacing';
+import { toast } from '../../../shared/components/toastBus';
+import { useAuth } from '../../../shared/contexts/auth';
 import { useTheme } from '../../../shared/contexts/theme';
-import { getLocale } from '../../../shared/i18n';
+import { useNetworkStatus } from '../../../shared/hooks/useNetworkStatus';
+import { useRequireAccount } from '../../../shared/hooks/useRequireAccount';
+import { getLocale, t } from '../../../shared/i18n';
+import { haptics } from '../../../shared/utils/haptics';
 import { formatDistance, formatElevation } from '../../../shared/utils/units';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -36,6 +51,9 @@ export function PublicProfileScreen() {
     query: { enabled: profile.data?.showStats === true },
   });
   const badges = useUsersGetBadges(route.params.username, {
+    query: { enabled: !!profile.data },
+  });
+  const buddySummary = useUsersGetBuddySummary(route.params.username, {
     query: { enabled: !!profile.data },
   });
 
@@ -122,6 +140,23 @@ export function PublicProfileScreen() {
               </AppText>
             ) : null}
             <AppText variant="chip">Level {profile.data.level}</AppText>
+            {buddySummary.data ? (
+              <AppText
+                testID="public-profile.buddy-count"
+                variant="small"
+                tone="muted"
+              >
+                {t('buddies.profile.count', {
+                  count: buddySummary.data.buddyCount,
+                })}
+              </AppText>
+            ) : null}
+            {route.params.userId ? (
+              <AddBuddy
+                userId={route.params.userId}
+                username={route.params.username}
+              />
+            ) : null}
           </View>
           <View testID="public-profile.stats" style={styles.section}>
             <AppText variant="h3">Adventure stats</AppText>
@@ -168,6 +203,90 @@ export function PublicProfileScreen() {
         </>
       )}
     </Screen>
+  );
+}
+
+const BUDDY_ERRORS: ReadonlySet<string> = new Set([
+  'BUDDY_EXISTS',
+  'BUDDY_USER_NOT_FOUND',
+  'SECURED_ACCOUNT_REQUIRED',
+]);
+
+/** "Add buddy" (buddies AC5), shown when the Buddies screen passed the user id. */
+function AddBuddy({ userId, username }: { userId: string; username: string }) {
+  const navigation = useNavigation<Nav>();
+  const queryClient = useQueryClient();
+  const { status, user } = useAuth();
+  const { isOnline } = useNetworkStatus();
+  const requireAccount = useRequireAccount('post');
+  const [sent, setSent] = useState(false);
+  const signedIn = status === 'signedIn';
+  const list = useBuddiesList({ query: { enabled: signedIn } });
+  const request = useBuddiesRequest({
+    mutation: { meta: { silentError: true } },
+  });
+
+  if (user?.username === username) {
+    return null;
+  }
+  const linked = list.data?.buddies.some(link => link.userId === userId);
+  const pending =
+    sent ||
+    list.data?.outgoing.some(link => link.userId === userId) ||
+    list.data?.incoming.some(link => link.userId === userId);
+  if (linked || pending) {
+    return (
+      <AppText testID="public-profile.buddy-status" variant="chip" tone="teal700">
+        {t(linked ? 'buddies.profile.linked' : 'buddies.profile.requested')}
+      </AppText>
+    );
+  }
+
+  const add = () =>
+    requireAccount(() => {
+      if (user?.isDemo) {
+        toast.show({
+          variant: 'error',
+          message: t('buddies.errors.SECURED_ACCOUNT_REQUIRED'),
+        });
+        navigation.navigate('SecureAccount');
+        return;
+      }
+      request.mutateAsync({ data: { userId } }).then(
+        link => {
+          setSent(true);
+          haptics.success();
+          toast.show({
+            variant: 'success',
+            message: t(
+              link.status === 'accepted'
+                ? 'buddies.toast.accepted'
+                : 'buddies.toast.requested',
+            ),
+          });
+          void queryClient.invalidateQueries({
+            queryKey: getBuddiesListQueryKey(),
+          });
+        },
+        (error: unknown) => {
+          haptics.error();
+          const key =
+            isApiError(error) && BUDDY_ERRORS.has(error.code)
+              ? `buddies.errors.${error.code}`
+              : errorMessageKey(error);
+          toast.show({ variant: 'error', message: t(key) });
+        },
+      );
+    });
+
+  return (
+    <AppButton
+      testID="public-profile.add-buddy"
+      label={t('buddies.profile.add')}
+      loading={request.isPending}
+      disabled={!isOnline}
+      onPress={add}
+    />
   );
 }
 

@@ -5,6 +5,7 @@ import { storage } from '../storage';
 
 import enActive from './en/active.json';
 import enAuth from './en/auth.json';
+import enBuddies from './en/buddies.json';
 import enCamp from './en/camp.json';
 import enCheckin from './en/checkin.json';
 import enCommon from './en/common.json';
@@ -25,6 +26,7 @@ import enTrip from './en/trip.json';
 import enTripEvents from './en/tripEvents.json';
 import ruActive from './ru/active.json';
 import ruAuth from './ru/auth.json';
+import ruBuddies from './ru/buddies.json';
 import ruCamp from './ru/camp.json';
 import ruCheckin from './ru/checkin.json';
 import ruCommon from './ru/common.json';
@@ -45,6 +47,7 @@ import ruTrip from './ru/trip.json';
 import ruTripEvents from './ru/tripEvents.json';
 import uzActive from './uz/active.json';
 import uzAuth from './uz/auth.json';
+import uzBuddies from './uz/buddies.json';
 import uzCamp from './uz/camp.json';
 import uzCheckin from './uz/checkin.json';
 import uzCommon from './uz/common.json';
@@ -84,6 +87,7 @@ export const i18n = new I18n({
   en: {
     active: enActive,
     auth: enAuth,
+    buddies: enBuddies,
     camp: enCamp,
     checkin: enCheckin,
     common: enCommon,
@@ -106,6 +110,7 @@ export const i18n = new I18n({
   ru: {
     active: ruActive,
     auth: ruAuth,
+    buddies: ruBuddies,
     camp: ruCamp,
     checkin: ruCheckin,
     common: ruCommon,
@@ -128,6 +133,7 @@ export const i18n = new I18n({
   uz: {
     active: uzActive,
     auth: uzAuth,
+    buddies: uzBuddies,
     camp: uzCamp,
     checkin: uzCheckin,
     common: uzCommon,

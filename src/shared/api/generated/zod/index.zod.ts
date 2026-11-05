@@ -2,6 +2,7 @@ export * from './admin/admin.zod.ts';
 export * from './admin-auth/admin-auth.zod.ts';
 export * from './auth/auth.zod.ts';
 export * from './badges/badges.zod.ts';
+export * from './buddies/buddies.zod.ts';
 export * from './check-ins/check-ins.zod.ts';
 export * from './conditions/conditions.zod.ts';
 export * from './group-chat/group-chat.zod.ts';

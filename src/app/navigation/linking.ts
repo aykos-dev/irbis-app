@@ -114,6 +114,7 @@ export const linking: LinkingOptions<RootStackParamList> = {
       GroupChat: 'groups/:id/chat',
       Place: 'place/:id',
       GroupTrip: 'trips/:id',
+      Buddies: 'buddies',
       ...debugScreens,
     },
   },
