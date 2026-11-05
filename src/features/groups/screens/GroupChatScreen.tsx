@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Image, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, TextInput, View, type ScrollViewInstance } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import type { RootStackScreenProps } from '../../../app/navigation/types';
@@ -62,7 +62,7 @@ export function GroupChatScreen({ navigation, route }: RootStackScreenProps<'Gro
   const mute = useGroupChatMute();
   const upload = useGroupChatUploadPhoto();
   const [body, setBody] = useState('');
-  const list = useRef<ScrollView>(null);
+  const list = useRef<ScrollViewInstance>(null);
   const [replyTo, setReplyTo] = useState<GroupMessageDto | null>(null);
   const [editing, setEditing] = useState<GroupMessageDto | null>(null);
   const [attachments, setAttachments] = useState<GroupMessageAttachmentDto[]>([]);
