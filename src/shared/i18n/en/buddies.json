@@ -1,7 +1,14 @@
 {
   "title": "Buddies",
   "back": "Back",
-  "segments": { "find": "Find", "mine": "Mine", "incoming": { "one": "%{count} request", "other": "%{count} requests" } },
+  "segments": {
+    "find": "Find",
+    "mine": "Mine",
+    "incoming": {
+      "one": "%{count} request",
+      "other": "%{count} requests"
+    }
+  },
   "find": {
     "title": "Find buddies",
     "free": "I'm free this weekend",
@@ -12,13 +19,19 @@
     "near": "L%{lo}–L%{hi}",
     "mentors": "Mentors (L5+)",
     "weekend": "This weekend",
-    "match": { "one": "%{count} explorer matches", "other": "%{count} explorers match" },
+    "match": {
+      "one": "%{count} explorer matches",
+      "other": "%{count} explorers match"
+    },
     "empty": "No explorers match — try fewer filters",
     "saved": "Weekend plans saved"
   },
   "card": {
     "rating": "★ %{rating}",
-    "together": { "one": "%{count} trip together", "other": "%{count} trips together" },
+    "together": {
+      "one": "%{count} trip together",
+      "other": "%{count} trips together"
+    },
     "leader": "Verified leader",
     "freeSat": "Free Sat",
     "freeSun": "Free Sun",
@@ -61,7 +74,10 @@
   "errors": {
     "BUDDY_EXISTS": "You're already linked with this explorer.",
     "BUDDY_USER_NOT_FOUND": "This explorer isn't available any more.",
-    "SECURED_ACCOUNT_REQUIRED": "Secure your account to add buddies."
+    "SECURED_ACCOUNT_REQUIRED": "Secure your account to add buddies.",
+    "NOT_ATTENDEE": "Only explorers who attended this trip can rate it.",
+    "RATING_CLOSED": "Rating for this trip has closed.",
+    "RATING_SELF": "You can't rate yourself."
   },
   "groupsCard": {
     "title": "Find buddies",
@@ -69,7 +85,10 @@
   },
   "profile": {
     "row": "Buddies",
-    "count": { "one": "%{count} buddy", "other": "%{count} buddies" },
+    "count": {
+      "one": "%{count} buddy",
+      "other": "%{count} buddies"
+    },
     "add": "Add buddy",
     "requested": "Requested",
     "linked": "Buddies"
@@ -90,5 +109,34 @@
     "syrdarya": "Syrdarya",
     "surkhandarya": "Surkhandarya",
     "other": "Other region"
+  },
+  "rate": {
+    "title": "Rate your trip buddies",
+    "anonymous": "Ratings are anonymous.",
+    "closes": "Closes on %{date}",
+    "closed": "Rating closed on %{date}.",
+    "reliable": "Reliable",
+    "safety": "Safety-first",
+    "company": "Good company",
+    "star": "%{trait}: %{n} of 5",
+    "save": "Save",
+    "saved": "Saved",
+    "savedToast": "Rating saved",
+    "empty": "No one else to rate on this trip."
+  },
+  "homeCard": {
+    "title": "Rate your trip buddies · %{place}",
+    "body": {
+      "one": "%{count} buddy to rate",
+      "other": "%{count} buddies to rate"
+    }
+  },
+  "ratings": {
+    "title": "Rated by trip buddies",
+    "empty": "No buddy ratings yet.",
+    "trips": {
+      "one": "%{count} trip",
+      "other": "%{count} trips"
+    }
   }
 }

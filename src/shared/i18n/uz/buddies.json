@@ -1,7 +1,14 @@
 {
   "title": "Hamrohlar",
   "back": "Orqaga",
-  "segments": { "find": "Topish", "mine": "Meniki", "incoming": { "one": "%{count} soʻrov", "other": "%{count} soʻrov" } },
+  "segments": {
+    "find": "Topish",
+    "mine": "Meniki",
+    "incoming": {
+      "one": "%{count} soʻrov",
+      "other": "%{count} soʻrov"
+    }
+  },
   "find": {
     "title": "Hamroh topish",
     "free": "Shu dam olish kunlari boʻshman",
@@ -12,13 +19,19 @@
     "near": "L%{lo}–L%{hi}",
     "mentors": "Ustozlar (L5+)",
     "weekend": "Shu dam olish kunlari",
-    "match": { "one": "%{count} ta sayyoh mos keldi", "other": "%{count} ta sayyoh mos keldi" },
+    "match": {
+      "one": "%{count} ta sayyoh mos keldi",
+      "other": "%{count} ta sayyoh mos keldi"
+    },
     "empty": "Mos sayyoh topilmadi — filtrlarni kamaytiring",
     "saved": "Dam olish rejalari saqlandi"
   },
   "card": {
     "rating": "★ %{rating}",
-    "together": { "one": "%{count} ta birga sayohat", "other": "%{count} ta birga sayohat" },
+    "together": {
+      "one": "%{count} ta birga sayohat",
+      "other": "%{count} ta birga sayohat"
+    },
     "leader": "Tasdiqlangan yetakchi",
     "freeSat": "Shanba boʻsh",
     "freeSun": "Yakshanba boʻsh",
@@ -61,7 +74,10 @@
   "errors": {
     "BUDDY_EXISTS": "Bu sayyoh bilan allaqachon bogʻlangansiz.",
     "BUDDY_USER_NOT_FOUND": "Bu sayyoh endi mavjud emas.",
-    "SECURED_ACCOUNT_REQUIRED": "Hamroh qoʻshish uchun akkauntingizni himoyalang."
+    "SECURED_ACCOUNT_REQUIRED": "Hamroh qoʻshish uchun akkauntingizni himoyalang.",
+    "NOT_ATTENDEE": "Faqat shu sayohatda qatnashganlar baholay oladi.",
+    "RATING_CLOSED": "Bu sayohat uchun baholash yopilgan.",
+    "RATING_SELF": "Oʻzingizni baholay olmaysiz."
   },
   "groupsCard": {
     "title": "Hamroh topish",
@@ -69,7 +85,10 @@
   },
   "profile": {
     "row": "Hamrohlar",
-    "count": { "one": "%{count} ta hamroh", "other": "%{count} ta hamroh" },
+    "count": {
+      "one": "%{count} ta hamroh",
+      "other": "%{count} ta hamroh"
+    },
     "add": "Hamroh qoʻshish",
     "requested": "Soʻrov yuborildi",
     "linked": "Hamrohlar"
@@ -90,5 +109,34 @@
     "syrdarya": "Sirdaryo",
     "surkhandarya": "Surxondaryo",
     "other": "Boshqa hudud"
+  },
+  "rate": {
+    "title": "Sayohat hamrohlaringizni baholang",
+    "anonymous": "Baholar anonim.",
+    "closes": "%{date} gacha baholash mumkin",
+    "closed": "Baholash %{date} da yopildi.",
+    "reliable": "Ishonchli",
+    "safety": "Xavfsizlik birinchi",
+    "company": "Yoqimli hamroh",
+    "star": "%{trait}: 5 dan %{n}",
+    "save": "Saqlash",
+    "saved": "Saqlandi",
+    "savedToast": "Baho saqlandi",
+    "empty": "Bu sayohatda baholash uchun boshqa hech kim yoʻq."
+  },
+  "homeCard": {
+    "title": "Hamrohlaringizni baholang · %{place}",
+    "body": {
+      "one": "%{count} hamroh baholanishi kerak",
+      "other": "%{count} hamroh baholanishi kerak"
+    }
+  },
+  "ratings": {
+    "title": "Sayohat hamrohlari baholari",
+    "empty": "Hamrohlardan hali baho yoʻq.",
+    "trips": {
+      "one": "%{count} sayohat",
+      "other": "%{count} sayohat"
+    }
   }
 }

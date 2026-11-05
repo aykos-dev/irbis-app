@@ -2,6 +2,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { clearTripDevice } from '../../features/active-trip/tripDevice';
 import { ProfileScreen } from '../../features/auth/screens/ProfileScreen';
+import { BuddyRatings } from '../../features/buddies/components/BuddyRatings';
+import { HomeRateCard } from '../../features/buddies/components/HomeRateCard';
 import { CommunityScreen } from '../screens/CommunityScreen';
 import { LessonsHubScreen } from '../../features/lessons/screens/LessonsHubScreen';
 import { getInterests } from '../../features/onboarding/onboardingStore';
@@ -41,13 +43,20 @@ export function TabNavigator() {
             placeType={placeType}
             tripCard={<TripCard onCheckedOut={clearTripDevice} />}
             streakChips={<StreakChips />}
+            rateCard={<HomeRateCard />}
           />
         )}
       </Tab.Screen>
       <Tab.Screen name="Explore" component={ExploreScreen} />
       <Tab.Screen name="Lessons">{props => <LessonsHubScreen {...props} streakLine={<StreakLessonsLine />} />}</Tab.Screen>
       <Tab.Screen name="Community" component={CommunityScreen} />
-      <Tab.Screen name="Profile">{props => <ProfileScreen {...props} streaksCard={<ProfileStreaksCard />} />}</Tab.Screen>
+      <Tab.Screen name="Profile">{props => (
+          <ProfileScreen
+            {...props}
+            streaksCard={<ProfileStreaksCard />}
+            buddyRatings={<BuddyRatings testID="profile.ratings" />}
+          />
+        )}</Tab.Screen>
     </Tab.Navigator>
   );
 }

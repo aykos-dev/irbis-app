@@ -61,6 +61,8 @@ export * from './buddyLinkStatus.ts';
 export * from './buddyPlaceNamesDto.ts';
 export * from './buddyProfileRatingsDto.ts';
 export * from './buddyRatingDto.ts';
+export * from './buddyRelation.ts';
+export * from './buddyRelationDto.ts';
 export * from './buddyRequestInputDto.ts';
 export * from './buddySummaryDto.ts';
 export * from './buddyTripBuddyDto.ts';

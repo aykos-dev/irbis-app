@@ -8,7 +8,7 @@ import {
   useNotificationsList,
   useNotificationsReadAll,
 } from '../../../shared/api/generated/notifications/notifications';
-import type { NotificationCategory } from '../../../shared/api/generated/model';
+import type { NotificationCategory, NotificationItemDto } from '../../../shared/api/generated/model';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
 import { EmptyState } from '../../../shared/components/EmptyState';
@@ -21,6 +21,12 @@ import { radii, spacing } from '../../../shared/constants/spacing';
 import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
+
+/** The group trip a `trip_rate` notification opens (buddies AC7), else null. */
+function rateTripId(item: NotificationItemDto): string | null {
+  const id = item.data?.groupTripId;
+  return item.kind === 'trip_rate' && typeof id === 'string' ? id : null;
+}
 type Tab = 'all' | NotificationCategory;
 
 function tashkentDay(value: string | Date): string {
@@ -119,8 +125,17 @@ export function NotifsScreen() {
                     {today ? 'Today' : 'Earlier'}
                   </AppText>
                 ) : null}
-                <View
+                <Pressable
                   testID={`notifs.item-${item.id}`}
+                  accessibilityRole={rateTripId(item) ? 'button' : undefined}
+                  accessibilityLabel={item.title}
+                  disabled={!rateTripId(item)}
+                  onPress={() => {
+                    const groupTripId = rateTripId(item);
+                    if (groupTripId) {
+                      navigation.navigate('RateBuddies', { groupTripId });
+                    }
+                  }}
                   style={[layout.item, styles.item]}
                 >
                   {item.readAt ? null : (
@@ -139,7 +154,7 @@ export function NotifsScreen() {
                       {new Date(item.createdAt).toLocaleString()}
                     </AppText>
                   </View>
-                </View>
+                </Pressable>
               </View>
             );
           })}

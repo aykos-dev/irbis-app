@@ -45,9 +45,11 @@ type RootNav = NativeStackNavigationProp<RootStackParamList>;
 type Props = MainTabScreenProps<'Profile'> & {
   /** The account's streak row from the app layer (streaks AC7). */
   streaksCard?: ReactNode;
+  /** "Rated by trip buddies" from the app layer (buddies AC8). */
+  buddyRatings?: ReactNode;
 };
 
-export function ProfileScreen({ streaksCard }: Props) {
+export function ProfileScreen({ streaksCard, buddyRatings }: Props) {
   const { status } = useAuth();
   if (status === 'loading') {
     return (
@@ -63,7 +65,7 @@ export function ProfileScreen({ streaksCard }: Props) {
     );
   }
   return status === 'signedIn' ? (
-    <AccountProfile streaksCard={streaksCard} />
+    <AccountProfile streaksCard={streaksCard} buddyRatings={buddyRatings} />
   ) : (
     <GuestProfile />
   );
@@ -263,7 +265,13 @@ function DemoSignOutSheet({
 }
 
 /** Signed-in profile: username, recovery phone, sign out (AC6); a demo account adds Secure (check-in AC8). */
-function AccountProfile({ streaksCard }: { streaksCard?: ReactNode }) {
+function AccountProfile({
+  streaksCard,
+  buddyRatings,
+}: {
+  streaksCard?: ReactNode;
+  buddyRatings?: ReactNode;
+}) {
   const { navigation, languageRow, safetyRow, debugRow, sheet } =
     useProfileRows();
   const { colors } = useTheme();
@@ -499,12 +507,7 @@ function AccountProfile({ streaksCard }: { streaksCard?: ReactNode }) {
             : 'Badges unlock with check-ins.'}
         </AppText>
       </Pressable>
-      <View testID="profile.ratings" style={styles.section}>
-        <AppText variant="h3">Buddy ratings</AppText>
-        <AppText variant="small" tone="muted">
-          No buddy ratings yet.
-        </AppText>
-      </View>
+      {buddyRatings}
       <View testID="profile.league" style={styles.section}>
         <AppText variant="h3">League</AppText>
         <AppText variant="small" tone="muted">

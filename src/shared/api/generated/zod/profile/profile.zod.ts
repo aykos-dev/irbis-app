@@ -82,3 +82,16 @@ export const UsersGetBuddySummaryResponse = zod.object({
 }).nullable().describe('Null below 3 distinct raters.')
 })
 
+/**
+ * @summary My buddy relation to a public profile's owner (anonymous: none)
+ */
+export const UsersGetBuddyRelationParams = zod.object({
+  "username": zod.string()
+})
+
+export const UsersGetBuddyRelationResponse = zod.object({
+  "userId": zod.uuid().describe('The profile owner\'s user id.'),
+  "relation": zod.enum(['self', 'none', 'outgoing', 'incoming', 'buddies']),
+  "linkId": zod.uuid().nullable().describe('The pending link id when relation is incoming (to accept it); else null.')
+})
+

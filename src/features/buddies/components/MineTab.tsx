@@ -73,7 +73,7 @@ export function MineTab({ header }: { header: ReactNode }) {
                 <PersonRow
                   key={link.id}
                   person={link}
-                  onOpen={() => navigation.navigate('PublicProfile', { username: link.username, userId: link.userId })}
+                  onOpen={() => navigation.navigate('PublicProfile', { username: link.username })}
                 >
                   <Action testID={`buddies.remove-${link.userId}`} label={t('buddies.mine.remove')} disabled={disabled} onPress={() => setRemoving(link)} />
                 </PersonRow>

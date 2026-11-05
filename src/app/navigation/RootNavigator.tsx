@@ -3,7 +3,10 @@ import { useEffect, useState } from 'react';
 
 import { TripSummaryScreen } from '../../features/active-trip/screens/TripSummaryScreen';
 import { BadgesScreen } from '../../features/badges/screens/BadgesScreen';
+import { BuddyRatings } from '../../features/buddies/components/BuddyRatings';
+import { ProfileBuddyButton } from '../../features/buddies/components/ProfileBuddyButton';
 import { BuddiesScreen } from '../../features/buddies/screens/BuddiesScreen';
+import { RateBuddiesScreen } from '../../features/buddies/screens/RateBuddiesScreen';
 import { GameWaiting } from '../../features/campfire-core/games/GameWaiting';
 import { CampJoinScreen } from '../../features/campfire-core/screens/CampJoinScreen';
 import { CampLobbyScreen } from '../../features/campfire-core/screens/CampLobbyScreen';
@@ -44,6 +47,10 @@ import { TabNavigator } from './TabNavigator';
 import type { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
+/** The public profile's buddy pieces (features never import each other). */
+const buddyAction = (username: string) => <ProfileBuddyButton username={username} />;
+const buddyRatings = (username: string, testID: string) => <BuddyRatings username={username} testID={testID} />;
 
 type InitialRoute = 'Onboarding' | 'MainTabs';
 
@@ -104,6 +111,7 @@ export function RootNavigator() {
       <Stack.Screen name="GroupTrip" component={GroupTripScreen} />
       <Stack.Screen name="GroupTrips" component={GroupTripsScreen} />
       <Stack.Screen name="Buddies" component={BuddiesScreen} />
+      <Stack.Screen name="RateBuddies" component={RateBuddiesScreen} />
       <Stack.Screen
         name="TripSummary"
         component={TripSummaryScreen}
@@ -116,7 +124,9 @@ export function RootNavigator() {
       />
       <Stack.Screen name="Level" component={LevelScreen} />
       <Stack.Screen name="Badges" component={BadgesScreen} />
-      <Stack.Screen name="PublicProfile" component={PublicProfileScreen} />
+      <Stack.Screen name="PublicProfile">
+        {() => <PublicProfileScreen buddyAction={buddyAction} buddyRatings={buddyRatings} />}
+      </Stack.Screen>
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} />

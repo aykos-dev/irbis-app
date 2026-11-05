@@ -111,13 +111,12 @@ export type RootStackParamList = {
   Level: undefined;
   /** Full 64-item badge catalogue and the signed-in user's four profile picks. */
   Badges: undefined;
-  /**
-   * Public profile opened from search or irbis://profile/:username. `userId` comes from the
-   * Buddies screen and enables "Add buddy" (buddies AC5).
-   */
-  PublicProfile: { username: string; userId?: string };
+  /** Public profile opened from search, Buddies or irbis://profile/:username (buddy button: buddies AC5). */
+  PublicProfile: { username: string };
   /** Find buddies and my buddies (buddies AC1–AC6), also `irbis://buddies`. */
   Buddies: { tab?: 'find' | 'mine' } | undefined;
+  /** Rate the other attendees of a finished group trip (buddies AC7), from Home or a `trip_rate` notification. */
+  RateBuddies: { groupTripId: string };
   EditProfile: undefined;
   Settings: undefined;
   DeleteAccount: undefined;

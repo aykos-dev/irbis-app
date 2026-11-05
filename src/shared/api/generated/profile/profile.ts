@@ -21,6 +21,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  BuddyRelationDto,
   BuddySummaryDto,
   ErrorResponseDto,
   ProfileStatsDto,
@@ -315,6 +316,98 @@ export function useUsersGetBuddySummary<TData = Awaited<ReturnType<typeof usersG
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getUsersGetBuddySummaryQueryOptions(username,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary My buddy relation to a public profile's owner (anonymous: none)
+ */
+export const usersGetBuddyRelation = (
+    username: string,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<BuddyRelationDto>(
+      {url: `/v1/users/${username}/buddy-relation`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getUsersGetBuddyRelationQueryKey = (username: string,) => {
+    return [
+    `/v1/users/${username}/buddy-relation`
+    ] as const;
+    }
+
+
+export const getUsersGetBuddyRelationQueryOptions = <TData = Awaited<ReturnType<typeof usersGetBuddyRelation>>, TError = ErrorType<ErrorResponseDto>>(username: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersGetBuddyRelation>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getUsersGetBuddyRelationQueryKey(username);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof usersGetBuddyRelation>>> = ({ signal }) => usersGetBuddyRelation(username, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: username !== null && username !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof usersGetBuddyRelation>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type UsersGetBuddyRelationQueryResult = NonNullable<Awaited<ReturnType<typeof usersGetBuddyRelation>>>
+export type UsersGetBuddyRelationQueryError = ErrorType<ErrorResponseDto>
+
+
+export function useUsersGetBuddyRelation<TData = Awaited<ReturnType<typeof usersGetBuddyRelation>>, TError = ErrorType<ErrorResponseDto>>(
+ username: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersGetBuddyRelation>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof usersGetBuddyRelation>>,
+          TError,
+          Awaited<ReturnType<typeof usersGetBuddyRelation>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useUsersGetBuddyRelation<TData = Awaited<ReturnType<typeof usersGetBuddyRelation>>, TError = ErrorType<ErrorResponseDto>>(
+ username: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersGetBuddyRelation>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof usersGetBuddyRelation>>,
+          TError,
+          Awaited<ReturnType<typeof usersGetBuddyRelation>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useUsersGetBuddyRelation<TData = Awaited<ReturnType<typeof usersGetBuddyRelation>>, TError = ErrorType<ErrorResponseDto>>(
+ username: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersGetBuddyRelation>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary My buddy relation to a public profile's owner (anonymous: none)
+ */
+
+export function useUsersGetBuddyRelation<TData = Awaited<ReturnType<typeof usersGetBuddyRelation>>, TError = ErrorType<ErrorResponseDto>>(
+ username: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersGetBuddyRelation>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getUsersGetBuddyRelationQueryOptions(username,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

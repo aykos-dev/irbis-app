@@ -182,7 +182,7 @@ export function FindTab({ header }: { header: React.ReactElement }) {
           person={item}
           requested={requested.has(item.userId)}
           disabled={!isOnline || actions.adding}
-          onOpen={() => navigation.navigate('PublicProfile', { username: item.username, userId: item.userId })}
+          onOpen={() => navigation.navigate('PublicProfile', { username: item.username })}
           onAdd={() => actions.add(item.userId, () => setRequested(current => new Set(current).add(item.userId)))}
         />
       )}

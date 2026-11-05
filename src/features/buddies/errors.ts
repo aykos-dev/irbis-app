@@ -1,7 +1,14 @@
 import { errorMessageKey, isApiError } from '../../shared/api/errors';
 
 /** Buddy error codes with their own copy (spec API table). */
-const knownCodes: ReadonlySet<string> = new Set(['BUDDY_EXISTS', 'BUDDY_USER_NOT_FOUND', 'SECURED_ACCOUNT_REQUIRED']);
+const knownCodes: ReadonlySet<string> = new Set([
+  'BUDDY_EXISTS',
+  'BUDDY_USER_NOT_FOUND',
+  'SECURED_ACCOUNT_REQUIRED',
+  'NOT_ATTENDEE',
+  'RATING_CLOSED',
+  'RATING_SELF',
+]);
 
 /** i18n key for a failed buddy call. */
 export function buddyErrorKey(error: unknown): string {
