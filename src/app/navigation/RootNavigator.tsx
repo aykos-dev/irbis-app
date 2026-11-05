@@ -31,6 +31,8 @@ import {
   markOnboardingDone,
 } from '../../features/onboarding/onboardingStore';
 import { SafetyScreen } from '../../features/auth/screens/SafetyScreen';
+import { CreateTripScreen } from '../../features/trip-events/screens/CreateTripScreen';
+import { GroupTripScreen } from '../../features/trip-events/screens/GroupTripScreen';
 import { TripPlanScreen } from '../../features/trip-plan/screens/TripPlanScreen';
 import { appConfig } from '../../shared/constants/config';
 import { useAuth } from '../../shared/contexts/auth';
@@ -96,6 +98,8 @@ export function RootNavigator() {
       <Stack.Screen name="Place" component={PlaceRoute} />
       <Stack.Screen name="TripPlan" component={TripPlanScreen} />
       <Stack.Screen name="ActiveTrip" component={ActiveTripRoute} />
+      <Stack.Screen name="CreateTrip" component={CreateTripScreen} />
+      <Stack.Screen name="GroupTrip" component={GroupTripScreen} />
       <Stack.Screen
         name="TripSummary"
         component={TripSummaryScreen}

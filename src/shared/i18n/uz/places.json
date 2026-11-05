@@ -92,5 +92,6 @@
   "location": {
     "banner": "Sizdan masofani ko‘rish uchun joylashuvni yoqing",
     "turnOn": "Yoqish"
-  }
+  },
+  "createTrip": "Guruh sayohatini yaratish"
 }

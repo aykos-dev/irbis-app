@@ -92,5 +92,6 @@
   "location": {
     "banner": "Turn on location to see distances from you",
     "turnOn": "Turn on"
-  }
+  },
+  "createTrip": "Create a group trip"
 }

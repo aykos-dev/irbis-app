@@ -77,6 +77,10 @@ export type RootStackParamList = {
   Place: { id: string; lat?: number; lng?: number };
   /** Trip plan for one place (trip-plan AC1–AC6); `tripId` edits a saved plan. */
   TripPlan: { placeId: string; tripId?: string };
+  /** Create a group trip at a place (trip-events AC1); `groupTripId` edits one (AC5). */
+  CreateTrip: { placeId: string; groupTripId?: string };
+  /** One group trip's page (trip-events AC3–AC5), also `irbis://trips/<id>`. */
+  GroupTrip: { id: string };
   /** The running trip (active-trip AC1–AC4, AC8). */
   ActiveTrip: { tripId: string };
   /** After check-out (active-trip AC8): the checked-out trip's counts. */
