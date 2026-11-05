@@ -379,7 +379,7 @@
   "geo": {
     "globe": {
       "label": "World globe",
-      "hint": "Drag to spin, pinch to zoom, tap to answer",
+      "hint": "Drag to move, pinch to zoom, tap to answer",
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out",
       "selected": "Country selected"

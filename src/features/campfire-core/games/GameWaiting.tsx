@@ -1,7 +1,6 @@
 import { usePreventRemove } from '@react-navigation/native';
 import { useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 import type { RootStackScreenProps } from '../../../app/navigation/types';
 import { AppButton } from '../../../shared/components/AppButton';
@@ -591,26 +590,25 @@ export function GameWaiting({
 }
 
 /**
- * Geocore pages scroll inside a native gesture the globe blocks while it is dragged or pinched, so
- * a vertical drag on the globe turns it instead of scrolling the page (elsewhere the page scrolls).
+ * Geocore pages scroll, except while a finger is on the map: the map then owns the drag, so it
+ * moves the map and never scrolls the page (elsewhere the page scrolls).
  */
 function GamePage({ globe, children }: { globe: boolean; children: ReactNode }) {
-  const scroll = useMemo(() => Gesture.Native(), []);
+  const [mapTouched, setMapTouched] = useState(false);
   if (!globe) {
     return children;
   }
   return (
-    <GlobeScrollContext.Provider value={scroll}>
-      <GestureDetector gesture={scroll}>
-        <ScrollView
-          testID="camp.game.waiting-scroll"
-          style={layout.fill}
-          contentContainerStyle={layout.page}
-          keyboardShouldPersistTaps="handled"
-        >
-          {children}
-        </ScrollView>
-      </GestureDetector>
+    <GlobeScrollContext.Provider value={setMapTouched}>
+      <ScrollView
+        testID="camp.game.waiting-scroll"
+        style={layout.fill}
+        contentContainerStyle={layout.page}
+        keyboardShouldPersistTaps="handled"
+        scrollEnabled={!mapTouched}
+      >
+        {children}
+      </ScrollView>
     </GlobeScrollContext.Provider>
   );
 }

@@ -3,7 +3,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -12,30 +11,19 @@ import {
   StyleSheet,
   View,
   type LayoutChangeEvent,
+  type NativeSyntheticEvent,
 } from 'react-native';
 import {
-  Gesture,
-  GestureDetector,
-  type GestureType,
-} from 'react-native-gesture-handler';
-import Animated, {
-  cancelAnimation,
-  Easing,
-  useDerivedValue,
-  useReducedMotion,
-  useSharedValue,
-  withTiming,
-  type SharedValue,
-} from 'react-native-reanimated';
+  Camera,
+  GeoJSONSource,
+  Layer,
+  Map as MapLibreMap,
+  type CameraRef,
+  type PressEvent,
+  type ViewStateChangeEvent,
+} from '@maplibre/maplibre-react-native';
+import { useReducedMotion } from 'react-native-reanimated';
 import Svg, { Path as SvgPath } from 'react-native-svg';
-import {
-  Canvas,
-  Circle,
-  Path,
-  Skia,
-  type SkPath,
-} from '@shopify/react-native-skia';
-import { scheduleOnRN } from 'react-native-worklets';
 
 import { Pressable } from '../../../../shared/components/Pressable';
 import { radii, spacing } from '../../../../shared/constants/spacing';
@@ -45,32 +33,20 @@ import { haptics } from '../../../../shared/utils/haptics';
 import { campColors, geoColors, geoSizes } from '../../campTheme';
 import { countryByIso, microstates } from './geoData';
 import {
-  fillRings,
-  invertScreen,
-  makeFrame,
-  nearestDot,
-  placeDots,
-  strokeLines,
-  type Frame,
-  type SphereLines,
-} from './globeFrame';
-import {
-  borderLines,
-  graticuleLines,
-  landLines,
-  microDots,
-  ringsOf,
-  type RingRange,
-} from './globeGeometry';
-import {
-  baseRadius,
-  clampLat,
-  clampZoom,
   countryAt,
-  initialView,
+  countryShapes,
+  fitZoom,
+  graticule,
+  isoFilter,
+  mapStyle,
+  maxZoomFor,
+  microAt,
+  microPoints,
+  microShownFilter,
   wrapLng,
-} from './globeProjection';
-import { AnswerMark, MyPin, SeatPin, type GlobeState } from './GlobeMarkers';
+  zoomFor,
+} from './mapGeometry';
+import { AnswerMark, MyPin, SeatPin } from './MapMarkers';
 
 export type GlobePin = {
   seatId: string;
@@ -89,11 +65,11 @@ export type GlobeProps = {
   /** Reveal: country filled orange and/or a marker. */
   answer?: { iso?: string; point?: LatLng } | null;
   pins?: GlobePin[];
-  /** Animates the rotation to centre this point (at mount: starts there). */
+  /** Eases the map to centre this point (at mount: starts there). */
   focus?: LatLng | null;
-  /** With focus, e.g. 4. */
+  /** With focus, e.g. 4 (two zoom levels in) or 2 (one level). */
   focusZoom?: number;
-  /** Read-only: taps are ignored, rotate and zoom still work. */
+  /** Read-only: taps are ignored, pan and zoom still work. */
   disabled?: boolean;
   onSelectCountry?: (iso: string, at: LatLng) => void;
   onDropPin?: (at: LatLng) => void;
@@ -101,58 +77,40 @@ export type GlobeProps = {
 };
 
 /**
- * The page's scroll gesture (`Gesture.Native()` around its ScrollView). Globe drags block it, so a
- * vertical drag on the globe rotates the globe and never scrolls the page.
+ * Set by a scrolling page around the map: called with true while a finger is on the map, so the
+ * page stops scrolling and a drag on the map only ever moves the map.
  */
-export const GlobeScrollContext = createContext<GestureType | null>(null);
+export const GlobeScrollContext = createContext<
+  ((touched: boolean) => void) | null
+>(null);
 
 const countryName = (iso: string) =>
   countryByIso(iso)?.name[getLocale()] ?? iso;
 
-const { pathMinStep, microGap, microHit } = geoSizes;
+const { microDot, microRing, focusMs } = geoSizes;
 
-/** The frame for the current shared values (UI thread). */
-function frameOf(globe: GlobeState): Frame {
-  'worklet';
-  const box = globe.size.value;
-  return makeFrame(
-    globe.lambda.value,
-    globe.phi.value,
-    baseRadius(box) * globe.zoom.value,
-    box,
-  );
-}
+const roundZoom = (zoom: number) => Math.round(zoom * 10) / 10;
 
-/** A path rebuilt on the UI thread whenever the frame (rotation, zoom or size) changes. */
-function useFillPath(frame: SharedValue<Frame>, lines: SphereLines, rings: RingRange) {
-  const { from, to } = rings;
-  return useDerivedValue<SkPath>(() => {
-    const builder = Skia.PathBuilder.Make();
-    fillRings(builder, lines, from, to, frame.value, pathMinStep);
-    return builder.detach();
-  });
-}
+type StartView = { center: [number, number]; zoom: number };
 
-function useStrokePath(frame: SharedValue<Frame>, lines: SphereLines) {
-  return useDerivedValue<SkPath>(() => {
-    const builder = Skia.PathBuilder.Make();
-    strokeLines(builder, lines, frame.value, pathMinStep);
-    return builder.detach();
-  });
-}
-
-const allLand: RingRange = { from: 0, to: landLines.starts.length - 1 };
-
-function startView(focus: LatLng | null | undefined, focusZoom?: number) {
+function viewFor(
+  minZoom: number,
+  focus: LatLng | null | undefined,
+  focusZoom?: number,
+): StartView {
+  const maxZoom = maxZoomFor(minZoom);
   return focus
     ? {
-        lng: wrapLng(focus.lng),
-        lat: clampLat(focus.lat),
-        zoom: clampZoom(focusZoom ?? geoSizes.minZoom),
+        center: [wrapLng(focus.lng), focus.lat],
+        zoom: Math.min(maxZoom, zoomFor(minZoom, focusZoom)),
       }
-    : initialView;
+    : { center: [geoSizes.initialLng, geoSizes.initialLat], zoom: minZoom };
 }
 
+/**
+ * The geocore map (MapLibre, flat Web Mercator, fully offline): bundled countries, graticule and
+ * microstate dots, RN-view markers. The name stays `Globe` for its callers.
+ */
 export function Globe({
   mode,
   selectedIso,
@@ -167,32 +125,23 @@ export function Globe({
   testID = 'geo.globe',
 }: GlobeProps) {
   const reducedMotion = useReducedMotion();
-  const scrollGesture = useContext(GlobeScrollContext);
-  const [start] = useState(() => startView(focus, focusZoom));
-  /* Shown to screen readers; updated when a zoom ends, never during a gesture. */
+  const setScrollLock = useContext(GlobeScrollContext);
+  const camera = useRef<CameraRef>(null);
+  const [minZoom, setMinZoom] = useState(() => fitZoom(geoSizes.board));
+  const maxZoom = maxZoomFor(minZoom);
+  const [start] = useState(() => viewFor(minZoom, focus, focusZoom));
+  /* The live zoom (taps and buttons read it); the label follows when a move ends. */
+  const zoom = useRef(start.zoom);
   const [zoomLabel, setZoomLabel] = useState(start.zoom);
 
-  const lambda = useSharedValue(start.lng);
-  const phi = useSharedValue(start.lat);
-  const zoom = useSharedValue(start.zoom);
-  const size = useSharedValue<number>(geoSizes.board);
-  const pinchFrom = useSharedValue(start.zoom);
-  const globe = useMemo<GlobeState>(
-    () => ({ lambda, phi, zoom, size }),
-    [lambda, phi, zoom, size],
-  );
+  const onLayout = useCallback((event: LayoutChangeEvent) => {
+    const { width } = event.nativeEvent.layout;
+    if (width > 0) {
+      setMinZoom(fitZoom(width));
+    }
+  }, []);
 
-  const onLayout = useCallback(
-    (event: LayoutChangeEvent) => {
-      const { width } = event.nativeEvent.layout;
-      if (width > 0) {
-        size.value = width;
-      }
-    },
-    [size],
-  );
-
-  /* Focus: the shared values animate on the UI thread, the shorter way round in longitude. */
+  /* Focus changes after mount ease the camera there. */
   const focusLat = focus?.lat;
   const focusLng = focus?.lng;
   const mounted = useRef(false);
@@ -204,28 +153,40 @@ export function Globe({
     if (focusLat === undefined || focusLng === undefined) {
       return;
     }
-    const to = startView({ lat: focusLat, lng: focusLng }, focusZoom);
-    const timing = {
-      duration: reducedMotion ? 0 : geoSizes.focusMs,
-      easing: Easing.inOut(Easing.cubic),
-    };
-    lambda.value = withTiming(
-      lambda.value + wrapLng(to.lng - lambda.value),
-      timing,
-    );
-    phi.value = withTiming(to.lat, timing);
-    zoom.value = withTiming(to.zoom, timing);
+    const to = viewFor(minZoom, { lat: focusLat, lng: focusLng }, focusZoom);
+    camera.current?.easeTo({
+      center: to.center,
+      zoom: to.zoom,
+      duration: reducedMotion ? 0 : focusMs,
+    });
+    zoom.current = to.zoom;
     setZoomLabel(to.zoom);
-  }, [focusLat, focusLng, focusZoom, lambda, phi, zoom, reducedMotion]);
+  }, [focusLat, focusLng, focusZoom, minZoom, reducedMotion]);
 
   const zoomBy = useCallback(
-    (factor: number) => {
-      cancelAnimation(zoom);
-      const next = clampZoom(zoom.value * factor);
-      zoom.value = next;
+    (delta: number) => {
+      const next = Math.min(maxZoom, Math.max(minZoom, zoom.current + delta));
+      camera.current?.zoomTo(next, {
+        duration: reducedMotion ? 0 : focusMs,
+      });
+      zoom.current = next;
       setZoomLabel(next);
     },
-    [zoom],
+    [maxZoom, minZoom, reducedMotion],
+  );
+
+  const onRegion = useCallback(
+    (event: NativeSyntheticEvent<ViewStateChangeEvent>) => {
+      zoom.current = event.nativeEvent.zoom;
+    },
+    [],
+  );
+  const onRegionDone = useCallback(
+    (event: NativeSyntheticEvent<ViewStateChangeEvent>) => {
+      zoom.current = event.nativeEvent.zoom;
+      setZoomLabel(event.nativeEvent.zoom);
+    },
+    [],
   );
 
   const choose = useCallback(
@@ -244,130 +205,32 @@ export function Globe({
     [disabled, mode, onDropPin, onSelectCountry],
   );
 
-  const onMicroAt = useCallback(
-    (index: number) => {
-      const item = microstates[index];
-      if (item) {
-        choose(item.iso, { lat: item.lat, lng: item.lng });
-      }
-    },
-    [choose],
-  );
-
-  const onTapAt = useCallback(
-    (lat: number, lng: number) => {
-      if (disabled) {
-        return;
-      }
-      const at = { lat, lng };
-      choose(mode === 'country' ? countryAt(at) : null, at);
-    },
-    [choose, disabled, mode],
-  );
-
   /* Microstate dots are country answers: drawn and tappable in the country games only. */
   const dotsShown = mode === 'country';
 
-  const gesture = useMemo(() => {
-    const stop = () => {
-      'worklet';
-      cancelAnimation(lambda);
-      cancelAnimation(phi);
-      cancelAnimation(zoom);
-    };
-    /* Worklets on the UI thread: a drag writes the shared values only, no React render. */
-    const pan = Gesture.Pan()
-      .onBegin(stop)
-      .onChange(event => {
-        const k = 180 / (Math.PI * baseRadius(size.value) * zoom.value);
-        lambda.value -= event.changeX * k;
-        phi.value = clampLat(phi.value + event.changeY * k);
-      })
-      .withTestId(`${testID}.pan`);
-    const pinch = Gesture.Pinch()
-      .onBegin(stop)
-      .onStart(() => {
-        pinchFrom.value = zoom.value;
-      })
-      .onUpdate(event => {
-        zoom.value = clampZoom(pinchFrom.value * event.scale);
-      })
-      .onEnd(() => {
-        scheduleOnRN(setZoomLabel, zoom.value);
-      })
-      .withTestId(`${testID}.pinch`);
-    if (scrollGesture) {
-      pan.blocksExternalGesture(scrollGesture);
-      pinch.blocksExternalGesture(scrollGesture);
-    }
-    const tap = Gesture.Tap()
-      .maxDistance(geoSizes.tapSlop)
-      .onEnd((event, success) => {
-        if (!success) {
-          return;
-        }
-        const f = frameOf(globe);
-        /* A visible microstate dot within reach wins over the country under the finger. */
-        if (dotsShown) {
-          const hit = nearestDot(
-            placeDots(f, size.value, microDots, microGap),
-            event.x,
-            event.y,
-            microHit,
-          );
-          if (hit >= 0) {
-            scheduleOnRN(onMicroAt, hit);
-            return;
-          }
-        }
-        const at = invertScreen(f, event.x, event.y);
-        if (at) {
-          scheduleOnRN(onTapAt, at.lat, at.lng);
-        }
-      })
-      .withTestId(`${testID}.tap`);
-    return Gesture.Race(Gesture.Simultaneous(pan, pinch), tap);
-  }, [
-    dotsShown,
-    globe,
-    lambda,
-    onMicroAt,
-    onTapAt,
-    phi,
-    pinchFrom,
-    scrollGesture,
-    size,
-    testID,
-    zoom,
-  ]);
-
-  /* The one frame per UI frame: every path, dot and marker is projected from it. */
-  const frame = useDerivedValue(() => frameOf(globe));
-  const radius = useDerivedValue(() => frame.value.r);
-  const centre = useDerivedValue(() => frame.value.cx);
-  const graticule = useStrokePath(frame, graticuleLines);
-  const land = useFillPath(frame, landLines, allLand);
-  const borders = useStrokePath(frame, borderLines);
-  const selectedShown = mode === 'country' && Boolean(selectedIso);
-  const selected = useFillPath(
-    frame,
-    landLines,
-    ringsOf(selectedShown ? selectedIso : null),
-  );
-  const answerShape = useFillPath(frame, landLines, ringsOf(answer?.iso));
-  const dots = useDerivedValue<SkPath>(() => {
-    const builder = Skia.PathBuilder.Make();
-    if (dotsShown) {
-      const placed = placeDots(frame.value, size.value, microDots, microGap);
-      for (let k = 0; k < placed.length; k++) {
-        const dot = placed[k];
-        if (dot) {
-          builder.addCircle(dot.x, dot.y, geoSizes.microDot / 2);
-        }
+  const onPress = useCallback(
+    (event: NativeSyntheticEvent<PressEvent>) => {
+      if (disabled) {
+        return;
       }
-    }
-    return builder.detach();
-  });
+      const [lng, lat] = event.nativeEvent.lngLat;
+      const at = { lat, lng: wrapLng(lng) };
+      if (mode === 'point') {
+        choose(null, at);
+        return;
+      }
+      /* A visible microstate dot within reach wins over the country under the finger. */
+      const dot = dotsShown ? microAt(at, zoom.current) : null;
+      if (dot) {
+        choose(dot.iso, dot.at);
+        return;
+      }
+      choose(countryAt(at), at);
+    },
+    [choose, disabled, dotsShown, mode],
+  );
+
+  const selectedShown = mode === 'country' && Boolean(selectedIso);
 
   /* Screen readers hear that a country is selected, never which one. */
   useEffect(() => {
@@ -376,89 +239,128 @@ export function Globe({
     }
   }, [selectedShown, selectedIso]);
 
+  const lock = useCallback(() => setScrollLock?.(true), [setScrollLock]);
+  const unlock = useCallback(() => setScrollLock?.(false), [setScrollLock]);
+  useEffect(() => unlock, [unlock]);
+
   return (
-    <View style={styles.box} onLayout={onLayout}>
-      <GestureDetector gesture={gesture}>
-        <Animated.View
-          testID={testID}
-          accessible
-          accessibilityLabel={t('camp.geo.globe.label')}
-          accessibilityHint={t('camp.geo.globe.hint')}
-          accessibilityValue={{
-            min: geoSizes.minZoom,
-            max: geoSizes.maxZoom,
-            now: Math.round(zoomLabel * 10) / 10,
-            ...(selectedShown ? { text: t('camp.geo.globe.selected') } : {}),
-          }}
+    <View
+      style={styles.box}
+      onLayout={onLayout}
+      onTouchStart={lock}
+      onTouchEnd={unlock}
+      onTouchCancel={unlock}
+    >
+      <View
+        testID={testID}
+        accessible
+        accessibilityLabel={t('camp.geo.globe.label')}
+        accessibilityHint={t('camp.geo.globe.hint')}
+        accessibilityValue={{
+          min: roundZoom(minZoom),
+          max: roundZoom(maxZoom),
+          now: roundZoom(zoomLabel),
+          ...(selectedShown ? { text: t('camp.geo.globe.selected') } : {}),
+        }}
+        style={styles.fill}
+      >
+        <MapLibreMap
+          testID={`${testID}.map`}
           style={styles.fill}
+          mapStyle={mapStyle}
+          logo={false}
+          compass={false}
+          attribution={false}
+          scaleBar={false}
+          touchRotate={false}
+          touchPitch={false}
+          onPress={onPress}
+          onRegionIsChanging={onRegion}
+          onRegionDidChange={onRegionDone}
         >
-          <Canvas style={StyleSheet.absoluteFill}>
-            <Circle
-              cx={centre}
-              cy={centre}
-              r={radius}
-              color={geoColors.ocean}
+          <Camera
+            ref={camera}
+            initialViewState={{ center: start.center, zoom: start.zoom }}
+            minZoom={minZoom}
+            maxZoom={maxZoom}
+          />
+          <GeoJSONSource id="geo-graticule" data={graticule}>
+            <Layer
+              id="geo-graticule-lines"
+              type="line"
+              style={{
+                lineColor: geoColors.graticule,
+                lineWidth: geoSizes.graticuleStroke,
+              }}
             />
-            <Path
-              path={graticule}
-              style="stroke"
-              strokeWidth={geoSizes.graticuleStroke}
-              color={geoColors.graticule}
+          </GeoJSONSource>
+          <GeoJSONSource id="geo-countries" data={countryShapes}>
+            <Layer
+              id="geo-land"
+              type="fill"
+              style={{ fillColor: geoColors.land }}
             />
-            <Path path={land} color={geoColors.land} />
-            <Path
-              path={borders}
-              style="stroke"
-              strokeWidth={geoSizes.borderStroke}
-              color={geoColors.border}
+            <Layer
+              id="geo-answer"
+              type="fill"
+              filter={isoFilter(answer?.iso)}
+              style={{ fillColor: geoColors.answer }}
             />
-            <Path path={answerShape} color={geoColors.answer} />
-            <Path path={selected} color={geoColors.selected} />
-            <Path
-              path={selected}
-              style="stroke"
-              strokeWidth={geoSizes.selectedStroke}
-              color={geoColors.onSelected}
+            <Layer
+              id="geo-selected"
+              type="fill"
+              filter={isoFilter(selectedShown ? selectedIso : null)}
+              style={{ fillColor: geoColors.selected }}
             />
-            <Path path={dots} color={geoColors.microDot} />
-            <Path
-              path={dots}
-              style="stroke"
-              strokeWidth={geoSizes.microRing}
-              color={geoColors.microRing}
+            <Layer
+              id="geo-borders"
+              type="line"
+              style={{
+                lineColor: geoColors.border,
+                lineWidth: geoSizes.borderStroke,
+              }}
             />
-            <Circle
-              cx={centre}
-              cy={centre}
-              r={radius}
-              style="stroke"
-              strokeWidth={geoSizes.rimStroke}
-              color={geoColors.rim}
-              opacity={geoSizes.rimOpacity}
+            <Layer
+              id="geo-selected-edge"
+              type="line"
+              filter={isoFilter(selectedShown ? selectedIso : null)}
+              style={{
+                lineColor: geoColors.onSelected,
+                lineWidth: geoSizes.selectedStroke,
+              }}
             />
-          </Canvas>
-          {answer?.point ? (
-            <AnswerMark frame={frame} size={size} point={answer.point} />
+          </GeoJSONSource>
+          {dotsShown ? (
+            <GeoJSONSource id="geo-micro" data={microPoints}>
+              <Layer
+                id="geo-micro-dots"
+                type="circle"
+                filter={microShownFilter}
+                style={{
+                  circleRadius: microDot / 2,
+                  circleColor: geoColors.microDot,
+                  circleStrokeWidth: microRing,
+                  circleStrokeColor: geoColors.microRing,
+                }}
+              />
+            </GeoJSONSource>
           ) : null}
+          {answer?.point ? <AnswerMark point={answer.point} /> : null}
           {(pins ?? []).map(pin => (
             <SeatPin
               key={pin.seatId}
-              frame={frame}
-              size={size}
               seatId={pin.seatId}
               point={pin.point}
               label={pin.label}
               colorIndex={pin.colorIndex}
             />
           ))}
-          {mode === 'point' && myPin ? (
-            <MyPin frame={frame} size={size} point={myPin} />
-          ) : null}
-        </Animated.View>
-      </GestureDetector>
+          {mode === 'point' && myPin ? <MyPin point={myPin} /> : null}
+        </MapLibreMap>
+      </View>
       {dotsShown ? (
         /*
-         * The dots are drawn and hit-tested in Skia; these buttons only give screen readers (and
+         * The dots are drawn and hit-tested on the map; these buttons only give screen readers (and
          * tests) a way to pick a microstate. Clipped to 1 pt: invisible and untouchable by eye.
          */
         <View style={styles.a11yList}>
@@ -479,13 +381,13 @@ export function Globe({
           testID="geo.zoom-in"
           label={t('camp.geo.globe.zoomIn')}
           glyph="M12 5v14M5 12h14"
-          onPress={() => zoomBy(geoSizes.zoomStep)}
+          onPress={() => zoomBy(1)}
         />
         <ZoomButton
           testID="geo.zoom-out"
           label={t('camp.geo.globe.zoomOut')}
           glyph="M5 12h14"
-          onPress={() => zoomBy(1 / geoSizes.zoomStep)}
+          onPress={() => zoomBy(-1)}
         />
       </View>
     </View>
@@ -534,6 +436,8 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     alignSelf: 'center',
     overflow: 'hidden',
+    borderRadius: radii.input,
+    backgroundColor: geoColors.ocean,
   },
   fill: { flex: 1 },
   a11yList: {
@@ -547,7 +451,7 @@ const styles = StyleSheet.create({
   a11yButton: { width: geoSizes.microHit, height: geoSizes.microHit },
   zoom: {
     position: 'absolute',
-    right: 0,
+    right: spacing[6],
     bottom: spacing[6],
     gap: spacing[8],
   },

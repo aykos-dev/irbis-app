@@ -1,17 +1,13 @@
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import {
-  fireGestureHandler,
-  getByGestureTestId,
-} from 'react-native-gesture-handler/jest-utils';
 
 import { ThemeProvider } from '../../../../../shared/contexts/theme';
 import { sounds } from '../../../../../shared/sounds/sounds';
-import { campScheme, geoScreenColors, geoSizes } from '../../../campTheme';
+import { campScheme, geoScreenColors } from '../../../campTheme';
 import type { GeoPublic, RosterPlayer } from '../../../protocol/codec';
 import { GeoScreen } from '../GeoScreen';
-import { countryAt, initialView, invertPoint, projectPoint } from '../globeProjection';
+import { countryAt } from '../mapGeometry';
 
 jest.mock('../../../../../shared/sounds/sounds', () => ({
   sounds: {
@@ -75,15 +71,19 @@ async function show(info: GeoPublic, opts: { host?: boolean; onGuess?: jest.Mock
   );
 }
 
-/** A completed tap in the middle of the globe (initial view: Central Asia). */
-const tapCentre = async () =>
+/** Inside Kazakhstan, clear of every microstate dot at the start zoom. */
+const inland = { lat: 48, lng: 67 };
+
+/** A press on the map at `at` (MapLibre reports the touched point). */
+const pressMap = async (at: { lat: number; lng: number }) =>
   act(async () => {
-    const c = geoSizes.board / 2;
-    fireGestureHandler(getByGestureTestId('geo.globe.tap'), [
-      { x: c, y: c },
-      { x: c, y: c },
-    ]);
+    fireEvent(screen.getByTestId('geo.globe.map'), 'press', {
+      nativeEvent: { lngLat: [at.lng, at.lat], point: [0, 0] },
+    });
   });
+
+/** A press on Central Asia (in view at the start of a round). */
+const tapCentre = () => pressMap(inland);
 
 beforeEach(() => {
   played.mockClear();
@@ -116,11 +116,7 @@ describe('GeoRound (AC3)', () => {
     expect(screen.getByTestId('geo.lock')).toBeDisabled();
     expect(screen.getByTestId('geo.lock')).toHaveTextContent('Tap the globe first');
     await tapCentre();
-    const at = invertPoint(geoSizes.board, initialView, {
-      x: geoSizes.board / 2,
-      y: geoSizes.board / 2,
-    });
-    const iso = at ? countryAt(at) : null;
+    const iso = countryAt(inland);
     expect(iso).not.toBeNull();
     expect(screen.getByTestId('geo.lock')).toBeEnabled();
     await fireEvent.press(screen.getByTestId('geo.lock'));
@@ -254,13 +250,8 @@ describe('Country games never name the tapped country', () => {
   it('after selecting Kenya in Find the country no "Kenya" is on screen and Lock in is generic', async () => {
     const onGuess = jest.fn();
     await show(question({ promptId: 'uz' }), { onGuess });
-    const at = projectPoint(geoSizes.board, initialView, { lat: 0.5, lng: 37.9 });
-    await act(async () => {
-      fireGestureHandler(getByGestureTestId('geo.globe.tap'), [
-        { x: at?.x ?? 0, y: at?.y ?? 0 },
-        { x: at?.x ?? 0, y: at?.y ?? 0 },
-      ]);
-    });
+    // North Kenya: at the world zoom the Comoros dot's 22 pt reach covers the centroid.
+    await pressMap({ lat: 3.5, lng: 35.5 });
     expect(screen.getByTestId('geo.lock')).toBeEnabled();
     expect(screen.getByTestId('geo.lock')).toHaveTextContent('Lock in');
     expect(screen.queryByText(/Kenya|Keniya/)).toBeNull();

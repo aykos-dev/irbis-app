@@ -1,8 +1,4 @@
 import { act, fireEvent, screen } from '@testing-library/react-native';
-import {
-  fireGestureHandler,
-  getByGestureTestId,
-} from 'react-native-gesture-handler/jest-utils';
 
 import { fakeNet, type FakeSocket } from '../../../../jest/campNetFakes';
 import { navigationRef } from '../../navigation/navigationRef';
@@ -68,14 +64,12 @@ async function openLobby() {
   await screen.findByTestId('camp.lobby.code');
 }
 
-/** Taps the middle of the globe (Central Asia at the start of a round) and locks the answer in. */
+/** Presses the middle of the map (Central Asia at the start of a round) and locks the answer in. */
 async function hostLocksIn() {
-  const c = geoSizes.board / 2;
   await act(async () => {
-    fireGestureHandler(getByGestureTestId('geo.globe.tap'), [
-      { x: c, y: c },
-      { x: c, y: c },
-    ]);
+    fireEvent(screen.getByTestId('geo.globe.map'), 'press', {
+      nativeEvent: { lngLat: [geoSizes.initialLng, geoSizes.initialLat], point: [0, 0] },
+    });
   });
   await fireEvent.press(screen.getByTestId('geo.lock'));
 }
