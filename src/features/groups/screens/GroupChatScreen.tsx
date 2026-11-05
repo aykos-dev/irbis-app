@@ -1,7 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { useEffect, useMemo, useState } from 'react';
-import { Image, StyleSheet, TextInput, View } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Image, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import type { RootStackScreenProps } from '../../../app/navigation/types';
 import {
@@ -61,6 +62,7 @@ export function GroupChatScreen({ navigation, route }: RootStackScreenProps<'Gro
   const mute = useGroupChatMute();
   const upload = useGroupChatUploadPhoto();
   const [body, setBody] = useState('');
+  const list = useRef<ScrollView>(null);
   const [replyTo, setReplyTo] = useState<GroupMessageDto | null>(null);
   const [editing, setEditing] = useState<GroupMessageDto | null>(null);
   const [attachments, setAttachments] = useState<GroupMessageAttachmentDto[]>([]);
@@ -148,7 +150,8 @@ export function GroupChatScreen({ navigation, route }: RootStackScreenProps<'Gro
   }
 
   return (
-    <Screen testID="group-chat.screen" keyboardAware>
+    <Screen testID="group-chat.screen">
+      <KeyboardAvoidingView behavior="padding" style={layout.fill}>
       <View style={layout.header}>
         <Pressable testID="group-chat.back" accessibilityLabel="Back" onPress={navigation.goBack}><Icon name="back" color={colors.ink} /></Pressable>
         <View style={[layout.groupAvatar, { backgroundColor: group.data?.color ?? colors.teal }]}><AppText variant="h3" tone="white">{group.data?.name.slice(0, 1) ?? 'G'}</AppText></View>
@@ -163,7 +166,16 @@ export function GroupChatScreen({ navigation, route }: RootStackScreenProps<'Gro
         ><Icon name="bell" color={muted ? colors.muted : colors.teal} /></Pressable>
       </View>
 
-      <View testID="group-chat.messages" style={layout.messages}>
+      {/* Only the messages scroll; the header stays on top and the composer stays pinned to the bottom. */}
+      <ScrollView
+        ref={list}
+        testID="group-chat.messages"
+        style={layout.fill}
+        contentContainerStyle={layout.messages}
+        keyboardDismissMode="interactive"
+        keyboardShouldPersistTaps="handled"
+        onContentSizeChange={() => list.current?.scrollToEnd({ animated: false })}
+      >
         {nextCursor ? <AppButton testID="group-chat.older" label={t('groupChat.loadOlder')} variant="white" loading={older.isLoading} onPress={() => setOlderCursor(nextCursor)} /> : null}
         {!items.length && !messages.isLoading ? <AppText tone="muted">{t('groupChat.empty')}</AppText> : null}
         {items.map(message => (
@@ -178,7 +190,7 @@ export function GroupChatScreen({ navigation, route }: RootStackScreenProps<'Gro
             onReact={emoji => void react(message, emoji)}
           />
         ))}
-      </View>
+      </ScrollView>
       {typing ? <AppText testID="group-chat.typing" variant="caption" tone="muted">{t('groupChat.typing')}</AppText> : null}
 
       {replyTo || editing ? (
@@ -220,6 +232,7 @@ export function GroupChatScreen({ navigation, route }: RootStackScreenProps<'Gro
         />
         <Pressable testID="group-chat.send" accessibilityLabel={t('groupChat.send')} disabled={busy || (!body.trim() && !attachments.length)} onPress={() => void submit()} style={[layout.iconButton, styles.send]}><Icon name="arrowUp" color={colors.white} /></Pressable>
       </View>
+      </KeyboardAvoidingView>
     </Screen>
   );
 }
@@ -282,7 +295,8 @@ const layout = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', gap: spacing[10] },
   groupAvatar: { width: 44, height: 44, borderRadius: radii.input, alignItems: 'center', justifyContent: 'center' },
   headerCopy: { flex: 1 },
-  messages: { gap: spacing[12] },
+  fill: { flex: 1, gap: spacing[12] },
+  messages: { flexGrow: 1, justifyContent: 'flex-end', gap: spacing[12], paddingVertical: spacing[8] },
   message: { alignItems: 'flex-start', gap: spacing[6] },
   mineRow: { alignItems: 'flex-end' },
   bubble: { maxWidth: '86%', gap: spacing[6], padding: spacing[10], borderRadius: radii.card },
