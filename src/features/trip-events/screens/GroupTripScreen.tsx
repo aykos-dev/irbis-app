@@ -45,6 +45,7 @@ import { MeetingMap } from '../components/MeetingMap';
 import { TextSheet } from '../components/TextSheet';
 import { tripErrorKey } from '../errors';
 import { formatClock, formatDay, tashkentDay } from '../tripEventTimes';
+import { invalidateTripLists } from '../tripLists';
 
 const HERO_HEIGHT = 140;
 const MAP_HEIGHT = 160;
@@ -131,7 +132,10 @@ function TripPage({ trip, onBack }: { trip: GroupTripDto; onBack: () => void }) 
   const leave = useGroupTripsLeave(silent);
   const cancel = useGroupTripsCancel(silent);
 
-  const store = (next: GroupTripDto) => queryClient.setQueryData(getGroupTripsGetQueryKey(trip.id), next);
+  const store = (next: GroupTripDto) => {
+    queryClient.setQueryData(getGroupTripsGetQueryKey(trip.id), next);
+    invalidateTripLists(queryClient);
+  };
   const fail = (error: unknown) => {
     haptics.error();
     toast.show({ variant: 'error', message: t(tripErrorKey(error)) });
@@ -190,6 +194,7 @@ function TripPage({ trip, onBack }: { trip: GroupTripDto; onBack: () => void }) 
     try {
       await leave.mutateAsync({ id: trip.id });
       await queryClient.invalidateQueries({ queryKey: getGroupTripsGetQueryKey(trip.id) });
+      invalidateTripLists(queryClient);
       done(t('tripEvents.trip.left'));
       return true;
     } catch (error) {

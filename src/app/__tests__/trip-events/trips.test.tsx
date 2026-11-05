@@ -1,4 +1,4 @@
-import { act, fireEvent, screen } from '@testing-library/react-native';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 
 import {
   apiError,
@@ -290,5 +290,24 @@ describe('trip-events — trip page (AC3–AC5)', () => {
     expect(await screen.findByTestId('group-trip.cancelled')).toBeOnTheScreen();
     expect(screen.queryByTestId('group-trip.edit')).not.toBeOnTheScreen();
     expect(screen.queryByTestId('group-trip.cancel')).not.toBeOnTheScreen();
+  });
+  it('refetches the Place trip list after the leader cancels, without a remount', async () => {
+    await signIn();
+    http.reply('/v1/group-trips', { status: 200, body: { items: [], nextCursor: null } });
+    await openPlace();
+    const listCalls = () => http.callsTo('/v1/group-trips').length;
+    const before = listCalls();
+    expect(before).toBeGreaterThan(0);
+    await openTrip(tripBody({ me: { role: 'leader', status: 'approved' } }));
+    http.reply(`${TRIP_URL}/cancel`, {
+      status: 200,
+      body: tripBody({ status: 'cancelled', me: { role: 'leader', status: 'approved' } }),
+    });
+
+    await fireEvent.press(screen.getByTestId('group-trip.cancel'));
+    await fireEvent.press(await screen.findByTestId('group-trip.cancel-sheet-confirm'));
+
+    expect(await screen.findByTestId('group-trip.cancelled')).toBeOnTheScreen();
+    await waitFor(() => expect(listCalls()).toBeGreaterThan(before));
   });
 });

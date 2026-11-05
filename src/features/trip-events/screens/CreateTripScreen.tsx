@@ -81,6 +81,7 @@ import {
   type Clock,
   type TripWindow,
 } from '../tripEventTimes';
+import { invalidateTripLists } from '../tripLists';
 
 const HERO_HEIGHT = 96;
 const SKELETON_BLOCK = 96;
@@ -303,6 +304,7 @@ function TripForm({ place, trip, onBack, onSaved }: FormProps) {
         saved = await create.mutateAsync({ data: body });
       }
       queryClient.setQueryData(getGroupTripsGetQueryKey(saved.id), saved);
+      invalidateTripLists(queryClient);
       haptics.success();
       toast.show({ variant: 'success', message: t(trip ? 'tripEvents.create.saved' : 'tripEvents.create.published') });
       onSaved(saved.id, trip !== null);
