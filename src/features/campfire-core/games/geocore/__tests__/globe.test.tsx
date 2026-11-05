@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
-import type { ReactElement } from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Profiler, type ReactElement } from 'react';
+import { GestureHandlerRootView, State } from 'react-native-gesture-handler';
 import {
   fireGestureHandler,
   getByGestureTestId,
@@ -172,5 +172,33 @@ describe('Globe zoom', () => {
     await fireEvent.press(screen.getByTestId('geo.zoom-out'));
     await fireEvent.press(screen.getByTestId('geo.zoom-out'));
     expect(zoom()).toBe(1);
+  });
+});
+
+describe('Globe drag', () => {
+  it('rotates without a single React render while dragging', async () => {
+    const onRender = jest.fn();
+    const onDropPin = jest.fn();
+    await renderGlobe(
+      <Profiler id="globe" onRender={onRender}>
+        <Globe mode="point" onDropPin={onDropPin} />
+      </Profiler>,
+    );
+    const before = onRender.mock.calls.length;
+    await act(async () => {
+      fireGestureHandler(getByGestureTestId('geo.globe.pan'), [
+        { state: State.BEGAN, translationX: 0, translationY: 0 },
+        { state: State.ACTIVE, translationX: 40, translationY: 10 },
+        { translationX: 80, translationY: 30 },
+        { translationX: 120, translationY: 60 },
+        { state: State.END, translationX: 140, translationY: 70 },
+      ]);
+    });
+    expect(onRender.mock.calls.length).toBe(before);
+    // The drag did rotate: the centre is no longer Central Asia (60°E, 30°N).
+    await tapAt(SIZE / 2, SIZE / 2);
+    const centre = onDropPin.mock.calls[0][0];
+    expect(centre.lng).toBeLessThan(initialView.lng - 10);
+    expect(centre.lat).toBeGreaterThan(initialView.lat + 2);
   });
 });
