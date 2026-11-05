@@ -192,7 +192,7 @@ export function GameWaiting({
   let geoView: GeoView | null = null;
   if (hosted?.game === 'geo' && hostGeo) {
     geoView = {
-      key: `${hosted.round}.${hostGeo.roundNo}.${hostGeo.phase}`,
+      key: `${hosted.round}`,
       info: hostGeo,
       selfSeatId: HOST_SEAT_ID,
       roster: hostRoster,
@@ -200,7 +200,7 @@ export function GameWaiting({
   } else if (player?.game?.game === 'geo') {
     const info = player.game.public;
     geoView = {
-      key: `${player.game.round}.${info.roundNo}.${info.phase}`,
+      key: `${player.game.round}`,
       info,
       selfSeatId: player.seatId,
       roster: player.players,

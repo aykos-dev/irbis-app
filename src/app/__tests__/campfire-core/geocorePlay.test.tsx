@@ -19,6 +19,25 @@ jest.mock('../../../features/campfire-core/native/campNet', () => ({
   },
 }));
 
+/* The real map, with a count of how many times it mounts. */
+jest.mock('../../../features/campfire-core/games/geocore/Globe', () => {
+  const React = require('react');
+  const actual = jest.requireActual('../../../features/campfire-core/games/geocore/Globe');
+  const mounts = jest.fn();
+  return {
+    ...actual,
+    __mounts: mounts,
+    Globe: (props: object) => {
+      React.useEffect(() => mounts(), []);
+      return React.createElement(actual.Globe, props);
+    },
+  };
+});
+
+const globeMounts = jest.requireMock<{ __mounts: jest.Mock }>(
+  '../../../features/campfire-core/games/geocore/Globe',
+).__mounts;
+
 jest.setTimeout(20000);
 
 const net = jest.mocked(campNet);
@@ -76,6 +95,7 @@ async function hostLocksIn() {
 
 describe('campfire-geocore — the host plays on the round screen (AC3, AC6)', () => {
   it('the host sees the prompt, locks in from the globe and (solo) goes straight to the reveal with Next', async () => {
+    globeMounts.mockClear();
     await openLobby();
     await fireEvent.press(screen.getByTestId('camp.lobby.start'));
     expect(await screen.findByTestId('geo.prompt')).toHaveTextContent(/Tap this country/);
@@ -87,6 +107,9 @@ describe('campfire-geocore — the host plays on the round screen (AC3, AC6)', (
     await fireEvent.press(screen.getByTestId('geo.next'));
     expect(saved()).toMatchObject({ phase: 'question', roundNo: 2 });
     expect(await screen.findByTestId('geo.prompt')).toBeOnTheScreen();
+    expect(screen.getByTestId('geo.lock')).toHaveTextContent('Tap the globe first');
+    // One MapLibre map for round 1 → reveal 1 → round 2 (no blank map while the timer runs).
+    expect(globeMounts).toHaveBeenCalledTimes(1);
   });
 });
 

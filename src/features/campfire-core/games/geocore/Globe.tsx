@@ -33,6 +33,7 @@ import { haptics } from '../../../../shared/utils/haptics';
 import { campColors, geoColors, geoSizes } from '../../campTheme';
 import { countryByIso, microstates } from './geoData';
 import {
+  borderLines,
   countryShapes,
   fitZoom,
   graticule,
@@ -140,7 +141,7 @@ export function Globe({
     }
   }, []);
 
-  /* Focus changes after mount ease the camera there. */
+  /* Focus changes after mount ease the camera there; a cleared focus eases back to the start view. */
   const focusLat = focus?.lat;
   const focusLng = focus?.lng;
   const mounted = useRef(false);
@@ -149,10 +150,10 @@ export function Globe({
       mounted.current = true;
       return;
     }
-    if (focusLat === undefined || focusLng === undefined) {
-      return;
-    }
-    const to = viewFor(minZoom, { lat: focusLat, lng: focusLng }, focusZoom);
+    const to =
+      focusLat === undefined || focusLng === undefined
+        ? viewFor(minZoom, null)
+        : viewFor(minZoom, { lat: focusLat, lng: focusLng }, focusZoom);
     camera.current?.easeTo({
       center: to.center,
       zoom: to.zoom,
@@ -310,20 +311,23 @@ export function Globe({
               style={{ fillColor: geoColors.selected }}
             />
             <Layer
-              id="geo-borders"
-              type="line"
-              style={{
-                lineColor: geoColors.border,
-                lineWidth: geoSizes.borderStroke,
-              }}
-            />
-            <Layer
               id="geo-selected-edge"
               type="line"
               filter={isoFilter(selectedShown ? selectedIso : null)}
               style={{
                 lineColor: geoColors.onSelected,
                 lineWidth: geoSizes.selectedStroke,
+              }}
+            />
+          </GeoJSONSource>
+          <GeoJSONSource id="geo-border-mesh" data={borderLines}>
+            <Layer
+              id="geo-borders"
+              type="line"
+              beforeId="geo-selected-edge"
+              style={{
+                lineColor: geoColors.border,
+                lineWidth: geoSizes.borderStroke,
               }}
             />
           </GeoJSONSource>

@@ -11,7 +11,7 @@ import { geoContains } from 'd3-geo';
 
 import type { LatLng } from '../../../../shared/utils/geo';
 import { geoColors, geoSizes } from '../../campTheme';
-import { countries, countryFeatures, microstates } from './geoData';
+import { countries, countryBorders, countryFeatures, microstates } from './geoData';
 
 const {
   tileSize,
@@ -84,24 +84,149 @@ export function fitZoom(width: number): number {
     : mapMinZoom;
 }
 
-/** Playable countries; `iso` on every feature. */
+type Position = GeoJSON.Position;
+
+const lngOf = (point: Position | undefined) => point?.[0] ?? 0;
+const latOf = (point: Position | undefined) => point?.[1] ?? 0;
+
+/** True when two consecutive points are more than 180° apart in longitude (the antimeridian). */
+export const jumpsAntimeridian = (line: Position[]) =>
+  line.some((point, i) => i > 0 && Math.abs(lngOf(point) - lngOf(line[i - 1])) > 180);
+
+/** The line with each longitude shifted by whole turns so no step exceeds 180°. */
+function unwrap(line: Position[]): Position[] {
+  let shift = 0;
+  let prev: number | null = null;
+  return line.map(point => {
+    const lng = lngOf(point);
+    if (prev !== null) {
+      const step = lng + shift - prev;
+      shift += step > 180 ? -360 : step < -180 ? 360 : 0;
+    }
+    prev = lng + shift;
+    return [prev, latOf(point)];
+  });
+}
+
+/** One closed ring clipped to longitudes [lo, hi] (Sutherland–Hodgman), shifted by `by`. */
+function clipRing(ring: Position[], lo: number, hi: number, by: number): Position[] {
+  const edges: [number, (x: number) => boolean][] = [
+    [lo, x => x >= lo],
+    [hi, x => x <= hi],
+  ];
+  let points = ring;
+  for (const [edge, inside] of edges) {
+    const out: Position[] = [];
+    points.forEach((a, i) => {
+      const b = points[(i + 1) % points.length] ?? a;
+      const aIn = inside(lngOf(a));
+      if (aIn) {
+        out.push(a);
+      }
+      if (aIn !== inside(lngOf(b))) {
+        const t = (edge - lngOf(a)) / (lngOf(b) - lngOf(a));
+        out.push([edge, latOf(a) + t * (latOf(b) - latOf(a))]);
+      }
+    });
+    points = out;
+  }
+  const shifted = points.map(point => [lngOf(point) + by, latOf(point)]);
+  const first = shifted[0];
+  return first ? [...shifted, first] : [];
+}
+
+/**
+ * A polygon whose rings cross ±180° split into polygons on each side, so MapLibre (flat, no
+ * wrapping) never draws a ring the long way round. A ring round a pole is closed along it.
+ */
+function splitPolygon(polygon: Position[][]): Position[][][] {
+  if (!polygon.some(jumpsAntimeridian)) {
+    return [polygon];
+  }
+  const rings = polygon.map(ring => {
+    const open = unwrap(ring);
+    const turn = lngOf(open[open.length - 1]) - lngOf(open[0]);
+    if (Math.abs(turn) < 180) {
+      return open;
+    }
+    const mean = open.reduce((sum, point) => sum + latOf(point), 0) / open.length;
+    const pole = mean < 0 ? -90 : 90;
+    return [
+      ...open,
+      [lngOf(open[open.length - 1]), pole],
+      [lngOf(open[0]), pole],
+    ];
+  });
+  const xs = rings.flat().map(lngOf);
+  const from = Math.floor((Math.min(...xs) + 180) / 360);
+  const to = Math.floor((Math.max(...xs) + 180) / 360);
+  const parts: Position[][][] = [];
+  for (let k = from; k <= to; k++) {
+    const lo = k * 360 - 180;
+    const [outer, ...holes] = rings.map(ring => clipRing(ring, lo, lo + 360, -k * 360));
+    if (outer && outer.length >= 4) {
+      parts.push([outer, ...holes.filter(hole => hole.length >= 4)]);
+    }
+  }
+  return parts;
+}
+
+/** A line cut where it crosses ±180°, each piece ending on the antimeridian. */
+function splitLine(line: Position[]): Position[][] {
+  const pieces: Position[][] = [];
+  let piece: Position[] = [];
+  line.forEach((point, i) => {
+    const prev = line[i - 1];
+    if (prev && Math.abs(lngOf(point) - lngOf(prev)) > 180) {
+      const edge = lngOf(prev) > 0 ? 180 : -180;
+      const across = lngOf(point) + (edge > 0 ? 360 : -360);
+      const t = (edge - lngOf(prev)) / (across - lngOf(prev));
+      const lat = latOf(prev) + t * (latOf(point) - latOf(prev));
+      piece.push([edge, lat]);
+      pieces.push(piece);
+      piece = [[-edge, lat]];
+    }
+    piece.push(point);
+  });
+  pieces.push(piece);
+  return pieces.filter(item => item.length >= 2);
+}
+
+/** Playable countries, split at the antimeridian; `iso` on every feature. */
 export const countryShapes: GeoJSON.FeatureCollection<
-  GeoJSON.Polygon | GeoJSON.MultiPolygon,
+  GeoJSON.MultiPolygon,
   { iso: string }
 > = {
   type: 'FeatureCollection',
   features: countries.flatMap(country => {
     const outline = countryFeatures.get(country.n3);
-    return outline
-      ? [
-          {
-            type: 'Feature' as const,
-            properties: { iso: country.iso },
-            geometry: outline.geometry,
-          },
-        ]
-      : [];
+    if (!outline) {
+      return [];
+    }
+    const { geometry } = outline;
+    const polygons =
+      geometry.type === 'Polygon' ? [geometry.coordinates] : geometry.coordinates;
+    return [
+      {
+        type: 'Feature' as const,
+        properties: { iso: country.iso },
+        geometry: {
+          type: 'MultiPolygon' as const,
+          coordinates: polygons.flatMap(splitPolygon),
+        },
+      },
+    ];
   }),
+};
+
+/** Borders and coasts, each shared arc once, cut at the antimeridian. */
+export const borderLines: GeoJSON.Feature<GeoJSON.MultiLineString> = {
+  type: 'Feature',
+  properties: {},
+  geometry: {
+    type: 'MultiLineString',
+    coordinates: countryBorders.coordinates.flatMap(splitLine),
+  },
 };
 
 function steps(from: number, to: number): number[] {
@@ -112,7 +237,7 @@ function steps(from: number, to: number): number[] {
   return values;
 }
 
-/** A line every 10°: meridians pole to pole, parallels to ±80° (straight lines in Mercator). */
+/** A line every 10°: meridians pole to pole, parallels to ±80°, sampled every 10° (no long steps). */
 export const graticule: GeoJSON.Feature<GeoJSON.MultiLineString> = {
   type: 'Feature',
   properties: {},
@@ -123,10 +248,7 @@ export const graticule: GeoJSON.Feature<GeoJSON.MultiLineString> = {
         [lng, -maxLat],
         [lng, maxLat],
       ]),
-      ...steps(-80, 80).map(lat => [
-        [-180, lat],
-        [180, lat],
-      ]),
+      ...steps(-80, 80).map(lat => steps(-180, 180).map(lng => [lng, lat])),
     ],
   },
 };

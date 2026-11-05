@@ -7,7 +7,11 @@ import { campScheme, geoSizes } from '../../../campTheme';
 import { countryByIso } from '../geoData';
 import { Globe } from '../Globe';
 import {
+  borderLines,
   countryAt,
+  countryShapes,
+  graticule,
+  jumpsAntimeridian,
   fromMercator,
   isoFilter,
   mapStyle,
@@ -105,6 +109,45 @@ describe('offline map style and layers', () => {
     expect(mock.layers.get('geo-selected')?.filter).toEqual(['==', ['get', 'iso'], 'KE']);
     expect(mock.layers.get('geo-answer')?.filter).toEqual(['==', ['get', 'iso'], 'UZ']);
     expect(isoFilter(null)).toEqual(['==', ['get', 'iso'], '']);
+  });
+});
+
+describe('antimeridian (bug: stripes across the map, Russia smeared full width)', () => {
+  const polygonsOf = (iso: string) =>
+    countryShapes.features.find(feature => feature.properties.iso === iso)?.geometry
+      .coordinates ?? [];
+  const lngs = (polygon: GeoJSON.Position[][]) => polygon.flat().map(point => point[0] ?? 0);
+  const lats = (polygon: GeoJSON.Position[][]) => polygon.flat().map(point => point[1] ?? 0);
+
+  it('no country ring, border line or graticule line steps more than 180° in longitude', () => {
+    const rings = countryShapes.features.flatMap(feature => feature.geometry.coordinates.flat());
+    expect(rings.length).toBeGreaterThan(0);
+    expect(rings.filter(jumpsAntimeridian)).toEqual([]);
+    expect(borderLines.geometry.coordinates.filter(jumpsAntimeridian)).toEqual([]);
+    expect(graticule.geometry.coordinates.filter(jumpsAntimeridian)).toEqual([]);
+  });
+
+  it("Russia's and Fiji's parts stay inside their real extents (split at ±180°)", () => {
+    const russia = polygonsOf('RU');
+    expect(russia.length).toBeGreaterThan(1);
+    russia.forEach(polygon => {
+      const xs = lngs(polygon);
+      const west = Math.min(...xs) >= 19;
+      const east = Math.max(...xs) <= -169;
+      expect(west || east).toBe(true);
+      expect(Math.min(...lats(polygon))).toBeGreaterThanOrEqual(41);
+      expect(Math.max(...lats(polygon))).toBeLessThanOrEqual(82);
+    });
+    expect(russia.some(polygon => Math.max(...lngs(polygon)) <= -169)).toBe(true);
+    const fiji = polygonsOf('FJ');
+    expect(fiji.length).toBeGreaterThan(1);
+    fiji.forEach(polygon => {
+      const xs = lngs(polygon);
+      expect(Math.min(...xs) >= 177 || Math.max(...xs) <= -179).toBe(true);
+      expect(Math.min(...lats(polygon))).toBeGreaterThanOrEqual(-19);
+      expect(Math.max(...lats(polygon))).toBeLessThanOrEqual(-15);
+    });
+    expect(countryAt({ lat: 66, lng: -175 })).toBe('RU');
   });
 });
 
