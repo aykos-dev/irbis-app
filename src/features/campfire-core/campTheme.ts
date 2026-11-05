@@ -255,11 +255,13 @@ export const geoSizes = {
   zoomBorder: 2,
   zoomEdge: 4,
   /** Microstate dots (map circle layer): a dot shows from the first zoom where it is at least
-   * `microGap` from every dot already shown; a tap within `microHit` of a shown dot picks it. */
+   * `microGap` from every dot already shown. A tap within `microSnap` of a shown dot picks it, even
+   * over land; off non-microstate land, within `microHit`. */
   microDot: 14,
   microRing: 2,
   microGap: 18,
   microHit: 22,
+  microSnap: 10,
   /** The screen-reader-only microstate buttons are clipped to this (pt). */
   a11yClip: 1,
   pinWidth: 28,

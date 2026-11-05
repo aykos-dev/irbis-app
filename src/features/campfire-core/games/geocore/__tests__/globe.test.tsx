@@ -126,26 +126,48 @@ describe('microstate dots', () => {
 describe('Globe taps, country mode', () => {
   it('a press on Kenya selects KE; the ocean selects nothing', async () => {
     const onSelectCountry = jest.fn();
-    await renderGlobe(
-      <Globe mode="country" focus={kenya} focusZoom={4} onSelectCountry={onSelectCountry} />,
-    );
+    await renderGlobe(<Globe mode="country" onSelectCountry={onSelectCountry} />);
     await pressAt({ lat: 0.5, lng: 37.9 });
     expect(onSelectCountry).toHaveBeenCalledWith('KE', { lat: 0.5, lng: 37.9 });
     await pressAt({ lat: -30, lng: -20 });
     expect(onSelectCountry).toHaveBeenCalledTimes(1);
   });
 
-  it("a press within 22 pt of Vatican's visible dot selects VA, not Italy", async () => {
+  it('a press on the Comoros dot centre at the world zoom selects KM', async () => {
+    const onSelectCountry = jest.fn();
+    const comoros = microDots.find(dot => dot.iso === 'KM')!;
+    expect(comoros.minZoom).toBe(0);
+    await renderGlobe(<Globe mode="country" onSelectCountry={onSelectCountry} />);
+    await pressAt(comoros.at);
+    expect(onSelectCountry).toHaveBeenCalledWith('KM', comoros.at);
+  });
+
+  it('over the ocean a press 15 pt from a visible dot still snaps to it', async () => {
+    const onSelectCountry = jest.fn();
+    const malta = microDots.find(dot => dot.iso === 'MT')!;
+    await renderGlobe(<Globe mode="country" onSelectCountry={onSelectCountry} />);
+    await zoomedTo(malta.minZoom);
+    const ocean = offset(malta.at, 15, 0, malta.minZoom);
+    expect(countryAt(ocean)).toBeNull();
+    await pressAt(ocean);
+    expect(onSelectCountry).toHaveBeenCalledWith('MT', malta.at);
+  });
+
+  it("a press within 10 pt of Vatican's visible dot selects VA even over Italy", async () => {
     const onSelectCountry = jest.fn();
     const vatican = microDots.find(dot => dot.iso === 'VA')!;
     await renderGlobe(
       <Globe mode="country" focus={{ lat: 42, lng: 12 }} onSelectCountry={onSelectCountry} />,
     );
     await zoomedTo(vatican.minZoom);
-    const near = offset(vatican.at, 12, -12, vatican.minZoom);
+    const near = offset(vatican.at, 6, -6, vatican.minZoom);
     expect(countryAt(near)).toBe('IT');
     await pressAt(near);
     expect(onSelectCountry).toHaveBeenCalledWith('VA', { lat: 41.903, lng: 12.453 });
+    const italy = offset(vatican.at, 12, -12, vatican.minZoom);
+    expect(countryAt(italy)).toBe('IT');
+    await pressAt(italy);
+    expect(onSelectCountry).toHaveBeenLastCalledWith('IT', italy);
   });
 
   it('a hidden dot (zoomed out below its minZoom) is never picked', async () => {

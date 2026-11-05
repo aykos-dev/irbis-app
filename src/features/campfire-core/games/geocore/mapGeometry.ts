@@ -20,6 +20,7 @@ const {
   microMaxZoom,
   microGap,
   microHit,
+  microSnap,
   maxLat,
   graticuleStep,
 } = geoSizes;
@@ -206,10 +207,14 @@ export function isoFilter(iso: string | null | undefined): FilterSpecification {
   return ['==', ['get', 'iso'], iso ? iso.toUpperCase() : ''];
 }
 
-/** The shown dot nearest `at` within 22 pt at `zoom`, or null. */
-export function microAt(at: LatLng, zoom: number): MicroDot | null {
+/** The shown dot nearest `at` within `reach` pt (default 22) at `zoom`, or null. */
+export function microAt(
+  at: LatLng,
+  zoom: number,
+  reach: number = microHit,
+): MicroDot | null {
   let best: MicroDot | null = null;
-  let bestDistance: number = microHit;
+  let bestDistance = reach;
   for (const dot of microDots) {
     if (dot.minZoom > zoom) {
       continue;
@@ -221,6 +226,32 @@ export function microAt(at: LatLng, zoom: number): MicroDot | null {
     }
   }
   return best;
+}
+
+const microIsos = new Set(microstates.map(item => item.iso));
+
+/**
+ * What a country-mode press at `at` picks: a shown dot within 10 pt of its centre; else the
+ * country under the finger unless it is a microstate; else (ocean or a microstate's own outline)
+ * the nearest shown dot within 22 pt; else that microstate's outline, or nothing.
+ */
+export function pickCountry(
+  at: LatLng,
+  zoom: number,
+): { iso: string; at: LatLng } | null {
+  const onDot = microAt(at, zoom, microSnap);
+  if (onDot) {
+    return { iso: onDot.iso, at: onDot.at };
+  }
+  const iso = countryAt(at);
+  if (iso && !microIsos.has(iso)) {
+    return { iso, at };
+  }
+  const near = microAt(at, zoom);
+  if (near) {
+    return { iso: near.iso, at: near.at };
+  }
+  return iso ? { iso, at } : null;
 }
 
 /** ISO code of the playable country containing `point`, or null (ocean, unlisted territory). */

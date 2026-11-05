@@ -71,7 +71,7 @@ async function show(info: GeoPublic, opts: { host?: boolean; onGuess?: jest.Mock
   );
 }
 
-/** Inside Kazakhstan, clear of every microstate dot at the start zoom. */
+/** Inside Kazakhstan (in view at the start of a round). */
 const inland = { lat: 48, lng: 67 };
 
 /** A press on the map at `at` (MapLibre reports the touched point). */
@@ -117,6 +117,7 @@ describe('GeoRound (AC3)', () => {
     expect(screen.getByTestId('geo.lock')).toHaveTextContent('Tap the globe first');
     await tapCentre();
     const iso = countryAt(inland);
+    expect(iso).toBe('KZ');
     expect(iso).not.toBeNull();
     expect(screen.getByTestId('geo.lock')).toBeEnabled();
     await fireEvent.press(screen.getByTestId('geo.lock'));
@@ -250,8 +251,7 @@ describe('Country games never name the tapped country', () => {
   it('after selecting Kenya in Find the country no "Kenya" is on screen and Lock in is generic', async () => {
     const onGuess = jest.fn();
     await show(question({ promptId: 'uz' }), { onGuess });
-    // North Kenya: at the world zoom the Comoros dot's 22 pt reach covers the centroid.
-    await pressMap({ lat: 3.5, lng: 35.5 });
+    await pressMap({ lat: 0.5, lng: 37.9 });
     expect(screen.getByTestId('geo.lock')).toBeEnabled();
     expect(screen.getByTestId('geo.lock')).toHaveTextContent('Lock in');
     expect(screen.queryByText(/Kenya|Keniya/)).toBeNull();

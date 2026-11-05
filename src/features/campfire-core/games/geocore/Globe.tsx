@@ -33,16 +33,15 @@ import { haptics } from '../../../../shared/utils/haptics';
 import { campColors, geoColors, geoSizes } from '../../campTheme';
 import { countryByIso, microstates } from './geoData';
 import {
-  countryAt,
   countryShapes,
   fitZoom,
   graticule,
   isoFilter,
   mapStyle,
   maxZoomFor,
-  microAt,
   microPoints,
   microShownFilter,
+  pickCountry,
   wrapLng,
   zoomFor,
 } from './mapGeometry';
@@ -219,15 +218,13 @@ export function Globe({
         choose(null, at);
         return;
       }
-      /* A visible microstate dot within reach wins over the country under the finger. */
-      const dot = dotsShown ? microAt(at, zoom.current) : null;
-      if (dot) {
-        choose(dot.iso, dot.at);
-        return;
+      /* Country games: real countries first, microstate dots for the ocean and right-on-dot taps. */
+      const picked = pickCountry(at, zoom.current);
+      if (picked) {
+        choose(picked.iso, picked.at);
       }
-      choose(countryAt(at), at);
     },
-    [choose, disabled, dotsShown, mode],
+    [choose, disabled, mode],
   );
 
   const selectedShown = mode === 'country' && Boolean(selectedIso);
