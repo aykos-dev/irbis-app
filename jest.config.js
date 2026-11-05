@@ -8,7 +8,6 @@ const esmPackages = [
   'd3-.*',
   'internmap',
   'i18n-js',
-  '@shopify/react-native-skia',
 ].join('|');
 
 module.exports = {
@@ -16,9 +15,6 @@ module.exports = {
   // Node crawler: the Homebrew watchman on the dev Mac is broken and not needed for tests.
   watchman: false,
   resolver: 'react-native-reanimated/jest/resolver',
-  // Skia's official Jest double needs CanvasKit in the environment (jest/skiaEnvironment.js).
-  testEnvironment: '<rootDir>/jest/skiaEnvironment.js',
-  setupFiles: ['@shopify/react-native-skia/jestSetup.js'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   // Sound clips resolve like images (the preset's asset transformer lists no audio types).
   // d3-geo / d3-array ship only ESM `.mjs`, which the preset's babel transform does not match.

@@ -1,8 +1,4 @@
 import { act, fireEvent, screen } from '@testing-library/react-native';
-import {
-  fireGestureHandler,
-  getByGestureTestId,
-} from 'react-native-gesture-handler/jest-utils';
 
 import { fakeNet, type FakeSocket } from '../../../../jest/campNetFakes';
 import { navigationRef } from '../../navigation/navigationRef';
@@ -22,6 +18,25 @@ jest.mock('../../../features/campfire-core/native/campNet', () => ({
     getWifiName: jest.fn(),
   },
 }));
+
+/* The real map, with a count of how many times it mounts. */
+jest.mock('../../../features/campfire-core/games/geocore/Globe', () => {
+  const React = require('react');
+  const actual = jest.requireActual('../../../features/campfire-core/games/geocore/Globe');
+  const mounts = jest.fn();
+  return {
+    ...actual,
+    __mounts: mounts,
+    Globe: (props: object) => {
+      React.useEffect(() => mounts(), []);
+      return React.createElement(actual.Globe, props);
+    },
+  };
+});
+
+const globeMounts = jest.requireMock<{ __mounts: jest.Mock }>(
+  '../../../features/campfire-core/games/geocore/Globe',
+).__mounts;
 
 jest.setTimeout(20000);
 
@@ -68,20 +83,19 @@ async function openLobby() {
   await screen.findByTestId('camp.lobby.code');
 }
 
-/** Taps the middle of the globe (Central Asia at the start of a round) and locks the answer in. */
+/** Presses the middle of the map (Central Asia at the start of a round) and locks the answer in. */
 async function hostLocksIn() {
-  const c = geoSizes.board / 2;
   await act(async () => {
-    fireGestureHandler(getByGestureTestId('geo.globe.tap'), [
-      { x: c, y: c },
-      { x: c, y: c },
-    ]);
+    fireEvent(screen.getByTestId('geo.globe.map'), 'press', {
+      nativeEvent: { lngLat: [geoSizes.initialLng, geoSizes.initialLat], point: [0, 0] },
+    });
   });
   await fireEvent.press(screen.getByTestId('geo.lock'));
 }
 
 describe('campfire-geocore — the host plays on the round screen (AC3, AC6)', () => {
   it('the host sees the prompt, locks in from the globe and (solo) goes straight to the reveal with Next', async () => {
+    globeMounts.mockClear();
     await openLobby();
     await fireEvent.press(screen.getByTestId('camp.lobby.start'));
     expect(await screen.findByTestId('geo.prompt')).toHaveTextContent(/Tap this country/);
@@ -93,6 +107,9 @@ describe('campfire-geocore — the host plays on the round screen (AC3, AC6)', (
     await fireEvent.press(screen.getByTestId('geo.next'));
     expect(saved()).toMatchObject({ phase: 'question', roundNo: 2 });
     expect(await screen.findByTestId('geo.prompt')).toBeOnTheScreen();
+    expect(screen.getByTestId('geo.lock')).toHaveTextContent('Tap the globe first');
+    // One MapLibre map for round 1 → reveal 1 → round 2 (no blank map while the timer runs).
+    expect(globeMounts).toHaveBeenCalledTimes(1);
   });
 });
 

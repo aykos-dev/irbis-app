@@ -194,7 +194,6 @@ export const crocColors = {
 /** GeoCore globe (canvas GeoRound / GeoRoundCity / GeoReveal). */
 export const geoColors = {
   ocean: '#163447',
-  rim: '#2B5670',
   graticule: '#1D4258',
   land: '#3B5A50',
   /** Country borders are drawn in the ocean colour. */
@@ -206,7 +205,6 @@ export const geoColors = {
   microRing: '#8CC8FF',
   pinFill: palette.orange,
   pinStroke: palette.onOrange,
-  pinShadow: '#000000',
   /** Reveal pin dot border and label chip. */
   markerEdge: campColors.bg,
   labelChip: campColors.bg,
@@ -233,52 +231,49 @@ export const geoSeatColors = [
 ] as const;
 
 export const geoSizes = {
-  /** Board globe box (358 pt square, radius 172). */
+  /** Board map box (358 pt square). */
   board: 358,
-  radiusRatio: 172 / 358,
-  rimOpacity: 0.35,
-  rimStroke: 4,
-  graticuleStroke: 0.5,
   borderStroke: 0.6,
+  graticuleStroke: 0.5,
   selectedStroke: 1.2,
   /** Initial view: Central Asia. */
   initialLng: 60,
   initialLat: 30,
-  maxLat: 85,
-  minZoom: 1,
-  maxZoom: 8,
-  zoomStep: 1.6,
-  /** A tap fails once the finger travels further than this. */
-  tapSlop: 10,
+  /** Web Mercator latitude limit (MapLibre). */
+  maxLat: 85.0511,
+  /** MapLibre world width at zoom 0 (pt) and its lowest zoom. */
+  tileSize: 512,
+  mapMinZoom: 0,
+  /** Zoom levels above the fitted world (8× ≈ 2^3). */
+  zoomRange: 3,
+  /** Microstate dot `minZoom` levels considered (0–8). */
+  microMaxZoom: 8,
   focusMs: 600,
   zoomButton: 44,
   zoomGlyph: 18,
   zoomStroke: 3,
   zoomBorder: 2,
   zoomEdge: 4,
-  /** Microstate dots (drawn in Skia): a dot is hidden when its centre is closer than `microGap` to a dot
-   * already placed; a tap within `microHit` of a shown dot picks it. */
+  /** Microstate dots (map circle layer): a dot shows from the first zoom where it is at least
+   * `microGap` from every dot already shown. A tap within `microSnap` of a shown dot picks it, even
+   * over land; off non-microstate land, within `microHit`. */
   microDot: 14,
   microRing: 2,
   microGap: 18,
   microHit: 22,
+  microSnap: 10,
   /** The screen-reader-only microstate buttons are clipped to this (pt). */
   a11yClip: 1,
   pinWidth: 28,
   pinHeight: 38,
   pinStroke: 1.5,
-  pinShadowOpacity: 0.35,
   markerDot: 18,
   markerBorder: 3,
   answerStar: 22,
   labelOpacity: 0.86,
   chipRadius: 9,
-  /** Graticule: a line every 10°, sampled every 2°, meridians up to ±80° (±90° every 90°). */
+  /** Graticule: a line every 10°. */
   graticuleStep: 10,
-  graticuleSample: 2,
-  graticuleMaxLat: 80,
-  /** Path vertices closer than this (pt, Manhattan) to the last drawn one are skipped. */
-  pathMinStep: 0.5,
 } as const;
 
 /** Geocore round, reveal and final screens (canvas GeoRound / GeoRoundCity / GeoReveal / GeoFinal). */

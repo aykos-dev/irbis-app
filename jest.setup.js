@@ -86,14 +86,15 @@ beforeEach(() => {
 });
 
 /*
- * MapLibre has no Jest double. The map renders as a plain View (sources and layers draw nothing);
+ * MapLibre has no Jest double. The map renders as a plain View that forwards `onPress` (sources and
+ * layers draw nothing, markers render their RN view);
  * LocationManager is controlled per test (default: permission refused, no fix).
  */
 jest.mock('@maplibre/maplibre-react-native', () => {
   const React = require('react');
   const { View } = require('react-native');
-  const Map = ({ children, testID, accessibilityLabel }) =>
-    React.createElement(View, { testID, accessibilityLabel }, children);
+  const Map = ({ children, testID, accessibilityLabel, onPress }) =>
+    React.createElement(View, { testID, accessibilityLabel, onPress }, children);
   const Nothing = () => null;
   const GeoJSONSource = ({ children }) => React.createElement(React.Fragment, null, children);
   return {
@@ -102,6 +103,7 @@ jest.mock('@maplibre/maplibre-react-native', () => {
     Images: Nothing,
     Layer: Nothing,
     GeoJSONSource,
+    Marker: ({ children }) => children,
     LocationManager: {
       requestPermissions: jest.fn(async () => false),
       getCurrentPosition: jest.fn(async () => undefined),

@@ -22,7 +22,7 @@ import {
 } from './geoText';
 import { GeoHeader } from './GeoRound';
 import { useSecondsLeft } from './GeoTimerRing';
-import { Globe, type GlobePin } from './Globe';
+import type { GlobePin, GlobeProps } from './Globe';
 import type { GeoMode } from './scoring';
 
 /** A round this good plays the `correct` clip, else `wrong` (country games up to 1,000; pin games −1,000…+1,000). */
@@ -74,30 +74,13 @@ type Props = {
   host?: GeoHostControls;
 };
 
-/** The round's answer on every dealt phone (AC6, canvas GeoReveal): own result, pins, standings. */
-export function GeoReveal({ info, selfSeatId, roster, host }: Props) {
-  const styles = useStyles();
-  const seconds = useSecondsLeft(info.remainingMs ?? 0);
+/** The map at reveal: the answer (country fill and star), every seat's pin, eased to the answer. */
+export function revealGlobeProps(info: GeoPublic, selfSeatId: string): GlobeProps | null {
   const reveal = info.reveal;
-  const mine = reveal?.results.find(result => result.seatId === selfSeatId);
-  const points = mine?.points ?? 0;
-  const countryMode = isCountryMode(info.mode);
-
-  const clip = goodRound(info.mode, points) ? 'correct' : 'wrong';
-  const heard = useRef<number | null>(null);
-
-  // One clip per reveal on this phone.
-  useEffect(() => {
-    if (heard.current === info.roundNo) {
-      return;
-    }
-    heard.current = info.roundNo;
-    void sounds.load().then(() => sounds.play(clip, 'geo_'));
-  }, [info.roundNo, clip]);
-
   if (!reveal) {
     return null;
   }
+  const countryMode = isCountryMode(info.mode);
   const answer = { lat: reveal.answer.lat, lng: reveal.answer.lng };
   const pins: GlobePin[] = reveal.results.flatMap(result =>
     result.lat !== undefined && result.lng !== undefined
@@ -114,11 +97,36 @@ export function GeoReveal({ info, selfSeatId, roster, host }: Props) {
         ]
       : [],
   );
-  const answered = mine !== undefined && mine.lat !== undefined;
-  const last = info.roundNo >= info.of;
+  return {
+    mode: countryMode ? 'country' : 'point',
+    disabled: true,
+    answer: { ...(reveal.answer.iso ? { iso: reveal.answer.iso } : {}), point: answer },
+    pins,
+    focus: answer,
+    focusZoom: countryMode ? geoScreenSizes.zoomCountry : geoScreenSizes.zoomPoint,
+  };
+}
 
+/** Above the map at reveal (AC6, canvas GeoReveal): header, the answer, own result; one clip. */
+export function GeoRevealTop({ info, selfSeatId }: Pick<Props, 'info' | 'selfSeatId'>) {
+  const reveal = info.reveal;
+  const mine = reveal?.results.find(result => result.seatId === selfSeatId);
+  const points = mine?.points ?? 0;
+  const clip = goodRound(info.mode, points) ? 'correct' : 'wrong';
+  const heard = useRef<number | null>(null);
+
+  // One clip per reveal on this phone.
+  useEffect(() => {
+    if (heard.current === info.roundNo) {
+      return;
+    }
+    heard.current = info.roundNo;
+    void sounds.load().then(() => sounds.play(clip, 'geo_'));
+  }, [info.roundNo, clip]);
+
+  const answered = mine !== undefined && mine.lat !== undefined;
   return (
-    <View testID="geo.reveal" style={layout.root}>
+    <>
       <GeoHeader info={info} selfSeatId={selfSeatId} />
       <AppText variant="h1" accessibilityRole="header" style={layout.center}>
         {answerText(info.mode, info.promptId)}
@@ -133,16 +141,22 @@ export function GeoReveal({ info, selfSeatId, roster, host }: Props) {
           {kmLine(info.mode, answered ? (mine?.km ?? 0) : null)}
         </AppText>
       </View>
+    </>
+  );
+}
 
-      <Globe
-        mode={countryMode ? 'country' : 'point'}
-        disabled
-        answer={{ ...(reveal.answer.iso ? { iso: reveal.answer.iso } : {}), point: answer }}
-        pins={pins}
-        focus={answer}
-        focusZoom={countryMode ? geoScreenSizes.zoomCountry : geoScreenSizes.zoomPoint}
-      />
+/** Below the map at reveal: standings after the round, then Next (host) or waiting. */
+export function GeoRevealBottom({ info, selfSeatId, roster, host }: Props) {
+  const styles = useStyles();
+  const seconds = useSecondsLeft(info.remainingMs ?? 0);
+  const reveal = info.reveal;
+  if (!reveal) {
+    return null;
+  }
+  const last = info.roundNo >= info.of;
 
+  return (
+    <>
       <View style={layout.list}>
         <View style={layout.listHead}>
           <AppText variant="h3" accessibilityRole="header">
@@ -205,12 +219,11 @@ export function GeoReveal({ info, selfSeatId, roster, host }: Props) {
           {t('camp.geo.waitingHost')}
         </AppText>
       )}
-    </View>
+    </>
   );
 }
 
 const layout = StyleSheet.create({
-  root: { gap: spacing[16] },
   center: { textAlign: 'center' },
   result: { alignItems: 'center', gap: spacing[4] },
   gain: { color: geoScreenColors.gain },

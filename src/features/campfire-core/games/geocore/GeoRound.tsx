@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { AppButton } from '../../../../shared/components/AppButton';
@@ -12,7 +12,7 @@ import type { GeoPoint, GeoPublic } from '../../protocol/codec';
 import { GEO_QUESTION_MS, geoRanks } from './geoGame';
 import { isCountryMode, modeName, num, promptText } from './geoText';
 import { GeoTimerRing } from './GeoTimerRing';
-import { Globe } from './Globe';
+import type { GlobeProps } from './Globe';
 
 type Props = {
   info: GeoPublic;
@@ -53,39 +53,58 @@ export function GeoHeader({ info, selfSeatId }: Pick<Props, 'info' | 'selfSeatId
   );
 }
 
-/** One question on every dealt phone (AC3, canvas GeoRound / GeoRoundCity): prompt, globe, lock in. */
-export function GeoRound({ info, selfSeatId, onGuess }: Props) {
-  const [iso, setIso] = useState<string | null>(null);
-  const [pin, setPin] = useState<LatLng | null>(null);
-  const [sent, setSent] = useState(false);
+/** This phone's pick in the current question (a new question starts empty). */
+export type RoundPick = { iso: string | null; pin: LatLng | null; sent: boolean };
+export type UpdatePick = (patch: Partial<RoundPick>) => void;
+
+const noPick: RoundPick = { iso: null, pin: null, sent: false };
+
+export function useRoundPick(roundNo: number): [RoundPick, UpdatePick] {
+  const [state, setState] = useState<RoundPick & { roundNo: number }>({
+    ...noPick,
+    roundNo,
+  });
+  const update = useCallback<UpdatePick>(
+    patch =>
+      setState(prev => ({
+        ...(prev.roundNo === roundNo ? prev : noPick),
+        ...patch,
+        roundNo,
+      })),
+    [roundNo],
+  );
+  return [state.roundNo === roundNo ? state : noPick, update];
+}
+
+const isLocked = (info: GeoPublic, selfSeatId: string, pick: RoundPick) =>
+  pick.sent || info.answered.includes(selfSeatId);
+
+/** The map during a question: tap a country or drop a pin until locked in. */
+export function roundGlobeProps(
+  info: GeoPublic,
+  selfSeatId: string,
+  pick: RoundPick,
+  update: UpdatePick,
+): GlobeProps {
   const countryMode = isCountryMode(info.mode);
-  const locked = sent || info.answered.includes(selfSeatId);
+  return {
+    mode: countryMode ? 'country' : 'point',
+    selectedIso: countryMode ? pick.iso : undefined,
+    myPin: countryMode ? undefined : pick.pin,
+    disabled: isLocked(info, selfSeatId, pick),
+    onSelectCountry: (code, at) => update({ iso: code, pin: at }),
+    onDropPin: at => update({ pin: at }),
+  };
+}
+
+/** Above the map in a question (AC3, canvas GeoRound / GeoRoundCity): header, prompt, timer. */
+export function GeoRoundTop({ info, selfSeatId }: Pick<Props, 'info' | 'selfSeatId'>) {
   const prompt = promptText(info.mode, info.promptId);
   const city = info.mode === 'cityDistance';
   const card = city ? geoScreenColors.promptCity : geoScreenColors.prompt;
   const ink = { color: card.ink };
-  const ready = countryMode ? iso !== null && pin !== null : pin !== null;
-
-  const lockLabel = !ready
-    ? t('camp.geo.pickFirst')
-    : countryMode
-      ? t('camp.geo.lockAnswer')
-      : t('camp.geo.lockPin');
-
-  const lockIn = () => {
-    if (!ready || locked || !pin) {
-      return;
-    }
-    setSent(true);
-    onGuess({
-      lat: pin.lat,
-      lng: pin.lng,
-      ...(countryMode && iso ? { iso } : {}),
-    });
-  };
-
   return (
-    <View style={layout.root}>
+    <>
       <GeoHeader info={info} selfSeatId={selfSeatId} />
       <View style={layout.promptRow}>
         <View
@@ -104,19 +123,43 @@ export function GeoRound({ info, selfSeatId, onGuess }: Props) {
           <GeoTimerRing remainingMs={info.remainingMs} totalMs={GEO_QUESTION_MS} />
         ) : null}
       </View>
+    </>
+  );
+}
 
-      <Globe
-        mode={countryMode ? 'country' : 'point'}
-        selectedIso={countryMode ? iso : undefined}
-        myPin={countryMode ? undefined : pin}
-        disabled={locked}
-        onSelectCountry={(code, at) => {
-          setIso(code);
-          setPin(at);
-        }}
-        onDropPin={setPin}
-      />
+/** Below the map in a question: answered count and Lock in (sent once). */
+export function GeoRoundBottom({
+  info,
+  selfSeatId,
+  onGuess,
+  pick,
+  update,
+}: Props & { pick: RoundPick; update: UpdatePick }) {
+  const countryMode = isCountryMode(info.mode);
+  const locked = isLocked(info, selfSeatId, pick);
+  const { iso, pin } = pick;
+  const ready = countryMode ? iso !== null && pin !== null : pin !== null;
 
+  const lockLabel = !ready
+    ? t('camp.geo.pickFirst')
+    : countryMode
+      ? t('camp.geo.lockAnswer')
+      : t('camp.geo.lockPin');
+
+  const lockIn = () => {
+    if (!ready || locked || !pin) {
+      return;
+    }
+    update({ sent: true });
+    onGuess({
+      lat: pin.lat,
+      lng: pin.lng,
+      ...(countryMode && iso ? { iso } : {}),
+    });
+  };
+
+  return (
+    <>
       <AppText testID="geo.answered" variant="small" tone="muted" style={layout.center}>
         {t('camp.geo.answered', {
           n: info.answered.length,
@@ -135,12 +178,11 @@ export function GeoRound({ info, selfSeatId, onGuess }: Props) {
           onPress={lockIn}
         />
       )}
-    </View>
+    </>
   );
 }
 
 const layout = StyleSheet.create({
-  root: { gap: spacing[16] },
   header: { flexDirection: 'row', alignItems: 'center', gap: spacing[12] },
   fill: { flex: 1 },
   promptRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[12] },
