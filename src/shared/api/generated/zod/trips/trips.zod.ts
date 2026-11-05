@@ -59,6 +59,12 @@ export const CreateTripBody = zod.object({
 }).optional().describe('Device position; stored only when start is true.')
 })
 
+export const createTripResponseLeagueElevationMMin = 0;
+
+export const createTripResponseLeagueSeasonElevationMMin = 0;
+
+
+
 export const CreateTripResponse = zod.object({
   "id": zod.uuid(),
   "place": zod.object({
@@ -94,12 +100,24 @@ export const CreateTripResponse = zod.object({
   "lng": zod.number(),
   "recordedAt": zod.iso.datetime({"offset":true})
 })),
+  "leagueElevationM": zod.int().min(createTripResponseLeagueElevationMMin).optional().describe('League elevation awarded by this checkout; present on the checkout response.'),
+  "leagueSeasonElevationM": zod.int().min(createTripResponseLeagueSeasonElevationMMin).optional().describe('The member season total after this checkout; present on the checkout response.'),
   "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 })
 
 /**
  * @summary The user's active trip and upcoming planned trips
  */
+export const getCurrentTripsResponseActiveOneLeagueElevationMMin = 0;
+
+export const getCurrentTripsResponseActiveOneLeagueSeasonElevationMMin = 0;
+
+export const getCurrentTripsResponsePlannedItemLeagueElevationMMin = 0;
+
+export const getCurrentTripsResponsePlannedItemLeagueSeasonElevationMMin = 0;
+
+
+
 export const GetCurrentTripsResponse = zod.object({
   "active": zod.object({
   "id": zod.uuid(),
@@ -136,6 +154,8 @@ export const GetCurrentTripsResponse = zod.object({
   "lng": zod.number(),
   "recordedAt": zod.iso.datetime({"offset":true})
 })),
+  "leagueElevationM": zod.int().min(getCurrentTripsResponseActiveOneLeagueElevationMMin).optional().describe('League elevation awarded by this checkout; present on the checkout response.'),
+  "leagueSeasonElevationM": zod.int().min(getCurrentTripsResponseActiveOneLeagueSeasonElevationMMin).optional().describe('The member season total after this checkout; present on the checkout response.'),
   "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 }).nullable(),
   "planned": zod.array(zod.object({
@@ -173,6 +193,8 @@ export const GetCurrentTripsResponse = zod.object({
   "lng": zod.number(),
   "recordedAt": zod.iso.datetime({"offset":true})
 })),
+  "leagueElevationM": zod.int().min(getCurrentTripsResponsePlannedItemLeagueElevationMMin).optional().describe('League elevation awarded by this checkout; present on the checkout response.'),
+  "leagueSeasonElevationM": zod.int().min(getCurrentTripsResponsePlannedItemLeagueSeasonElevationMMin).optional().describe('The member season total after this checkout; present on the checkout response.'),
   "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 }))
 })
@@ -202,6 +224,12 @@ export const StartTripBody = zod.object({
   "accuracyM": zod.number().min(startTripBodyLocationOneAccuracyMMin).max(startTripBodyLocationOneAccuracyMMax)
 }).optional().describe('Device position at start, used for the alert link.')
 })
+
+export const startTripResponseLeagueElevationMMin = 0;
+
+export const startTripResponseLeagueSeasonElevationMMin = 0;
+
+
 
 export const StartTripResponse = zod.object({
   "id": zod.uuid(),
@@ -238,6 +266,8 @@ export const StartTripResponse = zod.object({
   "lng": zod.number(),
   "recordedAt": zod.iso.datetime({"offset":true})
 })),
+  "leagueElevationM": zod.int().min(startTripResponseLeagueElevationMMin).optional().describe('League elevation awarded by this checkout; present on the checkout response.'),
+  "leagueSeasonElevationM": zod.int().min(startTripResponseLeagueSeasonElevationMMin).optional().describe('The member season total after this checkout; present on the checkout response.'),
   "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 })
 
@@ -370,6 +400,12 @@ export const UpdateTripBody = zod.object({
   "alertEnabled": zod.boolean().optional()
 })
 
+export const updateTripResponseLeagueElevationMMin = 0;
+
+export const updateTripResponseLeagueSeasonElevationMMin = 0;
+
+
+
 export const UpdateTripResponse = zod.object({
   "id": zod.uuid(),
   "place": zod.object({
@@ -405,6 +441,8 @@ export const UpdateTripResponse = zod.object({
   "lng": zod.number(),
   "recordedAt": zod.iso.datetime({"offset":true})
 })),
+  "leagueElevationM": zod.int().min(updateTripResponseLeagueElevationMMin).optional().describe('League elevation awarded by this checkout; present on the checkout response.'),
+  "leagueSeasonElevationM": zod.int().min(updateTripResponseLeagueSeasonElevationMMin).optional().describe('The member season total after this checkout; present on the checkout response.'),
   "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 })
 
@@ -437,6 +475,12 @@ export const CheckOutTripBody = zod.object({
   "distanceM": zod.int().min(checkOutTripBodyDistanceMMin).max(checkOutTripBodyDistanceMMax).optional(),
   "climbM": zod.int().min(checkOutTripBodyClimbMMin).max(checkOutTripBodyClimbMMax).optional()
 })
+
+export const checkOutTripResponseLeagueElevationMMin = 0;
+
+export const checkOutTripResponseLeagueSeasonElevationMMin = 0;
+
+
 
 export const CheckOutTripResponse = zod.object({
   "id": zod.uuid(),
@@ -473,6 +517,8 @@ export const CheckOutTripResponse = zod.object({
   "lng": zod.number(),
   "recordedAt": zod.iso.datetime({"offset":true})
 })),
+  "leagueElevationM": zod.int().min(checkOutTripResponseLeagueElevationMMin).optional().describe('League elevation awarded by this checkout; present on the checkout response.'),
+  "leagueSeasonElevationM": zod.int().min(checkOutTripResponseLeagueSeasonElevationMMin).optional().describe('The member season total after this checkout; present on the checkout response.'),
   "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 })
 

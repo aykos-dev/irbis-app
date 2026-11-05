@@ -1,0 +1,39 @@
+{
+  "title": "Ligalar",
+  "back": "Orqaga",
+  "open": "Mavsumiy ligalarni ochish",
+  "leagueName": "%{tier} ligasi",
+  "countdown": "%{days} kun %{hours} soat qoldi",
+  "you": "(siz)",
+  "card": {
+    "ranked": "%{tier} · #%{rank}",
+    "elevation": "Bu mavsumda %{elevation}",
+    "unranked": "Mavsumiy ligalar",
+    "join": "Tasdiqlangan belgi bilan yozib olingan sayohatni yakunlang."
+  },
+  "public": { "ranked": "%{tier} · #%{rank} · %{elevation}" },
+  "unranked": {
+    "title": "Reytingsiz",
+    "body": "Mavsumga kirish uchun tasdiqlangan belgili ilk yozib olingan sayohatingizni yakunlang."
+  },
+  "zones": {
+    "promote": "Birinchi %{count} yuqoriga o‘tadi",
+    "demote": "Oxirgi %{count} pastga tushadi",
+    "champion": "Chempionlar hududi"
+  },
+  "tiers": {
+    "scout": { "name": "Scout", "subtitle": "Asoslarni o‘rganmoqda" },
+    "tracker": { "name": "Tracker", "subtitle": "Tabiat izlarini o‘qiydi" },
+    "ranger": { "name": "Ranger", "subtitle": "Hudud himoyachisi va ustasi" },
+    "vanguard": { "name": "Vanguard", "subtitle": "Noma’lumlik sari yetaklaydi" },
+    "legend": { "name": "Legend", "subtitle": "Eng yuksak sayyoh maqomi" }
+  },
+  "result": {
+    "champion": { "title": "Mavsum chempioni!" },
+    "promoted": { "title": "Yangi ligaga o‘tdingiz!" },
+    "stayed": { "title": "Mavsum yakunlandi" },
+    "demoted": { "title": "Keyingi ko‘tarilish hozir boshlanadi" },
+    "body": "%{season} · #%{rank} · %{elevation}",
+    "done": "Davom etish"
+  }
+}

@@ -69,6 +69,9 @@ export const sizes = {
   iconTile: 36,
   /** Mascot on a status card (derived from the canvas — confirm in design.md). */
   mascotCard: 88,
+  leagueCrest: 128,
+  leagueCrestSmall: 44,
+  leagueResultMascot: 180,
 } as const;
 
 /** Path node drop shadow: 5 px, rgba(0,0,0,.18). */

@@ -44,9 +44,11 @@ type RootNav = NativeStackNavigationProp<RootStackParamList>;
 type Props = MainTabScreenProps<'Profile'> & {
   /** The account's streak row from the app layer (streaks AC7). */
   streaksCard?: ReactNode;
+  /** Seasonal league chip from the app layer. */
+  leagueCard?: ReactNode;
 };
 
-export function ProfileScreen({ streaksCard }: Props) {
+export function ProfileScreen({ streaksCard, leagueCard }: Props) {
   const { status } = useAuth();
   if (status === 'loading') {
     return (
@@ -62,7 +64,7 @@ export function ProfileScreen({ streaksCard }: Props) {
     );
   }
   return status === 'signedIn' ? (
-    <AccountProfile streaksCard={streaksCard} />
+    <AccountProfile streaksCard={streaksCard} leagueCard={leagueCard} />
   ) : (
     <GuestProfile />
   );
@@ -262,7 +264,7 @@ function DemoSignOutSheet({
 }
 
 /** Signed-in profile: username, recovery phone, sign out (AC6); a demo account adds Secure (check-in AC8). */
-function AccountProfile({ streaksCard }: { streaksCard?: ReactNode }) {
+function AccountProfile({ streaksCard, leagueCard }: { streaksCard?: ReactNode; leagueCard?: ReactNode }) {
   const { navigation, languageRow, safetyRow, debugRow, sheet } =
     useProfileRows();
   const { colors } = useTheme();
@@ -503,12 +505,7 @@ function AccountProfile({ streaksCard }: { streaksCard?: ReactNode }) {
           No buddy ratings yet.
         </AppText>
       </View>
-      <View testID="profile.league" style={styles.section}>
-        <AppText variant="h3">League</AppText>
-        <AppText variant="small" tone="muted">
-          Unranked
-        </AppText>
-      </View>
+      {leagueCard}
       <ListCard>
         {languageRow}
         <ListRow

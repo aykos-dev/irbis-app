@@ -15,7 +15,7 @@ const MINUTE_MS = 60_000;
 
 /** After check-out (AC8): distance, climb, time on the trail, waypoints and XP; Done goes to Path. */
 export function TripSummaryScreen({ navigation, route }: RootStackScreenProps<'TripSummary'>) {
-  const { distanceM, climbM, durationMin, waypoints, xp } = route.params;
+  const { distanceM, climbM, durationMin, waypoints, xp, leagueElevationM, leagueSeasonElevationM } = route.params;
   const locale = useLocale();
   const styles = useStyles();
 
@@ -25,6 +25,9 @@ export function TripSummaryScreen({ navigation, route }: RootStackScreenProps<'T
     { testID: 'summary.time', value: formatDuration(durationMin * MINUTE_MS), label: t('active.summary.time') },
     { testID: 'summary.waypoints', value: formatMetres(waypoints, locale), label: t('active.summary.waypoints') },
     { testID: 'summary.xp', value: `+${formatMetres(xp, locale)}`, label: t('active.summary.xp') },
+    ...(leagueElevationM && leagueElevationM > 0
+      ? [{ testID: 'summary.league', value: `+${formatMetres(leagueElevationM, locale)}`, label: t('leagues.title') }]
+      : []),
   ];
 
   return (
@@ -45,6 +48,14 @@ export function TripSummaryScreen({ navigation, route }: RootStackScreenProps<'T
           </View>
         ))}
       </View>
+      {leagueSeasonElevationM !== undefined ? (
+        <AppButton
+          testID="summary.league-open"
+          variant="white"
+          label={`${t('leagues.title')} · ${formatMetres(leagueSeasonElevationM, locale)}`}
+          onPress={() => navigation.navigate('Leagues')}
+        />
+      ) : null}
       <AppButton
         testID="summary.done"
         label={t('active.summary.done')}

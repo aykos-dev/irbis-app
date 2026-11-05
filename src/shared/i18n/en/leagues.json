@@ -1,0 +1,41 @@
+{
+  "title": "Leagues",
+  "back": "Back",
+  "open": "Open seasonal leagues",
+  "leagueName": "%{tier} League",
+  "countdown": "%{days} d %{hours} h left",
+  "you": "(you)",
+  "card": {
+    "ranked": "%{tier} · #%{rank}",
+    "elevation": "%{elevation} this season",
+    "unranked": "Seasonal leagues",
+    "join": "Complete a tracked trip with a verified check-in to join."
+  },
+  "public": {
+    "ranked": "%{tier} · #%{rank} · %{elevation}"
+  },
+  "unranked": {
+    "title": "Unranked",
+    "body": "Complete your first tracked adventure with a verified check-in to enter this season."
+  },
+  "zones": {
+    "promote": "Top %{count} move up",
+    "demote": "Bottom %{count} move down",
+    "champion": "Champion zone"
+  },
+  "tiers": {
+    "scout": { "name": "Scout", "subtitle": "Learning the ropes" },
+    "tracker": { "name": "Tracker", "subtitle": "Reading the wilderness" },
+    "ranger": { "name": "Ranger", "subtitle": "Protector and master of the zone" },
+    "vanguard": { "name": "Vanguard", "subtitle": "Leading the line into the unknown" },
+    "legend": { "name": "Legend", "subtitle": "The ultimate explorer identity" }
+  },
+  "result": {
+    "champion": { "title": "Season Champion!" },
+    "promoted": { "title": "Promoted!" },
+    "stayed": { "title": "Season complete" },
+    "demoted": { "title": "Your next climb starts now" },
+    "body": "%{season} · rank #%{rank} · %{elevation}",
+    "done": "Continue"
+  }
+}

@@ -36,6 +36,16 @@ export interface TripDto {
   distanceM: number;
   climbM: number;
   waypoints: TripWaypointDto[];
+  /**
+     * League elevation awarded by this checkout; present on the checkout response.
+     * @minimum 0
+     */
+  leagueElevationM?: number;
+  /**
+     * The member season total after this checkout; present on the checkout response.
+     * @minimum 0
+     */
+  leagueSeasonElevationM?: number;
   /** trip.active pingEveryMin: how often the app sends a location. */
   pingEveryMin: number;
 }

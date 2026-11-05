@@ -3,6 +3,7 @@ import { ActiveTripScreen } from '../../features/active-trip/screens/ActiveTripS
 import { SummitScreen } from '../../features/check-in/screens/SummitScreen';
 import { PlaceScreen } from '../../features/places/screens/PlaceScreen';
 import { WeekStreakTile } from '../../features/streaks/components/WeekStreakTile';
+import { LeagueEntryCard } from '../../features/leagues/components/LeagueEntryCard';
 import { useLocale } from '../../shared/hooks/useLocale';
 import type { RootStackScreenProps } from './types';
 
@@ -47,5 +48,5 @@ export function ActiveTripRoute(props: RootStackScreenProps<'ActiveTrip'>) {
 
 /** Summit with the "{n} Week streak" tile (streaks AC7). */
 export function SummitRoute(props: RootStackScreenProps<'Summit'>) {
-  return <SummitScreen {...props} weekStreak={<WeekStreakTile />} />;
+  return <SummitScreen {...props} weekStreak={<WeekStreakTile />} leagueCard={<LeagueEntryCard testID="summit.league" />} />;
 }
