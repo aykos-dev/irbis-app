@@ -111,13 +111,15 @@ function SummitArt({ level }: { level: number }) {
 type Props = RootStackScreenProps<'Summit'> & {
   /** The "{n} Week streak" tile from the app layer (streaks AC7), under a sent check-in's result. */
   weekStreak?: ReactNode;
+  /** Seasonal league entry from the app layer; scoring occurs when the tracked trip checks out. */
+  leagueCard?: ReactNode;
 };
 
 /**
  * Summit (AC7): the celebration after a check-in. Sent: "+XP earned" or "Already counted this
  * month"; queued (offline): the waiting line instead of the XP tile. Share and Continue (back).
  */
-export function SummitScreen({ navigation, route, weekStreak }: Props) {
+export function SummitScreen({ navigation, route, weekStreak, leagueCard }: Props) {
   const { placeName, placeType, elevationM, queued, counted, xp } =
     route.params;
   const { user } = useAuth();
@@ -186,6 +188,7 @@ export function SummitScreen({ navigation, route, weekStreak }: Props) {
             </View>
           )}
           {queued ? null : weekStreak}
+          {queued ? null : leagueCard}
           <View style={layout.actions}>
             <AppButton
               testID="summit.share"

@@ -7,6 +7,7 @@ export * from './conditions/conditions.ts';
 export * from './group-chat/group-chat.ts';
 export * from './groups/groups.ts';
 export * from './health/health.ts';
+export * from './leagues/leagues.ts';
 export * from './lessons/lessons.ts';
 export * from './levels/levels.ts';
 export * from './live/live.ts';

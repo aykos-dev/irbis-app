@@ -16,6 +16,7 @@ import enGroups from './en/groups.json';
 import enGroupChat from './en/groupChat.json';
 import enLessons from './en/lessons.json';
 import enLevels from './en/levels.json';
+import enLeagues from './en/leagues.json';
 import enNav from './en/nav.json';
 import enOnboarding from './en/onboarding.json';
 import enPath from './en/path.json';
@@ -35,6 +36,7 @@ import ruGroups from './ru/groups.json';
 import ruGroupChat from './ru/groupChat.json';
 import ruLessons from './ru/lessons.json';
 import ruLevels from './ru/levels.json';
+import ruLeagues from './ru/leagues.json';
 import ruNav from './ru/nav.json';
 import ruOnboarding from './ru/onboarding.json';
 import ruPath from './ru/path.json';
@@ -54,6 +56,7 @@ import uzGroups from './uz/groups.json';
 import uzGroupChat from './uz/groupChat.json';
 import uzLessons from './uz/lessons.json';
 import uzLevels from './uz/levels.json';
+import uzLeagues from './uz/leagues.json';
 import uzNav from './uz/nav.json';
 import uzOnboarding from './uz/onboarding.json';
 import uzPath from './uz/path.json';
@@ -93,6 +96,7 @@ export const i18n = new I18n({
     groupChat: enGroupChat,
     lessons: enLessons,
     levels: enLevels,
+    leagues: enLeagues,
     onboarding: enOnboarding,
     path: enPath,
     places: enPlaces,
@@ -114,6 +118,7 @@ export const i18n = new I18n({
     groupChat: ruGroupChat,
     lessons: ruLessons,
     levels: ruLevels,
+    leagues: ruLeagues,
     onboarding: ruOnboarding,
     path: ruPath,
     places: ruPlaces,
@@ -135,6 +140,7 @@ export const i18n = new I18n({
     groupChat: uzGroupChat,
     lessons: uzLessons,
     levels: uzLevels,
+    leagues: uzLeagues,
     onboarding: uzOnboarding,
     path: uzPath,
     places: uzPlaces,

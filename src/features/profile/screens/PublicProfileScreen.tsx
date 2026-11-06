@@ -4,6 +4,7 @@ import {
   type RouteProp,
 } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { ReactNode } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
 import type { RootStackParamList } from '../../../app/navigation/types';
@@ -25,7 +26,7 @@ import { formatDistance, formatElevation } from '../../../shared/utils/units';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
-export function PublicProfileScreen() {
+export function PublicProfileScreen({ leagueCard }: { leagueCard?: ReactNode }) {
   const navigation = useNavigation<Nav>();
   const route = useRoute<RouteProp<RootStackParamList, 'PublicProfile'>>();
   const { colors } = useTheme();
@@ -159,12 +160,7 @@ export function PublicProfileScreen() {
               No buddy ratings yet.
             </AppText>
           </View>
-          <View testID="public-profile.league" style={styles.section}>
-            <AppText variant="h3">League</AppText>
-            <AppText variant="small" tone="muted">
-              Unranked
-            </AppText>
-          </View>
+          {leagueCard}
         </>
       )}
     </Screen>

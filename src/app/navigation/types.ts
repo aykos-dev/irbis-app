@@ -87,6 +87,8 @@ export type RootStackParamList = {
     durationMin: number;
     waypoints: number;
     xp: number;
+    leagueElevationM?: number;
+    leagueSeasonElevationM?: number;
   };
   /**
    * Summit after a check-in (check-in AC7). `queued`: stored offline, no result yet (counted and
@@ -105,6 +107,7 @@ export type RootStackParamList = {
   Level: undefined;
   /** Full 64-item badge catalogue and the signed-in user's four profile picks. */
   Badges: undefined;
+  Leagues: undefined;
   /** Public profile opened from search or irbis://profile/:username. */
   PublicProfile: { username: string };
   EditProfile: undefined;

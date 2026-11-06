@@ -70,6 +70,8 @@ function summaryOf(done: TripDto, xp: number) {
     durationMin: Math.max(0, Math.floor((end - start) / MINUTE_MS)),
     waypoints: done.waypoints.length,
     xp,
+    leagueElevationM: done.leagueElevationM,
+    leagueSeasonElevationM: done.leagueSeasonElevationM,
   };
 }
 

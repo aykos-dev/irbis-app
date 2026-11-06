@@ -4,6 +4,7 @@ import { clearTripDevice } from '../../features/active-trip/tripDevice';
 import { ProfileScreen } from '../../features/auth/screens/ProfileScreen';
 import { CommunityScreen } from '../screens/CommunityScreen';
 import { LessonsHubScreen } from '../../features/lessons/screens/LessonsHubScreen';
+import { LeagueEntryCard } from '../../features/leagues/components/LeagueEntryCard';
 import { getInterests } from '../../features/onboarding/onboardingStore';
 import { placeTypes } from '../../features/places/placeTypes';
 import { ExploreScreen } from '../../features/places/screens/ExploreScreen';
@@ -41,13 +42,16 @@ export function TabNavigator() {
             placeType={placeType}
             tripCard={<TripCard onCheckedOut={clearTripDevice} />}
             streakChips={<StreakChips />}
+            leagueCard={<LeagueEntryCard testID="path.league" />}
           />
         )}
       </Tab.Screen>
       <Tab.Screen name="Explore" component={ExploreScreen} />
       <Tab.Screen name="Lessons">{props => <LessonsHubScreen {...props} streakLine={<StreakLessonsLine />} />}</Tab.Screen>
       <Tab.Screen name="Community" component={CommunityScreen} />
-      <Tab.Screen name="Profile">{props => <ProfileScreen {...props} streaksCard={<ProfileStreaksCard />} />}</Tab.Screen>
+      <Tab.Screen name="Profile">
+        {props => <ProfileScreen {...props} streaksCard={<ProfileStreaksCard />} leagueCard={<LeagueEntryCard testID="profile.league" />} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }

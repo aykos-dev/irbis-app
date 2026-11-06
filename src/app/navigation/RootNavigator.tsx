@@ -15,6 +15,8 @@ import { QuizScreen } from '../../features/lessons/screens/QuizScreen';
 import { CompanionsScreen } from '../../features/levels/screens/CompanionsScreen';
 import { LevelUpScreen } from '../../features/levels/screens/LevelUpScreen';
 import { LevelScreen } from '../../features/levels/screens/LevelScreen';
+import { LeaguesScreen } from '../../features/leagues/screens/LeaguesScreen';
+import { PublicLeagueCard } from '../../features/leagues/components/PublicLeagueCard';
 import { DeleteAccountScreen } from '../../features/profile/screens/DeleteAccountScreen';
 import { EditProfileScreen } from '../../features/profile/screens/EditProfileScreen';
 import { HelpScreen } from '../../features/profile/screens/HelpScreen';
@@ -108,7 +110,15 @@ export function RootNavigator() {
       />
       <Stack.Screen name="Level" component={LevelScreen} />
       <Stack.Screen name="Badges" component={BadgesScreen} />
-      <Stack.Screen name="PublicProfile" component={PublicProfileScreen} />
+      <Stack.Screen name="Leagues" component={LeaguesScreen} />
+      <Stack.Screen name="PublicProfile">
+        {props => (
+          <PublicProfileScreen
+            {...props}
+            leagueCard={<PublicLeagueCard username={props.route.params.username} />}
+          />
+        )}
+      </Stack.Screen>
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} />
