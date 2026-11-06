@@ -100,10 +100,35 @@ export function TripCard({ onCheckedOut }: { onCheckedOut?: () => void } = {}) {
       ) : null}
       {planned.map(trip => (
         <View key={trip.id} testID={`home.trip.planned.${trip.id}`} style={layout.section}>
-          <AppText variant="caption">
-            {t('trip.card.planned', { date: formatDay(tashkentDay(new Date(trip.startAt)), locale) })}
-          </AppText>
-          <AppText variant="h3">{placeName(trip.place, locale)}</AppText>
+          <View style={layout.plannedHead}>
+            <AppText variant="caption">
+              {t('trip.card.planned', { date: formatDay(tashkentDay(new Date(trip.startAt)), locale) })}
+            </AppText>
+            {trip.groupTripId ? (
+              <View testID="home.trip.group-tag" style={[layout.tag, styles.tag]}>
+                <AppText variant="chip" tone="teal700">
+                  {t('tripEvents.discover.groupTag')}
+                </AppText>
+              </View>
+            ) : null}
+          </View>
+          {trip.groupTripId ? (
+            <Pressable
+              testID="home.trip.group-open"
+              accessibilityRole="button"
+              accessibilityLabel={`${t('tripEvents.discover.groupTag')} ${placeName(trip.place, locale)}`}
+              onPress={() => {
+                const groupTripId = trip.groupTripId;
+                if (groupTripId) {
+                  navigation.navigate('GroupTrip', { id: groupTripId });
+                }
+              }}
+            >
+              <AppText variant="h3">{placeName(trip.place, locale)}</AppText>
+            </Pressable>
+          ) : (
+            <AppText variant="h3">{placeName(trip.place, locale)}</AppText>
+          )}
           <View style={layout.buttons}>
             <View style={layout.button}>
               <AppButton
@@ -177,6 +202,8 @@ const layout = StyleSheet.create({
   section: { gap: spacing[8] },
   buttons: { flexDirection: 'row', gap: spacing[8] },
   button: { flex: 1 },
+  plannedHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing[8] },
+  tag: { paddingHorizontal: spacing[10], paddingVertical: spacing[4], borderRadius: radii.pill },
 });
 
 const useStyles = createThemedStyles(c => ({
@@ -187,4 +214,5 @@ const useStyles = createThemedStyles(c => ({
     backgroundColor: c.card,
   },
   alerted: { color: c.red700 },
+  tag: { backgroundColor: c.soft },
 }));

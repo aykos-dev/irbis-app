@@ -7,6 +7,7 @@ import type {
   PlaceConditionDto,
   PlaceDetailDto,
 } from '../../../shared/api/generated/model';
+import { useGroupsList } from '../../../shared/api/generated/groups/groups';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
 import { ConditionCard } from '../../../shared/components/conditions/ConditionCard';
@@ -26,6 +27,7 @@ import {
   sizes,
   spacing,
 } from '../../../shared/constants/spacing';
+import { useAuth } from '../../../shared/contexts/auth';
 import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
 import { useLocale } from '../../../shared/hooks/useLocale';
 import { useNetworkStatus } from '../../../shared/hooks/useNetworkStatus';
@@ -36,6 +38,7 @@ import { LevelCard } from '../components/LevelCard';
 import { PlaceHero } from '../components/PlaceHero';
 import { SeasonBar } from '../components/SeasonBar';
 import { TypePill } from '../components/TypePill';
+import { UpcomingTrips } from '../components/UpcomingTrips';
 import {
   formatDistance as formatUnitDistance,
   formatElevation,
@@ -82,6 +85,14 @@ export function PlaceScreen({ navigation, route, renderCheckIn }: Props) {
   const { data, error, isNotFound, refetch } = usePlace(id, coords);
   const condition = usePlaceCondition(id, data?.slug);
   const requireAccount = useRequireAccount('trip');
+  const { status } = useAuth();
+  // "Create a group trip" only for an owner/admin of at least one group (trip-events AC1).
+  const groups = useGroupsList(undefined, { query: { enabled: status === 'signedIn' } });
+  const leadsGroup = (groups.data?.yours ?? []).some(
+    group =>
+      group.viewerMembership?.status === 'active' &&
+      (group.viewerMembership.role === 'owner' || group.viewerMembership.role === 'admin'),
+  );
   const conditionStatus = condition.data?.status ?? null;
   // Hidden until the condition settles, so a Not now place never flashes the button.
   const showTripCta =
@@ -155,6 +166,17 @@ export function PlaceScreen({ navigation, route, renderCheckIn }: Props) {
       <Screen testID="place.screen" scroll bottomInset={!showTripCta}>
         <BackButton onPress={goBack} />
         {body}
+        {data ? (
+          <UpcomingTrips placeId={id} locale={locale} onOpen={tripId => navigation.navigate('GroupTrip', { id: tripId })} />
+        ) : null}
+        {data && leadsGroup && status === 'signedIn' ? (
+          <AppButton
+            testID="place.create-trip"
+            variant="white"
+            label={t('places.createTrip')}
+            onPress={() => navigation.navigate('CreateTrip', { placeId: id })}
+          />
+        ) : null}
         {data && renderCheckIn ? (
           <View style={layout.checkIn}>
             {renderCheckIn(data, localized(data.name, locale))}

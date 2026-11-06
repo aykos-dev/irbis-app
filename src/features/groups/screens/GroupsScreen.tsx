@@ -14,11 +14,14 @@ import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
 import { ErrorState } from '../../../shared/components/ErrorState';
 import { Pressable } from '../../../shared/components/Pressable';
+import { CompanionArt } from '../../../shared/components/levels/CompanionArt';
+import { levelMeta } from '../../../shared/components/levels/levelMeta';
 import { borders, radii, spacing } from '../../../shared/constants/spacing';
 import { createThemedStyles } from '../../../shared/contexts/theme';
 import { t } from '../../../shared/i18n';
 import { toast } from '../../../shared/components/toastBus';
 import { useGuestSession } from '../../../shared/auth/useGuestSession';
+import { UpcomingTrips } from '../components/UpcomingTrips';
 
 export function GroupsScreen() {
   const navigation = useNavigation();
@@ -54,6 +57,8 @@ export function GroupsScreen() {
         </View>
       </View>
 
+      <FindBuddiesCard onPress={() => navigation.navigate('Buddies')} />
+
       {data?.invitations.length ? (
         <Section title={t('groups.invitations')}>
           {data.invitations.map(group => (
@@ -73,6 +78,8 @@ export function GroupsScreen() {
         )) : <AppText tone="muted">{t('groups.emptyYours')}</AppText>}
       </Section>
 
+      <UpcomingTrips />
+
       <Section title={t('groups.discover')}>
         {data?.discover.length ? data.discover.map(group => (
           <GroupCard key={group.id} group={group} onOpen={() => navigation.navigate('GroupDetails', { id: group.id })}>
@@ -90,6 +97,27 @@ export function GroupsScreen() {
         )) : <AppText tone="muted">{t('groups.emptyDiscover')}</AppText>}
       </Section>
     </View>
+  );
+}
+
+/** "Find buddies" entry (buddies AC1, canvas Groups → Buddies). */
+function FindBuddiesCard({ onPress }: { onPress: () => void }) {
+  const styles = useStyles();
+  const title = t('buddies.groupsCard.title');
+  return (
+    <Pressable testID="groups.find-buddies" accessibilityRole="button" accessibilityLabel={title} onPress={onPress} style={[layout.buddies, styles.buddies]}>
+      <View style={layout.copy}>
+        <AppText variant="h2" tone="onOrange">{title}</AppText>
+        <AppText variant="small" tone="onOrange">{t('buddies.groupsCard.body')}</AppText>
+      </View>
+      <View style={layout.companions}>
+        {BUDDY_LEVELS.map(level => (
+          <View key={level} style={[layout.companion, { backgroundColor: levelMeta(level).tint }]}>
+            <CompanionArt level={level} size={COMPANION} />
+          </View>
+        ))}
+      </View>
+    </Pressable>
   );
 }
 
@@ -126,6 +154,9 @@ function SmallAction({ label, testID, onPress, loading = false }: { label: strin
   );
 }
 
+const BUDDY_LEVELS = [4, 1, 5] as const;
+const COMPANION = 46;
+
 const layout = StyleSheet.create({
   root: { gap: spacing[20] },
   heading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing[12] },
@@ -136,6 +167,9 @@ const layout = StyleSheet.create({
   copy: { flex: 1, gap: spacing[4] },
   actions: { gap: spacing[6] },
   smallAction: { minHeight: 40, paddingHorizontal: spacing[10], borderRadius: radii.input, alignItems: 'center', justifyContent: 'center' },
+  buddies: { flexDirection: 'row', alignItems: 'center', gap: spacing[12], padding: spacing[16], borderRadius: radii.card, borderWidth: borders.card, borderBottomWidth: borders.edge },
+  companions: { flexDirection: 'row' },
+  companion: { width: COMPANION, height: COMPANION, borderRadius: radii.pill, overflow: 'hidden', alignItems: 'center', justifyContent: 'flex-end', marginStart: -spacing[10] },
   unread: { minWidth: 26, height: 26, paddingHorizontal: spacing[6], borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center' },
 });
 
@@ -143,5 +177,6 @@ const useStyles = createThemedStyles(c => ({
   card: { backgroundColor: c.card, borderColor: c.line },
   action: { backgroundColor: c.soft },
   unread: { backgroundColor: c.red700 },
+  buddies: { backgroundColor: c.orange, borderColor: c.orangeEdge },
 }));
 

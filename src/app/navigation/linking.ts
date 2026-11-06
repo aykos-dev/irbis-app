@@ -21,7 +21,7 @@ import type { RootStackParamList } from './types';
  * (`irbis://debug`, `irbis://debug/status`, `irbis://debug/lang/<uz|ru|en>`,
  * `irbis://debug/onboarding/<reset|done>`, `irbis://debug/levels/grant?xp=&lessons=&tier=&checkins=&difficulty=&spots=`,
  * `irbis://debug/lessons/hearts/<0-5>` sets today's hearts, `irbis://debug/path/visit/<placeId>` marks a path visit)
- * exist only outside production (AC10). Other planned routes (docs/architecture.md: trips, lessons) are added
+ * exist only outside production (AC10). `irbis://trips/<id>` opens a group trip. Other planned routes (docs/architecture.md: trips, lessons) are added
  * with the screen they open.
  */
 const debugScreens: Record<string, string> = appConfig.isQaEnabled
@@ -114,6 +114,8 @@ export const linking: LinkingOptions<RootStackParamList> = {
       Leagues: 'leagues',
       GroupChat: 'groups/:id/chat',
       Place: 'place/:id',
+      GroupTrip: 'trips/:id',
+      Buddies: 'buddies',
       ...debugScreens,
     },
   },

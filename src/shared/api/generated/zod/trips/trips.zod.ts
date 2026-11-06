@@ -17,14 +17,17 @@ export const GetTripPreviewParams = zod.object({
 
 export const GetTripPreviewQueryParams = zod.object({
   "startAt": zod.iso.datetime({"offset":true}),
-  "backBy": zod.iso.datetime({"offset":true}).describe('After startAt.')
+  "backBy": zod.iso.datetime({"offset":true}).describe('After startAt.'),
+  "groupTripId": zod.uuid().optional().describe('Merge this group trip\'s gear (it must be at this place).')
 })
 
 export const GetTripPreviewResponse = zod.object({
   "sunsetAt": zod.iso.datetime({"offset":true}).describe('Sunset at the place on the start date (Asia/Tashkent).'),
   "daylightBufferMin": zod.int().nullable().describe('Minutes from backBy to sunset (negative = after dark); null when backBy is on a later day.'),
   "gear": zod.array(zod.object({
-  "key": zod.enum(['water', 'warmLayer', 'firstAid', 'offlineMap', 'sun', 'headlamp', 'waterFilter']),
+  "key": zod.string().describe('A GearKey (water, warmLayer, firstAid, offlineMap, sun, headlamp, waterFilter), or custom-<n> for a group trip\'s custom item.'),
+  "label": zod.string().optional().describe('Custom items only: the text to show.'),
+  "custom": zod.boolean().optional().describe('True for a group trip custom item.'),
   "litres": zod.number().optional().describe('Water only, litres in 0.5 steps.'),
   "note": zod.enum(['frost', 'sunset', 'streams']).optional(),
   "noteTime": zod.iso.datetime({"offset":true}).optional().describe('With note `sunset`: the sunset time.')
@@ -102,6 +105,11 @@ export const CreateTripResponse = zod.object({
 })),
   "leagueElevationM": zod.int().min(createTripResponseLeagueElevationMMin).optional().describe('League elevation awarded by this checkout; present on the checkout response.'),
   "leagueSeasonElevationM": zod.int().min(createTripResponseLeagueSeasonElevationMMin).optional().describe('The member season total after this checkout; present on the checkout response.'),
+  "groupTripId": zod.uuid().nullable().describe('The group trip this plan belongs to.'),
+  "groupGear": zod.object({
+  "keys": zod.array(zod.enum(['water', 'warmLayer', 'firstAid', 'offlineMap', 'sun', 'headlamp', 'waterFilter'])),
+  "custom": zod.array(zod.string())
+}).nullable().describe('The group trip\'s gear; null for a personal plan.'),
   "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 })
 
@@ -156,6 +164,11 @@ export const GetCurrentTripsResponse = zod.object({
 })),
   "leagueElevationM": zod.int().min(getCurrentTripsResponseActiveOneLeagueElevationMMin).optional().describe('League elevation awarded by this checkout; present on the checkout response.'),
   "leagueSeasonElevationM": zod.int().min(getCurrentTripsResponseActiveOneLeagueSeasonElevationMMin).optional().describe('The member season total after this checkout; present on the checkout response.'),
+  "groupTripId": zod.uuid().nullable().describe('The group trip this plan belongs to.'),
+  "groupGear": zod.object({
+  "keys": zod.array(zod.enum(['water', 'warmLayer', 'firstAid', 'offlineMap', 'sun', 'headlamp', 'waterFilter'])),
+  "custom": zod.array(zod.string())
+}).nullable().describe('The group trip\'s gear; null for a personal plan.'),
   "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 }).nullable(),
   "planned": zod.array(zod.object({
@@ -195,6 +208,11 @@ export const GetCurrentTripsResponse = zod.object({
 })),
   "leagueElevationM": zod.int().min(getCurrentTripsResponsePlannedItemLeagueElevationMMin).optional().describe('League elevation awarded by this checkout; present on the checkout response.'),
   "leagueSeasonElevationM": zod.int().min(getCurrentTripsResponsePlannedItemLeagueSeasonElevationMMin).optional().describe('The member season total after this checkout; present on the checkout response.'),
+  "groupTripId": zod.uuid().nullable().describe('The group trip this plan belongs to.'),
+  "groupGear": zod.object({
+  "keys": zod.array(zod.enum(['water', 'warmLayer', 'firstAid', 'offlineMap', 'sun', 'headlamp', 'waterFilter'])),
+  "custom": zod.array(zod.string())
+}).nullable().describe('The group trip\'s gear; null for a personal plan.'),
   "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 }))
 })
@@ -268,6 +286,11 @@ export const StartTripResponse = zod.object({
 })),
   "leagueElevationM": zod.int().min(startTripResponseLeagueElevationMMin).optional().describe('League elevation awarded by this checkout; present on the checkout response.'),
   "leagueSeasonElevationM": zod.int().min(startTripResponseLeagueSeasonElevationMMin).optional().describe('The member season total after this checkout; present on the checkout response.'),
+  "groupTripId": zod.uuid().nullable().describe('The group trip this plan belongs to.'),
+  "groupGear": zod.object({
+  "keys": zod.array(zod.enum(['water', 'warmLayer', 'firstAid', 'offlineMap', 'sun', 'headlamp', 'waterFilter'])),
+  "custom": zod.array(zod.string())
+}).nullable().describe('The group trip\'s gear; null for a personal plan.'),
   "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 })
 
@@ -443,6 +466,11 @@ export const UpdateTripResponse = zod.object({
 })),
   "leagueElevationM": zod.int().min(updateTripResponseLeagueElevationMMin).optional().describe('League elevation awarded by this checkout; present on the checkout response.'),
   "leagueSeasonElevationM": zod.int().min(updateTripResponseLeagueSeasonElevationMMin).optional().describe('The member season total after this checkout; present on the checkout response.'),
+  "groupTripId": zod.uuid().nullable().describe('The group trip this plan belongs to.'),
+  "groupGear": zod.object({
+  "keys": zod.array(zod.enum(['water', 'warmLayer', 'firstAid', 'offlineMap', 'sun', 'headlamp', 'waterFilter'])),
+  "custom": zod.array(zod.string())
+}).nullable().describe('The group trip\'s gear; null for a personal plan.'),
   "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 })
 
@@ -519,6 +547,11 @@ export const CheckOutTripResponse = zod.object({
 })),
   "leagueElevationM": zod.int().min(checkOutTripResponseLeagueElevationMMin).optional().describe('League elevation awarded by this checkout; present on the checkout response.'),
   "leagueSeasonElevationM": zod.int().min(checkOutTripResponseLeagueSeasonElevationMMin).optional().describe('The member season total after this checkout; present on the checkout response.'),
+  "groupTripId": zod.uuid().nullable().describe('The group trip this plan belongs to.'),
+  "groupGear": zod.object({
+  "keys": zod.array(zod.enum(['water', 'warmLayer', 'firstAid', 'offlineMap', 'sun', 'headlamp', 'waterFilter'])),
+  "custom": zod.array(zod.string())
+}).nullable().describe('The group trip\'s gear; null for a personal plan.'),
   "pingEveryMin": zod.int().describe('trip.active pingEveryMin: how often the app sends a location.')
 })
 

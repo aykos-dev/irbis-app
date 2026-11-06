@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -18,7 +19,7 @@ import {
   useGroupChatUploadPhoto,
 } from '../../../shared/api/generated/group-chat/group-chat';
 import { useGroupsGet } from '../../../shared/api/generated/groups/groups';
-import type { GroupMessageAttachmentDto, GroupMessageDto } from '../../../shared/api/generated/model';
+import type { ConditionStatus, GroupMessageAttachmentDto, GroupMessageDto } from '../../../shared/api/generated/model';
 import { useSearchQuery } from '../../../shared/api/generated/search/search';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
@@ -26,12 +27,15 @@ import { ErrorState } from '../../../shared/components/ErrorState';
 import { Icon } from '../../../shared/components/Icon';
 import { Pressable } from '../../../shared/components/Pressable';
 import { Screen } from '../../../shared/components/Screen';
+import { StatusChip } from '../../../shared/components/StatusChip';
+import { statusVariant } from '../../../shared/components/conditions/reasonText';
 import { TextField } from '../../../shared/components/TextField';
 import { toast } from '../../../shared/components/toastBus';
 import { borders, radii, sizes, spacing } from '../../../shared/constants/spacing';
 import { useAuth } from '../../../shared/contexts/auth';
 import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
-import { t } from '../../../shared/i18n';
+import { getLocale, t } from '../../../shared/i18n';
+import { formatTripStart } from '../../../shared/utils/format';
 import { useGroupChatSocket } from '../hooks/useGroupChatSocket';
 
 const reactions = ['👍', '❤️', '🔥', '👏'] as const;
@@ -276,10 +280,40 @@ function MessageBubble({ message, mine, canDelete, onReply, onEdit, onDelete, on
   );
 }
 
+function isConditionStatus(value: string): value is ConditionStatus {
+  return Object.keys(statusVariant).includes(value);
+}
+
+/** A live trip card (trip-events AC8) opens the trip page; seeded cards stay read-only. */
 function TripCard({ message }: { message: GroupMessageDto }) {
   const styles = useStyles();
+  const navigation = useNavigation();
   const trip = message.trip;
   if (!trip) return null;
+  const { groupTripId } = trip;
+  if (groupTripId) {
+    const spots = trip.capacity > 0
+      ? t('tripEvents.discover.cardSpots', { joined: trip.joined, capacity: trip.capacity, count: Math.max(trip.capacity - trip.joined, 0) })
+      : t('tripEvents.discover.going', { count: trip.joined });
+    const status = isConditionStatus(trip.condition) ? trip.condition : null;
+    return (
+      <Pressable
+        testID={`group-chat.trip-${message.id}`}
+        accessibilityRole="button"
+        accessibilityLabel={`${trip.title} · ${spots}`}
+        onPress={() => navigation.navigate('GroupTrip', { id: groupTripId })}
+        style={[layout.trip, styles.theirs]}
+      >
+        <AppText variant="h3">{trip.title}</AppText>
+        <AppText variant="small" tone="muted">{formatTripStart(new Date(trip.startsAt), getLocale())}</AppText>
+        <AppText testID={`group-chat.trip-${message.id}-spots`} variant="chip" tone="teal700">{spots}</AppText>
+        <View style={layout.tripFoot}>
+          {status ? <StatusChip testID={`group-chat.trip-${message.id}-condition`} variant={statusVariant[status]} label={t(`conditions.status.${status}`)} /> : <View />}
+          <AppText variant="chip" tone="teal700">{t('tripEvents.discover.open')}</AppText>
+        </View>
+      </Pressable>
+    );
+  }
   return (
     <View testID={`group-chat.trip-${message.id}`} style={[layout.trip, styles.theirs]}>
       <AppText variant="h3">{trip.title}</AppText>
@@ -307,6 +341,7 @@ const layout = StyleSheet.create({
   place: { padding: spacing[8] },
   meta: { flexDirection: 'row', justifyContent: 'flex-end', gap: spacing[8] },
   trip: { gap: spacing[8], padding: spacing[14], borderWidth: borders.card, borderRadius: radii.card },
+  tripFoot: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   context: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing[8], padding: spacing[8], borderRadius: radii.input },
   attachPanel: { gap: spacing[8], padding: spacing[10] },
   placeResult: { minHeight: sizes.touchTarget, justifyContent: 'center', paddingHorizontal: spacing[8] },

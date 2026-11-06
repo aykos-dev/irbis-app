@@ -10,6 +10,7 @@ import { Image, StyleSheet, View } from 'react-native';
 import type { RootStackParamList } from '../../../app/navigation/types';
 import { useUsersGetBadges } from '../../../shared/api/generated/badges/badges';
 import {
+  useUsersGetBuddySummary,
   useUsersGetProfile,
   useUsersGetStats,
 } from '../../../shared/api/generated/profile/profile';
@@ -21,12 +22,22 @@ import { Screen } from '../../../shared/components/Screen';
 import { Skeleton } from '../../../shared/components/Skeleton';
 import { spacing } from '../../../shared/constants/spacing';
 import { useTheme } from '../../../shared/contexts/theme';
-import { getLocale } from '../../../shared/i18n';
+import { getLocale, t } from '../../../shared/i18n';
 import { formatDistance, formatElevation } from '../../../shared/utils/units';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
-export function PublicProfileScreen({ leagueCard }: { leagueCard?: ReactNode }) {
+/** What the public profile needs from the buddies and leagues features, passed in by the app layer. */
+type Props = {
+  /** Add / Requested / Accept / Buddies for this profile (buddies AC5). */
+  buddyAction?: (username: string) => ReactNode;
+  /** "Rated by trip buddies" (buddies AC8). */
+  buddyRatings?: (username: string, testID: string) => ReactNode;
+  /** Seasonal league card. */
+  leagueCard?: ReactNode;
+};
+
+export function PublicProfileScreen({ buddyAction, buddyRatings, leagueCard }: Props) {
   const navigation = useNavigation<Nav>();
   const route = useRoute<RouteProp<RootStackParamList, 'PublicProfile'>>();
   const { colors } = useTheme();
@@ -37,6 +48,9 @@ export function PublicProfileScreen({ leagueCard }: { leagueCard?: ReactNode }) 
     query: { enabled: profile.data?.showStats === true },
   });
   const badges = useUsersGetBadges(route.params.username, {
+    query: { enabled: !!profile.data },
+  });
+  const buddySummary = useUsersGetBuddySummary(route.params.username, {
     query: { enabled: !!profile.data },
   });
 
@@ -123,6 +137,18 @@ export function PublicProfileScreen({ leagueCard }: { leagueCard?: ReactNode }) 
               </AppText>
             ) : null}
             <AppText variant="chip">Level {profile.data.level}</AppText>
+            {buddySummary.data ? (
+              <AppText
+                testID="public-profile.buddy-count"
+                variant="small"
+                tone="muted"
+              >
+                {t('buddies.profile.count', {
+                  count: buddySummary.data.buddyCount,
+                })}
+              </AppText>
+            ) : null}
+            {buddyAction?.(route.params.username)}
           </View>
           <View testID="public-profile.stats" style={styles.section}>
             <AppText variant="h3">Adventure stats</AppText>
@@ -154,12 +180,7 @@ export function PublicProfileScreen({ leagueCard }: { leagueCard?: ReactNode }) 
               </AppText>
             )}
           </View>
-          <View testID="public-profile.ratings" style={styles.section}>
-            <AppText variant="h3">Buddy ratings</AppText>
-            <AppText variant="small" tone="muted">
-              No buddy ratings yet.
-            </AppText>
-          </View>
+          {buddyRatings?.(route.params.username, 'public-profile.ratings')}
           {leagueCard}
         </>
       )}

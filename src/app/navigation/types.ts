@@ -77,6 +77,12 @@ export type RootStackParamList = {
   Place: { id: string; lat?: number; lng?: number };
   /** Trip plan for one place (trip-plan AC1–AC6); `tripId` edits a saved plan. */
   TripPlan: { placeId: string; tripId?: string };
+  /** Create a group trip at a place (trip-events AC1); `groupTripId` edits one (AC5). */
+  CreateTrip: { placeId: string; groupTripId?: string };
+  /** One group trip's page (trip-events AC3–AC5), also `irbis://trips/<id>`. */
+  GroupTrip: { id: string };
+  /** Every upcoming group trip the viewer can see (trip-events AC8, Groups "See all"). */
+  GroupTrips: undefined;
   /** The running trip (active-trip AC1–AC4, AC8). */
   ActiveTrip: { tripId: string };
   /** After check-out (active-trip AC8): the checked-out trip's counts. */
@@ -108,8 +114,12 @@ export type RootStackParamList = {
   /** Full 64-item badge catalogue and the signed-in user's four profile picks. */
   Badges: undefined;
   Leagues: undefined;
-  /** Public profile opened from search or irbis://profile/:username. */
+  /** Public profile opened from search, Buddies or irbis://profile/:username (buddy button: buddies AC5). */
   PublicProfile: { username: string };
+  /** Find buddies and my buddies (buddies AC1–AC6), also `irbis://buddies`. */
+  Buddies: { tab?: 'find' | 'mine' } | undefined;
+  /** Rate the other attendees of a finished group trip (buddies AC7), from Home or a `trip_rate` notification. */
+  RateBuddies: { groupTripId: string };
   EditProfile: undefined;
   Settings: undefined;
   DeleteAccount: undefined;

@@ -5,11 +5,15 @@
  * Backend for the Irbis app and admin web. This document is the contract (ADR-003).
  * OpenAPI spec version: 0.0.1
  */
-import type { GearKey } from './gearKey.ts';
 import type { GearNote } from './gearNote.ts';
 
 export interface GearItemDto {
-  key: GearKey;
+  /** A GearKey (water, warmLayer, firstAid, offlineMap, sun, headlamp, waterFilter), or custom-<n> for a group trip's custom item. */
+  key: string;
+  /** Custom items only: the text to show. */
+  label?: string;
+  /** True for a group trip custom item. */
+  custom?: boolean;
   /** Water only, litres in 0.5 steps. */
   litres?: number;
   note?: GearNote;

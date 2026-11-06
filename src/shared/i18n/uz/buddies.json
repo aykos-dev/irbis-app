@@ -1,0 +1,142 @@
+{
+  "title": "Hamrohlar",
+  "back": "Orqaga",
+  "segments": {
+    "find": "Topish",
+    "mine": "Meniki",
+    "incoming": {
+      "one": "%{count} soʻrov",
+      "other": "%{count} soʻrov"
+    }
+  },
+  "find": {
+    "title": "Hamroh topish",
+    "free": "Shu dam olish kunlari boʻshman",
+    "sat": "Sh",
+    "sun": "Ya",
+    "level": "Daraja",
+    "any": "Istalgan",
+    "near": "L%{lo}–L%{hi}",
+    "mentors": "Ustozlar (L5+)",
+    "weekend": "Shu dam olish kunlari",
+    "match": {
+      "one": "%{count} ta sayyoh mos keldi",
+      "other": "%{count} ta sayyoh mos keldi"
+    },
+    "empty": "Mos sayyoh topilmadi — filtrlarni kamaytiring",
+    "saved": "Dam olish rejalari saqlandi"
+  },
+  "card": {
+    "rating": "★ %{rating}",
+    "together": {
+      "one": "%{count} ta birga sayohat",
+      "other": "%{count} ta birga sayohat"
+    },
+    "leader": "Tasdiqlangan yetakchi",
+    "freeSat": "Shanba boʻsh",
+    "freeSun": "Yakshanba boʻsh",
+    "freeBoth": "Sh–Ya boʻsh",
+    "level": "%{n}-daraja",
+    "add": "Hamroh qoʻshish",
+    "requested": "Soʻrov yuborildi"
+  },
+  "mine": {
+    "incoming": "Soʻrovlar",
+    "buddies": "Hamrohlarim",
+    "sent": "Yuborilganlar",
+    "going": "Hamrohlar boryapti",
+    "goingWith": "%{names} bilan",
+    "accept": "Qabul qilish",
+    "decline": "Rad etish",
+    "cancel": "Bekor qilish",
+    "remove": "Oʻchirish",
+    "empty": "Hozircha hamroh yoʻq",
+    "emptyBody": "Darajangizdagi sayyohlarni toping va hamroh sifatida qoʻshing."
+  },
+  "remove": {
+    "title": "Hamrohni oʻchirasizmi?",
+    "body": "%{name} endi hamrohingiz boʻlmaydi.",
+    "confirm": "Oʻchirish",
+    "keep": "Qoldirish"
+  },
+  "toast": {
+    "requested": "Hamrohlik soʻrovi yuborildi",
+    "accepted": "Endi siz hamrohsiz",
+    "declined": "Soʻrov rad etildi",
+    "cancelled": "Soʻrov bekor qilindi",
+    "removed": "Hamroh oʻchirildi"
+  },
+  "guest": {
+    "title": "Sayohat uchun hamroh toping",
+    "body": "Sayyohlarni topish va hamroh qoʻshish uchun bepul akkaunt oching.",
+    "action": "Kirish"
+  },
+  "errors": {
+    "BUDDY_EXISTS": "Bu sayyoh bilan allaqachon bogʻlangansiz.",
+    "BUDDY_USER_NOT_FOUND": "Bu sayyoh endi mavjud emas.",
+    "SECURED_ACCOUNT_REQUIRED": "Hamroh qoʻshish uchun akkauntingizni himoyalang.",
+    "NOT_ATTENDEE": "Faqat shu sayohatda qatnashganlar baholay oladi.",
+    "RATING_CLOSED": "Bu sayohat uchun baholash yopilgan.",
+    "RATING_SELF": "Oʻzingizni baholay olmaysiz."
+  },
+  "groupsCard": {
+    "title": "Hamroh topish",
+    "body": "Darajangizdagi, dam olish kunlari boʻsh sayyohlar"
+  },
+  "profile": {
+    "row": "Hamrohlar",
+    "count": {
+      "one": "%{count} ta hamroh",
+      "other": "%{count} ta hamroh"
+    },
+    "add": "Hamroh qoʻshish",
+    "requested": "Soʻrov yuborildi",
+    "linked": "Hamrohlar"
+  },
+  "regions": {
+    "tashkent_city": "Toshkent",
+    "tashkent_region": "Toshkent viloyati",
+    "andijan": "Andijon",
+    "bukhara": "Buxoro",
+    "fergana": "Fargʻona",
+    "jizzakh": "Jizzax",
+    "karakalpakstan": "Qoraqalpogʻiston",
+    "khorezm": "Xorazm",
+    "namangan": "Namangan",
+    "navoiy": "Navoiy",
+    "kashkadarya": "Qashqadaryo",
+    "samarkand": "Samarqand",
+    "syrdarya": "Sirdaryo",
+    "surkhandarya": "Surxondaryo",
+    "other": "Boshqa hudud"
+  },
+  "rate": {
+    "title": "Sayohat hamrohlaringizni baholang",
+    "anonymous": "Baholar anonim.",
+    "closes": "%{date} gacha baholash mumkin",
+    "closed": "Baholash %{date} da yopildi.",
+    "reliable": "Ishonchli",
+    "safety": "Xavfsizlik birinchi",
+    "company": "Yoqimli hamroh",
+    "star": "%{trait}: 5 dan %{n}",
+    "save": "Saqlash",
+    "saved": "Saqlandi",
+    "savedToast": "Baho saqlandi",
+    "empty": "Bu sayohatda baholash uchun boshqa hech kim yoʻq."
+  },
+  "homeCard": {
+    "title": "Hamrohlaringizni baholang · %{place}",
+    "body": {
+      "one": "%{count} hamroh baholanishi kerak",
+      "other": "%{count} hamroh baholanishi kerak"
+    }
+  },
+  "ratings": {
+    "title": "Sayohat hamrohlari baholari",
+    "empty": "Hamrohlardan hali baho yoʻq.",
+    "trips": {
+      "one": "%{count} sayohat",
+      "other": "%{count} sayohat"
+    }
+  }
+}

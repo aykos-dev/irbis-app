@@ -5,6 +5,7 @@ import { storage } from '../storage';
 
 import enActive from './en/active.json';
 import enAuth from './en/auth.json';
+import enBuddies from './en/buddies.json';
 import enCamp from './en/camp.json';
 import enCheckin from './en/checkin.json';
 import enCommon from './en/common.json';
@@ -23,8 +24,10 @@ import enPath from './en/path.json';
 import enPlaces from './en/places.json';
 import enStreaks from './en/streaks.json';
 import enTrip from './en/trip.json';
+import enTripEvents from './en/tripEvents.json';
 import ruActive from './ru/active.json';
 import ruAuth from './ru/auth.json';
+import ruBuddies from './ru/buddies.json';
 import ruCamp from './ru/camp.json';
 import ruCheckin from './ru/checkin.json';
 import ruCommon from './ru/common.json';
@@ -43,8 +46,10 @@ import ruPath from './ru/path.json';
 import ruPlaces from './ru/places.json';
 import ruStreaks from './ru/streaks.json';
 import ruTrip from './ru/trip.json';
+import ruTripEvents from './ru/tripEvents.json';
 import uzActive from './uz/active.json';
 import uzAuth from './uz/auth.json';
+import uzBuddies from './uz/buddies.json';
 import uzCamp from './uz/camp.json';
 import uzCheckin from './uz/checkin.json';
 import uzCommon from './uz/common.json';
@@ -63,6 +68,7 @@ import uzPath from './uz/path.json';
 import uzPlaces from './uz/places.json';
 import uzStreaks from './uz/streaks.json';
 import uzTrip from './uz/trip.json';
+import uzTripEvents from './uz/tripEvents.json';
 
 /**
  * i18n setup. Translations live in `<locale>/<namespace>.json`; keys are `<namespace>.<key>`
@@ -84,6 +90,7 @@ export const i18n = new I18n({
   en: {
     active: enActive,
     auth: enAuth,
+    buddies: enBuddies,
     camp: enCamp,
     checkin: enCheckin,
     common: enCommon,
@@ -102,10 +109,12 @@ export const i18n = new I18n({
     places: enPlaces,
     streaks: enStreaks,
     trip: enTrip,
+    tripEvents: enTripEvents,
   },
   ru: {
     active: ruActive,
     auth: ruAuth,
+    buddies: ruBuddies,
     camp: ruCamp,
     checkin: ruCheckin,
     common: ruCommon,
@@ -124,10 +133,12 @@ export const i18n = new I18n({
     places: ruPlaces,
     streaks: ruStreaks,
     trip: ruTrip,
+    tripEvents: ruTripEvents,
   },
   uz: {
     active: uzActive,
     auth: uzAuth,
+    buddies: uzBuddies,
     camp: uzCamp,
     checkin: uzCheckin,
     common: uzCommon,
@@ -146,6 +157,7 @@ export const i18n = new I18n({
     places: uzPlaces,
     streaks: uzStreaks,
     trip: uzTrip,
+    tripEvents: uzTripEvents,
   },
 });
 

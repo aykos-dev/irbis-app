@@ -7,6 +7,12 @@
  */
 
 export interface GroupTripCardDto {
+  /**
+     * Set for live group-trip cards; null for seeded cards.
+     * @nullable
+     */
+  groupTripId: string | null;
+  /** Place name in the viewer locale. */
   title: string;
   startsAt: string;
   meetingTime: string;

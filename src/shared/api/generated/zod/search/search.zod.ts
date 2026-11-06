@@ -24,7 +24,7 @@ export const searchQueryQueryLngMax = 180;
 
 export const SearchQueryQueryParams = zod.object({
   "q": zod.string().min(searchQueryQueryQMin).max(searchQueryQueryQMax).optional().describe('Trimmed before matching; 2–60 characters.'),
-  "scope": zod.enum(['all', 'places', 'people', 'groups', 'tours']).optional(),
+  "scope": zod.enum(['all', 'places', 'people', 'groups', 'tours', 'trips']).optional(),
   "lat": zod.number().min(searchQueryQueryLatMin).max(searchQueryQueryLatMax).optional(),
   "lng": zod.number().min(searchQueryQueryLngMin).max(searchQueryQueryLngMax).optional()
 })
@@ -72,6 +72,13 @@ export const SearchQueryResponse = zod.object({
   "color": zod.string(),
   "memberCount": zod.int()
 })),
-  "tours": zod.array(zod.string()).describe('Always empty until tours ship.')
+  "tours": zod.array(zod.string()).describe('Always empty until tours ship.'),
+  "trips": zod.array(zod.object({
+  "id": zod.uuid(),
+  "placeName": zod.string().describe('English name, else Russian, else Uzbek.'),
+  "startAt": zod.iso.datetime({"offset":true}),
+  "approvedCount": zod.int(),
+  "maxPeople": zod.int().nullable()
+})).optional().describe('Present for scope all and trips.')
 })
 

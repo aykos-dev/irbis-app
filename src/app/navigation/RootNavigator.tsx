@@ -3,6 +3,10 @@ import { useEffect, useState } from 'react';
 
 import { TripSummaryScreen } from '../../features/active-trip/screens/TripSummaryScreen';
 import { BadgesScreen } from '../../features/badges/screens/BadgesScreen';
+import { BuddyRatings } from '../../features/buddies/components/BuddyRatings';
+import { ProfileBuddyButton } from '../../features/buddies/components/ProfileBuddyButton';
+import { BuddiesScreen } from '../../features/buddies/screens/BuddiesScreen';
+import { RateBuddiesScreen } from '../../features/buddies/screens/RateBuddiesScreen';
 import { GameWaiting } from '../../features/campfire-core/games/GameWaiting';
 import { CampJoinScreen } from '../../features/campfire-core/screens/CampJoinScreen';
 import { CampLobbyScreen } from '../../features/campfire-core/screens/CampLobbyScreen';
@@ -33,6 +37,9 @@ import {
   markOnboardingDone,
 } from '../../features/onboarding/onboardingStore';
 import { SafetyScreen } from '../../features/auth/screens/SafetyScreen';
+import { CreateTripScreen } from '../../features/trip-events/screens/CreateTripScreen';
+import { GroupTripScreen } from '../../features/trip-events/screens/GroupTripScreen';
+import { GroupTripsScreen } from '../../features/trip-events/screens/GroupTripsScreen';
 import { TripPlanScreen } from '../../features/trip-plan/screens/TripPlanScreen';
 import { appConfig } from '../../shared/constants/config';
 import { useAuth } from '../../shared/contexts/auth';
@@ -42,6 +49,10 @@ import { TabNavigator } from './TabNavigator';
 import type { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
+/** The public profile's buddy pieces (features never import each other). */
+const buddyAction = (username: string) => <ProfileBuddyButton username={username} />;
+const buddyRatings = (username: string, testID: string) => <BuddyRatings username={username} testID={testID} />;
 
 type InitialRoute = 'Onboarding' | 'MainTabs';
 
@@ -98,6 +109,11 @@ export function RootNavigator() {
       <Stack.Screen name="Place" component={PlaceRoute} />
       <Stack.Screen name="TripPlan" component={TripPlanScreen} />
       <Stack.Screen name="ActiveTrip" component={ActiveTripRoute} />
+      <Stack.Screen name="CreateTrip" component={CreateTripScreen} />
+      <Stack.Screen name="GroupTrip" component={GroupTripScreen} />
+      <Stack.Screen name="GroupTrips" component={GroupTripsScreen} />
+      <Stack.Screen name="Buddies" component={BuddiesScreen} />
+      <Stack.Screen name="RateBuddies" component={RateBuddiesScreen} />
       <Stack.Screen
         name="TripSummary"
         component={TripSummaryScreen}
@@ -116,6 +132,8 @@ export function RootNavigator() {
           <PublicProfileScreen
             {...props}
             leagueCard={<PublicLeagueCard username={props.route.params.username} />}
+            buddyAction={buddyAction}
+            buddyRatings={buddyRatings}
           />
         )}
       </Stack.Screen>

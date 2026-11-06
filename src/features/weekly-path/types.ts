@@ -17,6 +17,8 @@ export type PathDeps = {
   tripCard: ReactNode;
   /** Streak chips (streaks AC6), next to XP; renders nothing for guests. */
   streakChips?: ReactNode;
+  /** "Rate your trip buddies" (buddies AC7), under the trip card; renders nothing when nothing is pending. */
+  rateCard?: ReactNode;
   /** Seasonal league entry, wired by the app layer. */
   leagueCard?: ReactNode;
 };

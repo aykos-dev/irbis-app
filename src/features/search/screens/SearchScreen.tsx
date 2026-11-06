@@ -19,6 +19,7 @@ import { TextField } from '../../../shared/components/TextField';
 import { radii, spacing } from '../../../shared/constants/spacing';
 import { createThemedStyles, useTheme } from '../../../shared/contexts/theme';
 import { getLocale } from '../../../shared/i18n';
+import { formatTripStart } from '../../../shared/utils/format';
 import { formatDistance, formatElevation } from '../../../shared/utils/units';
 import { useGuestSession } from '../../../shared/auth/useGuestSession';
 import { toast } from '../../../shared/components/toastBus';
@@ -26,11 +27,13 @@ import { t } from '../../../shared/i18n';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type Tab = 'all' | SearchScope;
+/** Trips uses an i18n key (read at render); the older tabs still carry their English copy. */
 const tabs: { key: Tab; label: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'places', label: 'Places' },
   { key: 'people', label: 'People' },
   { key: 'groups', label: 'Groups' },
+  { key: 'trips', label: 'tripEvents.discover.searchTab' },
   { key: 'tours', label: 'Tours' },
 ];
 
@@ -55,6 +58,7 @@ export function SearchScreen() {
   const showPlaces = tab === 'all' || tab === 'places';
   const showPeople = tab === 'all' || tab === 'people';
   const showGroups = tab === 'all' || tab === 'groups';
+  const showTrips = tab === 'all' || tab === 'trips';
   const comingSoon = tab === 'tours';
   return (
     <Screen testID="search.screen" scroll keyboardAware>
@@ -77,10 +81,10 @@ export function SearchScreen() {
         placeholder="Search Irbis"
       />
       <View style={layout.tabs}>
-        {tabs.map(item => (
+        {tabs.map(tabItem => ({ ...tabItem, label: tabItem.key === 'trips' ? t(tabItem.label) : tabItem.label })).map(item => (
           <Pressable
             key={item.key}
-            testID={`search.tab-${item.key}`}
+            testID={item.key === 'trips' ? 'search.segment.trips' : `search.tab-${item.key}`}
             accessibilityLabel={item.label}
             accessibilityRole="tab"
             accessibilityState={{ selected: tab === item.key }}
@@ -231,6 +235,35 @@ export function SearchScreen() {
                   </View>
                 </View>
               )) : <AppText variant="small" tone="muted">No public groups found.</AppText>}
+            </View>
+          ) : null}
+          {showTrips ? (
+            <View testID="search.trips" style={layout.section}>
+              <AppText variant="h2">{t('tripEvents.discover.searchTitle')}</AppText>
+              {query.data.trips?.length ? query.data.trips.map(trip => (
+                <Pressable
+                  key={trip.id}
+                  testID={`search.trip-${trip.id}`}
+                  accessibilityLabel={trip.placeName}
+                  onPress={() => navigation.navigate('GroupTrip', { id: trip.id })}
+                  style={[layout.result, styles.result]}
+                >
+                  <View style={layout.copy}>
+                    <AppText variant="body">{trip.placeName}</AppText>
+                    <AppText variant="small" tone="muted">
+                      {formatTripStart(new Date(trip.startAt), getLocale())} ·{' '}
+                      {trip.maxPeople === null
+                        ? t('tripEvents.discover.going', { count: trip.approvedCount })
+                        : t('tripEvents.trip.countOf', { n: trip.approvedCount, max: trip.maxPeople })}
+                    </AppText>
+                  </View>
+                  <Icon name="chevron" color={colors.muted} />
+                </Pressable>
+              )) : (
+                <AppText testID="search.trips-empty" variant="small" tone="muted">
+                  {t('tripEvents.discover.searchEmpty')}
+                </AppText>
+              )}
             </View>
           ) : null}
         </>

@@ -15,4 +15,5 @@ export const SearchScope = {
   people: 'people',
   groups: 'groups',
   tours: 'tours',
+  trips: 'trips',
 } as const;

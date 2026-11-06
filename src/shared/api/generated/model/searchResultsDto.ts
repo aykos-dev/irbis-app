@@ -8,6 +8,7 @@
 import type { SearchGroupDto } from './searchGroupDto.ts';
 import type { SearchPersonDto } from './searchPersonDto.ts';
 import type { SearchPlaceDto } from './searchPlaceDto.ts';
+import type { SearchTripDto } from './searchTripDto.ts';
 
 export interface SearchResultsDto {
   places: SearchPlaceDto[];
@@ -15,4 +16,6 @@ export interface SearchResultsDto {
   groups: SearchGroupDto[];
   /** Always empty until tours ship. */
   tours: string[];
+  /** Present for scope all and trips. */
+  trips?: SearchTripDto[];
 }

@@ -9,6 +9,7 @@ import type {
 } from '../../../app/navigation/types';
 import { useMeLevelGet } from '../../../shared/api/generated';
 import { useBadgesList } from '../../../shared/api/generated/badges/badges';
+import { useMeBuddySummary } from '../../../shared/api/generated/buddies/buddies';
 import { useMeStats } from '../../../shared/api/generated/me/me';
 import { AppButton } from '../../../shared/components/AppButton';
 import { AppText } from '../../../shared/components/AppText';
@@ -44,11 +45,13 @@ type RootNav = NativeStackNavigationProp<RootStackParamList>;
 type Props = MainTabScreenProps<'Profile'> & {
   /** The account's streak row from the app layer (streaks AC7). */
   streaksCard?: ReactNode;
+  /** "Rated by trip buddies" from the app layer (buddies AC8). */
+  buddyRatings?: ReactNode;
   /** Seasonal league chip from the app layer. */
   leagueCard?: ReactNode;
 };
 
-export function ProfileScreen({ streaksCard, leagueCard }: Props) {
+export function ProfileScreen({ streaksCard, buddyRatings, leagueCard }: Props) {
   const { status } = useAuth();
   if (status === 'loading') {
     return (
@@ -64,7 +67,7 @@ export function ProfileScreen({ streaksCard, leagueCard }: Props) {
     );
   }
   return status === 'signedIn' ? (
-    <AccountProfile streaksCard={streaksCard} leagueCard={leagueCard} />
+    <AccountProfile streaksCard={streaksCard} buddyRatings={buddyRatings} leagueCard={leagueCard} />
   ) : (
     <GuestProfile />
   );
@@ -264,7 +267,15 @@ function DemoSignOutSheet({
 }
 
 /** Signed-in profile: username, recovery phone, sign out (AC6); a demo account adds Secure (check-in AC8). */
-function AccountProfile({ streaksCard, leagueCard }: { streaksCard?: ReactNode; leagueCard?: ReactNode }) {
+function AccountProfile({
+  streaksCard,
+  buddyRatings,
+  leagueCard,
+}: {
+  streaksCard?: ReactNode;
+  buddyRatings?: ReactNode;
+  leagueCard?: ReactNode;
+}) {
   const { navigation, languageRow, safetyRow, debugRow, sheet } =
     useProfileRows();
   const { colors } = useTheme();
@@ -274,6 +285,7 @@ function AccountProfile({ streaksCard, leagueCard }: { streaksCard?: ReactNode; 
   const [confirmClosing, setConfirmClosing] = useState(false);
   const statsQuery = useMeStats();
   const badgesQuery = useBadgesList();
+  const buddySummary = useMeBuddySummary();
 
   if (!user) {
     return (
@@ -499,15 +511,24 @@ function AccountProfile({ streaksCard, leagueCard }: { streaksCard?: ReactNode; 
             : 'Badges unlock with check-ins.'}
         </AppText>
       </Pressable>
-      <View testID="profile.ratings" style={styles.section}>
-        <AppText variant="h3">Buddy ratings</AppText>
-        <AppText variant="small" tone="muted">
-          No buddy ratings yet.
-        </AppText>
-      </View>
+      {buddyRatings}
       {leagueCard}
       <ListCard>
         {languageRow}
+        <ListRow
+          testID="profile.buddies"
+          label={t('buddies.profile.row')}
+          value={
+            buddySummary.data
+              ? t('buddies.profile.count', { count: buddySummary.data.buddyCount })
+              : undefined
+          }
+          icon={<Icon name="person" color={colors.muted} size={ROW_ICON} />}
+          trailing={
+            <Icon name="chevron" color={colors.stone} size={spacing[18]} />
+          }
+          onPress={() => navigation.navigate('Buddies', { tab: 'mine' })}
+        />
         <ListRow
           testID="profile.recovery-phone"
           label={t('auth.profile.recoveryPhone')}
